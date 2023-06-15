@@ -1,5 +1,6 @@
 ﻿using SteamWeb.Script.DTO.Listinging;
 using SteamWeb.Auth.Interfaces;
+using SteamWeb.Extensions;
 
 namespace SteamWeb;
 public static class SteamIDs
@@ -36,14 +37,16 @@ public static class SteamIDs
     {
         if (IsKeepInRAM)
         {
-            if (!File.Exists(PathToSteamIDsFile)) return;
+            if (!File.Exists(PathToSteamIDsFile))
+                return;
             try
             {
                 var data = File.ReadAllLines(PathToSteamIDsFile);
                 mSteamIDs.Clear();
                 foreach (var item in data)
                 {
-                    if (string.IsNullOrEmpty(item)) continue;
+                    if (string.IsNullOrEmpty(item))
+                        continue;
                     var splitted = item.Split('=');
                     var name = splitted[0];
                     if (!mSteamIDs.ContainsKey(name))
@@ -68,24 +71,20 @@ public static class SteamIDs
         else File.AppendAllLines(PathToSteamIDsFile, list);
     }
 
+
     /// <summary>
-    /// 
+    /// Получает item_nameid из файла или извлекает из страницы предмета, если его не оказалось в файле
     /// </summary>
-    /// <param name="listing"></param>
-    /// <param name="Session"></param>
-    /// <param name="Proxy"></param>
     /// <returns>True - взято из файла, Null если неудалось загрузить страницу с предметом</returns>
-    public static async Task<(bool, string)> GetItemIDAsync(ISessionProvider Session, Web.Proxy Proxy, ListingItem listing)
-    => await GetItemIDAsync(Session, Proxy, listing.AppID, listing.MarketHashName);
+    public static async Task<(bool, string?)> GetItemIDAsync(ISessionProvider session, Web.Proxy? proxy, ListingItem listing)
+    => await GetItemIDAsync(session, proxy, listing.AppID, listing.MarketHashName);
     /// <summary>
-    /// 
+    /// Получает item_nameid из файла или извлекает из страницы предмета, если его не оказалось в файле
     /// </summary>
-    /// <param name="appid"></param>
-    /// <param name="market_hash_name"></param>
-    /// <param name="Session"></param>
-    /// <param name="Proxy"></param>
+    /// <param name="appid">ID приложения\\игры</param>
+    /// <param name="market_hash_name">Название предмета</param>
     /// <returns>True - взято из файла, Null если неудалось загрузить страницу с предметом</returns>
-    public static async Task<(bool, string)> GetItemIDAsync(ISessionProvider Session, Web.Proxy Proxy, uint appid, string market_hash_name)
+    public static async Task<(bool, string?)> GetItemIDAsync(ISessionProvider session, Web.Proxy? proxy, uint appid, string market_hash_name)
     {
         var items = mSteamIDs;
         if (items.ContainsKey(market_hash_name))
@@ -93,9 +92,10 @@ public static class SteamIDs
         if (!IsKeepInRAM)
         {
             var itemid = GetItemID(market_hash_name);
-            return (true, itemid);
+            if (!itemid.IsEmpty())
+                return (true, itemid);
         }
-        var market_item = await Steam.GetMarketItemAsync(Session, Proxy, appid, market_hash_name);
+        var market_item = await Steam.GetMarketItemAsync(session, proxy, appid, market_hash_name);
         if (market_item.item_nameid != null)
         {
             AddItemID(market_hash_name, market_item.item_nameid);
@@ -103,24 +103,20 @@ public static class SteamIDs
         }
         return (false, null);
     }
+
     /// <summary>
-    /// 
+    /// Получает item_nameid из файла или извлекает из страницы предмета, если его не оказалось в файле
     /// </summary>
-    /// <param name="listing"></param>
-    /// <param name="Session"></param>
-    /// <param name="Proxy"></param>
     /// <returns>True - взято из файла, Null если неудалось загрузить страницу с предметом</returns>
-    public static (bool, string) GetItemID(ISessionProvider Session, Web.Proxy Proxy, ListingItem listing) =>
-        GetItemID(Session, Proxy, listing.AppID, listing.MarketHashName);
+    public static (bool, string?) GetItemID(ISessionProvider session, Web.Proxy? proxy, ListingItem listing) =>
+        GetItemID(session, proxy, listing.AppID, listing.MarketHashName);
     /// <summary>
-    /// 
+    /// Получает item_nameid из файла или извлекает из страницы предмета, если его не оказалось в файле
     /// </summary>
-    /// <param name="appid"></param>
-    /// <param name="market_hash_name"></param>
-    /// <param name="Session"></param>
-    /// <param name="Proxy"></param>
-    /// <returns>True - взято из файла, Null если неудалось загрузить страницу с предметом</returns>
-    public static (bool, string) GetItemID(ISessionProvider Session, Web.Proxy Proxy, uint appid, string market_hash_name)
+    /// <param name="appid">ID приложения\\игры</param>
+    /// <param name="market_hash_name">Название предмета</param>
+    /// <returns>True - взято из файла, Null если не удалось загрузить страницу с предметом</returns>
+    public static (bool, string?) GetItemID(ISessionProvider session, Web.Proxy? proxy, uint appid, string market_hash_name)
     {
         var items = mSteamIDs;
         if (items.ContainsKey(market_hash_name))
@@ -128,9 +124,10 @@ public static class SteamIDs
         if (!IsKeepInRAM)
         {
             var itemid = GetItemID(market_hash_name);
-            return (true, itemid);
+            if (!itemid.IsEmpty())
+                return (true, itemid);
         }
-        var market_item = Steam.GetMarketItem(Session, Proxy, appid, market_hash_name);
+        var market_item = Steam.GetMarketItem(session, proxy, appid, market_hash_name);
         if (market_item.item_nameid != null)
         {
             AddItemID(market_hash_name, market_item.item_nameid);
@@ -138,6 +135,7 @@ public static class SteamIDs
         }
         return (false, null);
     }
+
     /// <summary>
     /// Получает item_nameid из кеша
     /// </summary>
@@ -155,6 +153,7 @@ public static class SteamIDs
             return mSteamIDs[market_hash_name];
         return null;
     }
+
 
     private static string GetItemID(string market_hash_name)
     {
