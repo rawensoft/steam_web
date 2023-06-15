@@ -645,7 +645,7 @@ public static partial class Steam
     /// <param name="appID">app id приложения, чей предмет парсим</param>
     /// <param name="market_hash_name">название предмет, который нам нужен</param>
     /// <returns>Полученные данные</returns>
-    public static async Task<MarketItem> GetMarketItemAsync(ISessionProvider session, System.Net.IWebProxy proxy, uint appID, string market_hash_name)
+    public static async Task<MarketItem> GetMarketItemAsync(ISessionProvider? session, System.Net.IWebProxy? proxy, uint appID, string market_hash_name)
     {
         if (string.IsNullOrEmpty(market_hash_name))
             return new MarketItem() { IsError = true, Data = "Не указан market_hash_name" };
@@ -671,7 +671,7 @@ public static partial class Steam
     /// <param name="appID">app id приложения, чей предмет парсим</param>
     /// <param name="market_hash_name">название предмет, который нам нужен</param>
     /// <returns>Полученные данные</returns>
-    public static MarketItem GetMarketItem(ISessionProvider session, System.Net.IWebProxy proxy, uint appID, string market_hash_name)
+    public static MarketItem GetMarketItem(ISessionProvider? session, System.Net.IWebProxy? proxy, uint appID, string market_hash_name)
     {
         if (string.IsNullOrEmpty(market_hash_name))
             return new MarketItem() { IsError = true, Data = "Не указан market_hash_name" };
