@@ -24,11 +24,11 @@ public class GetRequest
     public int Timeout { get; set; } = 30000;
 
     public GetRequest(string url) => Url = url;
-    public GetRequest(string url, IWebProxy proxy) : this(url) => Proxy = proxy;
-    public GetRequest(string url, ISessionProvider session) : this(url) => Session = session;
-    public GetRequest(string url, IWebProxy proxy, ISessionProvider session) : this(url, proxy) => Session = session;
-    public GetRequest(string url, IWebProxy proxy, ISessionProvider session, string referer) : this(url, proxy, session) => Referer = referer;
-    public GetRequest(string url, IWebProxy proxy, ISessionProvider session, string referer, string userAgent) : this(url, proxy, session, referer) => UserAgent = userAgent;
+    public GetRequest(string url, IWebProxy? proxy) : this(url) => Proxy = proxy;
+    public GetRequest(string url, ISessionProvider? session) : this(url) => Session = session;
+    public GetRequest(string url, IWebProxy? proxy, ISessionProvider? session) : this(url, proxy) => Session = session;
+    public GetRequest(string url, IWebProxy? proxy, ISessionProvider? session, string referer) : this(url, proxy, session) => Referer = referer;
+    public GetRequest(string url, IWebProxy? proxy, ISessionProvider? session, string referer, string userAgent) : this(url, proxy, session, referer) => UserAgent = userAgent;
 
     public GetRequest AddHeader(string name, string value)
     {

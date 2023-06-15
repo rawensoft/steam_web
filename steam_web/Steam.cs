@@ -660,7 +660,7 @@ public static partial class Steam
             return new MarketItem() { IsError = true, Data = "bad data" };
         else if (!response.Success)
             return new MarketItem() { IsError = true, Data = response.ErrorMessage! };
-        else if (response.Data.Contains("There are no listings for this item.") && !response.Data.Contains("market_listing_largeimage"))
+        else if (response.Data!.Contains("There are no listings for this item.") && !response.Data.Contains("market_listing_largeimage"))
             return new MarketItem() { IsZeroItemsListed = true };
 
         return MarketItem.Deserialize(response.Data);
@@ -686,7 +686,7 @@ public static partial class Steam
             return new MarketItem() { IsError = true, Data = "bad data" };
         else if (!response.Success)
             return new MarketItem() { IsError = true, Data = response.ErrorMessage! };
-        else if (response.Data.Contains("There are no listings for this item.") && !response.Data.Contains("market_listing_largeimage"))
+        else if (response.Data!.Contains("There are no listings for this item.") && !response.Data.Contains("market_listing_largeimage"))
             return new MarketItem() { IsZeroItemsListed = true };
 
         return MarketItem.Deserialize(response.Data);
