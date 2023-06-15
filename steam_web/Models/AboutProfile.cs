@@ -98,9 +98,9 @@ public sealed class AboutProfile
         }
         if (html.Contains("global_header_toggle_button red global_header_account_alert tooltip"))
             about.Red_Table = true;
+
         if ((about.FA2 == Enums.FA2.NonGuard || about.FA2 == Enums.FA2.NonGuardWithPhone) &&
-            about.SteamID == 0 && about.Balance == null &&
-            about.Email == null && about.Username == null)
+            about.SteamID == 0 && about.Email == null)
             about.FA2 = Enums.FA2.Deauth;
         return about;
     }
