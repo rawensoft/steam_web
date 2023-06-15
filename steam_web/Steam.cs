@@ -22,7 +22,7 @@ using UserLoginv2 = SteamWeb.Auth.v2.UserLogin;
 using SteamGuardAccuntv2 = SteamWeb.Auth.v2.SteamGuardAccount;
 
 namespace SteamWeb;
-public partial class Steam
+public static partial class Steam
 {
     /// <summary>
     /// Значение которое отнимается или прибавляется к steamid64\steamid32
