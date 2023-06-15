@@ -40,11 +40,11 @@ public class UserLogin
     /// <summary>
     /// Текущий статус авторизации
     /// </summary>
-    public LoginResultv2 Result
+    public LoginResult Result
     {
         get
         {
-            if (_result == LoginResultv2.GeneralFailure || _result == LoginResultv2.NeedAprove) SetEnumResponse();
+            if (_result == LoginResult.GeneralFailure || _result == LoginResult.NeedAprove) SetEnumResponse();
             return _result;
         }
     }
@@ -76,21 +76,21 @@ public class UserLogin
     private void SetEnumResponse()
     {
         if (FullyEnrolled)
-            _result = LoginResultv2.LoginOkay;
+            _result = LoginResult.LoginOkay;
         else if (_nextStep == NEXT_STEP.Update)
-            _result = LoginResultv2.NeedAprove;
+            _result = LoginResult.NeedAprove;
         else if (LastEResult == EResult.InvalidPassword)
-            _result = LoginResultv2.BadCredentials;
+            _result = LoginResult.BadCredentials;
         else if (LastEResult == EResult.AccountLimitExceeded ||
             LastEResult == EResult.RateLimitExceeded ||
             LastEResult == EResult.AccountActivityLimitExceeded ||
             LastEResult == EResult.PhoneActivityLimitExceeded)
-            _result = LoginResultv2.TooManyFailedLogins;
+            _result = LoginResult.RateExceeded;
         else if (_isCookieNotGet == true)
-            _result = LoginResultv2.BadCookie;
+            _result = LoginResult.BadCookie;
         else if (_isRSANotGet == true)
-            _result = LoginResultv2.BadRSA;
-        else _result = LoginResultv2.GeneralFailure;
+            _result = LoginResult.BadRSA;
+        else _result = LoginResult.GeneralFailure;
     }
 
     public bool BeginAuthSessionViaCredentials()
@@ -234,9 +234,11 @@ public class UserLogin
     public bool UpdateAuthSessionWithSteamGuardCode(string fa2Code)
     {
         if (fa2Code.IsEmpty())
-            fa2Code = Data;
-        if (fa2Code.IsEmpty())
-            return false;
+        {
+            if (Data.IsEmpty())
+                return false;
+            fa2Code = Data!;
+        }
         if (!IsNeedEmailCode && !IsNeedTwoFactorCode)
             return false;
         using var memStream2 = new MemoryStream();
@@ -439,9 +441,11 @@ public class UserLogin
     public async Task<bool> UpdateAuthSessionWithSteamGuardCodeAsync(string fa2Code)
     {
         if (fa2Code.IsEmpty())
-            fa2Code = Data;
-        if (fa2Code.IsEmpty())
-            return false;
+        {
+            if (Data.IsEmpty())
+                return false;
+            fa2Code = Data!;
+        }
         if (!IsNeedEmailCode && !IsNeedTwoFactorCode)
             return false;
         using var memStream2 = new MemoryStream();

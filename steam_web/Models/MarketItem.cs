@@ -92,7 +92,7 @@ public sealed class MarketItem
         {
             item.RequiresBillingInfo = html.Contains("g_bRequiresBillingInfo = true;");
         }
-        catch (Exception) { }
+        catch (Exception ex) { }
         item.item_nameid = html.GetBetween("Market_LoadOrderSpread(", ");")?.Replace(" ", "");
         item.Language = html.GetBetween("g_strLanguage = \"", "\";");
         item.SessionID = html.GetBetween("g_sessionID = \"", "\";");
@@ -107,7 +107,7 @@ public sealed class MarketItem
             if (raw != null)
                 item.WalletInfo = JsonSerializer.Deserialize<WalletInfo>(raw, options);
         }
-        catch (Exception) { }
+        catch (Exception ex) { }
 
         HtmlParser parser = new HtmlParser();
         var doc = parser.ParseDocument(html);
