@@ -1,5 +1,4 @@
-﻿using SteamWeb.Script.DTO;
-
+﻿using Response = SteamWeb.Script.DTO.Response;
 namespace SteamWeb.Script.Models;
 
 public record RecoveryConfirmation : Response

@@ -1,15 +1,15 @@
-﻿using System.Net;
+﻿global using SteamWeb.Web.DTO;
+using System.Net;
 using System.Text;
 using SteamWeb.Extensions;
 using RestSharp;
-using System.Text.RegularExpressions;
 using System.Web;
 using SteamWeb.Auth.Interfaces;
+using SteamWeb.Web.DTO;
 
 namespace SteamWeb.Web;
 public static class Downloader
 {
-    private const string UrlRemoveListing = "https://steamcommunity.com/market/removelisting/";
     public const string MobileCookie = "mobileClient=android; mobileClientVersion=777777 3.0.0; Steam_Language=english";
     public const string AppFormUrlEncoded = "application/x-www-form-urlencoded";
     public const string AppJson = "application/json";
@@ -63,12 +63,6 @@ public static class Downloader
         session.AddCookieToContainer(cookie_container, uri);
         return cookie_container;
     }
-    private static void RewriteCookie(CookieContainer container, ISessionProvider session)
-    {
-        if (session == null || container == null || container.Count == 0)
-            return;
-        session.RewriteCookie(container);
-    }
     private static void RewriteCookie(CookieContainer container, ISessionProvider session, CookieContainer containerForUpdate, string url)
     {
         if (session == null || container == null || container.Count == 0)
@@ -88,10 +82,14 @@ public static class Downloader
     /// <returns>Host, Origin</returns>
     private static (string?, string?) GetHostOrigin(string url)
     {
-        if (url.StartsWith("https://steamcommunity.com")) return ("steamcommunity.com", "https://steamcommunity.com");
-        if (url.StartsWith("https://steampowered.com")) return ("steampowered.com", "https://steampowered.com");
-        if (url.StartsWith("https://store.steampowered.com")) return ("store.steampowered.com", "https://store.steampowered.com");
-        if (url.StartsWith("https://api.steampowered.com")) return ("api.steampowered.com", "https://api.steampowered.com");
+        if (url.StartsWith("https://steamcommunity.com"))
+            return ("steamcommunity.com", "https://steamcommunity.com");
+        if (url.StartsWith("https://steampowered.com"))
+            return ("steampowered.com", "https://steampowered.com");
+        if (url.StartsWith("https://store.steampowered.com"))
+            return ("store.steampowered.com", "https://store.steampowered.com");
+        if (url.StartsWith("https://api.steampowered.com"))
+            return ("api.steampowered.com", "https://api.steampowered.com");
         return (null, null);
     }
 
@@ -109,7 +107,7 @@ public static class Downloader
             req.AddHeader("Cookie", request.Cookie);
         if (!request.SecOpenIDNonce.IsEmpty() && req.CookieContainer != null)
             req.CookieContainer.Add(new Cookie("sessionidSecureOpenIDNonce", request.SecOpenIDNonce, "/", "steamcommunity.com") { HttpOnly = true, Secure = true });
-        if (request.Url.StartsWith(UrlRemoveListing))
+        if (request.Url.StartsWith(SteamCommunityUrls.Market_RemoveListing))
             req.AddHeader("X-Prototype-Version", "1.7");
         if (request.IsAjax)
         {
@@ -124,7 +122,7 @@ public static class Downloader
                 req.AddHeader("Sec-Fetch-Mode", "cors");
                 req.AddHeader("Sec-Fetch-Site", "same-origin");
             }
-            req.AddHeader("X-Requested-With", request.GetXRequestedWidth());
+            req.AddHeader("X-Requested-With", request.GetXRequestedWidth()!);
         }
         else if (!request.IsMobile)
         {
@@ -167,7 +165,7 @@ public static class Downloader
             req.AddHeader("Cookie", request.Cookie);
         if (!request.SecOpenIDNonce.IsEmpty() && req.CookieContainer != null)
             req.CookieContainer.Add(new Cookie("sessionidSecureOpenIDNonce", request.SecOpenIDNonce, "/", "steamcommunity.com") { HttpOnly = true, Secure = true });
-        if (request.Url.StartsWith(UrlRemoveListing))
+        if (request.Url.StartsWith(SteamCommunityUrls.Market_RemoveListing))
             req.AddHeader("X-Prototype-Version", "1.7");
         if (request.IsAjax)
         {
@@ -182,7 +180,7 @@ public static class Downloader
                 req.AddHeader("Sec-Fetch-Mode", "cors");
                 req.AddHeader("Sec-Fetch-Site", "same-origin");
             }
-            req.AddHeader("X-Requested-With", request.GetXRequestedWidth());
+            req.AddHeader("X-Requested-With", request.GetXRequestedWidth()!);
         }
         else if (!request.IsMobile)
         {
@@ -221,7 +219,7 @@ public static class Downloader
             req.AddHeader("Referer", request.Referer);
         if (request.Cookie != null)
             req.AddHeader("Cookie", request.Cookie);
-        if (request.Url.StartsWith(UrlRemoveListing))
+        if (request.Url.StartsWith(SteamCommunityUrls.Market_RemoveListing))
             req.AddHeader("X-Prototype-Version", "1.7");
         if (request.IsAjax)
         {
@@ -236,7 +234,7 @@ public static class Downloader
                 req.AddHeader("Sec-Fetch-Mode", "cors");
                 req.AddHeader("Sec-Fetch-Site", "same-origin");
             }
-            req.AddHeader("X-Requested-With", request.GetXRequestedWidth());
+            req.AddHeader("X-Requested-With", request.GetXRequestedWidth()!);
         }
         else if (!request.IsMobile)
         {
@@ -277,7 +275,7 @@ public static class Downloader
             req.AddHeader("Referer", request.Referer);
         if (request.Cookie != null)
             req.AddHeader("Cookie", request.Cookie);
-        if (request.Url.StartsWith(UrlRemoveListing))
+        if (request.Url.StartsWith(SteamCommunityUrls.Market_RemoveListing))
             req.AddHeader("X-Prototype-Version", "1.7");
         if (request.IsAjax)
         {
@@ -292,7 +290,7 @@ public static class Downloader
                 req.AddHeader("Sec-Fetch-Mode", "cors");
                 req.AddHeader("Sec-Fetch-Site", "same-origin");
             }
-            req.AddHeader("X-Requested-With", request.GetXRequestedWidth());
+            req.AddHeader("X-Requested-With", request.GetXRequestedWidth()!);
         }
         else if (!request.IsMobile)
         {
@@ -680,352 +678,5 @@ public static class Downloader
         var res = await client.ExecuteAsync(req);
         client.Dispose();
         return new(res, resCookie);
-    }
-}
-public class ProtobufRequest
-{
-    public string Url { get; init; }
-    public string AccessToken { get; init; }
-    public string ProtoData { get; init; }
-    public IWebProxy? Proxy { get; init; }
-    public ISessionProvider Session { get; init; }
-    public string UserAgent { get; init; }
-    public string Cookie { get; init; }
-    public bool IsMobile { get; init; } = true;
-    public int Timeout { get; set; } = 30000;
-
-    public ProtobufRequest(string url, string protoData)
-    {
-        Url = url;
-        //ProtoData = System.Web.HttpUtility.UrlEncode(protoData);
-        ProtoData = protoData;
-    }
-}
-
-
-public class GetRequest
-{
-    public int CurrentRedirect { get; set; } = 0;
-    public CookieContainer? CookieContainer { get; set; } = null;
-    public int MaxRedirects { get; set; } = 10;
-    public string Url { get; set; }
-    public List<KeyValuePair<string, string>> QueryParametrs { get; private set; } = new(50);
-    public List<KeyValuePair<string, string>> Headers { get; private set; } = new(50);
-    public IWebProxy? Proxy { get; set; }
-    public ISessionProvider? Session { get; set; }
-    public string? UserAgent { get; set; }
-    public string? Referer { get; set; }
-    public string? Cookie { get; set; }
-    public bool UseVersion2 { get; set; } = false;
-    public bool IsAjax { get; set; } = false;
-    public bool IsMobile { get; set; } = false;
-    public int Timeout { get; set; } = 30000;
-
-    public GetRequest(string url) => Url = url;
-    public GetRequest(string url, IWebProxy proxy) : this(url) => Proxy = proxy;
-    public GetRequest(string url, ISessionProvider session) : this(url) => Session = session;
-    public GetRequest(string url, IWebProxy proxy, ISessionProvider session) : this(url, proxy) => Session = session;
-    public GetRequest(string url, IWebProxy proxy, ISessionProvider session, string referer) : this(url, proxy, session) => Referer = referer;
-    public GetRequest(string url, IWebProxy proxy, ISessionProvider session, string referer, string userAgent) : this(url, proxy, session, referer) => UserAgent = userAgent;
-
-    public GetRequest AddHeader(string name, string value)
-    {
-        Headers.Add(new(name, value));
-        return this;
-    }
-    public GetRequest AddHeaders(RestRequest request)
-    {
-        foreach (var header in Headers)
-            request.AddHeader(header.Key, header.Value);
-        return this;
-    }
-
-    public GetRequest AddQuery(string name, string value)
-    {
-        QueryParametrs.Add(new (name, HttpUtility.UrlEncode(value)));
-        return this;
-    }
-    public GetRequest AddQuery(string name, int value)
-    {
-        QueryParametrs.Add(new(name, value.ToString()));
-        return this;
-    }
-    public GetRequest AddQuery(string name, uint value)
-    {
-        QueryParametrs.Add(new(name, value.ToString()));
-        return this;
-    }
-    public GetRequest AddQuery(string name, long value)
-    {
-        QueryParametrs.Add(new(name, value.ToString()));
-        return this;
-    }
-    public GetRequest AddQuery(string name, ulong value)
-    {
-        QueryParametrs.Add(new(name, value.ToString()));
-        return this;
-    }
-    public void AddQuery(RestRequest request)
-    {
-        foreach (var query in QueryParametrs)
-            request.AddQueryParameter(query.Key, query.Value, false);
-    }
-    public string GetUserAgent()
-    {
-        if (UserAgent != null)
-            return UserAgent;
-
-        if (UseVersion2)
-            return Downloader.UserAgentOkHttp;
-        else
-            return Downloader.UserAgentChrome;
-    }
-    public string GetAccept()
-    {
-        if (IsMobile && IsAjax)
-            return "text/javascript, text/html, application/xml, text/xml, *";
-        if (UseVersion2)
-            return "application/json, text/plain, */*";
-        return "*/*";
-    }
-    public string GetXRequestedWidth()
-    {
-        if (IsMobile && IsAjax)
-            return "com.valvesoftware.android.steam.community";
-        else if (IsAjax)
-            return "XMLHttpRequest";
-        return null;
-    }
-}
-public class PostRequest: GetRequest
-{
-    internal const char Ampersand = '&';
-
-    public List<KeyValuePair<string, string>> PostData { get; private set; } = new(50);
-    public string Content { get; set; } = "";
-    public string ContentType { get; set; }
-    public string SecOpenIDNonce { get; set; }
-
-    public PostRequest(string url, string contentType) : base(url) => ContentType = contentType;
-    public PostRequest(string url, string content, string contentType): this(url, contentType) => Content = content;
-    public PostRequest(string url, string content, string contentType, IWebProxy proxy) : this(url, content, contentType) => Proxy = proxy;
-    public PostRequest(string url, string content, string contentType, ISessionProvider session) : this(url, content, contentType) => Session = session;
-    public PostRequest(string url, string content, string contentType, IWebProxy proxy, ISessionProvider session)
-        :this(url, content, contentType, proxy) => Session = session;
-    public PostRequest(string url, string content, string contentType, IWebProxy proxy, ISessionProvider session, string referer)
-        : this(url, content, contentType, proxy, session) => Referer = referer;
-    public PostRequest(string url, string content, string contentType, IWebProxy proxy, ISessionProvider session, string referer, string userAgent)
-        : this(url, content, contentType, proxy, session, referer) => UserAgent = userAgent;
-
-    public string GetContent()
-    {
-        if (PostData.Count == 0)
-            return Content;
-
-        var sb = new StringBuilder();
-        if (!Content.IsEmpty())
-            sb.Append(Content).Append(Ampersand);
-        foreach (var item in PostData)
-            sb.Append(item.Key).Append('=').Append(item.Value).Append(Ampersand);
-        if (sb[^1] == Ampersand)
-            sb = sb.Remove(sb.Length - 1, 1);
-        return sb.ToString();
-    }
-    public PostRequest AddPostData(string name, string value, bool encode = true)
-    {
-        PostData.Add(new(name, encode ? Regex.Escape(value) : value));
-        return this;
-    }
-    public PostRequest AddPostData(string name, int value)
-    {
-        PostData.Add(new(name, value.ToString()));
-        return this;
-    }
-    public PostRequest AddPostData(string name, long value)
-    {
-        PostData.Add(new(name, value.ToString()));
-        return this;
-    }
-    public PostRequest AddPostData(string name, ulong value)
-    {
-        PostData.Add(new(name, value.ToString()));
-        return this;
-    }
-    public PostRequest AddPostData(string name, float value)
-    {
-        PostData.Add(new(name, value.ToString()));
-        return this;
-    }
-    public PostRequest AddPostData(string name, double value)
-    {
-        PostData.Add(new(name, value.ToString()));
-        return this;
-    }
-}
-
-public class StringResponse : Response
-{
-    public string Data { get; init; } = null;
-    public StringResponse(RestResponse res): base(res) => Data = res.Content;
-    public StringResponse(RestResponse res, CookieContainer cookies) : base(res, cookies) => Data = res.Content;
-    public StringResponse(HttpWebResponse res) : base(res)
-    {
-        if (res != null && res.ContentLength > 0)
-        {
-            using var sr = new StreamReader(res.GetResponseStream());
-            Data = sr.ReadToEnd();
-        }
-    }
-}
-public class MemoryResponse : Response, IDisposable
-{
-    // Track whether Dispose has been called.
-    private bool disposed = false;
-
-    public MemoryStream Stream { get; init; } = null;
-
-    public MemoryResponse(RestResponse res) : base(res) => Stream = res.RawBytes == null || res.RawBytes.Length == 0 || !res.IsSuccessful ? null : new MemoryStream(res.RawBytes);
-
-    // Implement IDisposable.
-    // Do not make this method virtual.
-    // A derived class should not be able to override this method.
-    public void Dispose()
-    {
-        Dispose(disposing: true);
-        // This object will be cleaned up by the Dispose method.
-        // Therefore, you should call GC.SuppressFinalize to
-        // take this object off the finalization queue
-        // and prevent finalization code for this object
-        // from executing a second time.
-        GC.SuppressFinalize(this);
-    }
-    // Dispose(bool disposing) executes in two distinct scenarios.
-    // If disposing equals true, the method has been called directly
-    // or indirectly by a user's code. Managed and unmanaged resources
-    // can be disposed.
-    // If disposing equals false, the method has been called by the
-    // runtime from inside the finalizer and you should not reference
-    // other objects. Only unmanaged resources can be disposed.
-    protected virtual void Dispose(bool disposing)
-    {
-        // Check to see if Dispose has already been called.
-        if (!disposed)
-        {
-            // If disposing equals true, dispose all managed
-            // and unmanaged resources.
-            if (disposing)
-            {
-                // Dispose managed resources.
-                if (Stream != null)
-                {
-                    Stream.Dispose();
-                }
-            }
-
-            // Note disposing has been done.
-            disposed = true;
-        }
-    }
-}
-public class Response
-{
-    private const string HeaderNameLocation = "Location";
-    private const string HeaderValueLocation = "steammobile://lostauth/";
-    private const string HeaderNameXEResult = "X-eresult";
-
-    public CookieContainer? CookieContainer { get; set; } = null;
-    public bool Success { get; init; } = false;
-    public string? Cookie { get; init; } = null;
-    public int StatusCode { get; init; } = 0;
-    public Exception? ErrorException { get; init; } = null;
-    public string? ErrorMessage { get; init; } = null;
-    public bool LostAuth { get; init; } = false;
-    public EResult EResult { get; init; } = EResult.Invalid;
-    
-    public Response(RestResponse res) : this(res, null) { }
-    public Response(RestResponse res, CookieContainer? cookies)
-    {
-        Success = res.IsSuccessful;
-        StatusCode = (int)res.StatusCode;
-        if (!Success && res.StatusCode == HttpStatusCode.Found)
-        {
-            foreach (var header in res.Headers)
-            {
-                switch (header.Name)
-                {
-                    case HeaderNameLocation:
-                        if (header.Value.ToString() == HeaderValueLocation)
-                            LostAuth = true;
-                        break;
-                    case HeaderNameXEResult:
-                        if (header.Value != null)
-                            EResult = (EResult)header.Value.ToString().ParseInt32();
-                        break;
-                }
-            }
-        }
-        else if (res.Headers != null)
-        {
-            foreach (var header in res.Headers)
-            {
-                if (header.Name == HeaderNameXEResult && header.Value != null)
-                {
-                    EResult = (EResult)header.Value.ToString().ParseInt32();
-                    break;
-                }
-            }
-        }
-        if (!Success)
-        {
-            ErrorException = res.ErrorException;
-            ErrorMessage = res.ErrorMessage;
-        }
-        if (cookies != null)
-        {
-            var sb = new StringBuilder();
-            foreach (Cookie cookie in cookies.GetAllCookies())
-            {
-                sb.Append(cookie.Name);
-                sb.Append('=');
-                sb.Append(cookie.Value);
-                sb.Append("; ");
-            }
-            Cookie = sb.ToString();
-        }
-        CookieContainer = cookies;
-    }
-    public Response(HttpWebResponse res)
-    {
-        if (res == null)
-            return;
-        StatusCode = (int)res.StatusCode;
-        Success = StatusCode >= 200 && StatusCode < 300;
-        if (!Success && res.StatusCode == HttpStatusCode.Found)
-        {
-            foreach (string name in res.Headers.AllKeys)
-            {
-                switch (name)
-                {
-                    case HeaderNameLocation:
-                        if (res.Headers[HeaderNameLocation] == HeaderValueLocation)
-                            LostAuth = true;
-                        break;
-                    case HeaderNameXEResult:
-                        EResult = (EResult)res.Headers[HeaderNameLocation].ParseInt32();
-                        break;
-                }
-            }
-        }
-        else if (res.Headers != null)
-        {
-            foreach (string name in res.Headers.AllKeys)
-            {
-                if (name == HeaderNameXEResult)
-                {
-                    EResult = (EResult)res.Headers[HeaderNameXEResult].ParseInt32();
-                    break;
-                }
-            }
-        }
     }
 }

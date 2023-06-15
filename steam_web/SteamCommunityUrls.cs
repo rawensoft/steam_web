@@ -21,6 +21,7 @@ internal static class SteamCommunityUrls
     public const string Market_SellItem = "https://steamcommunity.com/market/sellitem/";
     public const string Market_ItemOrdersHistogram = "https://steamcommunity.com/market/itemordershistogram";
     public const string Market_PriceHistory = "https://steamcommunity.com/market/pricehistory";
+    public const string Market_RemoveListing = "https://steamcommunity.com/market/removelisting/";
     public const string PointsSummary_AjaxGetAsyncConfig = "https://steamcommunity.com/pointssummary/ajaxgetasyncconfig";
     public const string MobileConf_GetList = "https://steamcommunity.com/mobileconf/getlist";
     public const string SharedFiles_UnsubscribeAll = "https://steamcommunity.com/sharedfiles/unsubscribeall/";

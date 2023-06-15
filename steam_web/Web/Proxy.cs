@@ -1,21 +1,19 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Net;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using SteamWeb.Extensions;
 
 namespace SteamWeb.Web;
-public enum ProxyType: byte { HTTP, Socks4, Socks5 };
 public class Proxy : IWebProxy, INotifyPropertyChanged
 {
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
     private bool _useProxy = true;
-    private string _ip;
+    private string? _ip;
     private int _port;
-    private string _username;
-    private string _password;
-    private ProxyType _type = ProxyType.HTTP;
+    private string? _username;
+    private string? _password;
+    private readonly ProxyType _type = ProxyType.HTTP;
 
     /// <summary>
     /// True если IP.IsNoneEmpty && Port > 0 && UseProxy == True
@@ -29,7 +27,7 @@ public class Proxy : IWebProxy, INotifyPropertyChanged
         }
         set { _useProxy = value; Property("UseProxy"); }
     }
-    public string IP
+    public string? IP
     {
         get => _ip;
         set
@@ -43,11 +41,15 @@ public class Proxy : IWebProxy, INotifyPropertyChanged
         get => _port;
         set
         {
-            _port = value > 65535 ? 65535 : (0 > value ? 0 : value);
+            if (value > 65535)
+                _port = 65535;
+            else if (0 > value)
+                _port = 0;
+            else _port = value;
             Property("Port");
         }
     }
-    public string Username
+    public string? Username
     {
         get => _username;
         set
@@ -59,7 +61,7 @@ public class Proxy : IWebProxy, INotifyPropertyChanged
             Property("Credentials");
         }
     }
-    public string Password
+    public string? Password
     {
         get => _password;
         set
@@ -72,46 +74,29 @@ public class Proxy : IWebProxy, INotifyPropertyChanged
         }
     }
     [JsonIgnore]
-    public bool IsCredentials
-    {
-        get
-        {
-            if (!string.IsNullOrEmpty(_username) && !string.IsNullOrEmpty(_password)) return true;
-            return false;
-        }
-    }
+    public bool IsCredentials => !string.IsNullOrEmpty(_username) && !string.IsNullOrEmpty(_password);
     /// <summary>
     /// Показывает установлен ли только логин или только пароль
     /// </summary>
     [JsonIgnore]
-    public bool IsBadCredentials
-    {
-        get
-        {
-            if (string.IsNullOrEmpty(_username) && !string.IsNullOrEmpty(_password)) return true;
-            if (!string.IsNullOrEmpty(_username) && string.IsNullOrEmpty(_password)) return true;
-            return false;
-        }
-    }
+    public bool IsBadCredentials => (string.IsNullOrEmpty(_username) && !string.IsNullOrEmpty(_password)) || (!string.IsNullOrEmpty(_username) && string.IsNullOrEmpty(_password));
     [JsonIgnore]
-    public ICredentials Credentials
+    public ICredentials? Credentials
     {
-        get
-        {
-            if (!IsCredentials) return null;
-            return new NetworkCredential(_username, _password);
-        }
+        get => !IsCredentials ? null : new NetworkCredential(_username, _password);
         set
         {
-            if (value != null)
+            var cred = value as NetworkCredential;
+            if (cred != null)
             {
-                var cred = (NetworkCredential)value;
                 _username = cred.UserName;
                 _password = cred.Password;
-                return;
             }
-            _username = null;
-            _password = null;
+            else
+            {
+                _username = null;
+                _password = null;
+            }
         }
     }
     public ProxyType Type => _type;
@@ -154,7 +139,7 @@ public class Proxy : IWebProxy, INotifyPropertyChanged
         _password = !string.IsNullOrEmpty(password) ? password : null;
     }
 
-    public Uri GetProxy(Uri destination)
+    public Uri? GetProxy(Uri destination)
     {
         if (!UseProxy || string.IsNullOrEmpty(IP) || Port == 0)
             return null;
