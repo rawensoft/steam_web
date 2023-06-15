@@ -1,5 +1,5 @@
 # Steam Web - быстрая работа с внутренним API Steam
-SteamWeb предназначен для выполнения запрос в Steam. Запросы выполняются с использованием библиотеки [RestSharp](https://github.com/restsharp/RestSharp) что делает мультипоточностью очень быстрой.
+SteamWeb предназначен для выполнения запрос в Steam. Запросы выполняются с использованием библиотеки [RestSharp](https://github.com/restsharp/RestSharp) что делает мультипоточность очень быстрой.
 
 На данный момент имеются следующие функции:
 - Авторизация через [protobuf](https://github.com/protobuf-net/protobuf-net)
