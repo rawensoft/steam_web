@@ -2,6 +2,7 @@
 using SteamWeb.Extensions;
 using SteamWeb.Inventory.V2.Models;
 using SteamWeb.Web;
+using SteamWeb.Auth.Interfaces;
 
 namespace SteamWeb.Inventory.V2;
 public class SteamInventory

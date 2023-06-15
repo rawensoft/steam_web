@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
@@ -8,8 +7,10 @@ using System.Text.RegularExpressions;
 using SteamWeb.Web;
 using SteamWeb.Extensions;
 using ProtoBuf;
-using System.IO;
-using System.Threading.Tasks;
+using SteamWeb.Auth.v2.Models;
+using SteamWeb.Auth.v2.DTO;
+using TimeAligner = SteamWeb.Auth.v1.TimeAligner;
+using APIEndpoints = SteamWeb.Auth.v1.APIEndpoints;
 
 namespace SteamWeb.Auth.v2;
 public class SteamGuardAccount

@@ -1,11 +1,10 @@
-﻿using System;
-using System.Text.Json;
+﻿using System.Text.Json;
 using SteamWeb.Extensions;
 
 namespace SteamWeb.Models;
 public class SteamTradeError
 {
-    public string strError { get; init; }
+    public string? strError { get; init; }
     public int codeError { get; private set; }
     internal static int GetCode(string strError)
     {

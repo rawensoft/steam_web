@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.IO;
 using SteamWeb.Script.DTO.Listinging;
+using SteamWeb.Auth.Interfaces;
 
 namespace SteamWeb;
 public static class SteamIDs

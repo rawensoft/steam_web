@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using SteamWeb.Web;
+using SteamWeb.Auth.Interfaces;
 
 namespace SteamWeb.Script.DTO;
 public class QueueApps

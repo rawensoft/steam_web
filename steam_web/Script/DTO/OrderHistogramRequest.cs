@@ -1,4 +1,6 @@
-﻿namespace SteamWeb.Script.DTO;
+﻿using SteamWeb.Auth.Interfaces;
+
+namespace SteamWeb.Script.DTO;
 public class OrderHistogramRequest
 {
     public ISessionProvider Session { get; set; }

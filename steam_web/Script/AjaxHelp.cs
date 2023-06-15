@@ -1,11 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
-using SteamWeb.Script.Models;
+﻿using SteamWeb.Script.Models;
 using SteamWeb.Web;
 using System.Text.Json;
 using SteamWeb.Script.Enums;
 using SteamWeb.Extensions;
 using System.Web;
+using SteamWeb.Auth.Interfaces;
 
 namespace SteamWeb.Script;
 public static class AjaxHelp

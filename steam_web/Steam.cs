@@ -1,8 +1,4 @@
-﻿global using SteamWeb.Auth;
-using System;
-using System.Collections.Generic;
-using System.Text.Json;
-using System.Threading.Tasks;
+﻿using System.Text.Json;
 using SteamWeb.Web;
 using SteamWeb.Models;
 using SteamWeb.Extensions;
@@ -10,17 +6,31 @@ using AngleSharp.Html.Parser;
 using System.Globalization;
 using SteamWeb.Models.Trade;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Web;
+using SteamWeb.Auth.Interfaces;
+using SteamWeb.Auth.v2.Enums;
+
+using LoginResultv1 = SteamWeb.Auth.v1.Enums.LoginResult;
+using SessionDatav1 = SteamWeb.Auth.v1.Models.SessionData;
+using UserLoginv1 = SteamWeb.Auth.v1.UserLogin;
+using SteamGuardAccuntv1 = SteamWeb.Auth.v1.SteamGuardAccount;
+using SignInPlatform = SteamWeb.Auth.v1.Enums.SignInPlatform;
+
+using LoginResultv2 = SteamWeb.Auth.v2.Enums.LoginResult;
+using SessionDatav2 = SteamWeb.Auth.v2.Models.SessionData;
+using UserLoginv2 = SteamWeb.Auth.v2.UserLogin;
+using SteamGuardAccuntv2 = SteamWeb.Auth.v2.SteamGuardAccount;
 
 namespace SteamWeb;
 public partial class Steam
 {
+    /// <summary>
+    /// Значение которое отнимается или прибавляется к steamid64\steamid32
+    /// </summary>
     public const ulong SteamIDConverter = 76561197960265728;
     static Regex rgxTradeurl1 = new(@"https://steamcommunity\.com/tradeoffer/new/\?partner=\d{1,12}&token=\S{4,10}", RegexOptions.Compiled);
-    //static System.Text.RegularExpressions.Regex rgxTradeurl2 = new(@"https://steamcommunity\.com/tradeoffer/new/\?partner=\d{1,12}&token=\w{6,10}", System.Text.RegularExpressions.RegexOptions.Compiled);
-
-    public static async Task<bool> SwitchToMailCodeAsync(ISessionProvider session, System.Net.IWebProxy proxy, Auth.v2.SteamGuardAccount SDA)
+    
+    public static async Task<bool> SwitchToMailCodeAsync(ISessionProvider session, System.Net.IWebProxy proxy, SteamGuardAccuntv2 SDA)
     {
         var att_phone = await Script.AjaxHelp.PhoneAjaxAsync(session, proxy);
         if (att_phone.has_phone == null)

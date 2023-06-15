@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using SteamWeb.Auth.v1.Models;
+
 namespace SteamWeb.Models;
 public record InformationProfileRequest
 {

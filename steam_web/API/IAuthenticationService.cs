@@ -1,9 +1,10 @@
 ﻿using SteamWeb.API.Models;
 using SteamWeb.Web;
 using System.Text.Json;
-using SteamWeb.Auth.v2;
-using SessionData = SteamWeb.Auth.v2.SessionData;
+using SessionData = SteamWeb.Auth.v2.Models.SessionData;
 using ProtoBuf;
+using SteamWeb.Auth.v2.DTO;
+using SteamWeb.Auth.v2.Models;
 
 namespace SteamWeb.API;
 public static class IAuthenticationService

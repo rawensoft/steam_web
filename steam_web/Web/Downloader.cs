@@ -4,6 +4,7 @@ using SteamWeb.Extensions;
 using RestSharp;
 using System.Text.RegularExpressions;
 using System.Web;
+using SteamWeb.Auth.Interfaces;
 
 namespace SteamWeb.Web;
 public static class Downloader

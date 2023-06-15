@@ -1,10 +1,12 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using ProtoBuf;
 using SteamWeb.Web;
-using System.IO;
-using System.Threading.Tasks;
 using SteamWeb.Extensions;
+using SteamWeb.Auth.v2.Enums;
+using LinkResult = SteamWeb.Auth.v1.Enums.LinkResult;
+using FinalizeResult = SteamWeb.Auth.v1.Enums.FinalizeResult;
+using TimeAligner = SteamWeb.Auth.v1.TimeAligner;
+using SteamWeb.Auth.v2.Models;
 
 namespace SteamWeb.Auth.v2;
 public class AuthenticatorLinker

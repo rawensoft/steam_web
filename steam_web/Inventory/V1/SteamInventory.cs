@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.IO;
 using SteamWeb.Inventory.V1.Models;
 using SteamWeb.Web;
+using SteamWeb.Auth.Interfaces;
 
 namespace SteamWeb.Inventory.V1;
 public partial class SteamInventory

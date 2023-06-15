@@ -1,22 +1,13 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using ProtoBuf;
+using SteamWeb.Auth.v2.Enums;
+using SteamWeb.Auth.v2.Models;
 using SteamWeb.Extensions;
 using SteamWeb.Web;
+using Util = SteamWeb.Auth.v1.Util;
 
 namespace SteamWeb.Auth.v2;
-public enum LoginResultv2 : byte
-{
-    LoginOkay,
-    GeneralFailure,
-    BadRSA,
-    BadCredentials,
-    BadCookie,
-    NeedAprove,
-    TooManyFailedLogins,
-    //NeedCaptcha
-}
-public enum NEXT_STEP : byte { Begin, Update, Poll }
 public class UserLogin
 {
     public string Login { get; init; }
