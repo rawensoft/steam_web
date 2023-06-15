@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.IO;
-using SteamWeb.Script.DTO.Listinging;
+﻿using SteamWeb.Script.DTO.Listinging;
 using SteamWeb.Auth.Interfaces;
 
 namespace SteamWeb;
@@ -12,16 +8,16 @@ public static class SteamIDs
     /// Key - Market Hash Name, Value - SteamID
     /// </summary>
     private static Dictionary<string, string> mSteamIDs = new(30000);
-    private static bool _IsKeepInRAM = false;
+    private static bool _isKeepInRAM = false;
     /// <summary>
     /// Хранить и читать данные в оперативной памяти, а не в файле
     /// </summary>
     public static bool IsKeepInRAM
     {
-        get => _IsKeepInRAM;
+        get => _isKeepInRAM;
         set
         {
-            _IsKeepInRAM = value;
+            _isKeepInRAM = value;
             mSteamIDs.Clear();
         }
     }
@@ -142,6 +138,8 @@ public static class SteamIDs
         }
         return (false, null);
     }
+    
+    
     private static string GetItemID(string market_hash_name)
     {
         if (File.Exists(PathToSteamIDsFile))
