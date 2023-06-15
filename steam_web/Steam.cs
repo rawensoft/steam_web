@@ -46,7 +46,7 @@ public partial class Steam
         var response = await Downloader.PostAsync(request);
         return response.Success;
     }
-    public static bool SwitchToMailCode(ISessionProvider session, System.Net.IWebProxy proxy, Auth.v2.SteamGuardAccount SDA)
+    public static bool SwitchToMailCode(ISessionProvider session, System.Net.IWebProxy proxy, SteamGuardAccuntv2 SDA)
     {
         var att_phone = Script.AjaxHelp.PhoneAjax(session, proxy);
         if (att_phone.has_phone == null)
@@ -293,7 +293,8 @@ public partial class Steam
     public static async Task<WebApiKey> GetWebAPIKeyAsync(ISessionProvider session, System.Net.IWebProxy proxy)
     {
         var response = await Downloader.GetAsync(new(SteamCommunityUrls.Dev_APIKey, proxy, session));
-        if (!response.Success) return new WebApiKey(response.Data);
+        if (!response.Success)
+            return new WebApiKey(response.Data);
         else if (response.Data == "<!DOCTYPE html>")
         {
             var to1 = new WebApiKey("Бан\\блок на запросы.");
@@ -326,14 +327,16 @@ public partial class Steam
         HtmlParser html = new HtmlParser();
         var parser = await html.ParseDocumentAsync(response.Data);
         var children = parser.GetElementById("bodyContents_ex")?.Children;
-        if (children == null) return new("Неверная страница");
+        if (children == null)
+            return new("Неверная страница");
         var to = new WebApiKey(children[2].InnerHtml.Replace(" ", "").Split(':')[1], children[1].InnerHtml.Replace(" ", "").Split(':')[1]);
         return to;
     }
     public static WebApiKey GetWebAPIKey(ISessionProvider session, System.Net.IWebProxy proxy)
     {
         var response = Downloader.Get(new(SteamCommunityUrls.Dev_APIKey, proxy, session));
-        if (!response.Success) return new WebApiKey(response.Data);
+        if (!response.Success)
+            return new WebApiKey(response.Data);
         else if (response.Data == "<!DOCTYPE html>")
         {
             var to1 = new WebApiKey("Бан\\блок на запросы.");
