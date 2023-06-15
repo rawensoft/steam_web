@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <UseWPF>false</UseWPF>
+    <AssemblyName>SteamWeb</AssemblyName>
+    <RootNamespace>SteamWeb</RootNamespace>
+    <Authors>xaray</Authors>
+    <Company>RAWENSOFT</Company>
+    <FileVersion>1.2.0.1</FileVersion>
+    <Version>1.5.0.1</Version>
+    <DebugType>embedded</DebugType>
+    <GenerateDocumentationFile>False</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Optimize>False</Optimize>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AngleSharp" Version="1.0.1" />
+    <PackageReference Include="protobuf-net" Version="3.2.16" />
+    <PackageReference Include="RestSharp" Version="108.0.3" />
+  </ItemGroup>
+
+</Project>
