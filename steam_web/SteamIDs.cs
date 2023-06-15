@@ -138,8 +138,24 @@ public static class SteamIDs
         }
         return (false, null);
     }
-    
-    
+    /// <summary>
+    /// Получает item_nameid из кеша
+    /// </summary>
+    /// <param name="market_hash_name">Название предмета</param>
+    /// <returns>Null если данных для этого предмета нет</returns>
+    public static string? GetItemIDLocal(string market_hash_name)
+    {
+        if (!IsKeepInRAM)
+        {
+            var itemid = GetItemID(market_hash_name);
+            if (!itemid.IsEmpty())
+                return itemid;
+        }
+        else if (mSteamIDs.ContainsKey(market_hash_name))
+            return mSteamIDs[market_hash_name];
+        return null;
+    }
+
     private static string GetItemID(string market_hash_name)
     {
         if (File.Exists(PathToSteamIDsFile))
