@@ -114,6 +114,12 @@ public partial class Steam
         return (false, response.Data);
     }
 
+    /// <summary>
+    /// Проверяет имеется ли community ban на аккаунте
+    /// </summary>
+    /// <param name="session"></param>
+    /// <param name="proxy"></param>
+    /// <returns>True имеется</returns>
     public static async Task<bool> CheckOnKTAsync(ISessionProvider session, System.Net.IWebProxy proxy)
     {
         var response = await Downloader.GetAsync(new(SteamCommunityUrls.My_Edit_Info, proxy, session));
@@ -122,6 +128,12 @@ public partial class Steam
             return true;
         return false;
     }
+    /// <summary>
+    /// Проверяет имеется ли community ban на аккаунте
+    /// </summary>
+    /// <param name="session"></param>
+    /// <param name="proxy"></param>
+    /// <returns>True имеется</returns>
     public static bool CheckOnKT(ISessionProvider session, System.Net.IWebProxy proxy)
     {
         var response = Downloader.Get(new(SteamCommunityUrls.My_Edit_Info, proxy, session));
@@ -131,7 +143,12 @@ public partial class Steam
         return false;
     }
 
-    public static (ConfTradeOffer, SteamTradeError) CreateTrade(ISessionProvider session, System.Net.IWebProxy proxy, NewTradeOffer trade, Token token, string tradeoffermessage, uint offerpartner)
+    /// <summary>
+    /// Создаёт трейд
+    /// </summary>
+    /// <returns>ConfTradeOffer != null если трейд создался и SteamTradeError != null если трейд не создался</returns>
+    public static (ConfTradeOffer?, SteamTradeError?) CreateTrade(ISessionProvider session, System.Net.IWebProxy proxy, NewTradeOffer trade,
+        Token token, string tradeoffermessage, uint offerpartner)
     {
         var request = new PostRequest(SteamCommunityUrls.TradeOffer_New_Send, Downloader.AppFormUrlEncoded)
         {
@@ -166,7 +183,12 @@ public partial class Steam
             return (null, new() { strError = ex.Message });
         }
     }
-    public static async Task<(ConfTradeOffer, SteamTradeError)> CreateTradeAsync(ISessionProvider session, System.Net.IWebProxy proxy, NewTradeOffer trade, Token token, string tradeoffermessage, uint offerpartner)
+    /// <summary>
+    /// Создаёт трейд
+    /// </summary>
+    /// <returns>ConfTradeOffer != null если трейд создался и SteamTradeError != null если трейд не создался</returns>
+    public static async Task<(ConfTradeOffer?, SteamTradeError?)> CreateTradeAsync(ISessionProvider session, System.Net.IWebProxy proxy,
+        NewTradeOffer trade, Token token, string tradeoffermessage, uint offerpartner)
     {
         var request = new PostRequest(SteamCommunityUrls.TradeOffer_New_Send, Downloader.AppFormUrlEncoded)
         {
@@ -202,6 +224,11 @@ public partial class Steam
         }
     }
 
+    /// <summary>
+    /// Изменяет язык на steam аккаунте
+    /// </summary>
+    /// <param name="language">язык для смены, пример: russian, english</param>
+    /// <returns>True язык изменён</returns>
     public static async Task<bool> ChangeLanguageAsync(ISessionProvider session, System.Net.IWebProxy proxy, string language)
     {
         var request = new PostRequest(SteamCommunityUrls.Actions_SetLanguage, Downloader.AppFormUrlEncoded)
@@ -213,6 +240,11 @@ public partial class Steam
         var response = await Downloader.PostAsync(request);
         return response.Success;
     }
+    /// <summary>
+    /// Изменяет язык на steam аккаунте
+    /// </summary>
+    /// <param name="language">язык для смены, пример: russian, english</param>
+    /// <returns>True язык изменён</returns>
     public static bool ChangeLanguage(ISessionProvider session, System.Net.IWebProxy proxy, string language)
     {
         var request = new PostRequest(SteamCommunityUrls.Actions_SetLanguage, Downloader.AppFormUrlEncoded)
@@ -225,6 +257,10 @@ public partial class Steam
         return response.Success;
     }
 
+    /// <summary>
+    /// Получает информацию со страницы <see href="https://store.steampowered.com/account/">store.steampowered.com/account</see>
+    /// </summary>
+    /// <returns>Полученные данные</returns>
     public static async Task<AboutProfile> Get2FAAsync(ISessionProvider session, System.Net.IWebProxy proxy)
     {
         var response = await Downloader.GetAsync(new(SteamPoweredUrls.Account, proxy, session));
@@ -232,6 +268,10 @@ public partial class Steam
             return new();
         return AboutProfile.Deserialize(response.Data);
     }
+    /// <summary>
+    /// Получает информацию со страницы <see href="https://store.steampowered.com/account/">store.steampowered.com/account</see>
+    /// </summary>
+    /// <returns>Полученные данные</returns>
     public static AboutProfile Get2FA(ISessionProvider session, System.Net.IWebProxy proxy)
     {
         var response = Downloader.Get(new(SteamPoweredUrls.Account, proxy, session));
@@ -316,12 +356,17 @@ public partial class Steam
         HtmlParser html = new HtmlParser();
         var parser = html.ParseDocument(response.Data);
         var children = parser.GetElementById("bodyContents_ex")?.Children;
-        if (children == null) return new("Неверная страница");
+        if (children == null)
+            return new("Неверная страница");
         var to = new WebApiKey(children[2].InnerHtml.Replace(" ", "").Split(':')[1], children[1].InnerHtml.Replace(" ", "").Split(':')[1]);
         return to;
     }
 
-    public static WebTradeEligibility GetWebTradeEligibility(ISessionProvider session, System.Net.IWebProxy proxy)
+    /// <summary>
+    /// Загружает текущее состояние доступа к маркету для аккаунта (webTradeEligibilityState)
+    /// </summary>
+    /// <returns>Null если нет данных</returns>
+    public static WebTradeEligibility? GetWebTradeEligibility(ISessionProvider session, System.Net.IWebProxy proxy)
     {
         var response = Downloader.Get(new(SteamCommunityUrls.Market_EligibilityCheck, proxy, session));
         if (!response.Success || response.Cookie == null)
@@ -335,14 +380,18 @@ public partial class Steam
             if (item.Replace(" ", "").StartsWith("webTradeEligibility"))
             {
                 var web = item.Replace(" ", "").Split('=')[1];
-                web = System.Web.HttpUtility.UrlDecode(web);
+                web = HttpUtility.UrlDecode(web);
                 var obj = JsonSerializer.Deserialize<WebTradeEligibility>(web);
                 return obj;
             }
         }
         return null;
     }
-    public static async Task<WebTradeEligibility> GetWebTradeEligibilityAsync(ISessionProvider session, System.Net.IWebProxy proxy)
+    /// <summary>
+    /// Загружает текущее состояние доступа к маркету для аккаунта (webTradeEligibilityState)
+    /// </summary>
+    /// <returns>Null если нет данных</returns>
+    public static async Task<WebTradeEligibility?> GetWebTradeEligibilityAsync(ISessionProvider session, System.Net.IWebProxy proxy)
     {
         var response = await Downloader.GetAsync(new(SteamCommunityUrls.Market_EligibilityCheck, proxy, session));
         if (!response.Success || response.Cookie == null)
@@ -364,21 +413,25 @@ public partial class Steam
         return null;
     }
 
-    public static (bool, string, WebTradeEligibility) GetTradeURL(ISessionProvider session, System.Net.IWebProxy proxy)
+    /// <summary>
+    /// Получает trade ссылку и разрешения маркета
+    /// </summary>
+    /// <returns>true если запрос выполнен успешно, Null если трейд ссылка не найдена, Null если разрешений маркета нет</returns>
+    public static (bool, string?, WebTradeEligibility?) GetTradeURL(ISessionProvider session, System.Net.IWebProxy proxy)
     {
         var response = Downloader.Get(new(SteamCommunityUrls.Market_EligibilityCheck, proxy, session));
         if (!response.Success)
-            return (true, null, null);
+            return (false, null, null);
         else if (response.Data.Contains("link_forgot_password"))
             return (false, null, null);
 
-        string trade_url = null;
+        string? trade_url = null;
         HtmlParser html = new HtmlParser();
         var doc = html.ParseDocument(response.Data);
         var el = doc.GetElementById("trade_offer_access_url");
         if (el != null) trade_url = ((AngleSharp.Html.Dom.IHtmlInputElement)el).DefaultValue.GetClearWebString();
 
-        WebTradeEligibility webState = null;
+        WebTradeEligibility? webState = null;
         if (!response.Cookie.IsEmpty())
         {
             foreach (var item in response.Cookie.Split(';'))
@@ -386,29 +439,33 @@ public partial class Steam
                 if (item.Replace(" ", "").StartsWith("webTradeEligibility"))
                 {
                     var web = item.Replace(" ", "").Split('=')[1];
-                    web = System.Web.HttpUtility.UrlDecode(web);
+                    web = HttpUtility.UrlDecode(web);
                     webState = JsonSerializer.Deserialize<WebTradeEligibility>(web);
                     break;
                 }
             }
         }
-        return (true, trade_url == "" ? null : trade_url, webState);
+        return (true, trade_url.IsEmpty() ? null : trade_url, webState);
     }
-    public static async Task<(bool, string, WebTradeEligibility)> GetTradeURLAsync(ISessionProvider session, System.Net.IWebProxy proxy)
+    /// <summary>
+    /// Получает trade ссылку и разрешения маркета
+    /// </summary>
+    /// <returns>true если запрос выполнен успешно, Null если трейд ссылка не найдена, Null если разрешений маркета нет</returns>
+    public static async Task<(bool, string?, WebTradeEligibility?)> GetTradeURLAsync(ISessionProvider session, System.Net.IWebProxy proxy)
     {
         var response = await Downloader.GetAsync(new(SteamCommunityUrls.Market_EligibilityCheck, proxy, session));
         if (!response.Success)
-            return (true, null, null);
+            return (false, null, null);
         else if (response.Data.Contains("link_forgot_password"))
             return (false, null, null);
 
-        string trade_url = null;
+        string? trade_url = null;
         HtmlParser html = new HtmlParser();
         var doc = html.ParseDocument(response.Data);
         var el = doc.GetElementById("trade_offer_access_url");
         if (el != null) trade_url = ((AngleSharp.Html.Dom.IHtmlInputElement)el).DefaultValue.GetClearWebString();
 
-        WebTradeEligibility webState = null;
+        WebTradeEligibility? webState = null;
         if (!response.Cookie.IsEmpty())
         {
             foreach (var item in response.Cookie.Split(';'))
@@ -564,48 +621,68 @@ public partial class Steam
         return bytes;
     }
     
+    /// <summary>
+    /// Получает страницу предмета в steam
+    /// </summary>
+    /// <param name="appID">app id приложения, чей предмет парсим</param>
+    /// <param name="market_hash_name">название предмет, который нам нужен</param>
+    /// <returns>Полученные данные</returns>
     public static async Task<MarketItem> GetMarketItemAsync(ISessionProvider session, System.Net.IWebProxy proxy, uint appID, string market_hash_name)
     {
         if (string.IsNullOrEmpty(market_hash_name))
-            return new MarketItem() { IsError = true };
+            return new MarketItem() { IsError = true, Data = "Не указан market_hash_name" };
         market_hash_name = Uri.EscapeDataString(market_hash_name).Replace("%27", "'").Replace("?", "%3F").Replace("%E2%98%85", "★").Replace("%E2%84%A2", "™");
         string url = $"{SteamCommunityUrls.Market_Listings}/{appID}/{market_hash_name}";
         var response = await Downloader.GetAsync(new(url, proxy, session));
         if (response.Data.IsEmpty())
             return new MarketItem() { IsError = true, Data = "data empty" };
         else if (response.StatusCode == 429)
-            return new MarketItem() { IsError = true, IsTooManyRequests = true };
+            return new MarketItem() { IsError = true, IsTooManyRequests = true, Data = "TooManyRequests (429)" };
         else if (response.Data == "<!DOCTYPE html>")
             return new MarketItem() { IsError = true, Data = "bad data" };
         else if (!response.Success)
-            return new MarketItem() { IsError = true, Data = response.ErrorMessage };
+            return new MarketItem() { IsError = true, Data = response.ErrorMessage! };
         else if (response.Data.Contains("There are no listings for this item.") && !response.Data.Contains("market_listing_largeimage"))
             return new MarketItem() { IsZeroItemsListed = true };
 
         return MarketItem.Deserialize(response.Data);
     }
+    /// <summary>
+    /// Получает страницу предмета в steam
+    /// </summary>
+    /// <param name="appID">app id приложения, чей предмет парсим</param>
+    /// <param name="market_hash_name">название предмет, который нам нужен</param>
+    /// <returns>Полученные данные</returns>
     public static MarketItem GetMarketItem(ISessionProvider session, System.Net.IWebProxy proxy, uint appID, string market_hash_name)
     {
         if (string.IsNullOrEmpty(market_hash_name))
-            return new MarketItem() { IsError = true };
+            return new MarketItem() { IsError = true, Data = "Не указан market_hash_name" };
         market_hash_name = Uri.EscapeDataString(market_hash_name).Replace("%27", "'").Replace("?", "%3F").Replace("%E2%98%85", "★").Replace("%E2%84%A2", "™");
         string url = $"{SteamCommunityUrls.Market_Listings}/{appID}/{market_hash_name}";
         var response = Downloader.Get(new(url, proxy, session));
         if (response.Data.IsEmpty())
             return new MarketItem() { IsError = true, Data = "data empty" };
         else if (response.StatusCode == 429)
-            return new MarketItem() { IsError = true, IsTooManyRequests = true };
+            return new MarketItem() { IsError = true, IsTooManyRequests = true, Data = "TooManyRequests (429)" };
         else if (response.Data == "<!DOCTYPE html>")
             return new MarketItem() { IsError = true, Data = "bad data" };
         else if (!response.Success)
-            return new MarketItem() { IsError = true, Data = response.ErrorMessage };
+            return new MarketItem() { IsError = true, Data = response.ErrorMessage! };
         else if (response.Data.Contains("There are no listings for this item.") && !response.Data.Contains("market_listing_largeimage"))
             return new MarketItem() { IsZeroItemsListed = true };
 
         return MarketItem.Deserialize(response.Data);
     }
 
+    /// <summary>
+    /// Получает доступные инвентари аккаунта
+    /// </summary>
+    /// <returns>Коллекция доступных инвентарей, где Key=app_id</returns>
     public static Dictionary<string, AppContextData> GetAppContextData(ISessionProvider session, System.Net.IWebProxy proxy) => GetAppContextData(session, proxy, session.SteamID);
+    /// <summary>
+    /// Получает доступные инвентари аккаунта
+    /// </summary>
+    /// <returns>Коллекция доступных инвентарей, где Key=app_id</returns>
     public static Dictionary<string, AppContextData> GetAppContextData(ISessionProvider session, System.Net.IWebProxy proxy, ulong steamid64)
     {
         string url = $"https://steamcommunity.com/profiles/{steamid64}/inventory/";
@@ -615,7 +692,16 @@ public partial class Steam
             return new(1);
         return AppContextData.Deserialize(response.Data);
     }
-    public static async Task<Dictionary<string, AppContextData>> GetAppContextDataAsync(ISessionProvider session, System.Net.IWebProxy proxy) => await GetAppContextDataAsync(session, proxy, session.SteamID);
+    /// <summary>
+    /// Получает доступные инвентари аккаунта
+    /// </summary>
+    /// <returns>Коллекция доступных инвентарей, где Key=app_id</returns>
+    public static async Task<Dictionary<string, AppContextData>> GetAppContextDataAsync(ISessionProvider session, System.Net.IWebProxy proxy) =>
+        await GetAppContextDataAsync(session, proxy, session.SteamID);
+    /// <summary>
+    /// Получает доступные инвентари аккаунта
+    /// </summary>
+    /// <returns>Коллекция доступных инвентарей, где Key=app_id</returns>
     public static async Task<Dictionary<string, AppContextData>> GetAppContextDataAsync(ISessionProvider session, System.Net.IWebProxy proxy, ulong steamid64)
     {
         string url = $"https://steamcommunity.com/profiles/{steamid64}/inventory/";
@@ -626,34 +712,58 @@ public partial class Steam
         return AppContextData.Deserialize(response.Data);
     }
 
-    public static bool AcceptTrade(ISessionProvider session, System.Net.IWebProxy proxy, long tradeid, uint steamid_other)
-        => AcceptTrade(session, proxy, tradeid, Steam32ToSteam64(steamid_other));
-    public static bool AcceptTrade(ISessionProvider session, System.Net.IWebProxy proxy, long tradeid, ulong steamid64)
+    /// <summary>
+    /// Принимает трейд
+    /// </summary>
+    /// <param name="tradeofferid">id трейда для принятия</param>
+    /// <param name="steamid_other">steamid32 аккаунта, который отослал трейд</param>
+    /// <returns>False трейд не принят, но иногда может быть принят, для точности используйте API</returns>
+    public static bool AcceptTrade(ISessionProvider session, System.Net.IWebProxy proxy, long tradeofferid, uint steamid_other)
+        => AcceptTrade(session, proxy, tradeofferid, Steam32ToSteam64(steamid_other));
+    /// <summary>
+    /// Принимает трейд
+    /// </summary>
+    /// <param name="tradeofferid">id трейда для принятия</param>
+    /// <param name="steamid_other">steamid32 аккаунта, который отослал трейд</param>
+    /// <returns>False трейд не принят, но иногда может быть принят, для точности используйте API</returns>
+    public static bool AcceptTrade(ISessionProvider session, System.Net.IWebProxy proxy, long tradeofferid, ulong steamid64)
     {
-        var request = new PostRequest($"https://steamcommunity.com/tradeoffer/{tradeid}/accept", Downloader.AppFormUrlEncoded)
+        var request = new PostRequest($"https://steamcommunity.com/tradeoffer/{tradeofferid}/accept", Downloader.AppFormUrlEncoded)
         {
             Session = session,
             Proxy = proxy,
             IsAjax = true,
-            Referer = $"https://steamcommunity.com/tradeoffer/{tradeid}/"
+            Referer = $"https://steamcommunity.com/tradeoffer/{tradeofferid}/"
         }
-        .AddPostData("sessionid", session.SessionID).AddPostData("serverid", 1).AddPostData("tradeofferid", tradeid)
+        .AddPostData("sessionid", session.SessionID).AddPostData("serverid", 1).AddPostData("tradeofferid", tradeofferid)
         .AddPostData("partner", steamid64).AddPostData("captcha", "");
         var response = Downloader.Post(request);
         return response.Success;
     }
-    public static async Task<bool> AcceptTradeAsync(ISessionProvider session, System.Net.IWebProxy proxy, long tradeid, uint steamid_other)
-        => await AcceptTradeAsync(session, proxy, tradeid, Steam32ToSteam64(steamid_other));
-    public static async Task<bool> AcceptTradeAsync(ISessionProvider session, System.Net.IWebProxy proxy, long tradeid, ulong steamid64)
+    /// <summary>
+    /// Принимает трейд
+    /// </summary>
+    /// <param name="tradeofferid">id трейда для принятия</param>
+    /// <param name="steamid_other">steamid32 аккаунта, который отослал трейд</param>
+    /// <returns>False трейд не принят, но иногда может быть принят, для точности используйте API</returns>
+    public static async Task<bool> AcceptTradeAsync(ISessionProvider session, System.Net.IWebProxy proxy, long tradeofferid, uint steamid_other)
+        => await AcceptTradeAsync(session, proxy, tradeofferid, Steam32ToSteam64(steamid_other));
+    /// <summary>
+    /// Принимает трейд
+    /// </summary>
+    /// <param name="tradeofferid">id трейда для принятия</param>
+    /// <param name="steamid_other">steamid32 аккаунта, который отослал трейд</param>
+    /// <returns>False трейд не принят, но иногда может быть принят, для точности используйте API</returns>
+    public static async Task<bool> AcceptTradeAsync(ISessionProvider session, System.Net.IWebProxy proxy, long tradeofferid, ulong steamid64)
     {
-        var request = new PostRequest($"https://steamcommunity.com/tradeoffer/{tradeid}/accept", Downloader.AppFormUrlEncoded)
+        var request = new PostRequest($"https://steamcommunity.com/tradeoffer/{tradeofferid}/accept", Downloader.AppFormUrlEncoded)
         {
             Session = session,
             Proxy = proxy,
             IsAjax = true,
-            Referer = $"https://steamcommunity.com/tradeoffer/{tradeid}/"
+            Referer = $"https://steamcommunity.com/tradeoffer/{tradeofferid}/"
         }
-        .AddPostData("sessionid", session.SessionID).AddPostData("serverid", 1).AddPostData("tradeofferid", tradeid)
+        .AddPostData("sessionid", session.SessionID).AddPostData("serverid", 1).AddPostData("tradeofferid", tradeofferid)
         .AddPostData("partner", steamid64).AddPostData("captcha", "");
         var response = await Downloader.PostAsync(request);
         return response.Success;
@@ -1123,9 +1233,14 @@ public partial class Steam
         if (!Regex.IsMatch(input, "^U:[0-1]:([0-9]{1,10})$")) return string.Empty;
         return input;
     }
-    public static (bool, uint, string) SplitTradeURL(string tradeUrl)
+    /// <summary>
+    /// Разбивает трейд ссылку на steamid32 и token
+    /// </summary>
+    /// <param name="tradeUrl">Полная трейд ссылка</param>
+    /// <returns>true если трейд ссылка разбита</returns>
+    public static (bool, uint, string?) SplitTradeURL(string tradeUrl)
     {
-        if (tradeUrl != null && rgxTradeurl1.IsMatch(tradeUrl))
+        if (!tradeUrl.IsEmpty() && rgxTradeurl1.IsMatch(tradeUrl))
         {
             var query = tradeUrl.Split('?')[1];
             var @params = query.Split('&');
@@ -1155,7 +1270,7 @@ public partial class Steam
     /// <summary>
     /// Получить комиссии по указаной цене
     /// </summary>
-    /// <param name="receivedAmount"></param>
+    /// <param name="amount"></param>
     /// <param name="publisherFee"></param>
     /// <returns>(steam_fee - стим комса, publisher_fee - комиссия издателя, fees - общая комиссия, amount - сколько в общем должен заплатить пользователь)</returns>
     public static (int, int, int, int) CalculateFeeAmount(int amount, float publisherFee = 0.10f)

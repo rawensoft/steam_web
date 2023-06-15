@@ -475,7 +475,12 @@ public class AuthenticatorLinker
         return FinalizeResult.GeneralFailure;
     }
 
-    private CPhone_SetAccountPhoneNumber_Response SetAccountPhoneNumber(CPhone_SetAccountPhoneNumber_Request request)
+    /// <summary>
+    /// Изменяет номер аккаунта, при его привязке
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns>Null если запрос не прошёл или нет сессии</returns>
+    private CPhone_SetAccountPhoneNumber_Response? SetAccountPhoneNumber(CPhone_SetAccountPhoneNumber_Request request)
     {
         if (session == null)
             return null;
@@ -532,6 +537,11 @@ public class AuthenticatorLinker
             return SENDVERIFCODE.Yes;
         return SENDVERIFCODE.No;
     }
+    /// <summary>
+    /// Используется если не нужно привязывать телефон, т.к. один код для одного использования
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
     private SENDVERIFCODE VerifyAccountPhoneWithCode(CPhone_VerifyAccountPhoneWithCode_Request request)
     {
         if (session == null)
@@ -552,7 +562,12 @@ public class AuthenticatorLinker
         return SENDVERIFCODE.No;
     }
 
-    private async Task<CPhone_SetAccountPhoneNumber_Response> SetAccountPhoneNumberAsync(CPhone_SetAccountPhoneNumber_Request request)
+    /// <summary>
+    /// Изменяет номер аккаунта, при его привязке
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns>Null если запрос не прошёл или нет сессии</returns>
+    private async Task<CPhone_SetAccountPhoneNumber_Response?> SetAccountPhoneNumberAsync(CPhone_SetAccountPhoneNumber_Request request)
     {
         if (session == null)
             return null;
@@ -609,6 +624,11 @@ public class AuthenticatorLinker
             return SENDVERIFCODE.Yes;
         return SENDVERIFCODE.No;
     }
+    /// <summary>
+    /// Используется если не нужно привязывать телефон, т.к. один код для одного использования
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
     private async Task<SENDVERIFCODE> VerifyAccountPhoneWithCodeAsync(CPhone_VerifyAccountPhoneWithCode_Request request)
     {
         if (session == null)

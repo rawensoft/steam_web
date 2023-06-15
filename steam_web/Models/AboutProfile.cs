@@ -8,13 +8,34 @@ public sealed class AboutProfile
     private const string SG_Fair = "sg_fair.png";
     private const string Icon_Mobile = "icon_mobile.png";
 
+    /// <summary>
+    /// Аутентификатор аккаунта
+    /// </summary>
     public Enums.FA2 FA2 { get; internal set; } = Enums.FA2.Deauth;
+    /// <summary>
+    /// Почта аккаунта
+    /// </summary>
     public string? Email { get; internal set; } = null;
+    /// <summary>
+    /// Баланс аккаунта
+    /// </summary>
     public string? Balance { get; internal set; } = null;
+    /// <summary>
+    /// Имя пользователя аккаунта
+    /// </summary>
     public string? Username { get; internal set; } = null;
+    /// <summary>
+    /// Страна (регион) пользователя
+    /// </summary>
     public string? Country { get; internal set; } = null;
+    /// <summary>
+    /// Имеется ли красная табличка (КТ) на аккаунте
+    /// </summary>
     public bool Red_Table { get; internal set; } = false;
-    public ulong SteamID { get; internal set; }
+    /// <summary>
+    /// SteamID64 аккаунта
+    /// </summary>
+    public ulong SteamID { get; internal set; } = 0;
 
     internal static AboutProfile Deserialize(string html)
     {

@@ -9,26 +9,66 @@ using SteamWeb.Script.DTO;
 namespace SteamWeb.Models;
 public sealed class MarketItem
 {
-    public string Data { get; internal set; } = null;
+    /// <summary>
+    /// Данные об ошибке
+    /// </summary>
+    public string? Data { get; internal set; } = null;
+    /// <summary>
+    /// Имеется ли ошибка
+    /// </summary>
     public bool IsError { get; internal set; } = false;
+    /// <summary>
+    /// На предмет не выставлены ордера - он не продаётся
+    /// </summary>
     public bool IsZeroItemsListed { get; internal set; } = false;
+    /// <summary>
+    /// Слишком много запросов
+    /// </summary>
     public bool IsTooManyRequests { get; internal set; } = false;
-    public string Username { get; internal set; }
+    /// <summary>
+    /// Имя пользователя аккаунта (если указана сессия)
+    /// </summary>
+    public string? Username { get; internal set; }
+    /// <summary>
+    /// Валидная ли сессия
+    /// </summary>
     public bool LoggedIn { get; internal set; } = false;
-    public string Wallet { get; internal set; }
-    public string SessionID { get; internal set; }
-    public string SteamID { get; internal set; }
-    public string Language { get; internal set; }
+    /// <summary>
+    /// Баланс аккаунта (если указана сессия)
+    /// </summary>
+    public string? Wallet { get; internal set; }
+    /// <summary>
+    /// ID сессиии
+    /// </summary>
+    public string? SessionID { get; internal set; }
+    /// <summary>
+    /// SteamID64 (если указана сессия)
+    /// </summary>
+    public string? SteamID { get; internal set; }
+    /// <summary>
+    /// Язык страницы
+    /// </summary>
+    public string? Language { get; internal set; }
+    /// <summary>
+    /// Информация о кошельке аккаунта (если указана сессия)
+    /// </summary>
     public WalletInfo WalletInfo { get; internal set; } = new();
     public bool RequiresBillingInfo { get; internal set; } = false;
     public bool HasBillingStates { get; internal set; } = false;
-    public string CountryCode { get; internal set; }
+    /// <summary>
+    /// Код страны
+    /// </summary>
+    public string? CountryCode { get; internal set; }
+    /// <summary>
+    /// История продаж
+    /// </summary>
     public ItemPriceHistory[] HistoryGraph { get; internal set; } = new ItemPriceHistory[0];
-    public string item_nameid { get; internal set; }
+    public string? item_nameid { get; internal set; }
 
     public ItemPriceHistory[] GetHistoryGraphByHours(int hours = 24)
     {
-        if (hours == 0) return new ItemPriceHistory[0];
+        if (hours == 0)
+            return new ItemPriceHistory[0];
         var list = new List<ItemPriceHistory>(HistoryGraph.Length);
         var ticks_one_hour = 36000000000;
         var now_ticks = DateTime.Now.Ticks;
