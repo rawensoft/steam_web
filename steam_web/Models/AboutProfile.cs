@@ -84,7 +84,7 @@ public sealed class AboutProfile
             el = doc.GetElementsByClassName("youraccount_steamid");
             if (el.Length > 0)
             {
-                about.SteamID = el[0].TextContent.GetClearWebString().GetOnlyDigit().ParseUInt64(); // Через сплит делать только так: Split(new char['：',':']);
+                about.SteamID = el[0].TextContent.GetClearWebString()!.GetOnlyDigit().ParseUInt64(); // Через сплит делать только так: Split(new char['：',':']);
             } // Email
 
             //about.Country = data.GetBetween("\t\t\t\t\t\t\t\t<span class=\"account_data_field\">", "</span>");

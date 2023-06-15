@@ -18,11 +18,10 @@ public class SteamTradeError
         try
         {
             var steamerror = JsonSerializer.Deserialize<SteamTradeError>(json);
-            steamerror.codeError = GetCode(steamerror.strError);
+            steamerror!.codeError = GetCode(steamerror.strError!);
             return steamerror;
         }
         catch (Exception ex)
-        { }
-        return new() { strError = json };
+        { return new() { strError = json }; }
     }
 }

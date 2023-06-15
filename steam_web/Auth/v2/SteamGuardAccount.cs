@@ -29,12 +29,12 @@ public class SteamGuardAccount
     /// <summary>
     /// Не сериализируется и не десерилизируется. Нужно устанавливать каждый раз при создании экземпляра класса.
     /// </summary>
-    [JsonIgnore] public IWebProxy Proxy { get; set; } = null;
+    [JsonIgnore] public IWebProxy? Proxy { get; set; } = null;
     /// <summary>
     /// Set to true if the authenticator has actually been applied to the account.
     /// </summary>
     [JsonPropertyName("fully_enrolled")] public bool FullyEnrolled { get; set; } = false;
-    public SessionData Session { get; set; }
+    public SessionData? Session { get; set; }
     private static byte[] _steamGuardCodeTranslations = new byte[] { 50, 51, 52, 53, 54, 55, 56, 57, 66, 67, 68, 70, 71, 72, 74, 75, 77, 78, 80, 81, 82, 84, 86, 87, 88, 89 };
 
     public bool DeactivateAuthenticator()
@@ -71,9 +71,10 @@ public class SteamGuardAccount
     /// Generate Steam Guard Code from your time
     /// </summary>
     /// <returns>Null Or Code</returns>
-    public string GenerateSteamGuardCodeForTime(long time)
+    public string? GenerateSteamGuardCodeForTime(long time)
     {
-        if (SharedSecret == null || SharedSecret.Length == 0) return null;
+        if (SharedSecret == null || SharedSecret.Length == 0)
+            return null;
 
         byte[] timeArray = new byte[8];
         time /= 30L;
@@ -187,7 +188,7 @@ public class SteamGuardAccount
         if (!response.Success || response.Data.IsEmpty())
             return false;
         var sessionInfo = JsonSerializer.Deserialize<API.Models.Response<AuthSessionForAccount>>(response.Data);
-        sessionInfo.success = true;
+        sessionInfo!.success = true;
         if (sessionInfo.response?.client_ids == null)
             return false;
         return true;
@@ -205,7 +206,7 @@ public class SteamGuardAccount
         if (!response.Success || response.Data.IsEmpty())
             return false;
         var sessionInfo = JsonSerializer.Deserialize<API.Models.Response<AuthSessionForAccount>>(response.Data);
-        sessionInfo.success = true;
+        sessionInfo!.success = true;
         if (sessionInfo.response?.client_ids == null)
             return false;
         return true;
@@ -215,7 +216,7 @@ public class SteamGuardAccount
     /// </summary>
     /// <param name="request">Какую информацию получить</param>
     /// <returns>Null при ошибке</returns>
-    public CUserAccount_GetWalletDetails_Response WalletDetails(CUserAccount_GetClientWalletDetails_Request requestDetails)
+    public CUserAccount_GetWalletDetails_Response? WalletDetails(CUserAccount_GetClientWalletDetails_Request requestDetails)
     {
         if (Session == null)
             return null;
@@ -239,7 +240,7 @@ public class SteamGuardAccount
     /// </summary>
     /// <param name="request">Какую информацию получить</param>
     /// <returns>Null при ошибке</returns>
-    public async Task<CUserAccount_GetWalletDetails_Response> WalletDetailsAsync(CUserAccount_GetClientWalletDetails_Request requestDetails)
+    public async Task<CUserAccount_GetWalletDetails_Response?> WalletDetailsAsync(CUserAccount_GetClientWalletDetails_Request requestDetails)
     {
         if (Session == null)
             return null;
@@ -275,7 +276,7 @@ public class SteamGuardAccount
         if (!response.Success)
             return new Confirmation[0];
         var confs = JsonSerializer.Deserialize<ConfirmationsResponse>(response.Data);
-        return confs.conf;
+        return confs!.conf;
     }
     public async Task<Confirmation[]> FetchConfirmationsAsync()
     {
@@ -294,7 +295,7 @@ public class SteamGuardAccount
         if (!response.Success)
             return new Confirmation[0];
         var confs = JsonSerializer.Deserialize<ConfirmationsResponse>(response.Data);
-        return confs.conf;
+        return confs!.conf;
     }
 
     public bool AcceptConfirmation(Confirmation conf, bool withCredentials)
@@ -310,7 +311,7 @@ public class SteamGuardAccount
             return false;
         if (!response.Success || response.Data.IsEmpty()) return false;
         var confResponse = JsonSerializer.Deserialize<SendConfirmationResponse>(response.Data);
-        return confResponse.Success;
+        return confResponse!.Success;
     }
     public bool CancelConfirmation(Confirmation conf, bool withCredentials)
     {
@@ -325,7 +326,7 @@ public class SteamGuardAccount
             return false;
         if (!response.Success || response.Data.IsEmpty()) return false;
         var confResponse = JsonSerializer.Deserialize<SendConfirmationResponse>(response.Data);
-        return confResponse.Success;
+        return confResponse!.Success;
     }
     public bool AcceptMultiConfirmations(Confirmation[] confs)
     {
@@ -351,7 +352,7 @@ public class SteamGuardAccount
         if (!response.Success || response.Data.IsEmpty())
             return false;
         var confResponse = JsonSerializer.Deserialize<SendConfirmationResponse>(response.Data);
-        return confResponse.Success;
+        return confResponse!.Success;
     }
     public bool CancelMultiConfirmations(Confirmation[] confs)
     {
@@ -377,7 +378,7 @@ public class SteamGuardAccount
         if (!response.Success || response.Data.IsEmpty())
             return false;
         var confResponse = JsonSerializer.Deserialize<SendConfirmationResponse>(response.Data);
-        return confResponse.Success;
+        return confResponse!.Success;
     }
 
 
@@ -394,7 +395,7 @@ public class SteamGuardAccount
             return false;
         if (!response.Success || response.Data.IsEmpty()) return false;
         var confResponse = JsonSerializer.Deserialize<SendConfirmationResponse>(response.Data);
-        return confResponse.Success;
+        return confResponse!.Success;
     }
     public async Task<bool> CancelConfirmationAsync(Confirmation conf, bool withCredentials)
     {
@@ -409,7 +410,7 @@ public class SteamGuardAccount
             return false;
         if (!response.Success || response.Data.IsEmpty()) return false;
         var confResponse = JsonSerializer.Deserialize<SendConfirmationResponse>(response.Data);
-        return confResponse.Success;
+        return confResponse!.Success;
     }
     public async Task<bool> AcceptMultiConfirmationsAsync(Confirmation[] confs)
     {
@@ -435,7 +436,7 @@ public class SteamGuardAccount
         if (!response.Success || response.Data.IsEmpty())
             return false;
         var confResponse = JsonSerializer.Deserialize<SendConfirmationResponse>(response.Data);
-        return confResponse.Success;
+        return confResponse!.Success;
     }
     public async Task<bool> CancelMultiConfirmationsAsync(Confirmation[] confs)
     {
@@ -461,10 +462,10 @@ public class SteamGuardAccount
         if (!response.Success || response.Data.IsEmpty())
             return false;
         var confResponse = JsonSerializer.Deserialize<SendConfirmationResponse>(response.Data);
-        return confResponse.Success;
+        return confResponse!.Success;
     }
 
-    public CAuthentication_GetAuthSessionsForAccount_Response GetAuthSessionsForAccount()
+    public CAuthentication_GetAuthSessionsForAccount_Response? GetAuthSessionsForAccount()
     {
         if (Session == null)
             return null;
@@ -480,7 +481,7 @@ public class SteamGuardAccount
         var obj = Serializer.Deserialize<CAuthentication_GetAuthSessionsForAccount_Response>(response.Stream);
         return obj;
     }
-    public CAuthentication_GetAuthSessionInfo_Response GetAuthSessionInfo(CAuthentication_GetAuthSessionInfo_Request requestDetails)
+    public CAuthentication_GetAuthSessionInfo_Response? GetAuthSessionInfo(CAuthentication_GetAuthSessionInfo_Request requestDetails)
     {
         if (Session == null)
             return null;
@@ -511,9 +512,9 @@ public class SteamGuardAccount
             throw new ArgumentException("Device ID is not present");
 
         long time = TimeAligner.GetSteamTime();
-        return $"p={DeviceID}&a={Session.SteamID}&k={_generateConfirmationHashForTime(time, tag)}&t={time}&m=react&tag={tag}";
+        return $"p={DeviceID}&a={Session?.SteamID}&k={_generateConfirmationHashForTime(time, tag)}&t={time}&m=react&tag={tag}";
     }
-    private string _generateConfirmationHashForTime(long time, string tag)
+    private string? _generateConfirmationHashForTime(long time, string tag)
     {
         byte[] decode = Convert.FromBase64String(IdentitySecret);
         int n2 = 8;

@@ -14,7 +14,7 @@ public class AuthenticatorLinker
     /// <summary>
     /// Set to register a new phone number when linking. If a phone number is not set on the account, this must be set. If a phone number is set on the account, this must be null.
     /// </summary>
-    public string PhoneNumber { get; set; } = null;
+    public string? PhoneNumber { get; set; } = null;
     /// <summary>
     /// Randomly-generated device ID. Should only be generated once per linker.
     /// </summary>
@@ -79,7 +79,7 @@ public class AuthenticatorLinker
         phoneNumber = $"{cCode} {pNumber}";
         countryCode = GetCountryCodeByPhoneNumber(pNumber);
     }
-    private static string GetCountryCodeByPhoneNumber(string pNumber)
+    private static string? GetCountryCodeByPhoneNumber(string pNumber)
     {
         if (pNumber.StartsWith("+7")) return "RU";
         if (pNumber.StartsWith("+380")) return "UA";
@@ -500,7 +500,7 @@ public class AuthenticatorLinker
         var obj = Serializer.Deserialize<CPhone_SetAccountPhoneNumber_Response>(response.Stream);
         return obj;
     }
-    private CPhone_IsAccountWaitingForEmailConfirmation_Response IsAccountWaitingForEmailConfirmation()
+    private CPhone_IsAccountWaitingForEmailConfirmation_Response? IsAccountWaitingForEmailConfirmation()
     {
         if (session == null)
             return null;
@@ -587,7 +587,7 @@ public class AuthenticatorLinker
         var obj = Serializer.Deserialize<CPhone_SetAccountPhoneNumber_Response>(response.Stream);
         return obj;
     }
-    private async Task<CPhone_IsAccountWaitingForEmailConfirmation_Response> IsAccountWaitingForEmailConfirmationAsync()
+    private async Task<CPhone_IsAccountWaitingForEmailConfirmation_Response?> IsAccountWaitingForEmailConfirmationAsync()
     {
         if (session == null)
             return null;

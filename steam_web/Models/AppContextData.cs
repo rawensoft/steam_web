@@ -31,6 +31,6 @@ public class AppContextData
         if (json == null || json == emptyString)
             return new(1);
         var obj = JsonSerializer.Deserialize<Dictionary<string, AppContextData>>(json);
-        return obj;
+        return obj!;
     }
 }

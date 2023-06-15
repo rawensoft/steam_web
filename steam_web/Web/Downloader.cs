@@ -687,7 +687,7 @@ public class ProtobufRequest
     public string Url { get; init; }
     public string AccessToken { get; init; }
     public string ProtoData { get; init; }
-    public IWebProxy Proxy { get; init; }
+    public IWebProxy? Proxy { get; init; }
     public ISessionProvider Session { get; init; }
     public string UserAgent { get; init; }
     public string Cookie { get; init; }
@@ -711,11 +711,11 @@ public class GetRequest
     public string Url { get; set; }
     public List<KeyValuePair<string, string>> QueryParametrs { get; private set; } = new(50);
     public List<KeyValuePair<string, string>> Headers { get; private set; } = new(50);
-    public IWebProxy Proxy { get; set; }
-    public ISessionProvider Session { get; set; }
-    public string UserAgent { get; set; }
-    public string Referer { get; set; }
-    public string Cookie { get; set; }
+    public IWebProxy? Proxy { get; set; }
+    public ISessionProvider? Session { get; set; }
+    public string? UserAgent { get; set; }
+    public string? Referer { get; set; }
+    public string? Cookie { get; set; }
     public bool UseVersion2 { get; set; } = false;
     public bool IsAjax { get; set; } = false;
     public bool IsMobile { get; set; } = false;

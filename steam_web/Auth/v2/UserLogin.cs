@@ -20,7 +20,7 @@ public class UserLogin
     /// Как нужно подтвердить вход в аккаунт
     /// </summary>
     public EAuthSessionGuardType[] Approve { get; private set; } = new EAuthSessionGuardType[0];
-    public SessionData Session { get; private set; }
+    public SessionData? Session { get; private set; }
     /// <summary>
     /// Полностью ли пройдена авторизация
     /// </summary>
@@ -28,7 +28,7 @@ public class UserLogin
     /// <summary>
     /// Код с мобильного приложения или с почты
     /// </summary>
-    public string Data { get; set; }
+    public string? Data { get; set; }
     /// <summary>
     /// Последний код EResult от Steam
     /// </summary>
@@ -56,13 +56,13 @@ public class UserLogin
     private bool _isNeedEmailCode = false;
     private bool _isNeedConfirm = false;
     private NEXT_STEP _nextStep = NEXT_STEP.Begin;
-    private System.Net.IWebProxy _proxy = null;
-    private byte[] _request_id = null;
+    private readonly System.Net.IWebProxy? _proxy = null;
+    private byte[]? _request_id = null;
     private ulong _client_id = 0;
-    private EAuthTokenPlatformType _platform;
+    private readonly EAuthTokenPlatformType _platform;
     private bool? _isCookieNotGet = null;
     private bool? _isRSANotGet = null;
-    private LoginResultv2 _result = LoginResultv2.GeneralFailure;
+    private LoginResult _result = LoginResult.GeneralFailure;
 
     public UserLogin(string login, string passwd, EAuthTokenPlatformType platform)
     {
@@ -202,9 +202,9 @@ public class UserLogin
         Session = new()
         {
             SteamID = authSession.steamid,
-            BrowserId = browserID,
-            SessionID = sessionID,
-            SteamCountry = steamCountry,
+            BrowserId = browserID!,
+            SessionID = sessionID!,
+            SteamCountry = steamCountry!,
             PlatformType = _platform,
         };
         _client_id = authSession.client_id;
@@ -249,7 +249,7 @@ public class UserLogin
         });
         string content = Convert.ToBase64String(memStream2.ToArray());
         memStream2.Close();
-        memStream2.Dispose();
+        memStream2!.Dispose();
         var protoRequest = new ProtobufRequest("https://api.steampowered.com/IAuthenticationService/UpdateAuthSessionWithSteamGuardCode/v1", content)
         {
             UserAgent = _platform == EAuthTokenPlatformType.MobileApp ? Downloader.UserAgentSteamMobileApp : SessionData.UserAgentBrowser,
@@ -275,7 +275,7 @@ public class UserLogin
         Serializer.Serialize(memStream3, new AuthPollRequest()
         {
             client_id = _client_id,
-            request_id = _request_id,
+            request_id = _request_id!,
         });
         string content = Convert.ToBase64String(memStream3.ToArray());
         memStream3.Close();
@@ -294,7 +294,7 @@ public class UserLogin
         response.Stream.Dispose();
         if (authPoll0.access_token.IsEmpty() || authPoll0.refresh_token.IsEmpty())
             return false;
-        Session.AccessToken = authPoll0.access_token;
+        Session!.AccessToken = authPoll0.access_token;
         Session.RefreshToken = authPoll0.refresh_token;
         FullyEnrolled = true;
         return true;
@@ -359,7 +359,7 @@ public class UserLogin
         responseProto.Stream.Dispose();
 
         byte[] encryptedPasswordBytes;
-        using var rsaEncryptor = new RSACryptoServiceProvider();
+        using var rsaEncryptor = new RSACryptoServiceProvider(2048);
         var passwordBytes = Encoding.ASCII.GetBytes(Password);
         var rsaParameters = rsaEncryptor.ExportParameters(false);
         rsaParameters.Exponent = Util.HexStringToByteArray(rsaResponse.publickey_exp);
@@ -401,16 +401,16 @@ public class UserLogin
         var authSession = responseProto.Stream != null ? Serializer.Deserialize<AuthSessionResponse>(responseProto.Stream) : null;
         if (responseProto.EResult != EResult.OK)
             return false;
-        responseProto.Stream.Close();
+        responseProto.Stream!.Close();
         responseProto.Stream.Dispose();
 
-        SteamID64 = authSession.steamid;
+        SteamID64 = authSession!.steamid;
         Session = new()
         {
             SteamID = authSession.steamid,
-            BrowserId = browserID,
-            SessionID = sessionID,
-            SteamCountry = steamCountry,
+            BrowserId = browserID!,
+            SessionID = sessionID!,
+            SteamCountry = steamCountry!,
             PlatformType = _platform
         };
         _client_id = authSession.client_id;
@@ -454,7 +454,7 @@ public class UserLogin
         });
         string content = Convert.ToBase64String(memStream2.ToArray());
         memStream2.Close();
-        memStream2.Dispose();
+        memStream2!.Dispose();
         var protoRequest = new ProtobufRequest("https://api.steampowered.com/IAuthenticationService/UpdateAuthSessionWithSteamGuardCode/v1", content)
         {
             UserAgent = _platform == EAuthTokenPlatformType.MobileApp ? Downloader.UserAgentSteamMobileApp : SessionData.UserAgentBrowser,
@@ -480,11 +480,11 @@ public class UserLogin
         Serializer.Serialize(memStream3, new AuthPollRequest()
         {
             client_id = _client_id,
-            request_id = _request_id,
+            request_id = _request_id!,
         });
         string content = Convert.ToBase64String(memStream3.ToArray());
         memStream3.Close();
-        memStream3.Dispose();
+        memStream3!.Dispose();
         var protoRequest = new ProtobufRequest("https://api.steampowered.com/IAuthenticationService/PollAuthSessionStatus/v1", content)
         {
             UserAgent = _platform == EAuthTokenPlatformType.MobileApp ? Downloader.UserAgentSteamMobileApp : SessionData.UserAgentBrowser,
@@ -499,7 +499,7 @@ public class UserLogin
         response.Stream.Dispose();
         if (authPoll0.access_token.IsEmpty() || authPoll0.refresh_token.IsEmpty())
             return false;
-        Session.AccessToken = authPoll0.access_token;
+        Session!.AccessToken = authPoll0.access_token;
         Session.RefreshToken = authPoll0.refresh_token;
         FullyEnrolled = true;
         return true;

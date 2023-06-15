@@ -65,7 +65,7 @@ public partial class Steam
     {
         var response = await Downloader.GetAsync(new(SteamPoweredUrls.TwoFactor_ManageAction, proxy, session));
         if (!response.Success)
-            return (false, response.ErrorMessage);
+            return (false, response.ErrorMessage!);
 
         var request = new PostRequest(SteamPoweredUrls.TwoFactor_ManageAction, Downloader.AppFormUrlEncoded)
         {
@@ -75,13 +75,13 @@ public partial class Steam
         .AddPostData("action", "none").AddPostData("sessionid", session.SessionID).AddPostData("none_authenticator_check", "on");
         response = await Downloader.PostAsync(request);
         if (!response.Success)
-            return (false, response.ErrorMessage);
+            return (false, response.ErrorMessage!);
 
         request.PostData.Clear();
         request.AddPostData("action", "actuallynone").AddPostData("sessionid", session.SessionID);
         response = await Downloader.PostAsync(request);
         if (!response.Success)
-            return (false, response.ErrorMessage);
+            return (false, response.ErrorMessage!);
 
         var doc = new HtmlParser().ParseDocument(response.Data);
         var elements = doc.GetElementsByClassName("phone_box");
@@ -96,7 +96,7 @@ public partial class Steam
     {
         var response = Downloader.Get(new(SteamPoweredUrls.TwoFactor_ManageAction, proxy, session));
         if (!response.Success)
-            return (false, response.ErrorMessage);
+            return (false, response.ErrorMessage!);
 
         var request = new PostRequest(SteamPoweredUrls.TwoFactor_ManageAction, Downloader.AppFormUrlEncoded)
         {
@@ -106,13 +106,13 @@ public partial class Steam
         .AddPostData("action", "none").AddPostData("sessionid", session.SessionID).AddPostData("none_authenticator_check", "on");
         response = Downloader.Post(request);
         if (!response.Success)
-            return (false, response.ErrorMessage);
+            return (false, response.ErrorMessage!);
 
         request.PostData.Clear();
         request.AddPostData("action", "actuallynone").AddPostData("sessionid", session.SessionID);
         response = Downloader.Post(request);
         if (!response.Success)
-            return (false, response.ErrorMessage);
+            return (false, response.ErrorMessage!);
 
         var doc = new HtmlParser().ParseDocument(response.Data);
         var elements = doc.GetElementsByClassName("phone_box");
@@ -483,50 +483,51 @@ public partial class Steam
                 if (item.Replace(" ", "").StartsWith("webTradeEligibility"))
                 {
                     var web = item.Replace(" ", "").Split('=')[1];
-                    web = System.Web.HttpUtility.UrlDecode(web);
+                    web = HttpUtility.UrlDecode(web);
                     webState = JsonSerializer.Deserialize<WebTradeEligibility>(web);
                     break;
                 }
             }
         }
-        return (true, trade_url == "" ? null : trade_url, webState);
+        return (true, trade_url.IsEmpty() ? null : trade_url, webState);
     }
 
-    public static async Task<(LoginResult, SessionData, long)> AuthAsync(UserLogin user_login, SignInPlatform platform)
+    public static async Task<(LoginResultv1, SessionDatav1?, long)> Authv1Async(UserLoginv1 user_login, SignInPlatform platform)
     {
-        var result = await Task.Run(() => { return user_login.DoLogin(platform); });
-        if (result != LoginResult.LoginOkay) return (result, null, user_login.CaptchaGID);
+        var result = await user_login.DoLoginAsync(platform);
+        if (result != LoginResultv1.LoginOkay)
+            return (result, null, user_login.CaptchaGID);
         return (result, user_login.Session, -1);
     }
-    public static async Task<(LoginResult, SessionData)> AuthAsync(string username, string password, string fa2_code,
+    public static async Task<(LoginResultv1, SessionDatav1?)> AuthV1Async(string username, string password, string fa2_code,
         string email_code, System.Net.IWebProxy Proxy, SignInPlatform platform)
     {
-        var user_login = new UserLogin(username, password, Proxy);
-        if (fa2_code != null) user_login.TwoFactorCode = fa2_code;
-        else if (email_code != null) user_login.EmailCode = email_code;
-        var result = await Task.Run(() => { return user_login.DoLogin(platform); });
-        if (result != LoginResult.LoginOkay) return (result, null);
-        return (result, user_login.Session);
-    }
-    public static (LoginResult, SessionData) Auth(string username, string password, string fa2_code, string email_code, System.Net.IWebProxy Proxy, SignInPlatform platform)
-    {
-        var user_login = new UserLogin(username, password, Proxy);
+        var user_login = new UserLoginv1(username, password, Proxy);
         if (fa2_code != null)
-        {
             user_login.TwoFactorCode = fa2_code;
-        }
         else if (email_code != null)
-        {
             user_login.EmailCode = email_code;
-        }
-        var result = user_login.DoLogin(platform);
-        if (result != LoginResult.LoginOkay) return (result, null);
+        var result = await user_login.DoLoginAsync(platform);
+        if (result != LoginResultv1.LoginOkay)
+            return (result, null);
         return (result, user_login.Session);
     }
-    public static (LoginResult, SessionData, long) Auth(string username, string password, long capthagid, string captchatext,
-        SteamGuardAccount sda, System.Net.IWebProxy Proxy, SignInPlatform platform)
+    public static (LoginResultv1, SessionDatav1?) AuthV1(string username, string password, string fa2_code, string email_code, System.Net.IWebProxy Proxy, SignInPlatform platform)
     {
-        var user_login = new UserLogin(username, password, Proxy);
+        var user_login = new UserLoginv1(username, password, Proxy);
+        if (fa2_code != null)
+            user_login.TwoFactorCode = fa2_code;
+        else if (email_code != null)
+            user_login.EmailCode = email_code;
+        var result = user_login.DoLogin(platform);
+        if (result != LoginResultv1.LoginOkay)
+            return (result, null);
+        return (result, user_login.Session);
+    }
+    public static (LoginResultv1, SessionDatav1?, long) AuthV1(string username, string password, long capthagid, string captchatext,
+        SteamGuardAccuntv1 sda, System.Net.IWebProxy Proxy, SignInPlatform platform)
+    {
+        var user_login = new UserLoginv1(username, password, Proxy);
         if (sda != null)
         {
             user_login.Requires2FA = true;
@@ -539,91 +540,95 @@ public partial class Steam
             user_login.CaptchaText = captchatext;
         }
         var result = user_login.DoLogin(platform);
-        if (result != LoginResult.LoginOkay) return (result, null, user_login.CaptchaGID);
+        if (result != LoginResultv1.LoginOkay)
+            return (result, null, user_login.CaptchaGID);
         return (result, user_login.Session, -1);
     }
-    public static (LoginResult, SessionData, long) Auth(UserLogin user_login, SignInPlatform platform)
+    public static (LoginResultv1, SessionDatav1?, long) AuthV1(UserLoginv1 user_login, SignInPlatform platform)
     {
         var result = user_login.DoLogin(platform);
-        if (result != LoginResult.LoginOkay) return (result, null, user_login.CaptchaGID);
+        if (result != LoginResultv1.LoginOkay)
+            return (result, null, user_login.CaptchaGID);
         return (result, user_login.Session, -1);
     }
 
-    public static async Task<(Auth.v2.LoginResultv2, Auth.v2.SessionData)> AuthV2Async(Auth.v2.UserLogin user_login)
+    public static async Task<(LoginResultv2, SessionDatav2?)> AuthV2Async(UserLoginv2 user_login)
     {
         if (user_login.FullyEnrolled)
             return (user_login.Result, user_login.Session);
-        if (user_login.NextStep == SteamWeb.Auth.v2.NEXT_STEP.Begin && !await user_login.BeginAuthSessionViaCredentialsAsync())
+        if (user_login.NextStep == NEXT_STEP.Begin && !await user_login.BeginAuthSessionViaCredentialsAsync())
             return (user_login.Result, null);
         await Task.Delay(450);
-        if (user_login.NextStep == SteamWeb.Auth.v2.NEXT_STEP.Update && !await user_login.UpdateAuthSessionWithSteamGuardCodeAsync(user_login.Data))
+        if (user_login.NextStep == NEXT_STEP.Update && !await user_login.UpdateAuthSessionWithSteamGuardCodeAsync(user_login.Data))
             return (user_login.Result, null);
-        if (user_login.NextStep == SteamWeb.Auth.v2.NEXT_STEP.Poll && !await user_login.PollAuthSessionStatusAsync())
+        if (user_login.NextStep == NEXT_STEP.Poll && !await user_login.PollAuthSessionStatusAsync())
             return (user_login.Result, null);
         return (user_login.Result, user_login.Session);
     }
-    public static async Task<(Auth.v2.LoginResultv2, Auth.v2.SessionData)> AuthV2Async(string username, string password, string guard_code, System.Net.IWebProxy proxy, EAuthTokenPlatformType platform)
+    public static async Task<(LoginResultv2, SessionDatav2?)> AuthV2Async(string username, string password, string guard_code, System.Net.IWebProxy proxy, EAuthTokenPlatformType platform)
     {
-        var user_login = new Auth.v2.UserLogin(username, password, platform, proxy);
-        if (user_login.NextStep == SteamWeb.Auth.v2.NEXT_STEP.Begin && !await user_login.BeginAuthSessionViaCredentialsAsync())
+        var user_login = new UserLoginv2(username, password, platform, proxy);
+        if (user_login.NextStep == NEXT_STEP.Begin && !await user_login.BeginAuthSessionViaCredentialsAsync())
             return (user_login.Result, null);
         await Task.Delay(450);
-        if (user_login.NextStep == SteamWeb.Auth.v2.NEXT_STEP.Update && !await user_login.UpdateAuthSessionWithSteamGuardCodeAsync(guard_code))
+        if (user_login.NextStep == NEXT_STEP.Update && !await user_login.UpdateAuthSessionWithSteamGuardCodeAsync(guard_code))
             return (user_login.Result, null);
-        if (user_login.NextStep == SteamWeb.Auth.v2.NEXT_STEP.Poll && !await user_login.PollAuthSessionStatusAsync())
+        if (user_login.NextStep == NEXT_STEP.Poll && !await user_login.PollAuthSessionStatusAsync())
             return (user_login.Result, null);
         return (user_login.Result, user_login.Session);
     }
-    public static (Auth.v2.LoginResultv2, Auth.v2.SessionData) AuthV2(string username, string password, string guard_code, System.Net.IWebProxy proxy, EAuthTokenPlatformType platform)
+    public static (LoginResultv2, SessionDatav2?) AuthV2(string username, string password, string guard_code, System.Net.IWebProxy proxy, EAuthTokenPlatformType platform)
     {
-        var user_login = new Auth.v2.UserLogin(username, password, platform, proxy);
-        if (user_login.NextStep == SteamWeb.Auth.v2.NEXT_STEP.Begin && !user_login.BeginAuthSessionViaCredentials())
+        var user_login = new UserLoginv2(username, password, platform, proxy);
+        if (user_login.NextStep == NEXT_STEP.Begin && !user_login.BeginAuthSessionViaCredentials())
             return (user_login.Result, null);
-        new ManualResetEvent(false).WaitOne(450);
-        if (user_login.NextStep == SteamWeb.Auth.v2.NEXT_STEP.Update && !user_login.UpdateAuthSessionWithSteamGuardCode(guard_code))
+        using var mres = new ManualResetEvent(false);
+        mres.WaitOne(450);
+        if (user_login.NextStep == NEXT_STEP.Update && !user_login.UpdateAuthSessionWithSteamGuardCode(guard_code))
             return (user_login.Result, null);
-        if (user_login.NextStep == SteamWeb.Auth.v2.NEXT_STEP.Poll && !user_login.PollAuthSessionStatus())
+        if (user_login.NextStep == NEXT_STEP.Poll && !user_login.PollAuthSessionStatus())
             return (user_login.Result, null);
         return (user_login.Result, user_login.Session);
     }
-    public static (Auth.v2.LoginResultv2, Auth.v2.SessionData) AuthV2(Auth.v2.UserLogin user_login)
+    public static (LoginResultv2, SessionDatav2?) AuthV2(UserLoginv2 user_login)
     {
         if (user_login.FullyEnrolled)
             return (user_login.Result, user_login.Session);
-        if (user_login.NextStep == SteamWeb.Auth.v2.NEXT_STEP.Begin && !user_login.BeginAuthSessionViaCredentials())
+        if (user_login.NextStep == NEXT_STEP.Begin && !user_login.BeginAuthSessionViaCredentials())
             return (user_login.Result, null);
-        new ManualResetEvent(false).WaitOne(450);
-        if (user_login.NextStep == SteamWeb.Auth.v2.NEXT_STEP.Update && !user_login.UpdateAuthSessionWithSteamGuardCode(user_login.Data))
+        using var mres = new ManualResetEvent(false);
+        mres.WaitOne(450);
+        if (user_login.NextStep == NEXT_STEP.Update && !user_login.UpdateAuthSessionWithSteamGuardCode(user_login.Data))
             return (user_login.Result, null);
-        if (user_login.NextStep == SteamWeb.Auth.v2.NEXT_STEP.Poll && !user_login.PollAuthSessionStatus())
+        if (user_login.NextStep == NEXT_STEP.Poll && !user_login.PollAuthSessionStatus())
             return (user_login.Result, null);
         return (user_login.Result, user_login.Session);
     }
 
-    public static async Task<System.IO.MemoryStream> GetCaptchaImageToMemoryStreamAsync(string captchagid, Proxy proxy = null, SessionData session = null)
+    public static async Task<MemoryStream?> GetCaptchaImageToMemoryStreamAsync(string captchagid, Proxy? proxy = null, ISessionProvider? session = null)
     {
         var (success, bytes, _) = await Downloader.GetCaptchaAsync(captchagid, proxy, session);
         if (!success)
             return null;
-        var stream = new System.IO.MemoryStream(bytes);
+        var stream = new MemoryStream(bytes);
         return stream;
     }
-    public static async Task<byte[]> GetCaptchaImageToBytesAsync(string captchagid, Proxy proxy = null, ISessionProvider session = null)
+    public static async Task<byte[]> GetCaptchaImageToBytesAsync(string captchagid, Proxy? proxy = null, ISessionProvider? session = null)
     {
         var (success, bytes, _) = await Downloader.GetCaptchaAsync(captchagid, proxy, session);
         if (!success)
             return new byte[0];
         return bytes;
     }
-    public static System.IO.MemoryStream GetCaptchaImageToMemoryStream(string captchagid, Proxy proxy = null, ISessionProvider session = null)
+    public static MemoryStream? GetCaptchaImageToMemoryStream(string captchagid, Proxy? proxy = null, ISessionProvider? session = null)
     {
         var (success, bytes, _) = Downloader.GetCaptcha(captchagid, proxy, session);
         if (!success)
             return null;
-        var stream = new System.IO.MemoryStream(bytes);
+        var stream = new MemoryStream(bytes);
         return stream;
     }
-    public static byte[] GetCaptchaImageToBytes(string captchagid, Proxy proxy = null, ISessionProvider session = null)
+    public static byte[] GetCaptchaImageToBytes(string captchagid, Proxy? proxy = null, ISessionProvider? session = null)
     {
         var (success, bytes, _) = Downloader.GetCaptcha(captchagid, proxy, session);
         if (!success)
@@ -1292,12 +1297,11 @@ public partial class Steam
         var nEstimatedAmountOfWalletFundsReceivedByOtherParty = (amount - wallet_fee_base) / (wallet_fee_percent + publisherFee + 1);
 
         var bEverUndershot = false;
-        int fees_steam, fees_publisher, fees_fees, fees_amount = 0;
         var fees = CalculateAmountToSendForDesiredReceivedAmount((int)nEstimatedAmountOfWalletFundsReceivedByOtherParty, publisherFee);
-        fees_steam = fees.Item1;
-        fees_publisher = fees.Item2;
-        fees_fees = fees.Item3;
-        fees_amount = fees.Item4;
+        int fees_steam = fees.Item1;
+        int fees_publisher = fees.Item2;
+        int fees_fees = fees.Item3;
+        int fees_amount = fees.Item4;
 
         while (fees_amount != amount && iterations < 10)
         {
