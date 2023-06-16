@@ -69,6 +69,7 @@ public static class ExtensionMethods
         return 0f;
     }
     public static string? GetClearWebString(this string? strSource) => strSource?.Replace("\n", "").Replace("\t", "").Replace("\r", "");
+    public static bool IsEmpty(this string? str) => string.IsNullOrEmpty(str);
     public static bool ContainsOnlyDigit(this string strSource)
     {
         for (int i = 0; i < strSource.Length; i++)
@@ -78,7 +79,6 @@ public static class ExtensionMethods
         }
         return true;
     }
-    public static bool IsEmpty(this string? str) => string.IsNullOrEmpty(str);
     public static string GetOnlyDigit(this string strSource)
     {
         if (string.IsNullOrEmpty(strSource))
@@ -102,12 +102,13 @@ public static class ExtensionMethods
         return epoch.ToLocalTime();
     }
     public static int ToInt32(this bool value) => value ? 1 : 0;
-    public static string GetBetween(this string strSource, string strStart, string strEnd, string replace = null, int x = 0)
+    public static string? GetBetween(this string strSource, string strStart, string strEnd, string? replace = null, int x = 0)
     {
         x += 1;
-        if (strSource.IsEmpty()) return replace;
+        if (strSource.IsEmpty())
+            return replace;
         bool is_empty_start = strStart.IsEmpty();
-        if (is_empty_start || (!is_empty_start && strSource.Contains(strStart) && strSource.Contains(strEnd)))
+        if (is_empty_start || (!is_empty_start! && strSource.Contains(strStart) && strSource.Contains(strEnd)))
         {
             if (is_empty_start)
             {
