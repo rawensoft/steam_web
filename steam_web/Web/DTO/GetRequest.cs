@@ -2,6 +2,7 @@
 using RestSharp;
 using System.Web;
 using SteamWeb.Auth.Interfaces;
+using System.Text.RegularExpressions;
 
 namespace SteamWeb.Web.DTO;
 
@@ -42,9 +43,9 @@ public class GetRequest
         return this;
     }
 
-    public GetRequest AddQuery(string name, string value)
+    public GetRequest AddQuery(string name, string value, bool encode = true)
     {
-        QueryParametrs.Add(new(name, HttpUtility.UrlEncode(value)));
+        QueryParametrs.Add(new(name, encode ? HttpUtility.UrlEncode(value) : value));
         return this;
     }
     public GetRequest AddQuery(string name, int value)
