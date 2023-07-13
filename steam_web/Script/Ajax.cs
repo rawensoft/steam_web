@@ -690,7 +690,7 @@ public static class Ajax
         { }
         return new();
     }
-    public static async Task<QueueApps> explore_generatenewdiscoveryqueue_async(ISessionProvider session, System.Net.IWebProxy proxy)
+    public static async Task<QueueApps> explore_generatenewdiscoveryqueue_async(ISessionProvider session, System.Net.IWebProxy proxy, ushort queuetype = 0)
     {
         if (session == null)
             return new();
@@ -700,7 +700,7 @@ public static class Ajax
             Proxy = proxy,
             IsAjax = true
         };
-        request.AddPostData("sessionid", session.SessionID).AddPostData("queuetype", 1);
+        request.AddPostData("sessionid", session.SessionID).AddPostData("queuetype", queuetype);
         var response = await Downloader.PostAsync(request);
         if (!response.Success || response.Data.IsEmpty() || response.Data == "<!DOCTYPE html>" ||
             response.Data.Contains("btn_blue_steamui btn_medium login_btn")) return new();
@@ -714,7 +714,7 @@ public static class Ajax
         { }
         return new();
     }
-    public static QueueApps explore_generatenewdiscoveryqueue(ISessionProvider session, System.Net.IWebProxy proxy)
+    public static QueueApps explore_generatenewdiscoveryqueue(ISessionProvider session, System.Net.IWebProxy proxy, ushort queuetype = 0)
     {
         if (session == null)
             return new();
@@ -724,7 +724,7 @@ public static class Ajax
             Proxy = proxy,
             IsAjax = true
         };
-        request.AddPostData("sessionid", session.SessionID).AddPostData("queuetype", 1);
+        request.AddPostData("sessionid", session.SessionID).AddPostData("queuetype", queuetype);
         var response = Downloader.Post(request);
         if (!response.Success || response.Data.IsEmpty() || response.Data == "<!DOCTYPE html>" ||
             response.Data.Contains("btn_blue_steamui btn_medium login_btn")) return new();

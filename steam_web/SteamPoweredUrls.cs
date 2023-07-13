@@ -8,7 +8,10 @@ internal static class SteamPoweredUrls
     public const string Account_RegisterKey = "https://store.steampowered.com/account/registerkey";
     public const string Account_AjaxRegisterKey = "https://store.steampowered.com/account/ajaxregisterkey/";
     public const string Explore = "https://store.steampowered.com/explore";
+    public const string Explore_Next = "https://store.steampowered.com/explore/next/";
+    public const string Explore_Next_Zero = "https://store.steampowered.com/explore/next/0/";
     public const string App10 = "https://store.steampowered.com/app/10";
+    public const string App = "https://store.steampowered.com/app";
     public const string IAuthenticationService_GetAuthSessionsForAccount_v1 = "https://api.steampowered.com/IAuthenticationService/GetAuthSessionsForAccount/v1";
     public const string IAuthenticationService_GenerateAccessTokenForApp_v1 = "https://api.steampowered.com/IAuthenticationService/GenerateAccessTokenForApp/v1";
     public const string ICSGOServers_730_GetGameServersStatus_v1 = "https://api.steampowered.com/ICSGOServers_730/GetGameServersStatus/v1";
