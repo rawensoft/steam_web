@@ -6,5 +6,6 @@
     Issued = 3,
     Denied = 4,
     LoggedOut = 5,
+    Consumed = 6,
     Revoked = 99
 }

@@ -1,6 +1,9 @@
 ﻿public enum EAuthSessionGuardType
 {
     Unknown = 0,
+    /// <summary>
+    /// Код не требуется
+    /// </summary>
     None = 1,
     /// <summary>
     /// Guard с письма на почту
@@ -12,5 +15,6 @@
     DeviceCode = 3,
     DeviceConfirmation = 4,
     EmailConfirmation = 5,
-    MachineToken = 6
+    MachineToken = 6,
+    LegacyMachineAuth = 7
 }
