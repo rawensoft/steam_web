@@ -16,7 +16,8 @@ class AuthSessionMobileRequest
     {
         get
         {
-            if (wesiteid != null) return wesiteid;
+            if (wesiteid != null)
+                return wesiteid;
             switch (device_details.platform_type)
             {
                 case EAuthTokenPlatformType.SteamClient:

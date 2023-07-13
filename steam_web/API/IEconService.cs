@@ -157,7 +157,7 @@ public static class IEconService
     /// <returns></returns>
     public static async Task<Response<Trades>> GetTradeOffersAsync(Proxy proxy, string key, bool get_sent_offers = false, bool get_received_offers = false,
         bool get_descriptions = false, bool active_only = false, bool historical_only = false, uint? time_historical_cutoff = null,
-        uint? cursor = null, string language = null)
+        uint? cursor = null, string? language = null)
     {
         var request = new GetRequest(SteamPoweredUrls.IEconService_GetTradeOffers_v1, proxy).AddQuery("key", key);
         if (time_historical_cutoff.HasValue)
