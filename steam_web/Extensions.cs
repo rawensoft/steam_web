@@ -130,4 +130,12 @@ public static class ExtensionMethods
         }
         else return replace;
     }
+    public static bool RemoveAsset(this Inventory.V2.SteamInventory inventory, Inventory.V2.Models.Asset asset)
+    {
+        return inventory.rgInventory.Remove($"{asset.classid}_{asset.instanceid}");
+    }
+    public static bool RemoveAsset(this Inventory.V2.SteamInventory inventory, string classid, string instanceid)
+    {
+        return inventory.rgInventory.Remove($"{classid}_{instanceid}");
+    }
 }
