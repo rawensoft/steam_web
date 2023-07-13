@@ -307,7 +307,11 @@ public class SteamGuardAccount
         string tag = "accept";
         string url = $"{APIEndpoints.COMMUNITY_BASE}/mobileconf/ajaxop?op=allow&{GenerateConfirmationQueryParams(tag)}&cid={conf.id}&ck={conf.nonce}";
         string content = withCredentials ? "{\"withCredentials\":true}" : "{\"withCredentials\":false}";
-        var request = new PostRequest(url, content, Downloader.AppJson, Proxy, Session, null, Downloader.UserAgentOkHttp) { UseVersion2 = true };
+        var request = new PostRequest(url, content, Downloader.AppJson, Proxy, Session, null, Downloader.UserAgentOkHttp)
+        {
+            UseVersion2 = true,
+            Timeout = 90000
+        };
         var response = Downloader.Post(request);
         if (response.LostAuth)
             return false;
@@ -347,7 +351,11 @@ public class SteamGuardAccount
             sb.Append("&ck[]=");
             sb.Append(conf.nonce);
         }
-        var request = new PostRequest(url, sb.ToString(), Downloader.AppFormUrlEncoded, Proxy, Session, null, Downloader.UserAgentOkHttp) { UseVersion2 = true };
+        var request = new PostRequest(url, sb.ToString(), Downloader.AppFormUrlEncoded, Proxy, Session, null, Downloader.UserAgentOkHttp)
+        {
+            UseVersion2 = true,
+            Timeout = 90000
+        };
         var response = Downloader.Post(request);
         if (response.LostAuth)
             return false;
