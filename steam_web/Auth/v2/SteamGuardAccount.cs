@@ -183,10 +183,11 @@ public class SteamGuardAccount
         {
             UserAgent = SessionData.UserAgentMobile,
             UseVersion2 = true
-        }.AddQuery("access_token", Session.AccessToken);
+        }.AddQuery("access_token", Session.AccessToken).AddQuery("origin", "SteamMobile").AddQuery("input_protobuf_encoded", string.Empty);
         var response = Downloader.Get(request);
         if (!response.Success || response.Data.IsEmpty())
             return false;
+        return response.EResult == EResult.OK && response.Data.IsEmpty();
         var sessionInfo = JsonSerializer.Deserialize<API.Models.Response<AuthSessionForAccount>>(response.Data);
         sessionInfo!.success = true;
         if (sessionInfo.response?.client_ids == null)
@@ -201,10 +202,11 @@ public class SteamGuardAccount
         {
             UserAgent = SessionData.UserAgentMobile,
             UseVersion2 = true
-        }.AddQuery("access_token", Session.AccessToken);
+        }.AddQuery("access_token", Session.AccessToken).AddQuery("origin", "SteamMobile").AddQuery("input_protobuf_encoded", string.Empty);
         var response = await Downloader.GetAsync(request);
         if (!response.Success || response.Data.IsEmpty())
             return false;
+        return response.EResult == EResult.OK && response.Data.IsEmpty();
         var sessionInfo = JsonSerializer.Deserialize<API.Models.Response<AuthSessionForAccount>>(response.Data);
         sessionInfo!.success = true;
         if (sessionInfo.response?.client_ids == null)
@@ -473,11 +475,14 @@ public class SteamGuardAccount
         {
             UserAgent = SessionData.UserAgentMobile,
             Proxy = Proxy,
-            AccessToken = Session.AccessToken
+            AccessToken = Session.AccessToken,
+            IsMobile = true
         };
         using var response = Downloader.GetProtobuf(request);
         if (response.EResult != EResult.OK)
             return null;
+        if (response.Stream == null)
+            return new();
         var obj = Serializer.Deserialize<CAuthentication_GetAuthSessionsForAccount_Response>(response.Stream);
         return obj;
     }
