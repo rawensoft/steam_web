@@ -6,7 +6,7 @@ using SteamWeb.Auth.Interfaces;
 namespace SteamWeb.Auth.v2.Models;
 public class SessionData : ISessionProvider
 {
-    public const string DefaultMobileCookie = "mobileClient=android; mobileClientVersion=777777 3.1.0; ";
+    public const string DefaultMobileCookie = "mobileClient=android; mobileClientVersion=777777 3.6.3; ";
     public const string UserAgentMobile = "Mozilla/5.0 (Linux; Android 5.1.1; SM-G977N Build/LMY48Z; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/74.0.3729.136 Mobile Safari/537.36";
     public const string UserAgentBrowser = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36";
 
