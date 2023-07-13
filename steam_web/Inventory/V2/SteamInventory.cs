@@ -20,16 +20,17 @@ public class SteamInventory
     //public bool more_start { get; init; } = false;
     public string context { get; set; } = "2";
     public string? error { get; init; }
+    public bool is_too_many_requests { get; init; } = false;
 
-    public static SteamInventory Load(ISessionProvider session, System.Net.IWebProxy proxy, ulong steamid64, uint appid, string context = "2")
+    public static SteamInventory Load(ISessionProvider session, System.Net.IWebProxy proxy, ulong steamid64, uint appid, string context = "2", bool trading = false)
     {
-        string url = GetUrl(steamid64, appid, context);
+        string url = GetUrl(steamid64, appid, context, trading);
         try
         {
             var getRequest = new GetRequest(url, proxy, session) { IsAjax = true };
             var response = Downloader.Get(getRequest);
             if (response.StatusCode == 429)
-                return new() { error = "Слишком много запросов. Попробуйте через 10-15 минут, но не пытайтесь обойти эту блокировку, иначе она будет автоматически продлеваться." };
+                return new() { is_too_many_requests = true, error = "Слишком много запросов. Попробуйте через 10-15 минут, но не пытайтесь обойти эту блокировку, иначе она будет автоматически продлеваться." };
             else if (!response.Success)
                 return new() { error = response.Data ?? response.ErrorMessage ?? "Нет возвратных данных и данных об ошибке" };
             else if (string.IsNullOrEmpty(response.Data))
@@ -42,15 +43,15 @@ public class SteamInventory
         { return new() { error = e.Message}; }
         
     }
-    public async static Task<SteamInventory> LoadAsync(ISessionProvider session, System.Net.IWebProxy proxy, ulong steamid64, uint appid, string context = "2")
+    public async static Task<SteamInventory> LoadAsync(ISessionProvider session, System.Net.IWebProxy proxy, ulong steamid64, uint appid, string context = "2", bool trading = false)
     {
-        string url = GetUrl(steamid64, appid, context);
+        string url = GetUrl(steamid64, appid, context, trading);
         try
         {
             var getRequest = new GetRequest(url, proxy, session) { IsAjax = true };
             var response = await Downloader.GetAsync(getRequest);
             if (response.StatusCode == 429)
-                return new() { error = "Слишком много запросов. Попробуйте через 10-15 минут, но не пытайтесь обойти эту блокировку, иначе она будет автоматически продлеваться." };
+                return new() { is_too_many_requests = true, error = "Слишком много запросов. Попробуйте через 10-15 минут, но не пытайтесь обойти эту блокировку, иначе она будет автоматически продлеваться." };
             else if (!response.Success)
                 return new() { error = response.Data ?? response.ErrorMessage ?? response.ErrorException?.Message ?? "Нет возвратных данных и данных об ошибке" };
             else if (string.IsNullOrEmpty(response.Data))
@@ -202,17 +203,19 @@ public class SteamInventory
     }
 
 
-    private static string GetUrl(ulong steamid64, uint appid, string context)
+    private static string GetUrl(ulong steamid64, uint appid, string context, bool trading)
     {
         string url = $"https://steamcommunity.com/profiles/{steamid64}/inventory/json";
-        if (appid == 440) return url + "/440/2/?l=english";
-        else if (appid == 730) return url + "/730/2/?l=english";
-        else if (appid == 753) return url + $"/753/{context}/?l=english";
-        else if (appid == 218620) return url + "/218620/2/?l=english";
-        else if (appid == 252490) return url + "/252490/2/?l=english";
-        else if (appid == 570) return url + "/570/2/?l=english";
-        else if (appid == 433850) return url + "/433850/1/?l=english";
-        return $"{url}/{appid}/{context}/?l=english";
+        if (appid == 440) url += "/440/2/?l=english";
+        else if (appid == 730) url += "/730/2/?l=english";
+        else if (appid == 753) url += $"/753/{context}/?l=english";
+        else if (appid == 218620) url += "/218620/2/?l=english";
+        else if (appid == 252490) url += "/252490/2/?l=english";
+        else if (appid == 570) url += "/570/2/?l=english";
+        else if (appid == 433850) url += "/433850/1/?l=english";
+        else url = $"{url}/{appid}/{context}/?l=english";
+        if (trading) url += "&trading=1";
+        return url;
     }
     private static string GetDataReplaced(string data) => data.Replace(",\"descriptions\":\"\"", "")
                 .Replace(",\"owner_descriptions\":\"\"", "")
