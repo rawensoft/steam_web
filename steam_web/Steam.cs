@@ -180,8 +180,12 @@ public static partial class Steam
                 return (null, steamerror);
             }
             try
-            {
-                var conf = JsonSerializer.Deserialize<ConfTradeOffer>(response.Data);
+			{
+				var options = new JsonSerializerOptions
+				{
+					NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
+				};
+				var conf = JsonSerializer.Deserialize<ConfTradeOffer>(response.Data!, options);
                 return (conf, null);
             }
             catch (Exception ex)
@@ -220,8 +224,12 @@ public static partial class Steam
                 return (null, steamerror);
             }
             try
-            {
-                var conf = JsonSerializer.Deserialize<ConfTradeOffer>(response.Data);
+			{
+				var options = new JsonSerializerOptions
+				{
+					NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
+				};
+				var conf = JsonSerializer.Deserialize<ConfTradeOffer>(response.Data!, options);
                 return (conf, null);
             }
             catch (Exception ex)
@@ -765,8 +773,12 @@ public static partial class Steam
                 return (null, steamerror);
             }
             try
-            {
-                var conf = JsonSerializer.Deserialize<ConfTradeOffer>(response.Data);
+			{
+				var options = new JsonSerializerOptions
+				{
+					NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
+				};
+				var conf = JsonSerializer.Deserialize<ConfTradeOffer>(response.Data!, options);
                 return (conf, null);
             }
             catch (Exception ex)
@@ -815,8 +827,12 @@ public static partial class Steam
                 return (null, steamerror);
             }
             try
-            {
-                var conf = JsonSerializer.Deserialize<ConfTradeOffer>(response.Data);
+			{
+				var options = new JsonSerializerOptions
+				{
+					NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
+				};
+				var conf = JsonSerializer.Deserialize<ConfTradeOffer>(response.Data!, options);
                 return (conf, null);
             }
             catch (Exception ex)
