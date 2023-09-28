@@ -3,7 +3,9 @@
 namespace SteamWeb.Extensions;
 public static class ExtensionMethods
 {
-    public static Dictionary<T1, T2> SubDict<T1, T2>(this Dictionary<T1, T2> data, int index, int length)
+    private const string _chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+	public static Dictionary<T1, T2> SubDict<T1, T2>(this Dictionary<T1, T2> data, int index, int length)
     {
         var result = new Dictionary<T1, T2>(length + 1);
 
@@ -138,4 +140,13 @@ public static class ExtensionMethods
     {
         return inventory.rgInventory.Remove($"{classid}_{instanceid}");
     }
+	public static string GetRandomString(this int length)
+	{
+		var random = new Random();
+		var sb = new StringBuilder(length);
+		var lengthChars = _chars.Length;
+		for (int i = 0; i < length; i++)
+			sb.Append(_chars[random.Next(lengthChars)]);
+		return sb.ToString();
+	}
 }
