@@ -112,6 +112,128 @@ public static class Ajax
         => tradeoffer_cancel(session, proxy, trade.u_tradeofferid);
 
     public static async Task<PriceOverview> market_priceoverview_async(ISessionProvider session, System.Net.IWebProxy proxy, uint appid, string country, ushort currency, string market_hash_name)
+	public static Success market_cancelbuyorder(ISessionProvider session, System.Net.IWebProxy proxy, ulong buy_orderid)
+	{
+		var request = new PostRequest(SteamCommunityUrls.Market_CancelBuyOrder, Downloader.AppFormUrlEncoded)
+		{
+			Session = session,
+			Proxy = proxy,
+			IsAjax = true,
+            Referer = SteamCommunityUrls.Market
+		};
+		request.AddPostData("sessionid", session.SessionID);
+        request.AddPostData("buy_orderid", buy_orderid);
+        request.AddHeader("X-Prototype-Version", "1.7");
+		var response = Downloader.Post(request);
+		if (!response.Success)
+			return new();
+        try
+        {
+            var obj = JsonSerializer.Deserialize<Success>(response.Data!);
+            return obj!;
+        }
+        catch (Exception)
+        {
+            return new();
+        }
+    }
+	public static async Task<Success> market_cancelbuyorder_async(ISessionProvider session, System.Net.IWebProxy proxy, ulong buy_orderid)
+	{
+		var request = new PostRequest(SteamCommunityUrls.Market_CancelBuyOrder, Downloader.AppFormUrlEncoded)
+		{
+			Session = session,
+			Proxy = proxy,
+			IsAjax = true,
+			Referer = SteamCommunityUrls.Market
+		};
+		request.AddPostData("sessionid", session.SessionID);
+		request.AddPostData("buy_orderid", buy_orderid);
+		request.AddHeader("X-Prototype-Version", "1.7");
+		var response = await Downloader.PostAsync(request);
+        if (!response.Success)
+            return new();
+        try
+        {
+            var obj = JsonSerializer.Deserialize<Success>(response.Data!);
+            return obj!;
+        }
+        catch (Exception)
+        {
+            return new();
+        }
+    }
+
+	public static DataOrder market_createbuyorder(ISessionProvider session, System.Net.IWebProxy proxy, int currency, uint appid, string market_hash_name, int price_total, ushort quantity)
+	{
+		var request = new PostRequest(SteamCommunityUrls.Market_CreateBuyOrder, Downloader.AppFormUrlEncoded)
+		{
+			Session = session,
+			Proxy = proxy,
+			IsAjax = true,
+			Referer = SteamCommunityUrls.Market_Listings + $"/{appid}/" + Regex.Escape(market_hash_name),
+		};
+		request.AddPostData("sessionid", session.SessionID);
+		request.AddPostData("currency", currency);
+		request.AddPostData("appid", appid);
+		request.AddPostData("market_hash_name", HttpUtility.UrlEncode(market_hash_name), false);
+		request.AddPostData("price_total", price_total);
+		request.AddPostData("quantity", quantity);
+		request.AddPostData("billing_state", "");
+		request.AddPostData("save_my_address", 0);
+		var response = Downloader.Post(request);
+		if (!response.Success)
+			return new();
+		try
+		{
+			var options = new JsonSerializerOptions
+			{
+				NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
+			};
+			var obj = JsonSerializer.Deserialize<DataOrder>(response.Data!, options);
+			return obj!;
+		}
+		catch (Exception)
+		{
+			return new();
+		}
+	}
+	public static async Task<DataOrder> market_createbuyorder_async(ISessionProvider session, System.Net.IWebProxy proxy, int currency, uint appid, string market_hash_name, int price_total, ushort quantity)
+	{
+		var request = new PostRequest(SteamCommunityUrls.Market_CreateBuyOrder, Downloader.AppFormUrlEncoded)
+		{
+			Session = session,
+			Proxy = proxy,
+			IsAjax = true,
+			Referer = SteamCommunityUrls.Market_Listings + $"/{appid}/" + Regex.Escape(market_hash_name),
+            UseVersion2 = true,
+		};
+		request.AddPostData("sessionid", session.SessionID);
+		request.AddPostData("currency", currency);
+		request.AddPostData("appid", appid);
+		request.AddPostData("market_hash_name", HttpUtility.UrlEncode(market_hash_name), false);
+		request.AddPostData("price_total", price_total);
+		request.AddPostData("quantity", quantity);
+		request.AddPostData("billing_state", "");
+		request.AddPostData("save_my_address", 0);
+		var response = await Downloader.PostAsync(request);
+		if (!response.Success)
+			return new();
+		try
+		{
+            var options = new JsonSerializerOptions
+            {
+                NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
+            };
+			var obj = JsonSerializer.Deserialize<DataOrder>(response.Data!, options);
+			return obj!;
+		}
+		catch (Exception)
+		{
+			return new();
+		}
+	}
+
+	public static async Task<PriceOverview> market_priceoverview_async(ISessionProvider session, System.Net.IWebProxy proxy, uint appid, string country, ushort currency, string market_hash_name)
     {
         var request = new GetRequest(SteamCommunityUrls.Market_PriceOverview, proxy, session)
         {
