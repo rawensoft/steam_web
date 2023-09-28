@@ -29,13 +29,14 @@ public static class Ajax
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Success>(response.Data);
-            obj.success = 1;
+            var obj = JsonSerializer.Deserialize<Success>(response.Data!);
+            obj!.success = 1;
             return obj;
         }
         catch (Exception)
-        { }
-        return new();
+		{
+			return new();
+		}
     }
     public static Success sharedfiles_unsubscribeall(ISessionProvider session, System.Net.IWebProxy proxy)
     {
@@ -51,13 +52,14 @@ public static class Ajax
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Success>(response.Data);
-            obj.success = 1;
+            var obj = JsonSerializer.Deserialize<Success>(response.Data!);
+            obj!.success = 1;
             return obj;
         }
         catch (Exception)
-        { }
-        return new();
+		{
+			return new();
+		}
     }
 
     public static async Task<CancelTrade> tradeoffer_cancel_async(ISessionProvider session, System.Net.IWebProxy proxy, ulong tradeofferid)
@@ -74,14 +76,19 @@ public static class Ajax
         if (!response.Success)
             return new();
         try
-        {
-            var obj = JsonSerializer.Deserialize<CancelTrade>(response.Data);
-            obj.success = true;
+		{
+			var options = new JsonSerializerOptions
+			{
+				NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
+			};
+			var obj = JsonSerializer.Deserialize<CancelTrade>(response.Data!, options);
+            obj!.success = true;
             return obj;
         }
         catch (Exception)
-        { }
-        return new();
+		{
+			return new();
+		}
     }
     public static async Task<CancelTrade> tradeoffer_cancel_async(ISessionProvider session, System.Net.IWebProxy proxy, API.Models.IEconService.Trade trade)
         => await tradeoffer_cancel_async(session, proxy, trade.u_tradeofferid);
@@ -99,19 +106,23 @@ public static class Ajax
         if (!response.Success)
             return new();
         try
-        {
-            var obj = JsonSerializer.Deserialize<CancelTrade>(response.Data);
-            obj.success = true;
+		{
+			var options = new JsonSerializerOptions
+			{
+				NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
+			};
+			var obj = JsonSerializer.Deserialize<CancelTrade>(response.Data!, options);
+            obj!.success = true;
             return obj;
         }
-        catch (Exception ex)
-        { }
-        return new();
+        catch (Exception)
+		{
+			return new();
+		}
     }
     public static CancelTrade tradeoffer_cancel(ISessionProvider session, System.Net.IWebProxy proxy, API.Models.IEconService.Trade trade)
         => tradeoffer_cancel(session, proxy, trade.u_tradeofferid);
 
-    public static async Task<PriceOverview> market_priceoverview_async(ISessionProvider session, System.Net.IWebProxy proxy, uint appid, string country, ushort currency, string market_hash_name)
 	public static Success market_cancelbuyorder(ISessionProvider session, System.Net.IWebProxy proxy, ulong buy_orderid)
 	{
 		var request = new PostRequest(SteamCommunityUrls.Market_CancelBuyOrder, Downloader.AppFormUrlEncoded)

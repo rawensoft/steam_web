@@ -84,14 +84,14 @@ public static partial class Steam
         if (!response.Success)
             return (false, response.ErrorMessage!);
 
-        var doc = new HtmlParser().ParseDocument(response.Data);
+        var doc = new HtmlParser().ParseDocument(response.Data!);
         var elements = doc.GetElementsByClassName("phone_box");
         if (elements.Length > 0)
         {
             string text = elements[0].TextContent.Replace("\t", "").Replace("\r", "").Replace("\n", "");
             return (true, text);
         }
-        return (false, response.Data);
+        return (false, response.Data!);
     }
     public static (bool, string) SwitchToNonGuard(ISessionProvider session, System.Net.IWebProxy proxy)
     {
@@ -115,14 +115,14 @@ public static partial class Steam
         if (!response.Success)
             return (false, response.ErrorMessage!);
 
-        var doc = new HtmlParser().ParseDocument(response.Data);
+        var doc = new HtmlParser().ParseDocument(response.Data!);
         var elements = doc.GetElementsByClassName("phone_box");
         if (elements.Length > 0)
         {
             string text = elements[0].TextContent.Replace("\t", "").Replace("\r", "").Replace("\n", "");
             return (true, text);
         }
-        return (false, response.Data);
+        return (false, response.Data!);
     }
 
     /// <summary>
@@ -176,7 +176,7 @@ public static partial class Steam
             var response = Downloader.Post(request);
             if (!response.Success)
             {
-                var steamerror = SteamTradeError.Deserialize(response.Data);
+                var steamerror = SteamTradeError.Deserialize(response.Data!);
                 return (null, steamerror);
             }
             try
@@ -220,7 +220,7 @@ public static partial class Steam
             var response = await Downloader.PostAsync(request);
             if (!response.Success)
             {
-                var steamerror = SteamTradeError.Deserialize(response.Data);
+                var steamerror = SteamTradeError.Deserialize(response.Data!);
                 return (null, steamerror);
             }
             try
@@ -285,7 +285,7 @@ public static partial class Steam
         var response = await Downloader.GetAsync(new(SteamPoweredUrls.Account, proxy, session));
         if (!response.Success)
             return new();
-        return AboutProfile.Deserialize(response.Data);
+        return AboutProfile.Deserialize(response.Data!);
     }
     /// <summary>
     /// Получает информацию со страницы <see href="https://store.steampowered.com/account/">store.steampowered.com/account</see>
@@ -296,22 +296,22 @@ public static partial class Steam
         var response = Downloader.Get(new(SteamPoweredUrls.Account, proxy, session));
         if (!response.Success)
             return new();
-        return AboutProfile.Deserialize(response.Data);
+        return AboutProfile.Deserialize(response.Data!);
     }
 
     public static async Task<WebApiKey> GetWebAPIKeyAsync(ISessionProvider session, System.Net.IWebProxy proxy)
     {
         var response = await Downloader.GetAsync(new(SteamCommunityUrls.Dev_APIKey, proxy, session));
         if (!response.Success)
-            return new WebApiKey(response.Data);
+            return new WebApiKey(response.Data!);
         else if (response.Data == "<!DOCTYPE html>")
         {
             var to1 = new WebApiKey("Бан\\блок на запросы.");
             return to1;
         }
-        else if (response.Data.Contains("<p><a style=\"font-size: 16px;\" href=\"https://support.steampowered.com/kb_article.php?ref=3330-IAGK-7663\">"))
+        else if (response.Data!.Contains("<p><a style=\"font-size: 16px;\" href=\"https://support.steampowered.com/kb_article.php?ref=3330-IAGK-7663\">"))
         {
-            var to1 = new WebApiKey(response.Data.GetBetween("<p>", "</p>"));
+            var to1 = new WebApiKey(response.Data.GetBetween("<p>", "</p>")!);
             return to1;
         }
         else if (response.Data.Contains("Register for a new Steam Web API Key"))
@@ -334,7 +334,7 @@ public static partial class Steam
             return to1;
         }
         HtmlParser html = new HtmlParser();
-        var parser = await html.ParseDocumentAsync(response.Data);
+        var parser = await html.ParseDocumentAsync(response.Data!);
         var children = parser.GetElementById("bodyContents_ex")?.Children;
         if (children == null)
             return new("Неверная страница");
@@ -345,15 +345,15 @@ public static partial class Steam
     {
         var response = Downloader.Get(new(SteamCommunityUrls.Dev_APIKey, proxy, session));
         if (!response.Success)
-            return new WebApiKey(response.Data);
+            return new WebApiKey(response.Data!);
         else if (response.Data == "<!DOCTYPE html>")
         {
             var to1 = new WebApiKey("Бан\\блок на запросы.");
             return to1;
         }
-        else if (response.Data.Contains("<p><a style=\"font-size: 16px;\" href=\"https://support.steampowered.com/kb_article.php?ref=3330-IAGK-7663\">"))
+        else if (response.Data!.Contains("<p><a style=\"font-size: 16px;\" href=\"https://support.steampowered.com/kb_article.php?ref=3330-IAGK-7663\">"))
         {
-            var to1 = new WebApiKey(response.Data.GetBetween("<p>", "</p>"));
+            var to1 = new WebApiKey(response.Data.GetBetween("<p>", "</p>")!);
             return to1;
         }
         else if (response.Data.Contains("Register for a new Steam Web API Key"))
@@ -376,7 +376,7 @@ public static partial class Steam
             return to1;
         }
         HtmlParser html = new HtmlParser();
-        var parser = html.ParseDocument(response.Data);
+        var parser = html.ParseDocument(response.Data!);
         var children = parser.GetElementById("bodyContents_ex")?.Children;
         if (children == null)
             return new("Неверная страница");
@@ -393,7 +393,7 @@ public static partial class Steam
         var response = Downloader.Get(new(SteamCommunityUrls.Market_EligibilityCheck, proxy, session));
         if (!response.Success || response.Cookie == null)
             return null;
-        else if ((!response.Data.Contains("menuitem supernav username persona_name_text_content") &&
+        else if ((!response.Data!.Contains("menuitem supernav username persona_name_text_content") &&
             !response.Data.Contains("whiteLink persona_name_text_content")) ||
             response.Data.Contains("see, edit, or remove your Community Market listings."))
             return null;
@@ -418,7 +418,7 @@ public static partial class Steam
         var response = await Downloader.GetAsync(new(SteamCommunityUrls.Market_EligibilityCheck, proxy, session));
         if (!response.Success || response.Cookie == null)
             return null;
-        else if ((!response.Data.Contains("menuitem supernav username persona_name_text_content") &&
+        else if ((!response.Data!.Contains("menuitem supernav username persona_name_text_content") &&
             !response.Data.Contains("whiteLink persona_name_text_content")) ||
             response.Data.Contains("see, edit, or remove your Community Market listings."))
             return null;
@@ -427,7 +427,7 @@ public static partial class Steam
             if (item.Replace(" ", "").StartsWith("webTradeEligibility"))
             {
                 var web = item.Replace(" ", "").Split('=')[1];
-                web = System.Web.HttpUtility.UrlDecode(web);
+                web = HttpUtility.UrlDecode(web);
                 var obj = JsonSerializer.Deserialize<WebTradeEligibility>(web);
                 return obj;
             }
@@ -444,7 +444,7 @@ public static partial class Steam
         var response = Downloader.Get(new(SteamCommunityUrls.Market_EligibilityCheck, proxy, session));
         if (!response.Success)
             return (false, null, null);
-        else if (response.Data.Contains("link_forgot_password"))
+        else if (response.Data!.Contains("link_forgot_password"))
             return (false, null, null);
 
         string? trade_url = null;
@@ -478,7 +478,7 @@ public static partial class Steam
         var response = await Downloader.GetAsync(new(SteamCommunityUrls.Market_EligibilityCheck, proxy, session));
         if (!response.Success)
             return (false, null, null);
-        else if (response.Data.Contains("link_forgot_password"))
+        else if (response.Data!.Contains("link_forgot_password"))
             return (false, null, null);
 
         string? trade_url = null;
@@ -717,7 +717,7 @@ public static partial class Steam
         var response = Downloader.Get(new(url, proxy, session, referer));
         if (!response.Success || response.Data.IsEmpty())
             return new(1);
-        return AppContextData.Deserialize(response.Data);
+        return AppContextData.Deserialize(response.Data!);
     }
     /// <summary>
     /// Получает доступные инвентари аккаунта
@@ -736,7 +736,7 @@ public static partial class Steam
         var response = await Downloader.GetAsync(new(url, proxy, session, referer));
         if (!response.Success || response.Data.IsEmpty())
             return new(1);
-        return AppContextData.Deserialize(response.Data);
+        return AppContextData.Deserialize(response.Data!);
     }
 
     /// <summary>
@@ -769,7 +769,7 @@ public static partial class Steam
         {
             if (!response.Success)
             {
-                var steamerror = SteamTradeError.Deserialize(response.Data);
+                var steamerror = SteamTradeError.Deserialize(response.Data!);
                 return (null, steamerror);
             }
             try
@@ -823,7 +823,7 @@ public static partial class Steam
         {
             if (!response.Success)
             {
-                var steamerror = SteamTradeError.Deserialize(response.Data);
+                var steamerror = SteamTradeError.Deserialize(response.Data!);
                 return (null, steamerror);
             }
             try
@@ -862,8 +862,8 @@ public static partial class Steam
         if (!response.Success) return new() { errmsg = "Не удалось отправить запрос" };
         try
         {
-            var obj = JsonSerializer.Deserialize<InvormationProfileResponse>(response.Data);
-            return obj;
+            var obj = JsonSerializer.Deserialize<InvormationProfileResponse>(response.Data!);
+            return obj!;
         }
         catch (Exception)
         {
@@ -886,11 +886,11 @@ public static partial class Steam
         .AddPostData("doSub", 1).AddPostData("json", 1);
         var response = await Downloader.UploadFilesToRemoteUrlAsync(request, filename);
         if (!response.Success)
-            return new() { success = false, message = response.Data };
+            return new() { success = false, message = response.Data! };
         try
         {
-            var obj = JsonSerializer.Deserialize<UploadImageResponse>(response.Data);
-            return obj;
+            var obj = JsonSerializer.Deserialize<UploadImageResponse>(response.Data!);
+            return obj!;
         }
         catch (Exception)
         {
@@ -906,7 +906,7 @@ public static partial class Steam
         else if (response.Data == "<!DOCTYPE html>")
             return new OperationProgress("Бан на запросы");
         HtmlParser html = new HtmlParser();
-        var parser = await html.ParseDocumentAsync(response.Data);
+        var parser = await html.ParseDocumentAsync(response.Data!);
         var personaldata_elements_container = parser.GetElementById("personaldata_elements_container");
         if (personaldata_elements_container == null)
         {
