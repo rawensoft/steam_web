@@ -1,8 +1,6 @@
 ﻿using SteamWeb.API.Models.IEconService;
 using SteamWeb.Web;
-using System;
 using System.Text.Json;
-using System.Threading.Tasks;
 using SteamWeb.API.Models;
 using SteamWeb.Extensions;
 
@@ -84,16 +82,41 @@ public static class IEconService
             return new();
         }
     }
-
+	
     /// <summary>
-    /// Gets a specific trade offer
-    /// </summary>
-    /// <param name="key"></param>
-    /// <param name="tradeofferid"></param>
-    /// <param name="get_descriptions">If set, the item display data for the items included in the returned trade offers will also be returned. If one or more descriptions can't be retrieved, then your request will fail.</param>
-    /// <param name="language"></param>
-    /// <returns></returns>
-    public static Response<TradeOffer> GetTradeOffer(Proxy proxy, string key, ulong tradeofferid, bool get_descriptions = false, string language = null)
+	/// Returns the estimated hold duration and end date that a trade with a user would have
+	/// </summary>
+	/// <param name="key"></param>
+	/// <param name="steamid_target">User you are trading with (SteamID64)</param>
+	/// <param name="trade_offer_access_token">A special token that allows for trade offers from non-friends.</param>
+	/// <returns></returns>
+	public static Response<TradeHoldDuration> GetTradeHoldDurations(Proxy? proxy, string key, ulong steamid_target, string trade_offer_access_token)
+	{
+		var request = new GetRequest(SteamPoweredUrls.IEconService_GetTradeHoldDurations_v1, proxy).AddQuery("key", key)
+			.AddQuery("steamid_target", steamid_target).AddQuery("trade_offer_access_token", trade_offer_access_token);
+		var response = Downloader.Get(request);
+		if (!response.Success) return new();
+		try
+		{
+			var obj = JsonSerializer.Deserialize<Response<TradeHoldDuration>>(response.Data!);
+			obj!.success = true;
+			return obj;
+		}
+		catch (Exception)
+		{
+			return new();
+		}
+	}
+
+	/// <summary>
+	/// Gets a specific trade offer
+	/// </summary>
+	/// <param name="key"></param>
+	/// <param name="tradeofferid"></param>
+	/// <param name="get_descriptions">If set, the item display data for the items included in the returned trade offers will also be returned. If one or more descriptions can't be retrieved, then your request will fail.</param>
+	/// <param name="language"></param>
+	/// <returns></returns>
+	public static Response<TradeOffer> GetTradeOffer(Proxy proxy, string key, ulong tradeofferid, bool get_descriptions = false, string language = null)
     {
         var request = new GetRequest(SteamPoweredUrls.IEconService_GetTradeOffer_v1, proxy).AddQuery("key", key).AddQuery("tradeofferid", tradeofferid);
         if (get_descriptions)
