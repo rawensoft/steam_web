@@ -1,6 +1,6 @@
 ﻿namespace SteamWeb.Script.DTO;
 
-public record Success
+public class Success
 {
-    public int success { get; internal set; } = 0;
+    public int success { get; set; } = 0;
 }

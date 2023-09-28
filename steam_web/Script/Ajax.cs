@@ -1,10 +1,8 @@
 ﻿using System.Text.Json;
-using System.Threading.Tasks;
 using SteamWeb.Web;
 using AngleSharp.Html.Parser;
 using SteamWeb.Extensions;
 using SteamWeb.Script.Enums;
-using System;
 using System.Web;
 using SteamWeb.Script.DTO;
 using SteamWeb.Script.DTO.CookiePreferences;
