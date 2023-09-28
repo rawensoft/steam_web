@@ -11,6 +11,7 @@ using SteamWeb.Script.DTO.CookiePreferences;
 using SteamWeb.Script.DTO.Listinging;
 using SteamWeb.Script.DTO.Historing;
 using SteamWeb.Auth.Interfaces;
+using System.Text.RegularExpressions;
 
 namespace SteamWeb.Script;
 public static class Ajax

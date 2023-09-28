@@ -8,7 +8,7 @@ public class Confirmation
     public ConfirmationType type { get; init; }
     public string type_name { get; init; }
     public string id { get; init; }
-    public string creator_id { get; init; }
+    public ulong creator_id { get; init; }
     public string nonce { get; init; }
     public bool multi { get; init; } = false;
     public string headline { get; init; }

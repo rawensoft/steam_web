@@ -745,7 +745,7 @@ public static partial class Steam
     /// <param name="tradeofferid">id трейда для принятия</param>
     /// <param name="steamid_other">steamid32 аккаунта, который отослал трейд</param>
     /// <returns>False трейд не принят, но иногда может быть принят, для точности используйте API</returns>
-    public static (ConfTradeOffer?, SteamTradeError?) AcceptTrade(ISessionProvider session, System.Net.IWebProxy proxy, long tradeofferid, uint steamid_other)
+    public static (ConfTradeOffer?, SteamTradeError?) AcceptTrade(ISessionProvider session, System.Net.IWebProxy proxy, ulong tradeofferid, uint steamid_other)
         => AcceptTrade(session, proxy, tradeofferid, Steam32ToSteam64(steamid_other));
     /// <summary>
     /// Принимает трейд
@@ -753,7 +753,7 @@ public static partial class Steam
     /// <param name="tradeofferid">id трейда для принятия</param>
     /// <param name="steamid_other">steamid32 аккаунта, который отослал трейд</param>
     /// <returns>False трейд не принят, но иногда может быть принят, для точности используйте API</returns>
-    public static (ConfTradeOffer?, SteamTradeError?) AcceptTrade(ISessionProvider session, System.Net.IWebProxy proxy, long tradeofferid, ulong steamid64)
+    public static (ConfTradeOffer?, SteamTradeError?) AcceptTrade(ISessionProvider session, System.Net.IWebProxy proxy, ulong tradeofferid, ulong steamid64)
     {
         var request = new PostRequest($"https://steamcommunity.com/tradeoffer/{tradeofferid}/accept", Downloader.AppFormUrlEncoded)
         {
@@ -792,14 +792,14 @@ public static partial class Steam
         }
     }
     public static (ConfTradeOffer?, SteamTradeError?) AcceptTrade(ISessionProvider session, System.Net.IWebProxy proxy, Trade trade) =>
-        AcceptTrade(session, proxy, (long)trade.u_tradeofferid, trade.accountid_other);
+        AcceptTrade(session, proxy, trade.u_tradeofferid, trade.accountid_other);
     /// <summary>
     /// Принимает трейд
     /// </summary>
     /// <param name="tradeofferid">id трейда для принятия</param>
     /// <param name="steamid_other">steamid32 аккаунта, который отослал трейд</param>
     /// <returns>False трейд не принят, но иногда может быть принят, для точности используйте API</returns>
-    public static async Task<(ConfTradeOffer?, SteamTradeError?)> AcceptTradeAsync(ISessionProvider session, System.Net.IWebProxy proxy, long tradeofferid, uint steamid_other)
+    public static async Task<(ConfTradeOffer?, SteamTradeError?)> AcceptTradeAsync(ISessionProvider session, System.Net.IWebProxy proxy, ulong tradeofferid, uint steamid_other)
         => await AcceptTradeAsync(session, proxy, tradeofferid, Steam32ToSteam64(steamid_other));
     /// <summary>
     /// Принимает трейд
@@ -807,7 +807,7 @@ public static partial class Steam
     /// <param name="tradeofferid">id трейда для принятия</param>
     /// <param name="steamid_other">steamid32 аккаунта, который отослал трейд</param>
     /// <returns>False трейд не принят, но иногда может быть принят, для точности используйте API</returns>
-    public static async Task<(ConfTradeOffer?, SteamTradeError?)> AcceptTradeAsync(ISessionProvider session, System.Net.IWebProxy proxy, long tradeofferid, ulong steamid64)
+    public static async Task<(ConfTradeOffer?, SteamTradeError?)> AcceptTradeAsync(ISessionProvider session, System.Net.IWebProxy proxy, ulong tradeofferid, ulong steamid64)
     {
         var request = new PostRequest($"https://steamcommunity.com/tradeoffer/{tradeofferid}/accept", Downloader.AppFormUrlEncoded)
         {
