@@ -277,7 +277,11 @@ public class SteamGuardAccount
         var response = Downloader.Get(request);
         if (!response.Success)
             return new Confirmation[0];
-        var confs = JsonSerializer.Deserialize<ConfirmationsResponse>(response.Data);
+        var options = new JsonSerializerOptions
+        {
+            NumberHandling = JsonNumberHandling.AllowReadingFromString
+        };
+        var confs = JsonSerializer.Deserialize<ConfirmationsResponse>(response.Data!, options);
         return confs!.conf;
     }
     public async Task<Confirmation[]> FetchConfirmationsAsync()
@@ -296,7 +300,11 @@ public class SteamGuardAccount
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new Confirmation[0];
-        var confs = JsonSerializer.Deserialize<ConfirmationsResponse>(response.Data);
+		var options = new JsonSerializerOptions
+		{
+			NumberHandling = JsonNumberHandling.AllowReadingFromString
+		};
+		var confs = JsonSerializer.Deserialize<ConfirmationsResponse>(response.Data!, options);
         return confs!.conf;
     }
 
