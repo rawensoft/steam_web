@@ -169,8 +169,9 @@ public static partial class Steam
             Referer = $"{SteamCommunityUrls.TradeOffer_New}/?partner={offerpartner}"
         }
         .AddPostData("sessionid", session.SessionID).AddPostData("serverid", 1).AddPostData("partner", Steam32ToSteam64(offerpartner))
-        .AddPostData("tradeoffermessage", tradeoffermessage, true).AddPostData("json_tradeoffer", HttpUtility.UrlEncode(JsonSerializer.Serialize(trade)), false)
-        .AddPostData("captcha", "").AddPostData("trade_offer_create_params", HttpUtility.UrlEncode(JsonSerializer.Serialize(token)), false);
+        .AddPostData("tradeoffermessage", HttpUtility.UrlEncode(tradeoffermessage), false)
+        .AddPostData("json_tradeoffer", HttpUtility.UrlEncode(JsonSerializer.Serialize(trade)), false).AddPostData("captcha", "")
+        .AddPostData("trade_offer_create_params", HttpUtility.UrlEncode(JsonSerializer.Serialize(token)), false);
         try
         {
             var response = Downloader.Post(request);
@@ -213,8 +214,9 @@ public static partial class Steam
             Referer = $"{SteamCommunityUrls.TradeOffer_New}/?partner={offerpartner}"
         }
         .AddPostData("sessionid", session.SessionID).AddPostData("serverid", 1).AddPostData("partner", Steam32ToSteam64(offerpartner))
-        .AddPostData("tradeoffermessage", HttpUtility.UrlEncode(tradeoffermessage), false).AddPostData("json_tradeoffer", HttpUtility.UrlEncode(JsonSerializer.Serialize(trade)), false)
-        .AddPostData("captcha", "").AddPostData("trade_offer_create_params", HttpUtility.UrlEncode(JsonSerializer.Serialize(token)), false);
+        .AddPostData("tradeoffermessage", HttpUtility.UrlEncode(tradeoffermessage), false)
+        .AddPostData("json_tradeoffer", HttpUtility.UrlEncode(JsonSerializer.Serialize(trade)), false).AddPostData("captcha", "")
+        .AddPostData("trade_offer_create_params", HttpUtility.UrlEncode(JsonSerializer.Serialize(token)), false);
         try
         {
             var response = await Downloader.PostAsync(request);
