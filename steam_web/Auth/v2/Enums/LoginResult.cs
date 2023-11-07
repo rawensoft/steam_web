@@ -8,5 +8,8 @@ public enum LoginResult : byte
     BadCookie,
     NeedAprove,
     RateExceeded,
-    //NeedCaptcha
+	//NeedCaptcha,
+	ProxyError,
+    Timeout,
+    ConnectionError
 }
