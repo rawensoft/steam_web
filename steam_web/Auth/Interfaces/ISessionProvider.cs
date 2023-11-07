@@ -7,6 +7,7 @@ public interface ISessionProvider
 
     public void AddCookieToContainer(System.Net.CookieContainer container, Uri url);
     public void RewriteCookie(System.Net.CookieContainer container);
+	public void RewriteCookie(System.Net.CookieCollection collection);
 
-    public string ToStringCookie();
+	public string ToStringCookie();
 }
