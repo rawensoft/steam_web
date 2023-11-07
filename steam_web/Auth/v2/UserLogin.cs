@@ -63,17 +63,20 @@ public class UserLogin
     private bool? _isCookieNotGet = null;
     private bool? _isRSANotGet = null;
     private LoginResult _result = LoginResult.GeneralFailure;
+	private CancellationToken? _cts = null;
 
-    public UserLogin(string login, string passwd, EAuthTokenPlatformType platform)
+	public UserLogin(string login, string passwd, EAuthTokenPlatformType platform)
     {
         Login = login;
         Password = passwd;
         _platform = platform;
-
     }
     public UserLogin(string login, string passwd, EAuthTokenPlatformType platform, System.Net.IWebProxy proxy) : this(login, passwd, platform) => _proxy = proxy;
+	public UserLogin(string login, string passwd, EAuthTokenPlatformType platform, System.Net.IWebProxy proxy, CancellationToken? cts) :
+        this(login, passwd, platform, proxy) => _cts = cts;
+	public UserLogin(string login, string passwd, EAuthTokenPlatformType platform, CancellationToken? cts) : this(login, passwd, platform) => _cts = cts;
 
-    private void SetEnumResponse()
+	private void SetEnumResponse()
     {
         if (FullyEnrolled)
             _result = LoginResult.LoginOkay;

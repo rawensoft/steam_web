@@ -18,7 +18,7 @@ public static class IAuthenticationService
     /// <param name="proxy"></param>
     /// <param name="session"></param>
     /// <returns>default если ошибка в запросе или нет сессии</returns>
-    public static async Task<Response<AuthSessionForAccount>> GetAuthSessionsForAccountAsync(SessionData session, Proxy proxy)
+    public static async Task<Response<AuthSessionForAccount>> GetAuthSessionsForAccountAsync(SessionData session, Proxy proxy, CancellationToken? cts = null)
     {
         if (session == null)
             return default;
@@ -27,8 +27,9 @@ public static class IAuthenticationService
             Session = session,
             Proxy = proxy,
             UserAgent = SessionData.UserAgentMobile,
-            UseVersion2 = true
-        }.AddQuery("access_token", session.AccessToken);
+            UseVersion2 = true,
+			CancellationToken = cts
+		}.AddQuery("access_token", session.AccessToken);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return default;
@@ -45,7 +46,7 @@ public static class IAuthenticationService
     /// <param name="proxy"></param>
     /// <param name="session"></param>
     /// <returns>default если ошибка в запросе или нет сессии</returns>
-    public static Response<AuthSessionForAccount> GetAuthSessionsForAccount(SessionData session, Proxy proxy)
+    public static Response<AuthSessionForAccount> GetAuthSessionsForAccount(SessionData session, Proxy proxy, CancellationToken? cts = null)
     {
         if (session == null)
             return default;
@@ -54,8 +55,9 @@ public static class IAuthenticationService
             Session = session,
             Proxy = proxy,
             UserAgent = SessionData.UserAgentMobile,
-            UseVersion2 = true
-        }.AddQuery("access_token", session.AccessToken);
+            UseVersion2 = true,
+			CancellationToken = cts
+		}.AddQuery("access_token", session.AccessToken);
         var response = Downloader.Get(request);
         if (!response.Success)
             return default;
@@ -76,7 +78,7 @@ public static class IAuthenticationService
     /// <param name="proxy"></param>
     /// <param name="session"></param>
     /// <returns></returns>
-    public static async Task<(EResult, UpdateTokenResponse)> GenerateAccessTokenForAppAsync(SessionData session, Proxy proxy)
+    public static async Task<(EResult, UpdateTokenResponse)> GenerateAccessTokenForAppAsync(SessionData session, Proxy proxy, CancellationToken? cts = null)
     {
         if (session == null)
             return (EResult.Invalid, default);
@@ -91,8 +93,9 @@ public static class IAuthenticationService
             Session = session,
             Proxy = proxy,
             UserAgent = SessionData.UserAgentMobile,
-            AccessToken = session.AccessToken
-        };
+            AccessToken = session.AccessToken,
+			CancellationToken = cts
+		};
         using var response = await Downloader.PostProtobufAsync(request);
         if (response.EResult != EResult.OK)
             return (response.EResult, default);
@@ -115,7 +118,7 @@ public static class IAuthenticationService
     /// <param name="proxy"></param>
     /// <param name="session"></param>
     /// <returns></returns>
-    public static (EResult, UpdateTokenResponse) GenerateAccessTokenForApp(SessionData session, Proxy proxy)
+    public static (EResult, UpdateTokenResponse) GenerateAccessTokenForApp(SessionData session, Proxy proxy, CancellationToken? cts = null)
     {
         if (session == null)
             return (EResult.Invalid, default);
@@ -130,7 +133,8 @@ public static class IAuthenticationService
             Session = session,
             Proxy = proxy,
             UserAgent = SessionData.UserAgentMobile,
-            AccessToken = session.AccessToken
+            AccessToken = session.AccessToken,
+            CancellationToken = cts
         };
         using var response = Downloader.PostProtobuf(request);
         if (response.EResult != EResult.OK)

@@ -2,7 +2,6 @@
 using RestSharp;
 using System.Web;
 using SteamWeb.Auth.Interfaces;
-using System.Text.RegularExpressions;
 
 namespace SteamWeb.Web.DTO;
 
@@ -23,8 +22,9 @@ public class GetRequest
     public bool IsAjax { get; set; } = false;
     public bool IsMobile { get; set; } = false;
     public int Timeout { get; set; } = 30000;
+	public CancellationToken? CancellationToken { get; init; } = null;
 
-    public GetRequest(string url) => Url = url;
+	public GetRequest(string url) => Url = url;
     public GetRequest(string url, IWebProxy? proxy) : this(url) => Proxy = proxy;
     public GetRequest(string url, ISessionProvider? session) : this(url) => Session = session;
     public GetRequest(string url, IWebProxy? proxy, ISessionProvider? session) : this(url, proxy) => Session = session;

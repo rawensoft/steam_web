@@ -14,8 +14,9 @@ public class ProtobufRequest
     public string? Cookie { get; init; }
     public bool IsMobile { get; init; } = true;
     public int Timeout { get; set; } = 30000;
+	public CancellationToken? CancellationToken { get; init; } = null;
 
-    public ProtobufRequest(string url, string protoData)
+	public ProtobufRequest(string url, string protoData)
     {
         Url = url;
         //ProtoData = System.Web.HttpUtility.UrlEncode(protoData);

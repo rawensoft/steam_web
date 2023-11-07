@@ -14,14 +14,15 @@ using System.Text.RegularExpressions;
 namespace SteamWeb.Script;
 public static class Ajax
 {
-    public static async Task<Success> sharedfiles_unsubscribeall_async(ISessionProvider session, System.Net.IWebProxy proxy)
+    public static async Task<Success> sharedfiles_unsubscribeall_async(ISessionProvider session, System.Net.IWebProxy proxy, CancellationToken? cts = null)
     {
         var request = new PostRequest(SteamCommunityUrls.SharedFiles_UnsubscribeAll, Downloader.AppFormUrlEncoded)
         {
             Session = session,
             Proxy = proxy,
-            IsAjax = true
-        };
+            IsAjax = true,
+			CancellationToken = cts
+		};
         request.AddPostData("sessionid", session.SessionID).AddPostData("appid", 0).AddPostData("filetype", 18);
         var response = await Downloader.PostAsync(request);
         if (!response.Success)
@@ -37,14 +38,15 @@ public static class Ajax
 			return new();
 		}
     }
-    public static Success sharedfiles_unsubscribeall(ISessionProvider session, System.Net.IWebProxy proxy)
+    public static Success sharedfiles_unsubscribeall(ISessionProvider session, System.Net.IWebProxy proxy, CancellationToken? cts = null)
     {
         var request = new PostRequest(SteamCommunityUrls.SharedFiles_UnsubscribeAll, Downloader.AppFormUrlEncoded)
         {
             Session = session,
             Proxy = proxy,
-            IsAjax = true
-        };
+            IsAjax = true,
+			CancellationToken = cts
+		};
         request.AddPostData("sessionid", session.SessionID).AddPostData("appid", 0).AddPostData("filetype", 18);
         var response = Downloader.Post(request);
         if (!response.Success)
@@ -61,15 +63,16 @@ public static class Ajax
 		}
     }
 
-    public static async Task<CancelTrade> tradeoffer_cancel_async(ISessionProvider session, System.Net.IWebProxy proxy, ulong tradeofferid)
+    public static async Task<CancelTrade> tradeoffer_cancel_async(ISessionProvider session, System.Net.IWebProxy proxy, ulong tradeofferid, CancellationToken? cts = null)
     {
         string url = $"https://steamcommunity.com/tradeoffer/{tradeofferid}/cancel";
         var request = new PostRequest(url, Downloader.AppFormUrlEncoded)
         {
             Session = session,
             Proxy = proxy,
-            IsAjax = true
-        };
+            IsAjax = true,
+			CancellationToken = cts
+		};
         request.AddPostData("sessionid", session.SessionID);
         var response = await Downloader.PostAsync(request);
         if (!response.Success)
@@ -89,17 +92,18 @@ public static class Ajax
 			return new();
 		}
     }
-    public static async Task<CancelTrade> tradeoffer_cancel_async(ISessionProvider session, System.Net.IWebProxy proxy, API.Models.IEconService.Trade trade)
-        => await tradeoffer_cancel_async(session, proxy, trade.u_tradeofferid);
-    public static CancelTrade tradeoffer_cancel(ISessionProvider session, System.Net.IWebProxy proxy, ulong tradeofferid)
+    public static async Task<CancelTrade> tradeoffer_cancel_async(ISessionProvider session, System.Net.IWebProxy proxy, API.Models.IEconService.Trade trade, CancellationToken? cts = null)
+        => await tradeoffer_cancel_async(session, proxy, trade.u_tradeofferid, cts);
+    public static CancelTrade tradeoffer_cancel(ISessionProvider session, System.Net.IWebProxy proxy, ulong tradeofferid, CancellationToken? cts = null)
     {
         string url = $"https://steamcommunity.com/tradeoffer/{tradeofferid}/cancel";
         var request = new PostRequest(url, Downloader.AppFormUrlEncoded)
         {
             Session = session,
             Proxy = proxy,
-            IsAjax = true
-        };
+            IsAjax = true,
+			CancellationToken = cts
+		};
         request.AddPostData("sessionid", session.SessionID);
         var response = Downloader.Post(request);
         if (!response.Success)
@@ -119,17 +123,18 @@ public static class Ajax
 			return new();
 		}
     }
-    public static CancelTrade tradeoffer_cancel(ISessionProvider session, System.Net.IWebProxy proxy, API.Models.IEconService.Trade trade)
-        => tradeoffer_cancel(session, proxy, trade.u_tradeofferid);
+    public static CancelTrade tradeoffer_cancel(ISessionProvider session, System.Net.IWebProxy proxy, API.Models.IEconService.Trade trade, CancellationToken? cts = null)
+        => tradeoffer_cancel(session, proxy, trade.u_tradeofferid, cts);
 
-	public static Success market_cancelbuyorder(ISessionProvider session, System.Net.IWebProxy proxy, ulong buy_orderid)
+	public static Success market_cancelbuyorder(ISessionProvider session, System.Net.IWebProxy proxy, ulong buy_orderid, CancellationToken? cts = null)
 	{
 		var request = new PostRequest(SteamCommunityUrls.Market_CancelBuyOrder, Downloader.AppFormUrlEncoded)
 		{
 			Session = session,
 			Proxy = proxy,
 			IsAjax = true,
-            Referer = SteamCommunityUrls.Market
+            Referer = SteamCommunityUrls.Market,
+			CancellationToken = cts
 		};
 		request.AddPostData("sessionid", session.SessionID);
         request.AddPostData("buy_orderid", buy_orderid);
@@ -147,14 +152,15 @@ public static class Ajax
             return new();
         }
     }
-	public static async Task<Success> market_cancelbuyorder_async(ISessionProvider session, System.Net.IWebProxy proxy, ulong buy_orderid)
+	public static async Task<Success> market_cancelbuyorder_async(ISessionProvider session, System.Net.IWebProxy proxy, ulong buy_orderid, CancellationToken? cts = null)
 	{
 		var request = new PostRequest(SteamCommunityUrls.Market_CancelBuyOrder, Downloader.AppFormUrlEncoded)
 		{
 			Session = session,
 			Proxy = proxy,
 			IsAjax = true,
-			Referer = SteamCommunityUrls.Market
+			Referer = SteamCommunityUrls.Market,
+			CancellationToken = cts
 		};
 		request.AddPostData("sessionid", session.SessionID);
 		request.AddPostData("buy_orderid", buy_orderid);
@@ -173,7 +179,7 @@ public static class Ajax
         }
     }
 
-	public static DataOrder market_createbuyorder(ISessionProvider session, System.Net.IWebProxy proxy, int currency, uint appid, string market_hash_name, int price_total, ushort quantity)
+	public static DataOrder market_createbuyorder(ISessionProvider session, System.Net.IWebProxy proxy, int currency, uint appid, string market_hash_name, int price_total, ushort quantity, CancellationToken? cts = null)
 	{
 		var request = new PostRequest(SteamCommunityUrls.Market_CreateBuyOrder, Downloader.AppFormUrlEncoded)
 		{
@@ -181,6 +187,8 @@ public static class Ajax
 			Proxy = proxy,
 			IsAjax = true,
 			Referer = SteamCommunityUrls.Market_Listings + $"/{appid}/" + Regex.Escape(market_hash_name),
+			CancellationToken = cts,
+            UseVersion2 = true
 		};
 		request.AddPostData("sessionid", session.SessionID);
 		request.AddPostData("currency", currency);
@@ -207,7 +215,7 @@ public static class Ajax
 			return new();
 		}
 	}
-	public static async Task<DataOrder> market_createbuyorder_async(ISessionProvider session, System.Net.IWebProxy proxy, int currency, uint appid, string market_hash_name, int price_total, ushort quantity)
+	public static async Task<DataOrder> market_createbuyorder_async(ISessionProvider session, System.Net.IWebProxy proxy, int currency, uint appid, string market_hash_name, int price_total, ushort quantity, CancellationToken? cts = null)
 	{
 		var request = new PostRequest(SteamCommunityUrls.Market_CreateBuyOrder, Downloader.AppFormUrlEncoded)
 		{
@@ -216,6 +224,7 @@ public static class Ajax
 			IsAjax = true,
 			Referer = SteamCommunityUrls.Market_Listings + $"/{appid}/" + Regex.Escape(market_hash_name),
             UseVersion2 = true,
+			CancellationToken = cts
 		};
 		request.AddPostData("sessionid", session.SessionID);
 		request.AddPostData("currency", currency);
@@ -243,14 +252,15 @@ public static class Ajax
 		}
 	}
 
-	public static async Task<PriceOverview> market_priceoverview_async(ISessionProvider session, System.Net.IWebProxy proxy, uint appid, string country, ushort currency, string market_hash_name)
+	public static async Task<PriceOverview> market_priceoverview_async(ISessionProvider session, System.Net.IWebProxy proxy, uint appid, string country, ushort currency, string market_hash_name, CancellationToken? cts = null)
     {
         var request = new GetRequest(SteamCommunityUrls.Market_PriceOverview, proxy, session)
         {
             Session = session,
             Proxy = proxy,
-            IsAjax = true
-        };
+            IsAjax = true,
+			CancellationToken = cts
+		};
         request.AddQuery("market_hash_name", market_hash_name).AddQuery("appid", appid).AddQuery("country", country).AddQuery("currency", currency);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
@@ -264,14 +274,15 @@ public static class Ajax
         { }
         return new();
     }
-    public static PriceOverview market_priceoverview(ISessionProvider session, System.Net.IWebProxy proxy, uint appid, string country, ushort currency, string market_hash_name)
+    public static PriceOverview market_priceoverview(ISessionProvider session, System.Net.IWebProxy proxy, uint appid, string country, ushort currency, string market_hash_name, CancellationToken? cts = null)
     {
         var request = new GetRequest(SteamCommunityUrls.Market_PriceOverview, proxy, session)
         {
             Session = session,
             Proxy = proxy,
-            IsAjax = true
-        };
+            IsAjax = true,
+			CancellationToken = cts
+		};
         request.AddQuery("market_hash_name", market_hash_name).AddQuery("appid", appid).AddQuery("country", country).AddQuery("currency", currency);
         var response = Downloader.Get(request);
         if (!response.Success)
@@ -286,14 +297,15 @@ public static class Ajax
         return new();
     }
 
-    public static async Task<MarketSearchResponse> market_search_render_async(ISessionProvider session, System.Net.IWebProxy proxy, MarketSearchRequest request)
+    public static async Task<MarketSearchResponse> market_search_render_async(ISessionProvider session, System.Net.IWebProxy proxy, MarketSearchRequest request, CancellationToken? cts = null)
     {
         var getRequest = new GetRequest(SteamCommunityUrls.Market_Search_Render, proxy, session)
         {
             Session = session,
             Proxy = proxy,
-            IsAjax = true
-        };
+            IsAjax = true,
+			CancellationToken = cts
+		};
         if (!request.Query.IsEmpty())
             getRequest.AddQuery("query", request.Query);
         getRequest.AddQuery("start", request.Start).AddQuery("count", request.Count).AddQuery("search_descriptions", request.Search_Descriptions)
@@ -324,14 +336,15 @@ public static class Ajax
         { }
         return new();
     }
-    public static MarketSearchResponse market_search_render(ISessionProvider session, System.Net.IWebProxy proxy, MarketSearchRequest request)
+    public static MarketSearchResponse market_search_render(ISessionProvider session, System.Net.IWebProxy proxy, MarketSearchRequest request, CancellationToken? cts = null)
     {
         var getRequest = new GetRequest(SteamCommunityUrls.Market_Search_Render, proxy, session)
         {
             Session = session,
             Proxy = proxy,
-            IsAjax = true
-        };
+            IsAjax = true,
+			CancellationToken = cts
+		};
         if (!request.Query.IsEmpty())
             getRequest.AddQuery("query", request.Query);
         getRequest.AddQuery("start", request.Start).AddQuery("count", request.Count).AddQuery("search_descriptions", request.Search_Descriptions)
@@ -363,9 +376,12 @@ public static class Ajax
         return new();
     }
 
-    public static async Task<Data<WebApiToken>> pointssummary_ajaxgetasyncconfig_async(ISessionProvider session, System.Net.IWebProxy proxy)
+    public static async Task<Data<WebApiToken>> pointssummary_ajaxgetasyncconfig_async(ISessionProvider session, System.Net.IWebProxy proxy, CancellationToken? cts = null)
     {
-        var request = new GetRequest(SteamCommunityUrls.PointsSummary_AjaxGetAsyncConfig, proxy, session, $"https://steamcommunity.com/profiles/{session?.SteamID}");
+        var request = new GetRequest(SteamCommunityUrls.PointsSummary_AjaxGetAsyncConfig, proxy, session, $"https://steamcommunity.com/profiles/{session?.SteamID}")
+        {
+            CancellationToken = cts
+        };
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();
@@ -378,10 +394,13 @@ public static class Ajax
         { }
         return new();
     }
-    public static Data<WebApiToken> pointssummary_ajaxgetasyncconfig(ISessionProvider session, System.Net.IWebProxy proxy)
+    public static Data<WebApiToken> pointssummary_ajaxgetasyncconfig(ISessionProvider session, System.Net.IWebProxy proxy, CancellationToken? cts = null)
     {
-        var request = new GetRequest(SteamCommunityUrls.PointsSummary_AjaxGetAsyncConfig, proxy, session, $"https://steamcommunity.com/profiles/{session?.SteamID}");
-        var response = Downloader.Get(request);
+        var request = new GetRequest(SteamCommunityUrls.PointsSummary_AjaxGetAsyncConfig, proxy, session, $"https://steamcommunity.com/profiles/{session?.SteamID}")
+		{
+			CancellationToken = cts
+		};
+		var response = Downloader.Get(request);
         if (!response.Success)
             return new();
         try
@@ -394,15 +413,16 @@ public static class Ajax
         return new();
     }
 
-    public static async Task<Listing> market_mylistings_async(ISessionProvider session, System.Net.IWebProxy proxy, int count = 100, int start = 0)
+    public static async Task<Listing> market_mylistings_async(ISessionProvider session, System.Net.IWebProxy proxy, int count = 100, int start = 0, CancellationToken? cts = null)
     {
         var request = new GetRequest(SteamCommunityUrls.Market_MyListings, proxy, session)
         {
             Session = session,
             Proxy = proxy,
             IsAjax = true,
-            Referer = SteamCommunityUrls.Market
-        };
+            Referer = SteamCommunityUrls.Market,
+			CancellationToken = cts
+		};
         request.AddQuery("count", count);
         if (start > 0)
             request.AddQuery("start", start);
@@ -411,15 +431,16 @@ public static class Ajax
             return new();
         return Listing.Deserialize(response.Data);
     }
-    public static Listing market_mylistings(ISessionProvider session, System.Net.IWebProxy proxy, int count = 100, int start = 0)
+    public static Listing market_mylistings(ISessionProvider session, System.Net.IWebProxy proxy, int count = 100, int start = 0, CancellationToken? cts = null)
     {
         var request = new GetRequest(SteamCommunityUrls.Market_MyListings, proxy, session)
         {
             Session = session,
             Proxy = proxy,
             IsAjax = true,
-            Referer = SteamCommunityUrls.Market
-        };
+            Referer = SteamCommunityUrls.Market,
+			CancellationToken = cts
+		};
         request.AddQuery("count", count);
         if (start > 0)
             request.AddQuery("start", start);
@@ -429,10 +450,14 @@ public static class Ajax
         return Listing.Deserialize(response.Data);
     }
 
-    public static async Task<Historing> market_myhistory_async(ISessionProvider session, System.Net.IWebProxy proxy, int start = 0, int count = 200)
+    public static async Task<Historing> market_myhistory_async(ISessionProvider session, System.Net.IWebProxy proxy, int start = 0, int count = 200, CancellationToken? cts = null)
     {
         // count - При любом значении, присылают не все данные
-        var request = new GetRequest(SteamCommunityUrls.Market_MyHistory_Render, proxy, session, SteamCommunityUrls.Market).AddQuery("start", start).AddQuery("count", count);
+        var request = new GetRequest(SteamCommunityUrls.Market_MyHistory_Render, proxy, session, SteamCommunityUrls.Market)
+		{
+			CancellationToken = cts
+		};
+        request.AddQuery("start", start).AddQuery("count", count);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new Historing() { IsError = true };
@@ -442,11 +467,15 @@ public static class Ajax
             return new Historing() { IsAuthtorized = false };
         return Historing.Deserialize(response.Data);
     }
-    public static Historing market_myhistory(ISessionProvider session, System.Net.IWebProxy proxy, int start = 0, int count = 200)
+    public static Historing market_myhistory(ISessionProvider session, System.Net.IWebProxy proxy, int start = 0, int count = 200, CancellationToken? cts = null)
     {
-        // count - При любом значении, присылают не все данные
-        var request = new GetRequest(SteamCommunityUrls.Market_MyHistory_Render, proxy, session, SteamCommunityUrls.Market).AddQuery("start", start).AddQuery("count", count);
-        var response = Downloader.Get(request);
+		// count - При любом значении, присылают не все данные
+		var request = new GetRequest(SteamCommunityUrls.Market_MyHistory_Render, proxy, session, SteamCommunityUrls.Market)
+		{
+			CancellationToken = cts
+		};
+		request.AddQuery("start", start).AddQuery("count", count);
+		var response = Downloader.Get(request);
         if (!response.Success)
             return new Historing() { IsError = true };
         else if (response.Data.Contains("There was an error loading your market history. Please try again later."))
@@ -456,15 +485,16 @@ public static class Ajax
         return Historing.Deserialize(response.Data);
     }
 
-    public static async Task<SellItem> market_sellitem_async(ISessionProvider session, System.Net.IWebProxy proxy, uint appid, string contextid, string assetid, string amount, int price)
+    public static async Task<SellItem> market_sellitem_async(ISessionProvider session, System.Net.IWebProxy proxy, uint appid, string contextid, string assetid, string amount, int price, CancellationToken? cts = null)
     {
         var request = new PostRequest(SteamCommunityUrls.Market_SellItem, Downloader.AppFormUrlEncoded)
         {
             Session = session,
             Proxy = proxy,
             Referer = $"https://steamcommunity.com/profiles/{session.SteamID}/inventory/",
-            IsAjax = true
-        };
+            IsAjax = true,
+			CancellationToken = cts
+		};
         request.AddPostData("sessionid", session.SessionID).AddPostData("appid", appid).AddPostData("contextid", contextid)
             .AddPostData("assetid", assetid).AddPostData("amount", amount).AddPostData("price", price);
         var response = await Downloader.PostAsync(request);
@@ -473,15 +503,16 @@ public static class Ajax
         var obj = JsonSerializer.Deserialize<SellItem>(response.Data);
         return obj;
     }
-    public static SellItem market_sellitem(ISessionProvider session, System.Net.IWebProxy proxy, uint appid, string contextid, string assetid, string amount, int price)
+    public static SellItem market_sellitem(ISessionProvider session, System.Net.IWebProxy proxy, uint appid, string contextid, string assetid, string amount, int price, CancellationToken? cts = null)
     {
         var request = new PostRequest(SteamCommunityUrls.Market_SellItem, Downloader.AppFormUrlEncoded)
         {
             Session = session,
             Proxy = proxy,
             Referer = $"https://steamcommunity.com/profiles/{session.SteamID}/inventory/",
-            IsAjax = true
-        };
+            IsAjax = true,
+			CancellationToken = cts
+		};
         request.AddPostData("sessionid", session.SessionID).AddPostData("appid", appid).AddPostData("contextid", contextid)
             .AddPostData("assetid", assetid).AddPostData("amount", amount).AddPostData("price", price);
         var response = Downloader.Post(request);
@@ -491,15 +522,16 @@ public static class Ajax
         return obj;
     }
 
-    public static async Task<bool> market_removelisting_async(ISessionProvider session, System.Net.IWebProxy proxy, string id, string market_hash_name, uint appid)
+    public static async Task<bool> market_removelisting_async(ISessionProvider session, System.Net.IWebProxy proxy, string id, string market_hash_name, uint appid, CancellationToken? cts = null)
     {
         var request = new PostRequest($"https://steamcommunity.com/market/removelisting/{id}", Downloader.AppFormUrlEncoded)
         {
             Session = session,
             Proxy = proxy,
             Referer = $"https://steamcommunity.com/market/listings/{appid}/{Uri.EscapeDataString(market_hash_name)}",
-            IsAjax = true
-        };
+            IsAjax = true,
+			CancellationToken = cts
+		};
         request.AddPostData("sessionid", session.SessionID);
         var response = await Downloader.PostAsync(request);
         if (!response.Success)
@@ -507,15 +539,16 @@ public static class Ajax
         else if (response.Data == "[]") return true;
         return false;
     }
-    public static bool market_removelisting(ISessionProvider session, System.Net.IWebProxy proxy, string id, string market_hash_name, uint appid)
+    public static bool market_removelisting(ISessionProvider session, System.Net.IWebProxy proxy, string id, string market_hash_name, uint appid, CancellationToken? cts = null)
     {
         var request = new PostRequest($"https://steamcommunity.com/market/removelisting/{id}", Downloader.AppFormUrlEncoded)
         {
             Session = session,
             Proxy = proxy,
             Referer = $"https://steamcommunity.com/market/listings/{appid}/{Uri.EscapeDataString(market_hash_name)}",
-            IsAjax = true
-        };
+            IsAjax = true,
+			CancellationToken = cts
+		};
         request.AddPostData("sessionid", session.SessionID);
         var response = Downloader.Post(request);
         if (!response.Success)
@@ -529,8 +562,9 @@ public static class Ajax
         var getRequest = new GetRequest(SteamCommunityUrls.Market_ItemOrdersHistogram, request.Proxy, request.Session)
         {
             Referer = $"https://steamcommunity.com/market/listings/{request.AppID}/{Uri.EscapeDataString(request.Market_Hash_Name)}",
-            IsAjax = true
-        };
+            IsAjax = true,
+            CancellationToken = request.CancellationToken
+		};
         getRequest.AddQuery("country", request.Country).AddQuery("language", request.Language).AddQuery("currency", request.Currency)
             .AddQuery("item_nameid", request.Item_Nameid).AddQuery("two_factor", request.Two_Factor);
         if (request.Timeout > 0)
@@ -546,8 +580,9 @@ public static class Ajax
         var getRequest = new GetRequest(SteamCommunityUrls.Market_ItemOrdersHistogram, request.Proxy, request.Session)
         {
             Referer = $"https://steamcommunity.com/market/listings/{request.AppID}/{Uri.EscapeDataString(request.Market_Hash_Name)}",
-            IsAjax = true
-        };
+            IsAjax = true,
+			CancellationToken = request.CancellationToken
+		};
         getRequest.AddQuery("country", request.Country).AddQuery("language", request.Language).AddQuery("currency", request.Currency)
             .AddQuery("item_nameid", request.Item_Nameid).AddQuery("two_factor", request.Two_Factor);
         if (request.Timeout > 0)
@@ -559,13 +594,14 @@ public static class Ajax
         return obj;
     }
 
-    public static async Task<PriceHistory> market_pricehistory_async(ISessionProvider session, System.Net.IWebProxy proxy, int appid, string market_hash_name)
+    public static async Task<PriceHistory> market_pricehistory_async(ISessionProvider session, System.Net.IWebProxy proxy, int appid, string market_hash_name, CancellationToken? cts = null)
     {
         market_hash_name = market_hash_name.Replace("%27", "'").Replace("?", "%3F").Replace("%E2%98%85", "★").Replace("%E2%84%A2", "™");
         var getRequest = new GetRequest(SteamCommunityUrls.Market_PriceHistory, proxy, session)
         {
             Referer = session == null ? "https://steamcommunity.com/my/inventory/" : $"https://steamcommunity.com/profiles/{session.SteamID}/inventory/",
-            IsAjax = true
+            IsAjax = true,
+            CancellationToken = cts
         };
         getRequest.AddQuery("appid", appid).AddQuery("market_hash_name", market_hash_name);
         var response = await Downloader.GetAsync(getRequest);
@@ -573,14 +609,15 @@ public static class Ajax
             return new() { e500 = response.StatusCode == 502 || response.StatusCode == 503 };
         return PriceHistory.Deserialize(response.Data);
     }
-    public static PriceHistory market_pricehistory(ISessionProvider session, System.Net.IWebProxy proxy, uint appid, string market_hash_name)
+    public static PriceHistory market_pricehistory(ISessionProvider session, System.Net.IWebProxy proxy, uint appid, string market_hash_name, CancellationToken? cts = null)
     {
         market_hash_name = market_hash_name.Replace("%27", "'").Replace("?", "%3F").Replace("%E2%98%85", "★").Replace("%E2%84%A2", "™");
         var getRequest = new GetRequest(SteamCommunityUrls.Market_PriceHistory, proxy, session)
         {
             Referer = session == null ? "https://steamcommunity.com/my/inventory/" : $"https://steamcommunity.com/profiles/{session.SteamID}/inventory/",
-            IsAjax = true
-        };
+            IsAjax = true,
+			CancellationToken = cts
+		};
         getRequest.AddQuery("appid", appid).AddQuery("market_hash_name", market_hash_name);
         var response = Downloader.Get(getRequest);
         if (!response.Success)
@@ -588,23 +625,28 @@ public static class Ajax
         return PriceHistory.Deserialize(response.Data);
     }
 
-    public static async Task<ItemQueryLocations[]> action_QueryLocations_async(ISessionProvider session, System.Net.IWebProxy proxy)
+    public static async Task<ItemQueryLocations[]> action_QueryLocations_async(ISessionProvider session, System.Net.IWebProxy proxy, CancellationToken? cts = null)
     {
         string referer = $"https://steamcommunity.com/profiles/{session.SteamID}/edit/info";
-        var request = new GetRequest(SteamCommunityUrls.Actions_QueryLocations, proxy, session, referer) { IsAjax = true };
+        var request = new GetRequest(SteamCommunityUrls.Actions_QueryLocations, proxy, session, referer)
+        {
+            IsAjax = true,
+			CancellationToken = cts
+		};
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new ItemQueryLocations[0];
         var obj = JsonSerializer.Deserialize<ItemQueryLocations[]>(response.Data);
         return obj;
     }
-    public static async Task<ItemQueryLocations[]> action_QueryLocations_async(ISessionProvider session, System.Net.IWebProxy proxy, ItemQueryLocations Loc)
+    public static async Task<ItemQueryLocations[]> action_QueryLocations_async(ISessionProvider session, System.Net.IWebProxy proxy, ItemQueryLocations Loc, CancellationToken? cts = null)
     {
         string referer = $"https://steamcommunity.com/profiles/{session.SteamID}/edit/info";
         var request = new GetRequest(SteamCommunityUrls.Actions_QueryLocations + '/' + Loc.countrycode + (Loc.state_loaded ? Loc.statecode : ""), proxy, session, referer)
         {
-            IsAjax = true
-        };
+            IsAjax = true,
+			CancellationToken = cts
+		};
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new ItemQueryLocations[0];
@@ -625,12 +667,16 @@ public static class Ajax
         return obj;
     }
 
-    public static async Task<ItemGroup[]> profiles_ajaxgroupinvite_async(ISessionProvider session, System.Net.IWebProxy proxy)
+    public static async Task<ItemGroup[]> profiles_ajaxgroupinvite_async(ISessionProvider session, System.Net.IWebProxy proxy, CancellationToken? cts = null)
     {
         string url = $"https://steamcommunity.com/profiles/{session.SteamID}/ajaxgroupinvite?select_primary=1&json=1";
         string referer = $"https://steamcommunity.com/profiles/{session.SteamID}/edit/theme";
-        var request = new GetRequest(url, proxy, session, referer) { IsAjax = true };
-        var response = await Downloader.GetAsync(request);
+        var request = new GetRequest(url, proxy, session, referer)
+		{
+			IsAjax = true,
+			CancellationToken = cts
+		};
+		var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new ItemGroup[0];
         var obj = JsonSerializer.Deserialize<ItemGroup[]>(response.Data);
@@ -646,8 +692,8 @@ public static class Ajax
     /// <param name="count">Количество комментариев на странице</param>
     /// <param name="feature2"></param>
     /// <returns></returns>
-    public static async Task<CommentResponse> profiles_post_comment_async(ISessionProvider session, System.Net.IWebProxy proxy, string comment, int count = 6, int feature2 = -1)
-        => await profiles_post_comment_async(session, proxy, comment, session.SteamID, count, feature2);
+    public static async Task<CommentResponse> profiles_post_comment_async(ISessionProvider session, System.Net.IWebProxy proxy, string comment, int count = 6, int feature2 = -1, CancellationToken? cts = null)
+        => await profiles_post_comment_async(session, proxy, comment, session.SteamID, count, feature2, cts);
     /// <summary>
     /// Оставить комментарий в профиле
     /// </summary>
@@ -658,7 +704,7 @@ public static class Ajax
     /// <param name="count">Количество комментариев на странице</param>
     /// <param name="feature2"></param>
     /// <returns></returns>
-    public static async Task<CommentResponse> profiles_post_comment_async(ISessionProvider session, System.Net.IWebProxy proxy, string comment, ulong steamid, int count = 6, int feature2 = -1)
+    public static async Task<CommentResponse> profiles_post_comment_async(ISessionProvider session, System.Net.IWebProxy proxy, string comment, ulong steamid, int count = 6, int feature2 = -1, CancellationToken? cts = null)
     {
         string url = $"https://steamcommunity.com/comment/Profile/post/{steamid}/-1/";
         string referer = $"https://steamcommunity.com/profiles/{steamid}/";
@@ -668,7 +714,8 @@ public static class Ajax
             Proxy = proxy,
             Referer = referer,
             IsAjax = true,
-        };
+			CancellationToken = cts
+		};
         //comment = HttpUtility.UrlEncode(comment);
         request.AddPostData("comment", comment).AddPostData("count", count).AddPostData("sessionid", session.SessionID).AddPostData("feature2", feature2);
         var response = await Downloader.PostAsync(request);
@@ -685,9 +732,9 @@ public static class Ajax
         }
     }
 
-    public static async Task<SteamLoyaltyStore> store_loyalty_store_async(ISessionProvider session, System.Net.IWebProxy proxy)
+    public static async Task<SteamLoyaltyStore> store_loyalty_store_async(ISessionProvider session, System.Net.IWebProxy proxy, CancellationToken? cts = null)
     {
-        var request = new GetRequest(SteamPoweredUrls.Points_Shop, proxy, session);
+        var request = new GetRequest(SteamPoweredUrls.Points_Shop, proxy, session) { CancellationToken = cts };
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();
@@ -707,7 +754,7 @@ public static class Ajax
             return new();
         }
     }
-    public static async Task<SteamPurchases> account_history_async(ISessionProvider session, System.Net.IWebProxy proxy, SteamPurchaseCursor cursor = null)
+    public static async Task<SteamPurchases> account_history_async(ISessionProvider session, System.Net.IWebProxy proxy, SteamPurchaseCursor? cursor = null, CancellationToken? cts = null)
     {
         if (session == null)
             return new();
@@ -715,8 +762,9 @@ public static class Ajax
         {
             Session = session,
             Proxy = proxy,
-            IsAjax = true
-        };
+            IsAjax = true,
+			CancellationToken = cts
+		};
         request.AddPostData("sessionid", session.SessionID);
         if (cursor != null)
         {
@@ -728,7 +776,7 @@ public static class Ajax
             response.Data.Contains("btn_blue_steamui btn_medium login_btn")) return new();
         return SteamPurchases.Deserialize(response.Data);
     }
-    public static async Task<Success> account_ajaxsetcookiepreferences_async(ISessionProvider session, System.Net.IWebProxy proxy, CookiePreferences cookiepreferences)
+    public static async Task<Success> account_ajaxsetcookiepreferences_async(ISessionProvider session, System.Net.IWebProxy proxy, CookiePreferences cookiepreferences, CancellationToken? cts = null)
     {
         if (session == null)
             return new();
@@ -736,8 +784,9 @@ public static class Ajax
         {
             Session = session,
             Proxy = proxy,
-            IsAjax = true
-        };
+            IsAjax = true,
+			CancellationToken = cts
+		};
         request.AddPostData("sessionid", session.SessionID).AddPostData("cookiepreferences", JsonSerializer.Serialize(cookiepreferences));
         var response = await Downloader.PostAsync(request);
         if (!response.Success || response.Data.IsEmpty() || response.Data == "<!DOCTYPE html>" ||
@@ -761,7 +810,7 @@ public static class Ajax
     /// <param name="steamids">С кем производим действия (не более 100)</param>
     /// <exception cref="ArgumentException">В steamids должен быть один или больше элементов, но не более 100</exception>
     /// <returns></returns>
-    public static async Task<SuccessRgCounts> friends_action_async(ISessionProvider session, System.Net.IWebProxy proxy, ulong steamid, FriendsAction action, string[] steamids)
+    public static async Task<SuccessRgCounts> friends_action_async(ISessionProvider session, System.Net.IWebProxy proxy, ulong steamid, FriendsAction action, string[] steamids, CancellationToken? cts = null)
     {
         if (session == null)
             return new();
@@ -775,8 +824,9 @@ public static class Ajax
         {
             Session = session,
             Proxy = proxy,
-            IsAjax = true
-        };
+            IsAjax = true,
+			CancellationToken = cts
+		};
         request.AddPostData("sessionid", session.SessionID).AddPostData("steamid", steamid).AddPostData("ajax", 1);
         switch (action)
         {
@@ -822,7 +872,7 @@ public static class Ajax
         { }
         return new();
     }
-    public static async Task<QueueApps> explore_generatenewdiscoveryqueue_async(ISessionProvider session, System.Net.IWebProxy proxy, ushort queuetype = 0)
+    public static async Task<QueueApps> explore_generatenewdiscoveryqueue_async(ISessionProvider session, System.Net.IWebProxy proxy, ushort queuetype = 0, CancellationToken? cts = null)
     {
         if (session == null)
             return new();
@@ -830,8 +880,9 @@ public static class Ajax
         {
             Session = session,
             Proxy = proxy,
-            IsAjax = true
-        };
+            IsAjax = true,
+			CancellationToken = cts
+		};
         request.AddPostData("sessionid", session.SessionID).AddPostData("queuetype", queuetype);
         var response = await Downloader.PostAsync(request);
         if (!response.Success || response.Data.IsEmpty() || response.Data == "<!DOCTYPE html>" ||
@@ -846,7 +897,7 @@ public static class Ajax
         { }
         return new();
     }
-    public static QueueApps explore_generatenewdiscoveryqueue(ISessionProvider session, System.Net.IWebProxy proxy, ushort queuetype = 0)
+    public static QueueApps explore_generatenewdiscoveryqueue(ISessionProvider session, System.Net.IWebProxy proxy, ushort queuetype = 0, CancellationToken? cts = null)
     {
         if (session == null)
             return new();
@@ -854,8 +905,9 @@ public static class Ajax
         {
             Session = session,
             Proxy = proxy,
-            IsAjax = true
-        };
+            IsAjax = true,
+			CancellationToken = cts
+		};
         request.AddPostData("sessionid", session.SessionID).AddPostData("queuetype", queuetype);
         var response = Downloader.Post(request);
         if (!response.Success || response.Data.IsEmpty() || response.Data == "<!DOCTYPE html>" ||
@@ -870,11 +922,11 @@ public static class Ajax
         { }
         return new();
     }
-    public static async Task<InventoryHistory> inventory_history_async(ISessionProvider session, System.Net.IWebProxy proxy, InventoryHistoryCursor cursor, uint[] appid)
+    public static async Task<InventoryHistory> inventory_history_async(ISessionProvider session, System.Net.IWebProxy proxy, InventoryHistoryCursor cursor, uint[] appid, CancellationToken? cts = null)
     {
         if (session == null)
             return new();
-        var request = new GetRequest(SteamCommunityUrls.My_InventoryHistory, proxy, session) { IsAjax = true};
+        var request = new GetRequest(SteamCommunityUrls.My_InventoryHistory, proxy, session) { IsAjax = true , CancellationToken = cts };
         request.AddQuery("ajax", 1).AddQuery("cursor%5Btime%5D", cursor.CursorTime).AddQuery("cursor%5Btime_frac%5D", cursor.CursorTime)
             .AddQuery("cursor%5Bs%5D", cursor.CursorS).AddQuery("sessionid", session.SessionID);
         for (int i = 0; i < appid.Length; i++)
