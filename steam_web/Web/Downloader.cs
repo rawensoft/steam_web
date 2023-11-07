@@ -5,7 +5,6 @@ using SteamWeb.Extensions;
 using RestSharp;
 using System.Web;
 using SteamWeb.Auth.Interfaces;
-using SteamWeb.Web.DTO;
 
 namespace SteamWeb.Web;
 public static class Downloader
@@ -24,48 +23,28 @@ public static class Downloader
     public const string UserAgentSteamMobileApp = "Dalvik/2.1.0 (Linux; U; Android 5.1.1; SM-G977N Build/LMY48Z; Valve Steam App Version/3)";
     public const string UserAgentOkHttp = "okhttp/3.12.12";
 
-    private static (RestClient, RestRequest, CookieContainer) GetRestClient(string url, Method method, IWebProxy proxy, string ua, CookieContainer? container = null)
+    private static (RestClient, RestRequest) GetRestClient(string url, Method method, IWebProxy? proxy, string ua, CookieContainer? cookies = null)
     {
-        if (container == null)
-            container = new CookieContainer();
-        var containerResponse = new CookieContainer();
-        var client = new RestClient(new RestClientOptions() 
+        var uri = new Uri(url);
+        var client = RestClientFactory.GetClient(uri, proxy, ua);
+        var request = new RestRequest(uri.PathAndQuery, method)
         {
-            AutomaticDecompression = DecompressionMethods.All,
-            FollowRedirects = false,
-            //MaxRedirects = 10,
-            UserAgent = ua,
-            BaseUrl = new Uri(url),
-            AllowMultipleDefaultParametersWithSameName = true,
-            Proxy = proxy,
-            RemoteCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; },
-            // если скрыть, то при Redirect куки сбрасываются
-            CookieContainer = container, // из-за этого происходит дублирование кук и если какие-то куки изменились, то будут изменённые и не изменённые
-            ConfigureMessageHandler = h =>
-            {
-                ((HttpClientHandler)h).UseCookies = true; // если это не установить, то Set-Cookie не работает
-                // если скрыть, то куки записываются в этот контейнер, в который мы не можем попасть
-                ((HttpClientHandler)h).CookieContainer = containerResponse; // если это не установить, то куки из Set-Cookie не добавляются в наш CookieContainer
-                ((HttpClientHandler)h).UseProxy = proxy != null;
-                ((HttpClientHandler)h).Proxy = proxy;
-                return h;
-            }
-        });
-        var request = new RestRequest(string.Empty, method);
-        return (client, request, containerResponse);
+            CookieContainer = cookies
+		};
+		return (client, request);
     }
-    private static CookieContainer AddCookieSession(string url, ISessionProvider session)
+    private static CookieContainer AddCookieSession(string url, ISessionProvider? session)
     {
         if (session == null)
             return new();
-        var cookie_container = new CookieContainer();
-        var uri = new Uri(url == BuffLoginUrl ? "https://steamcommunity.com" : url);
-        session.AddCookieToContainer(cookie_container, uri);
-        return cookie_container;
-    }
+        var cookies = new CookieContainer();
+		var uri = new Uri(url == BuffLoginUrl ? "https://steamcommunity.com" : url);
+        session.AddCookieToContainer(cookies, uri);
+        return cookies;
+	}
     private static void RewriteCookie(CookieContainer container, ISessionProvider session, CookieContainer containerForUpdate, string url)
     {
-        if (session == null || container == null || container.Count == 0)
+		if (session == null || container == null || container.Count == 0)
             return;
         session.RewriteCookie(container);
         var uri = new Uri(url);
@@ -74,13 +53,25 @@ public static class Downloader
         {
             containerForUpdate.Add(uri, cookie);
         }
-    }
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="url"></param>
-    /// <returns>Host, Origin</returns>
-    private static (string?, string?) GetHostOrigin(string url)
+	}
+	private static void RewriteCookie(CookieCollection? collection, ISessionProvider? session, CookieContainer containerForUpdate, string url)
+	{
+		if (session == null || collection == null || collection.Count == 0)
+			return;
+		session.RewriteCookie(collection);
+		var uri = new Uri(url);
+		foreach (Cookie cookie in collection)
+		{
+			if (cookie.Domain == uri.Host)
+			    containerForUpdate.Add(uri, cookie);
+		}
+	}
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="url"></param>
+	/// <returns>Host, Origin</returns>
+	private static (string?, string?) GetHostOrigin(string url)
     {
         if (url.StartsWith("https://steamcommunity.com"))
             return ("steamcommunity.com", "https://steamcommunity.com");
@@ -96,7 +87,7 @@ public static class Downloader
     public static async Task<StringResponse> PostAsync(PostRequest request)
     {
         var cookies = AddCookieSession(request.Url, request.Session);
-        var (client, req, resCookie) = GetRestClient(request.Url, Method.Post, request.Proxy, request.GetUserAgent(), cookies);
+        var (client, req) = GetRestClient(request.Url, Method.Post, request.Proxy, request.GetUserAgent(), cookies);
         request.AddHeaders(req);
         req.AddHeader("Accept", request.GetAccept());
         req.AddHeader("Content-Type", request.ContentType);
@@ -132,10 +123,9 @@ public static class Downloader
         request.AddQuery(req);
         if (request.Timeout > 0)
             req.Timeout = request.Timeout;
-        var res = await client.ExecuteAsync(req);
-        client.Dispose();
+		var res = await (request.CancellationToken == null ? client.ExecuteAsync(req) : client.ExecuteAsync(req, request.CancellationToken.Value));
         if (request.Session != null)
-            RewriteCookie(resCookie, request.Session, cookies, request.Url);
+            RewriteCookie(res.Cookies, request.Session, cookies, request.Url);
         int statusCode = (int)res.StatusCode;
         if (statusCode >= 300 && statusCode <= 399 && request.CurrentRedirect < request.MaxRedirects)
         {
@@ -149,12 +139,12 @@ public static class Downloader
                 }
             }
         }
-        return new(res, cookies);
+        return new(res, res.Cookies);
     }
     public static StringResponse Post(PostRequest request)
     {
         var cookies = AddCookieSession(request.Url, request.Session);
-        var (client, req, resCookie) = GetRestClient(request.Url, Method.Post, request.Proxy, request.GetUserAgent(), cookies);
+        var (client, req) = GetRestClient(request.Url, Method.Post, request.Proxy, request.GetUserAgent(), cookies);
         request.AddHeaders(req);
         req.AddHeader("Accept", request.GetAccept());
         req.AddHeader("Content-Type", request.ContentType);
@@ -190,10 +180,9 @@ public static class Downloader
         request.AddQuery(req);
         if (request.Timeout > 0)
             req.Timeout = request.Timeout;
-        var res = client.Execute(req);
-        client.Dispose();
+		var res = request.CancellationToken == null ? client.Execute(req) : client.Execute(req, request.CancellationToken.Value);
         if (request.Session != null)
-            RewriteCookie(resCookie, request.Session, cookies, request.Url);
+            RewriteCookie(res.Cookies, request.Session, cookies, request.Url);
         int statusCode = (int)res.StatusCode;
         if (statusCode >= 300 && statusCode <= 399 && request.CurrentRedirect < request.MaxRedirects)
         {
@@ -207,12 +196,12 @@ public static class Downloader
                 }
             }
         }
-        return new(res, cookies);
+        return new(res, res.Cookies);
     }
     public static async Task<StringResponse> GetAsync(GetRequest request)
     {
         var cookies = AddCookieSession(request.Url, request.Session);
-        var (client, req, resCookie) = GetRestClient(request.Url, Method.Get, request.Proxy, request.GetUserAgent(), cookies);
+        var (client, req) = GetRestClient(request.Url, Method.Get, request.Proxy, request.GetUserAgent(), cookies);
         request.AddHeaders(req);
         req.AddHeader("Accept", request.GetAccept());
         if (request.Referer != null)
@@ -244,10 +233,9 @@ public static class Downloader
         request.AddQuery(req);
         if (request.Timeout > 0)
             req.Timeout = request.Timeout;
-        var res = await client.ExecuteAsync(req);
-        client.Dispose();
+		var res = await (request.CancellationToken == null ? client.ExecuteAsync(req) : client.ExecuteAsync(req, request.CancellationToken.Value));
         if (request.Session != null)
-            RewriteCookie(resCookie, request.Session, cookies, request.Url);
+            RewriteCookie(res.Cookies, request.Session, cookies, request.Url);
         int statusCode = (int)res.StatusCode;
         if (statusCode >= 300 && statusCode <= 399 && request.CurrentRedirect < request.MaxRedirects)
         {
@@ -261,13 +249,13 @@ public static class Downloader
                 }
             }
         }
-        return new(res, cookies);
+        return new(res, res.Cookies);
     }
     public static StringResponse Get(GetRequest request)
-    {
-        var cookies = AddCookieSession(request.Url, request.Session);
-        var (client, req, resCookie) = GetRestClient(request.Url, Method.Get, request.Proxy, request.GetUserAgent(), cookies);
-        request.AddHeaders(req);
+	{
+		var cookies = AddCookieSession(request.Url, request.Session);
+		var (client, req) = GetRestClient(request.Url, Method.Get, request.Proxy, request.GetUserAgent(), cookies);
+		request.AddHeaders(req);
         req.AddHeader("Accept", request.GetAccept());
         req.AddHeader("Cache-Control", "no-cache");
         req.AddHeader("Pragma", "no-cache");
@@ -300,11 +288,10 @@ public static class Downloader
         request.AddQuery(req);
         if (request.Timeout > 0)
             req.Timeout = request.Timeout;
-        var res = client.Execute(req);
-        client.Dispose();
-        if (request.Session != null)
-            RewriteCookie(resCookie, request.Session, cookies, request.Url);
-        int statusCode = (int)res.StatusCode;
+		var res = request.CancellationToken == null ? client.Execute(req) : client.Execute(req, request.CancellationToken.Value);
+		if (request.Session != null)
+            RewriteCookie(res.Cookies, request.Session, cookies, request.Url);
+		int statusCode = (int)res.StatusCode;
         if (statusCode >= 300 && statusCode <= 399 && request.CurrentRedirect < request.MaxRedirects)
         {
             foreach (var header in res.Headers!)
@@ -317,7 +304,7 @@ public static class Downloader
                 }
             }
         }
-        return new(res, cookies);
+        return new(res, res.Cookies);
     }
 
     public static async Task<StringResponse> UploadFilesToRemoteUrlAsync(PostRequest request, string filename)
@@ -326,7 +313,7 @@ public static class Downloader
         string boundary = "----------------------------" + DateTime.Now.Ticks.ToString("x");
 
         HttpWebRequest req = (HttpWebRequest)WebRequest.Create(request.Url);
-        req.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.Brotli;
+		req.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.Brotli;
         req.Method = "POST";
         req.Accept = "application/json, text/plain, */*";
         if (!request.Referer.IsEmpty())
@@ -416,7 +403,7 @@ public static class Downloader
             return new((HttpWebResponse)null) { ErrorException = ex, ErrorMessage = ex.Message };
         }
     }
-    public static async Task<(bool, byte[], string?)> GetCaptchaAsync(string captchagid, Proxy? proxy = null, ISessionProvider? session = null)
+    public static async Task<(bool, byte[], string?)> GetCaptchaAsync(string captchagid, Proxy? proxy = null, ISessionProvider? session = null, CancellationToken? cts = null)
     {
         if (captchagid.IsEmpty())
             return (false, Encoding.UTF8.GetBytes("Не указан CaptchaGID"), null);
@@ -437,8 +424,8 @@ public static class Downloader
         };
         request.AddHeader("Accept", "image/webp,image/apng,image/*,*/*;q=0.8");
         request.AddHeader("Referer", "https://store.steampowered.com/join/");
-        var response = await client.ExecuteAsync(request);
-        string new_cookie = response.Cookies.Count > 0 ? "" : null;
+		var response = await (cts == null ? client.ExecuteAsync(request) : client.ExecuteAsync(request, cts.Value));
+		string new_cookie = response.Cookies.Count > 0 ? "" : null;
         for (int i = 0; i < response.Cookies.Count; i++)
         {
             var item = response.Cookies[i];
@@ -453,7 +440,7 @@ public static class Downloader
         client.Dispose();
         return (true, response.RawBytes, new_cookie);
     }
-    public static (bool, byte[], string) GetCaptcha(string captchagid, Proxy? proxy = null, ISessionProvider? session = null)
+    public static (bool, byte[], string) GetCaptcha(string captchagid, Proxy? proxy = null, ISessionProvider? session = null, CancellationToken? cts = null)
     {
         if (captchagid.IsEmpty()) return (false, Encoding.UTF8.GetBytes("Не указан CaptchaGID"), null);
         string url = $"https://store.steampowered.com/login/rendercaptcha?gid={captchagid}";
@@ -473,8 +460,8 @@ public static class Downloader
         };
         request.AddHeader("Accept", "image/webp,image/apng,image/*,*/*;q=0.8");
         request.AddHeader("Referer", "https://store.steampowered.com/join/");
-        var response = client.Execute(request);
-        string new_cookie = response.Cookies.Count > 0 ? "" : null;
+		var response = cts == null ? client.Execute(request) : client.Execute(request, cts.Value);
+		string new_cookie = response.Cookies.Count > 0 ? "" : null;
         for (int i = 0; i < response.Cookies.Count; i++)
         {
             var item = response.Cookies[i];
@@ -492,12 +479,12 @@ public static class Downloader
 
     public static async Task<MemoryResponse> GetProtobufAsync(ProtobufRequest request)
     {
-        var (client, req, resCookie) = GetRestClient(request.Url, Method.Get, request.Proxy, UserAgentOkHttp);
+        var (client, req) = GetRestClient(request.Url, Method.Get, request.Proxy, UserAgentOkHttp);
         req.AddHeader("Accept", "application/json, text/plain, */*");
         req.AddHeader("Accept-Encoding", "gzip");
         req.AddHeader("Content-Type", AppOctetSteam);
         if (!request.Cookie.IsEmpty())
-            req.AddHeader("Cookie", request.Cookie);
+            req.AddHeader("Cookie", request.Cookie!);
         req.AddQueryParameter("input_protobuf_encoded", request.ProtoData);
         if (request.IsMobile)
             req.AddQueryParameter("origin", "SteamMobile");
@@ -505,18 +492,18 @@ public static class Downloader
             req.AddQueryParameter("access_token", request.AccessToken);
         if (request.Timeout > 0)
             req.Timeout = request.Timeout;
-        var res = await client.ExecuteAsync(req);
-        client.Dispose();
-        return new(res);
+		var res = await (request.CancellationToken == null ? client.ExecuteAsync(req) : client.ExecuteAsync(req, request.CancellationToken.Value));
+		var obj = new MemoryResponse(res);
+		return obj;
     }
     public static MemoryResponse GetProtobuf(ProtobufRequest request)
     {
-        var (client, req, resCookie) = GetRestClient(request.Url, Method.Get, request.Proxy, UserAgentOkHttp);
+        var (client, req) = GetRestClient(request.Url, Method.Get, request.Proxy, UserAgentOkHttp);
         req.AddHeader("Accept", "application/json, text/plain, */*");
         req.AddHeader("Accept-Encoding", "gzip");
         req.AddHeader("Content-Type", AppOctetSteam);
         if (!request.Cookie.IsEmpty())
-            req.AddHeader("Cookie", request.Cookie);
+            req.AddHeader("Cookie", request.Cookie!);
         req.AddQueryParameter("input_protobuf_encoded", request.ProtoData);
         if (request.IsMobile)
             req.AddQueryParameter("origin", "SteamMobile");
@@ -524,18 +511,18 @@ public static class Downloader
             req.AddQueryParameter("access_token", request.AccessToken);
         if (request.Timeout > 0)
             req.Timeout = request.Timeout;
-        var res = client.Execute(req);
-        //client.Dispose();
-        return new(res);
-    }
+		var res = request.CancellationToken == null ? client.Execute(req) : client.Execute(req, request.CancellationToken.Value);
+		var obj = new MemoryResponse(res);
+		return obj;
+	}
     public static async Task<MemoryResponse> PostProtobufAsync(ProtobufRequest request)
     {
-        var (client, req, resCookie) = GetRestClient(request.Url, Method.Post, request.Proxy, UserAgentOkHttp);
+        var (client, req) = GetRestClient(request.Url, Method.Post, request.Proxy, UserAgentOkHttp);
         req.AddHeader("Accept", "application/json, text/plain, */*");
         req.AddHeader("Accept-Encoding", "gzip");
         req.AddHeader("Content-Type", AppFormUrlEncoded);
         if (!request.Cookie.IsEmpty())
-            req.AddHeader("Cookie", request.Cookie);
+            req.AddHeader("Cookie", request.Cookie!);
 
         var sb = new StringBuilder();
         sb.Append("input_protobuf_encoded=");
@@ -548,18 +535,18 @@ public static class Downloader
             req.AddQueryParameter("access_token", request.AccessToken);
         if (request.Timeout > 0)
             req.Timeout = request.Timeout;
-        var res = await client.ExecuteAsync(req);
-        client.Dispose();
-        return new(res);
-    }
+		var res = await (request.CancellationToken == null ? client.ExecuteAsync(req) : client.ExecuteAsync(req, request.CancellationToken.Value));
+		var obj = new MemoryResponse(res);
+		return obj;
+	}
     public static MemoryResponse PostProtobuf(ProtobufRequest request)
     {
-        var (client, req, resCookie) = GetRestClient(request.Url, Method.Post, request.Proxy, UserAgentOkHttp);
+        var (client, req) = GetRestClient(request.Url, Method.Post, request.Proxy, UserAgentOkHttp);
         req.AddHeader("Accept", "application/json, text/plain, */*");
         req.AddHeader("Accept-Encoding", "gzip");
         req.AddHeader("Content-Type", AppFormUrlEncoded);
         if (!request.Cookie.IsEmpty())
-            req.AddHeader("Cookie", request.Cookie);
+            req.AddHeader("Cookie", request.Cookie!);
 
         var sb = new StringBuilder();
         sb.Append("input_protobuf_encoded=");
@@ -572,35 +559,34 @@ public static class Downloader
             req.AddQueryParameter("access_token", request.AccessToken);
         if (request.Timeout > 0)
             req.Timeout = request.Timeout;
-        var res = client.Execute(req);
-        //var base64 = Convert.ToBase64String(res.RawBytes);
-        //client.Dispose();
-        return new(res);
-    }
+		var res = request.CancellationToken == null ? client.Execute(req) : client.Execute(req, request.CancellationToken.Value);
+		var obj = new MemoryResponse(res);
+		return obj;
+	}
 
     internal static StringResponse GetMobile(GetRequest request)
     {
-        var (client, req, resCookie) = GetRestClient(request.Url, Method.Post, request.Proxy, request.UserAgent, AddCookieSession(request.Url, request.Session));
+        var (client, req) = GetRestClient(request.Url, Method.Post, request.Proxy, request.UserAgent!, AddCookieSession(request.Url, request.Session));
         request.AddHeaders(req);
-        req.AddHeader("Accept", "text/javascript, text/html, application/xml, text/xml, *");
-        if (!request.Cookie.IsEmpty()) req.AddHeader("Cookie", request.Cookie);
-        if (!request.Referer.IsEmpty()) req.AddHeader("Referer", request.Referer);
+
+		req.AddHeader("Accept", "text/javascript, text/html, application/xml, text/xml, *");
+        if (!request.Cookie.IsEmpty()) req.AddHeader("Cookie", request.Cookie!);
+        if (!request.Referer.IsEmpty()) req.AddHeader("Referer", request.Referer!);
         req.AddHeader("X-Requested-With", "com.valvesoftware.android.steam.community");
 
         request.AddQuery(req);
         if (request.Timeout > 0)
             req.Timeout = request.Timeout;
-        var res = client.Execute(req);
-        client.Dispose();
-        return new(res, resCookie);
+        var res = request.CancellationToken == null ? client.Execute(req) : client.Execute(req, request.CancellationToken.Value);
+        return new(res, res.Cookies);
     }
     internal static StringResponse PostMobile(PostRequest request)
     {
-        var (client, req, resCookie) = GetRestClient(request.Url, Method.Post, request.Proxy, request.UserAgent, AddCookieSession(request.Url, request.Session));
+        var (client, req) = GetRestClient(request.Url, Method.Post, request.Proxy, request.UserAgent!, AddCookieSession(request.Url, request.Session));
         request.AddHeaders(req);
         req.AddHeader("Accept", "text/javascript, text/html, application/xml, text/xml, *");
-        if (!request.Cookie.IsEmpty()) req.AddHeader("Cookie", request.Cookie);
-        if (!request.Referer.IsEmpty()) req.AddHeader("Referer", request.Referer);
+        if (!request.Cookie.IsEmpty()) req.AddHeader("Cookie", request.Cookie!);
+        if (!request.Referer.IsEmpty()) req.AddHeader("Referer", request.Referer!);
         req.AddHeader("X-Requested-With", "com.valvesoftware.android.steam.community");
         req.AddHeader("Content-Type", request.ContentType);
         req.AddStringBody(request.GetContent(), DataFormat.None);
@@ -608,33 +594,31 @@ public static class Downloader
         request.AddQuery(req);
         if (request.Timeout > 0)
             req.Timeout = request.Timeout;
-        var res = client.Execute(req);
-        client.Dispose();
-        return new(res, resCookie);
+		var res = request.CancellationToken == null ? client.Execute(req) : client.Execute(req, request.CancellationToken.Value);
+        return new(res, res.Cookies);
     }
     internal static async Task<StringResponse> GetMobileAsync(GetRequest request)
     {
-        var (client, req, resCookie) = GetRestClient(request.Url, Method.Post, request.Proxy, request.UserAgent, AddCookieSession(request.Url, request.Session));
+        var (client, req) = GetRestClient(request.Url, Method.Post, request.Proxy, request.UserAgent!, AddCookieSession(request.Url, request.Session));
         request.AddHeaders(req);
         req.AddHeader("Accept", "text/javascript, text/html, application/xml, text/xml, *");
-        if (!request.Referer.IsEmpty()) req.AddHeader("Referer", request.Referer);
-        if (!request.Cookie.IsEmpty()) req.AddHeader("Cookie", request.Cookie);
+        if (!request.Referer.IsEmpty()) req.AddHeader("Referer", request.Referer!);
+        if (!request.Cookie.IsEmpty()) req.AddHeader("Cookie", request.Cookie!);
         req.AddHeader("X-Requested-With", "com.valvesoftware.android.steam.community");
 
         request.AddQuery(req);
         if (request.Timeout > 0)
             req.Timeout = request.Timeout;
-        var res = await client.ExecuteAsync(req);
-        client.Dispose();
-        return new(res, resCookie);
+		var res = await (request.CancellationToken == null ? client.ExecuteAsync(req) : client.ExecuteAsync(req, request.CancellationToken.Value));
+        return new(res, res.Cookies);
     }
     internal static async Task<StringResponse> PostMobileAsync(PostRequest request)
     {
-        var (client, req, resCookie) = GetRestClient(request.Url, Method.Post, request.Proxy, request.UserAgent, AddCookieSession(request.Url, request.Session));
+        var (client, req) = GetRestClient(request.Url, Method.Post, request.Proxy, request.UserAgent!, AddCookieSession(request.Url, request.Session));
         request.AddHeaders(req);
         req.AddHeader("Accept", "text/javascript, text/html, application/xml, text/xml, *");
-        if (!request.Cookie.IsEmpty()) req.AddHeader("Cookie", request.Cookie);
-        if (!request.Referer.IsEmpty()) req.AddHeader("Referer", request.Referer);
+        if (!request.Cookie.IsEmpty()) req.AddHeader("Cookie", request.Cookie!);
+        if (!request.Referer.IsEmpty()) req.AddHeader("Referer", request.Referer!);
         req.AddHeader("X-Requested-With", "com.valvesoftware.android.steam.community");
         req.AddHeader("Content-Type", request.ContentType);
         req.AddStringBody(request.GetContent(), DataFormat.None);
@@ -642,41 +626,38 @@ public static class Downloader
 
         if (request.Timeout > 0)
             req.Timeout = request.Timeout;
-        var res = await client.ExecuteAsync(req);
-        client.Dispose();
-        return new(res, resCookie);
+		var res = await (request.CancellationToken == null ? client.ExecuteAsync(req) : client.ExecuteAsync(req, request.CancellationToken.Value));
+        return new(res, res.Cookies);
     }
 
     private static StringResponse GetMobileApp(GetRequest request)
     {
-        var (client, req, resCookie) = GetRestClient(request.Url, Method.Post, request.Proxy, request.UserAgent, AddCookieSession(request.Url, request.Session));
+        var (client, req) = GetRestClient(request.Url, Method.Post, request.Proxy, request.UserAgent!, AddCookieSession(request.Url, request.Session));
         request.AddHeaders(req);
         req.AddHeader("accept", "text/javascript, text/html, application/xml, text/xml, *");
         req.AddHeader("Accept-Encoding", "gzip");
         req.AddHeader("Cookie", "mobileClient=android; mobileClientVersion=777777 3.0.0; Steam_Language=english");
         req.AddHeader("X-Requested-With", "com.valvesoftware.android.steam.community");
         if (!request.Referer.IsEmpty())
-            req.AddHeader("Referer", request.Referer);
+            req.AddHeader("Referer", request.Referer!);
         if (request.Timeout > 0)
             req.Timeout = request.Timeout;
-        var res = client.Execute(req);
-        client.Dispose();
-        return new(res, resCookie);
+		var res = request.CancellationToken == null ? client.Execute(req) : client.Execute(req, request.CancellationToken.Value);
+        return new(res, res.Cookies);
     }
     private static async Task<StringResponse> GetMobileAppAsync(GetRequest request)
     {
-        var (client, req, resCookie) = GetRestClient(request.Url, Method.Post, request.Proxy, request.UserAgent, AddCookieSession(request.Url, request.Session));
+        var (client, req) = GetRestClient(request.Url, Method.Post, request.Proxy, request.UserAgent!, AddCookieSession(request.Url, request.Session));
         request.AddHeaders(req);
         req.AddHeader("accept", "text/javascript, text/html, application/xml, text/xml, *");
         req.AddHeader("Accept-Encoding", "gzip");
         req.AddHeader("Cookie", "mobileClient=android; mobileClientVersion=777777 3.0.0; Steam_Language=english");
         req.AddHeader("X-Requested-With", "com.valvesoftware.android.steam.community");
         if (!request.Referer.IsEmpty())
-            req.AddHeader("Referer", request.Referer);
+            req.AddHeader("Referer", request.Referer!);
         if (request.Timeout > 0)
             req.Timeout = request.Timeout;
-        var res = await client.ExecuteAsync(req);
-        client.Dispose();
-        return new(res, resCookie);
+		var res = await (request.CancellationToken == null ? client.ExecuteAsync(req) : client.ExecuteAsync(req, request.CancellationToken.Value));
+        return new(res, res.Cookies);
     }
 }
