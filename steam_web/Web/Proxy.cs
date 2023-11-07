@@ -3,6 +3,7 @@ using System.Net;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using SteamWeb.Extensions;
+using SteamWeb.Web.Enums;
 
 namespace SteamWeb.Web;
 public class Proxy : IWebProxy, INotifyPropertyChanged
@@ -79,7 +80,7 @@ public class Proxy : IWebProxy, INotifyPropertyChanged
     /// Показывает установлен ли только логин или только пароль
     /// </summary>
     [JsonIgnore]
-    public bool IsBadCredentials => (string.IsNullOrEmpty(_username) && !string.IsNullOrEmpty(_password)) || (!string.IsNullOrEmpty(_username) && string.IsNullOrEmpty(_password));
+    public bool IsBadCredentials => string.IsNullOrEmpty(_username) && !string.IsNullOrEmpty(_password) || !string.IsNullOrEmpty(_username) && string.IsNullOrEmpty(_password);
     [JsonIgnore]
     public ICredentials? Credentials
     {
