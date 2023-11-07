@@ -523,9 +523,11 @@ public class SteamGuardAccount
 
     public string GenerateConfirmationURL(string tag = "conf")
     {
-        string endpoint = APIEndpoints.COMMUNITY_BASE + "/mobileconf/conf?";
-        string queryString = GenerateConfirmationQueryParams(tag);
-        return endpoint + queryString;
+        var sb = new StringBuilder(4);
+		sb.Append(APIEndpoints.COMMUNITY_BASE);
+		sb.Append("/mobileconf/conf?");
+		sb.Append(GenerateConfirmationQueryParams(tag));
+		return sb.ToString();
     }
     public string GenerateConfirmationQueryParams(string tag)
     {
@@ -533,8 +535,19 @@ public class SteamGuardAccount
             throw new ArgumentException("Device ID is not present");
 
         long time = TimeAligner.GetSteamTime();
-        return $"p={DeviceID}&a={Session?.SteamID}&k={_generateConfirmationHashForTime(time, tag)}&t={time}&m=react&tag={tag}";
-    }
+        var sb = new StringBuilder(10);
+        sb.Append("p=");
+		sb.Append(DeviceID);
+		sb.Append("&a=");
+		sb.Append(Session?.SteamID);
+		sb.Append("&k=");
+		sb.Append(_generateConfirmationHashForTime(time, tag));
+		sb.Append("&t=");
+		sb.Append(time);
+		sb.Append("&m=react&tag=");
+		sb.Append(tag);
+		return sb.ToString();
+	}
     private string? _generateConfirmationHashForTime(long time, string tag)
     {
         byte[] decode = Convert.FromBase64String(IdentitySecret);
@@ -561,8 +574,6 @@ public class SteamGuardAccount
             hmacGenerator.Key = decode;
             byte[] hashedData = hmacGenerator.ComputeHash(array);
             string encodedData = Convert.ToBase64String(hashedData, Base64FormattingOptions.None);
-            //string hash = WebUtility.UrlEncode(encodedData);
-            //return hash;
             return encodedData;
         }
         catch
