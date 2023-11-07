@@ -28,46 +28,58 @@ public static class ExtensionMethods
         Array.Copy(data, index, result, 0, length);
         return result;
     }
-    public static short ParseInt16(this string value)
+    public static short ParseInt16(this string? value)
     {
-        if (short.TryParse(value, out short result)) return result;
+        if (short.TryParse(value, out short result))
+            return result;
         return 0;
     }
-    public static int ParseInt32(this string value)
+    public static int ParseInt32(this string? value)
     {
-        if (int.TryParse(value, out int result)) return result;
+        if (int.TryParse(value, out int result))
+            return result;
         return 0;
     }
-    public static long ParseInt64(this string value)
+    public static long ParseInt64(this string? value)
     {
-        if (long.TryParse(value, out long result)) return result;
+        if (long.TryParse(value, out long result))
+            return result;
         return 0;
     }
-    public static ushort ParseUInt16(this string value)
+    public static ushort ParseUInt16(this string? value)
     {
-        if (ushort.TryParse(value, out ushort result)) return result;
+        if (ushort.TryParse(value, out ushort result))
+            return result;
         return 0;
     }
-    public static uint ParseUInt32(this string value)
+    public static uint ParseUInt32(this string? value)
     {
-        if (uint.TryParse(value, out uint result)) return result;
+        if (uint.TryParse(value, out uint result))
+            return result;
         return 0;
     }
-    public static ulong ParseUInt64(this string value)
+    public static ulong ParseUInt64(this string? value)
     {
-        if (ulong.TryParse(value, out ulong result)) return result;
+        if (ulong.TryParse(value, out ulong result))
+            return result;
         return 0;
     }
-    public static double ParseDouble(this string value)
+    public static double ParseDouble(this string? value)
+	{
+		if (value == null)
+			return 0d;
+		value = value.Replace(".", ",");
+        if (double.TryParse(value, out double result))
+            return result;
+        return 0;
+    }
+    public static float ParseFloat(this string? value)
     {
+        if (value == null)
+            return 0f;
         value = value.Replace(".", ",");
-        if (double.TryParse(value, out double result)) return result;
-        return 0;
-    }
-    public static float ParseFloat(this string value)
-    {
-        value = value.Replace(".", ",");
-        if (float.TryParse(value, out float result)) return result;
+        if (float.TryParse(value, out float result))
+            return result;
         return 0f;
     }
     public static string? GetClearWebString(this string? strSource) => strSource?.Replace("\n", "").Replace("\t", "").Replace("\r", "");
@@ -81,7 +93,7 @@ public static class ExtensionMethods
         }
         return true;
     }
-    public static string GetOnlyDigit(this string strSource)
+    public static string GetOnlyDigit(this string? strSource)
     {
         if (string.IsNullOrEmpty(strSource))
             return "";
