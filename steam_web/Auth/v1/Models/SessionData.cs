@@ -223,5 +223,23 @@ public class SessionData : ISessionProvider
                 else if (cookie.Name == "Steam_Language") SteamLanguage = cookie.Value;
             }
         }
-    }
+	}
+	public void RewriteCookie(CookieCollection collection)
+	{
+		foreach (Cookie cookie in collection)
+		{
+			if (cookie.Value.IsEmpty()) continue;
+			if (cookie.Domain == "steamcommunity.com" || cookie.Domain == "store.steampowered.com" ||
+				cookie.Domain == "help.steampowered.com" || cookie.Domain == "api.steampowered.com")
+			{
+				if (cookie.Name == "sessionid") SessionID = cookie.Value;
+				else if (cookie.Name == "steamLoginSecure") SteamLoginSecure = cookie.Value;
+				else if (cookie.Name == "steamRememberLogin") SteamRememberLogin = cookie.Value;
+				else if (cookie.Name.StartsWith("steamMachineAuth")) SteamMachineAuth = cookie.Value;
+				else if (cookie.Name == "steamCountry") SteamCountry = cookie.Value;
+				else if (cookie.Name == "browserid") BrowserID = cookie.Value;
+				else if (cookie.Name == "Steam_Language") SteamLanguage = cookie.Value;
+			}
+		}
+	}
 }

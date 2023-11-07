@@ -89,7 +89,27 @@ public class SessionData : ISessionProvider
                 else _cookies.AddOrUpdate(cookie.Name, cookie, (key, oldValue) => cookie);
             }
         }
-    }
+	}
+	public void RewriteCookie(CookieCollection collection)
+	{
+		foreach (Cookie cookie in collection)
+		{
+			if (cookie.Value.IsEmpty()) continue;
+			if (cookie.Domain == "steamcommunity.com" || cookie.Domain == "store.steampowered.com" ||
+				cookie.Domain == "help.steampowered.com" || cookie.Domain == "api.steampowered.com")
+			{
+				if (cookie.Name == "sessionid")
+					SessionID = cookie.Value;
+				else if (cookie.Name == "steamCountry")
+					SteamCountry = cookie.Value;
+				else if (cookie.Name == "browserid")
+					BrowserId = cookie.Value;
+				else if (cookie.Name == "Steam_Language")
+					SteamLanguage = cookie.Value;
+				else _cookies.AddOrUpdate(cookie.Name, cookie, (key, oldValue) => cookie);
+			}
+		}
+	}
 
-    public string ToStringCookie() => $"{DefaultMobileCookie}steamLoginSecure={SteamID}%7C%7C{AccessToken}; steamCountry={SteamCountry}; browserid={BrowserId}; sessionid={SessionID}";
+	public string ToStringCookie() => $"{DefaultMobileCookie}steamLoginSecure={SteamID}%7C%7C{AccessToken}; steamCountry={SteamCountry}; browserid={BrowserId}; sessionid={SessionID}";
 }
