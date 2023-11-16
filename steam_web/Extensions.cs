@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿using SteamWeb.Auth.v2.Models;
+using SteamWeb.Web;
+using System.Net;
+using System.Text;
 
 namespace SteamWeb.Extensions;
 public static class ExtensionMethods
@@ -160,5 +163,46 @@ public static class ExtensionMethods
 		for (int i = 0; i < length; i++)
 			sb.Append(_chars[random.Next(lengthChars)]);
 		return sb.ToString();
+	}
+
+    public static bool IsValid(this SessionData? session, IWebProxy? proxy = null)
+    {
+        if (session == null)
+            return false;
+
+		var request = new GetRequest(SteamPoweredUrls.IAuthenticationService_GetAuthSessionsForAccount_v1, proxy, session)
+		{
+			UserAgent = SessionData.UserAgentMobile,
+			UseVersion2 = true
+		}.AddQuery("access_token", session.AccessToken).AddQuery("input_protobuf_encoded", string.Empty);
+
+        if (session.PlatformType == EAuthTokenPlatformType.MobileApp)
+			request.AddQuery("origin", "SteamMobile");
+
+		var response = Downloader.Get(request);
+		if (!response.Success || response.Data.IsEmpty())
+			return false;
+		return response.EResult == EResult.OK && response.Data.IsEmpty();
+
+	}
+	public static async Task<bool> IsValidAsync(this SessionData? session, IWebProxy? proxy = null)
+	{
+		if (session == null)
+			return false;
+
+		var request = new GetRequest(SteamPoweredUrls.IAuthenticationService_GetAuthSessionsForAccount_v1, proxy, session)
+		{
+			UserAgent = SessionData.UserAgentMobile,
+			UseVersion2 = true
+		}.AddQuery("access_token", session.AccessToken).AddQuery("input_protobuf_encoded", string.Empty);
+
+		if (session.PlatformType == EAuthTokenPlatformType.MobileApp)
+			request.AddQuery("origin", "SteamMobile");
+
+		var response = await Downloader.GetAsync(request);
+		if (!response.Success || response.Data.IsEmpty())
+			return false;
+		return response.EResult == EResult.OK && response.Data.IsEmpty();
+
 	}
 }
