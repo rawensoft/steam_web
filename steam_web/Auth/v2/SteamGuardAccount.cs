@@ -60,13 +60,37 @@ public class SteamGuardAccount
             return false;
         var obj = Serializer.Deserialize<CTwoFactor_RemoveAuthenticator_Response>(response.Stream);
         return obj.success;
-    }
+	}
+	public async Task<bool> DeactivateAuthenticatorAsync()
+	{
+		if (Session == null)
+			return false;
+		using var memStream1 = new MemoryStream();
+		Serializer.Serialize(memStream1, new CTwoFactor_RemoveAuthenticator_Request()
+		{
+			//remove_all_steamguard_cookies = true,
+			revocation_code = RevocationCode,
+			revocation_reason = 1,
+			steamguard_scheme = 1,
+		});
+		var request = new ProtobufRequest(SteamPoweredUrls.ITwoFactorService_RemoveAuthenticator_v1, Convert.ToBase64String(memStream1.ToArray()))
+		{
+			AccessToken = Session.AccessToken,
+			Proxy = Proxy,
+			UserAgent = SessionData.UserAgentMobile
+		};
+		using var response = await Downloader.PostProtobufAsync(request);
+		if (!response.Success || response.EResult != EResult.OK)
+			return false;
+		var obj = Serializer.Deserialize<CTwoFactor_RemoveAuthenticator_Response>(response.Stream);
+		return obj.success;
+	}
 
-    /// <summary>
-    /// Generate Steam Guard Code from Steam Time Request
-    /// </summary>
-    /// <returns>Null Or Code</returns>
-    public string GenerateSteamGuardCode() => GenerateSteamGuardCodeForTime(TimeAligner.GetSteamTime());
+	/// <summary>
+	/// Generate Steam Guard Code from Steam Time Request
+	/// </summary>
+	/// <returns>Null Or Code</returns>
+	public string GenerateSteamGuardCode() => GenerateSteamGuardCodeForTime(TimeAligner.GetSteamTime())!;
     /// <summary>
     /// Generate Steam Guard Code from your time
     /// </summary>
