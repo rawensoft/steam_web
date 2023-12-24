@@ -181,9 +181,19 @@ public static class ExtensionMethods
 
 		var response = Downloader.Get(request);
 		if (!response.Success || response.Data.IsEmpty())
+    public static bool Refresh(this SessionData? session, Proxy? proxy = null)
+	{
+		if (session == null || session.AccessToken.IsEmpty())
 			return false;
-		return response.EResult == EResult.OK && response.Data.IsEmpty();
 
+		var new_token_response = API.IAuthenticationService.GenerateAccessTokenForApp(session, proxy);
+		if (new_token_response.Item1 != EResult.OK && new_token_response.Item2?.access_token?.IsEmpty() != true)
+			return false;
+		else
+		{
+			session.AccessToken = new_token_response.Item2.access_token;
+            return true;
+		}
 	}
 	public static async Task<bool> IsValidAsync(this SessionData? session, IWebProxy? proxy = null)
 	{
@@ -203,6 +213,18 @@ public static class ExtensionMethods
 		if (!response.Success || response.Data.IsEmpty())
 			return false;
 		return response.EResult == EResult.OK && response.Data.IsEmpty();
+	public static async Task<bool> RefreshAsync(this SessionData? session, Proxy? proxy = null)
+	{
+		if (session == null || session.AccessToken.IsEmpty())
+			return false;
 
+		var new_token_response = await API.IAuthenticationService.GenerateAccessTokenForAppAsync(session, proxy);
+		if (new_token_response.Item1 != EResult.OK && new_token_response.Item2?.access_token?.IsEmpty() != true)
+			return false;
+		else
+		{
+			session.AccessToken = new_token_response.Item2.access_token;
+			return true;
+		}
 	}
 }
