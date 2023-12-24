@@ -165,22 +165,18 @@ public static class ExtensionMethods
 		return sb.ToString();
 	}
 
-    public static bool IsValid(this SessionData? session, IWebProxy? proxy = null)
+    public static bool IsValid(this SessionData? session, Proxy? proxy = null)
     {
-        if (session == null)
+        if (session == null || session.AccessToken.IsEmpty())
             return false;
 
-		var request = new GetRequest(SteamPoweredUrls.IAuthenticationService_GetAuthSessionsForAccount_v1, proxy, session)
+		var check_session = API.IAuthenticationService.GetAuthSessionsForAccount(session, proxy);
+		if (check_session?.response.client_ids == null)
 		{
-			UserAgent = SessionData.UserAgentMobile,
-			UseVersion2 = true
-		}.AddQuery("access_token", session.AccessToken).AddQuery("input_protobuf_encoded", string.Empty);
-
-        if (session.PlatformType == EAuthTokenPlatformType.MobileApp)
-			request.AddQuery("origin", "SteamMobile");
-
-		var response = Downloader.Get(request);
-		if (!response.Success || response.Data.IsEmpty())
+            return false;
+		}
+        return true;
+	}
     public static bool Refresh(this SessionData? session, Proxy? proxy = null)
 	{
 		if (session == null || session.AccessToken.IsEmpty())
@@ -195,24 +191,18 @@ public static class ExtensionMethods
             return true;
 		}
 	}
-	public static async Task<bool> IsValidAsync(this SessionData? session, IWebProxy? proxy = null)
+	public static async Task<bool> IsValidAsync(this SessionData? session, Proxy? proxy = null)
 	{
-		if (session == null)
+		if (session == null || session.AccessToken.IsEmpty())
 			return false;
 
-		var request = new GetRequest(SteamPoweredUrls.IAuthenticationService_GetAuthSessionsForAccount_v1, proxy, session)
+		var check_session = await API.IAuthenticationService.GetAuthSessionsForAccountAsync(session, proxy);
+		if (check_session?.response.client_ids == null)
 		{
-			UserAgent = SessionData.UserAgentMobile,
-			UseVersion2 = true
-		}.AddQuery("access_token", session.AccessToken).AddQuery("input_protobuf_encoded", string.Empty);
-
-		if (session.PlatformType == EAuthTokenPlatformType.MobileApp)
-			request.AddQuery("origin", "SteamMobile");
-
-		var response = await Downloader.GetAsync(request);
-		if (!response.Success || response.Data.IsEmpty())
 			return false;
-		return response.EResult == EResult.OK && response.Data.IsEmpty();
+		}
+		return true;
+	}
 	public static async Task<bool> RefreshAsync(this SessionData? session, Proxy? proxy = null)
 	{
 		if (session == null || session.AccessToken.IsEmpty())
