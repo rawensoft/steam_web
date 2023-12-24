@@ -32,12 +32,26 @@ class CTwoFactor_AddAuthenticator_Response
     /// Spare shared secret
     /// </summary>
     [ProtoMember(9)] public byte[] secret_1 { get; set; }
-    /// <summary>
-    /// Result code - 2 - нужно привязать номер(?), 1 - ожидание ввода смс кода(?)
-    /// </summary>
-    [ProtoMember(10)] public int status { get; set; }
+	/// <summary>
+	/// Основывается на x-eresult заголовке
+	/// <para/>
+	/// 1 - ожидание ввода кода с почты или из телефона
+	/// <para/>
+	/// 2 - нужно привязать номер
+	/// <para/>
+	/// 11 - EResult.InvalidState
+	/// </summary>
+	[ProtoMember(10)] public int status { get; set; }
     /// <summary>
     /// a portion of the phone number the SMS code was sent to
     /// </summary>
-    [ProtoMember(11)] public string phone_number_hint { get; set; }
+    [ProtoMember(11)] public string? phone_number_hint { get; set; }
+	/// <summary>
+	/// how we expect to confirm adding the authenticator
+	/// <para/>
+	/// 3 - ожидание ввода кода с почты
+	/// <para/>
+	/// ? - неизвестно
+	/// </summary>
+	[ProtoMember(12)] public int confirm_type { get; set; }
 }

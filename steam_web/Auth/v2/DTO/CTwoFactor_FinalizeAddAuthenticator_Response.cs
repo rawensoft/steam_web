@@ -8,11 +8,7 @@ class CTwoFactor_FinalizeAddAuthenticator_Response
     /// <summary>
     /// True if succeeded, or want more tries
     /// </summary>
-    [ProtoMember(1)] public bool success { get; set; }
-    /// <summary>
-    /// True if want more tries
-    /// </summary>
-    [ProtoMember(2)] public bool want_more { get; set; }
+    [ProtoMember(1)] public bool success { get; set; } = false;
     /// <summary>
     /// Current server time
     /// </summary>

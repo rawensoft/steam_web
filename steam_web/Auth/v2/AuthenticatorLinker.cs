@@ -29,16 +29,16 @@ public class AuthenticatorLinker
     public bool Finalized { get; private set; } = false;
 
     private readonly SessionData session;
-    private readonly IWebProxy proxy;
+    private readonly IWebProxy? proxy;
     private bool allowAuthenticator = false;
-    private string countryCode = null;
-    private string phoneNumber = null;
+    private string? countryCode = null;
+    private string? phoneNumber = null;
 
     private bool needAddMobile = false;
     private bool isEmailConfirmed = false;
     private bool setNumberExecuted = false;
     private bool isCodeToPhoneNumberSended = false;
-    public AuthenticatorLinker(SessionData session, IWebProxy proxy)
+    public AuthenticatorLinker(SessionData session, IWebProxy? proxy)
     {
         this.session = session;
         this.proxy = proxy;
@@ -135,7 +135,7 @@ public class AuthenticatorLinker
     /// <code>AwaitingFinalization</code> - нужно перейти к след шагу
     /// <code>TooManyRequests</code> - слишком много было отправлено смс на телефон
     /// </returns>
-    public LinkResult AddAuthenticator()
+    public LinkResult AddAuthenticatorMobile()
     {
         if (!allowAuthenticator)
             return LinkResult.AuthenticatorNotAllowed;
@@ -164,7 +164,7 @@ public class AuthenticatorLinker
         }
 
         using var memStream1 = new MemoryStream();
-        Serializer.Serialize(memStream1, new CTwoFactor_AddAuthenticator_Request()
+        Serializer.Serialize(memStream1, new CTwoFactor_AddAuthenticator_Request_Mobile()
         {
             steamid = session.SteamID,
             authenticator_type = 1,
@@ -232,7 +232,8 @@ public class AuthenticatorLinker
             Proxy = proxy,
             TokenGID = addAuthenticatorResponse.token_gid,
             URI = addAuthenticatorResponse.uri,
-        };
+			AddedThrough = ADD_THROUGH.PhoneNumber
+		};
         return LinkResult.AwaitingFinalization;
     }
     /// <summary>
@@ -246,7 +247,7 @@ public class AuthenticatorLinker
     /// <code>UnableToGenerateCorrectCodes</code> - невозможно нормально сгенерировать 2FA коды
     /// <code>Success</code> - аунтентификатор привязан
     /// </returns>
-    public FinalizeResult FinalizeAddAuthenticator(string smsCode)
+    public FinalizeResult FinalizeAddAuthenticatorMobile(string smsCode)
     {
         if (!allowAuthenticator)
             return FinalizeResult.AuthenticatorNotAllowed;
@@ -285,8 +286,6 @@ public class AuthenticatorLinker
             if (finalizeResponse.status == 88 && tries >= 30)
                 return FinalizeResult.UnableToGenerateCorrectCodes;
             if (!finalizeResponse.success)
-                return FinalizeResult.GeneralFailure;
-            if (finalizeResponse.want_more)
             {
                 request.validate_sms_code = false;
                 request.activation_code = null;
@@ -312,7 +311,7 @@ public class AuthenticatorLinker
     /// <code>AwaitingFinalization</code> - нужно перейти к след шагу
     /// <code>TooManyRequests</code> - слишком много было отправлено смс на телефон
     /// </returns>
-    public async Task<LinkResult> AddAuthenticatorAsync()
+    public async Task<LinkResult> AddAuthenticatorMobileAsync()
     {
         if (!allowAuthenticator)
             return LinkResult.AuthenticatorNotAllowed;
@@ -341,7 +340,7 @@ public class AuthenticatorLinker
         }
 
         using var memStream1 = new MemoryStream();
-        Serializer.Serialize(memStream1, new CTwoFactor_AddAuthenticator_Request()
+        Serializer.Serialize(memStream1, new CTwoFactor_AddAuthenticator_Request_Mobile()
         {
             steamid = session.SteamID,
             authenticator_type = 1,
@@ -408,7 +407,8 @@ public class AuthenticatorLinker
             Proxy = proxy,
             TokenGID = addAuthenticatorResponse.token_gid,
             URI = addAuthenticatorResponse.uri,
-        };
+			AddedThrough = ADD_THROUGH.PhoneNumber
+		};
         return LinkResult.AwaitingFinalization;
     }
     /// <summary>
@@ -422,7 +422,7 @@ public class AuthenticatorLinker
     /// <code>UnableToGenerateCorrectCodes</code> - невозможно нормально сгенерировать 2FA коды
     /// <code>Success</code> - аунтентификатор привязан
     /// </returns>
-    public async Task<FinalizeResult> FinalizeAddAuthenticatorAsync(string smsCode)
+    public async Task<FinalizeResult> FinalizeAddAuthenticatorMobileAsync(string smsCode)
     {
         if (!allowAuthenticator)
             return FinalizeResult.AuthenticatorNotAllowed;
@@ -461,8 +461,6 @@ public class AuthenticatorLinker
             if (finalizeResponse.status == 88 && tries >= 30)
                 return FinalizeResult.UnableToGenerateCorrectCodes;
             if (!finalizeResponse.success)
-                return FinalizeResult.GeneralFailure;
-            if (finalizeResponse.want_more)
             {
                 request.validate_sms_code = false;
                 request.activation_code = null;
@@ -477,12 +475,98 @@ public class AuthenticatorLinker
         return FinalizeResult.GeneralFailure;
     }
 
-    /// <summary>
-    /// Изменяет номер аккаунта, при его привязке
-    /// </summary>
-    /// <param name="request"></param>
-    /// <returns>Null если запрос не прошёл или нет сессии</returns>
-    private CPhone_SetAccountPhoneNumber_Response? SetAccountPhoneNumber(CPhone_SetAccountPhoneNumber_Request request)
+	public LinkResult AddAuthenticatorEmail()
+	{
+		using var memStream1 = new MemoryStream();
+		Serializer.Serialize(memStream1, new CTwoFactor_AddAuthenticator_Request_Email()
+		{
+			steamid = session.SteamID,
+			device_identifier = DeviceID,
+		});
+		string content = Convert.ToBase64String(memStream1.ToArray());
+		var protoRequest = new ProtobufRequest("https://api.steampowered.com/ITwoFactorService/AddAuthenticator/v1", content)
+		{
+			AccessToken = session.AccessToken,
+			Proxy = proxy,
+			UserAgent = SessionData.UserAgentMobile
+		};
+		using var response = Downloader.PostProtobuf(protoRequest);
+		if (!response.Success || response.EResult != EResult.OK)
+		{
+			return LinkResult.GeneralFailure;
+		}
+		var addAuthenticatorResponse = Serializer.Deserialize<CTwoFactor_AddAuthenticator_Response>(response.Stream);
+
+		if (addAuthenticatorResponse.status == 29)
+			return LinkResult.AuthenticatorPresent;
+		if (addAuthenticatorResponse.status != 1)
+			return LinkResult.GeneralFailure;
+
+		LinkedAccount = new()
+		{
+			AccountName = addAuthenticatorResponse.account_name,
+			RevocationCode = addAuthenticatorResponse.revocation_code,
+			DeviceID = DeviceID,
+			IdentitySecret = Convert.ToBase64String(addAuthenticatorResponse.identity_secret),
+			Secret1 = Convert.ToBase64String(addAuthenticatorResponse.secret_1),
+			SerialNumber = addAuthenticatorResponse.serial_number,
+			ServerTime = addAuthenticatorResponse.server_time,
+			SharedSecret = Convert.ToBase64String(addAuthenticatorResponse.shared_secret),
+			Status = addAuthenticatorResponse.status,
+			Session = session,
+			Proxy = proxy,
+			TokenGID = addAuthenticatorResponse.token_gid,
+			URI = addAuthenticatorResponse.uri,
+			AddedThrough = ADD_THROUGH.EmailCode
+		};
+		return LinkResult.AwaitingFinalization;
+	}
+	public FinalizeResult FinalizeAddAuthenticatorEmail(string emailCode)
+	{
+		if (session == null)
+			return FinalizeResult.GeneralFailure;
+		using var memStream1 = new MemoryStream();
+		var request = new CTwoFactor_FinalizeAddAuthenticator_Request()
+		{
+			steamid = session.SteamID,
+			activation_code = emailCode,
+			validate_sms_code = true,
+			authenticator_code = LinkedAccount.GenerateSteamGuardCode(),
+			authenticator_time = TimeAligner.GetSteamTime()
+		};
+		Serializer.Serialize(memStream1, request);
+		string content = Convert.ToBase64String(memStream1.ToArray());
+
+		var protoRequest = new ProtobufRequest("https://api.steampowered.com/ITwoFactorService/FinalizeAddAuthenticator/v1", content)
+		{
+			AccessToken = session.AccessToken,
+			Proxy = proxy,
+			UserAgent = SessionData.UserAgentMobile
+		};
+		using var response = Downloader.PostProtobuf(protoRequest);
+		if (!response.Success || response.EResult != EResult.OK)
+			return FinalizeResult.GeneralFailure;
+		var finalizeResponse = Serializer.Deserialize<CTwoFactor_FinalizeAddAuthenticator_Response>(response.Stream);
+
+		if (finalizeResponse.status == 89)
+			return FinalizeResult.BadSMSCode;
+		if (finalizeResponse.status == 88)
+			return FinalizeResult.UnableToGenerateCorrectCodes;
+		if (!finalizeResponse.success)
+		{
+			return FinalizeResult.GeneralFailure;
+		}
+
+		LinkedAccount.FullyEnrolled = true;
+		return FinalizeResult.Success;
+	}
+
+	/// <summary>
+	/// Изменяет номер аккаунта, при его привязке
+	/// </summary>
+	/// <param name="request"></param>
+	/// <returns>Null если запрос не прошёл или нет сессии</returns>
+	private CPhone_SetAccountPhoneNumber_Response? SetAccountPhoneNumber(CPhone_SetAccountPhoneNumber_Request request)
     {
         if (session == null)
             return null;
