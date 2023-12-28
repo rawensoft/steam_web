@@ -116,8 +116,8 @@ public class SteamGuardAccount
         {
             byte b = (byte)(hashedData[19] & 0xF);
             int codePoint = (hashedData[b] & 0x7F) << 24 | (hashedData[b + 1] & 0xFF) << 16 | (hashedData[b + 2] & 0xFF) << 8 | (hashedData[b + 3] & 0xFF);
-
-            for (int i = 0; i < 5; ++i)
+            int length = 5;
+            for (int i = 0; i < length; ++i)
             {
                 codeArray[i] = _steamGuardCodeTranslations[codePoint % _steamGuardCodeTranslations.Length];
                 codePoint /= _steamGuardCodeTranslations.Length;

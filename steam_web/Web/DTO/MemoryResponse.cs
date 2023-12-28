@@ -1,4 +1,5 @@
 ﻿using RestSharp;
+using System.Text.Json.Serialization;
 
 namespace SteamWeb.Web.DTO;
 
@@ -7,7 +8,7 @@ public class MemoryResponse : Response, IDisposable
     // Track whether Dispose has been called.
     private bool disposed = false;
 
-    public MemoryStream? Stream { get; init; } = null;
+    [JsonIgnore] public MemoryStream? Stream { get; set; } = null;
 
     public MemoryResponse(RestResponse res) : base(res) => Stream = res.RawBytes == null || res.RawBytes.Length == 0 || !res.IsSuccessful ? null : new MemoryStream(res.RawBytes);
 

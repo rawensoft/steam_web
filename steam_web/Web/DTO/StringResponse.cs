@@ -2,7 +2,6 @@
 using RestSharp;
 
 namespace SteamWeb.Web.DTO;
-
 public class StringResponse : Response
 {
     public string? Data { get; init; } = null;

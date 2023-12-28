@@ -19,7 +19,6 @@ public class ProtobufRequest
 	public ProtobufRequest(string url, string protoData)
     {
         Url = url;
-        //ProtoData = System.Web.HttpUtility.UrlEncode(protoData);
         ProtoData = protoData;
     }
 }

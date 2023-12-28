@@ -2,6 +2,7 @@
 using SteamWeb.Auth.Interfaces;
 using SteamWeb.Extensions;
 using SteamWeb.Web;
+using System.Text;
 
 namespace SteamWeb;
 public static class SteamIDs
@@ -12,7 +13,7 @@ public static class SteamIDs
     private static Dictionary<string, uint> mSteamIDs = new(30000);
     private static bool _isKeepInRAM = false;
     /// <summary>
-    /// Хранить и читать данные в оперативной памяти, а не в файле
+    /// Хранить и читать данные в оперативной памяти, а не в файле. При изменении значения очищает данные с item_nameid.
     /// </summary>
     public static bool IsKeepInRAM
     {
@@ -31,8 +32,10 @@ public static class SteamIDs
     /// <param name="folder"></param>
     public static void SetFolder(string folder)
     {
-        if (Environment.OSVersion.Platform == PlatformID.Win32NT) PathToSteamIDsFile = !folder.EndsWith('\\') ? folder + "\\steam_ids" : folder + "steam_ids";
-        else if (Environment.OSVersion.Platform == PlatformID.Unix) PathToSteamIDsFile = !folder.EndsWith('/') ? folder + "/steam_ids" : folder + "steam_ids";
+        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            PathToSteamIDsFile = !folder.EndsWith('\\') ? folder + "\\steam_ids" : folder + "steam_ids";
+        else if (Environment.OSVersion.Platform == PlatformID.Unix)
+            PathToSteamIDsFile = !folder.EndsWith('/') ? folder + "/steam_ids" : folder + "steam_ids";
     }
     public static void LoadSteamIDs()
     {
@@ -44,15 +47,17 @@ public static class SteamIDs
             {
                 var data = File.ReadAllLines(PathToSteamIDsFile);
                 mSteamIDs.Clear();
-                foreach (var item in data)
+                var length = data.Length;
+                for (int i = 0; i < length; i++)
                 {
-                    if (string.IsNullOrEmpty(item))
-                        continue;
-                    var splitted = item.Split('=');
-                    var name = splitted[0];
-                    if (!mSteamIDs.ContainsKey(name))
-                        mSteamIDs.Add(name, splitted[1].ParseUInt32());
-                }
+                    var item = data[i];
+					if (string.IsNullOrEmpty(item))
+						continue;
+					var splitted = item.Split('=');
+					var name = splitted[0];
+					if (!mSteamIDs.ContainsKey(name))
+						mSteamIDs.Add(name, splitted[1].ParseUInt32());
+				}
             }
             catch (Exception e)
             { }
@@ -65,11 +70,16 @@ public static class SteamIDs
     /// <param name="isClearSave">Нужно ли записать в файл, а не добавить в файл</param>
     public static void SaveSteamIDs(bool isClearSave)
     {
-        var list = new List<string>(mSteamIDs.Count);
+        var sb = new StringBuilder(mSteamIDs.Count * 4 + 2);
         foreach (var item in mSteamIDs)
-            list.Add($"{item.Key}={item.Value}");
-        if (isClearSave) File.WriteAllLines(PathToSteamIDsFile, list);
-        else File.AppendAllLines(PathToSteamIDsFile, list);
+		{
+			sb.Append(item.Key);
+			sb.Append('=');
+			sb.Append(item.Value);
+			sb.Append('\n');
+		}
+        if (isClearSave) File.WriteAllText(PathToSteamIDsFile, sb.ToString());
+        else File.AppendAllText(PathToSteamIDsFile, sb.ToString());
     }
 
 
@@ -88,13 +98,14 @@ public static class SteamIDs
     public static async Task<(bool, uint)> GetItemIDAsync(ISessionProvider session, Proxy? proxy, uint appid, string market_hash_name)
     {
         var items = mSteamIDs;
-        if (items.ContainsKey(market_hash_name))
-            return (true, items[market_hash_name]);
+        if (items.TryGetValue(market_hash_name, out var item_nameid))
+            return (true, item_nameid);
         if (!IsKeepInRAM)
         {
-            var itemid = GetItemID(market_hash_name);
-			return (true, itemid);
+			item_nameid = GetItemID(market_hash_name);
+			return (true, item_nameid);
 		}
+
         var market_item = await Steam.GetMarketItemAsync(session, proxy, appid, market_hash_name);
         if (market_item.item_nameid != null)
         {
@@ -119,13 +130,14 @@ public static class SteamIDs
     public static (bool, uint) GetItemID(ISessionProvider session, Proxy? proxy, uint appid, string market_hash_name)
     {
         var items = mSteamIDs;
-        if (items.ContainsKey(market_hash_name))
-            return (true, items[market_hash_name]);
+        if (items.TryGetValue(market_hash_name, out var item_nameid))
+            return (true, item_nameid);
         if (!IsKeepInRAM)
         {
-            var itemid = GetItemID(market_hash_name);
-			return (true, itemid);
+			item_nameid = GetItemID(market_hash_name);
+			return (true, item_nameid);
 		}
+
         var market_item = Steam.GetMarketItem(session, proxy, appid, market_hash_name);
         if (market_item.item_nameid != null)
         {
@@ -144,11 +156,11 @@ public static class SteamIDs
     {
         if (!IsKeepInRAM)
         {
-            var itemid = GetItemID(market_hash_name);
-			return itemid;
+            var item_nameid = GetItemID(market_hash_name);
+			return item_nameid;
 		}
-        else if (mSteamIDs.ContainsKey(market_hash_name))
-            return mSteamIDs[market_hash_name];
+        else if (mSteamIDs.TryGetValue(market_hash_name, out var item_nameid))
+            return item_nameid;
         return 0;
     }
 
@@ -178,7 +190,7 @@ public static class SteamIDs
     {
         try
         {
-            File.AppendAllLines(PathToSteamIDsFile, new string[1] { $"{market_hash_name}={id}" });
+            File.AppendAllLines(PathToSteamIDsFile, new string[] { market_hash_name + '=' + id });
         }
         catch (Exception)
         { }

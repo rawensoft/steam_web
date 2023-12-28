@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Net;
+using System.Text;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using SteamWeb.Extensions;
@@ -80,7 +81,8 @@ public class Proxy : IWebProxy, INotifyPropertyChanged
     /// Показывает установлен ли только логин или только пароль
     /// </summary>
     [JsonIgnore]
-    public bool IsBadCredentials => string.IsNullOrEmpty(_username) && !string.IsNullOrEmpty(_password) || !string.IsNullOrEmpty(_username) && string.IsNullOrEmpty(_password);
+    public bool IsBadCredentials => string.IsNullOrEmpty(_username) && !string.IsNullOrEmpty(_password) ||
+                                    !string.IsNullOrEmpty(_username) && string.IsNullOrEmpty(_password);
     [JsonIgnore]
     public ICredentials? Credentials
     {
@@ -144,16 +146,27 @@ public class Proxy : IWebProxy, INotifyPropertyChanged
     {
         if (!UseProxy || string.IsNullOrEmpty(IP) || Port == 0)
             return null;
-        switch (_type)
+		var sb = new StringBuilder(5);
+		switch (_type)
         {
             case ProxyType.Socks5:
-                return new($"socks5://{IP}:{Port}");
+                sb.Append("socks5://");
+                break;
+
             case ProxyType.Socks4:
-                return new($"socks4://{IP}:{Port}");
-            default:
-                return new($"http://{IP}:{Port}");
-        }
-    }
+				sb.Append("socks4://");
+				break;
+
+			default:
+				sb.Append("http://");
+				break;
+		}
+		sb.Append(IP);
+		sb.Append(':');
+		sb.Append(Port);
+        return new(sb.ToString());
+
+	}
     public bool IsBypassed(Uri host) => !UseProxy || string.IsNullOrEmpty(IP) || Port == 0;
     private void Property(string name) => PropertyChanged?.Invoke(this, new(name));
 

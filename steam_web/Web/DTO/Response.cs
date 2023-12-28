@@ -56,7 +56,7 @@ public class Response
 		}
 		if (!Success)
 		{
-			if (res.ErrorException != null && res.ErrorException.InnerException != null)
+			if (res.ErrorException?.InnerException != null)
 			{
 				ErrorException = res.ErrorException.InnerException;
 				ErrorMessage = res.ErrorException.InnerException.Message;
@@ -112,8 +112,9 @@ public class Response
 	{
 		if (cookies != null)
 		{
-			var sb = new StringBuilder();
-			foreach (Cookie cookie in cookies.GetAllCookies())
+			var allCookies = cookies.GetAllCookies();
+			var sb = new StringBuilder(allCookies.Count * 4 + 2);
+			foreach (Cookie cookie in allCookies)
 			{
 				sb.Append(cookie.Name);
 				sb.Append('=');
@@ -129,7 +130,7 @@ public class Response
 		if (cookies != null)
 		{
 			var container = new CookieContainer();
-			var sb = new StringBuilder();
+			var sb = new StringBuilder(cookies.Count * 4 + 2);
 			foreach (Cookie cookie in cookies)
 			{
 				sb.Append(cookie.Name);

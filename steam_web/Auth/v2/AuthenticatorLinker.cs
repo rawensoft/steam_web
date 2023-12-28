@@ -76,14 +76,17 @@ public class AuthenticatorLinker
     /// <param name="pNumber">номер телефона без кода страны</param>
     public void SetPhoneNumber(string cCode, string pNumber)
     {
-        phoneNumber = $"{cCode} {pNumber}";
+        phoneNumber = cCode + " " + pNumber;
         countryCode = GetCountryCodeByPhoneNumber(pNumber);
     }
     private static string? GetCountryCodeByPhoneNumber(string pNumber)
     {
-        if (pNumber.StartsWith("+7")) return "RU";
-        if (pNumber.StartsWith("+380")) return "UA";
-        if (pNumber.StartsWith("+372")) return "EE";
+        if (pNumber.StartsWith("+7"))
+            return "RU";
+        if (pNumber.StartsWith("+380"))
+            return "UA";
+        if (pNumber.StartsWith("+372"))
+            return "EE";
         return null;
     }
     public bool CheckStatus()
@@ -123,6 +126,7 @@ public class AuthenticatorLinker
         return allowAuthenticator = wallet.authenticator_allowed;
     }
     public bool ResendCode() => isCodeToPhoneNumberSended = false;
+
 
     /// <summary>
     /// Начало привязывания аутентификатора

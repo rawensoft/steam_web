@@ -11,7 +11,7 @@ public class PostRequest : GetRequest
     internal const char Ampersand = '&';
 
     public List<KeyValuePair<string, string>> PostData { get; private set; } = new(50);
-    public string Content { get; set; } = "";
+    public string Content { get; set; } = string.Empty;
     public string ContentType { get; set; }
     public string? SecOpenIDNonce { get; set; }
 
@@ -31,7 +31,7 @@ public class PostRequest : GetRequest
         if (PostData.Count == 0)
             return Content;
 
-        var sb = new StringBuilder();
+        var sb = new StringBuilder(PostData.Count * 4 + 3);
         if (!Content.IsEmpty())
             sb.Append(Content).Append(Ampersand);
         foreach (var item in PostData)
