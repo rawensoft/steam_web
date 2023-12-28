@@ -29,8 +29,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AngleSharp" Version="1.0.1" />
-    <PackageReference Include="protobuf-net" Version="3.2.16" />
+    <PackageReference Include="AngleSharp" Version="1.0.7" />
+    <PackageReference Include="protobuf-net" Version="3.2.30" />
     <PackageReference Include="RestSharp" Version="110.2.0" />
   </ItemGroup>
 
