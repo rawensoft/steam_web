@@ -6,6 +6,7 @@ namespace SteamWeb.Extensions;
 public static class ExtensionMethods
 {
     private const string _chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+	private const string _dtFormat = "dd.MM.yyyy HH:mm:ss";
 
 	public static Dictionary<T1, T2> SubDict<T1, T2>(this Dictionary<T1, T2> data, int index, int length)
     {
@@ -79,7 +80,7 @@ public static class ExtensionMethods
     {
         if (value == null)
             return 0f;
-        value = value.Replace(".", ",");
+        value = value.Replace('.', ',');
         if (float.TryParse(value, out float result))
             return result;
         return 0f;
@@ -88,9 +89,10 @@ public static class ExtensionMethods
     public static bool IsEmpty(this string? str) => string.IsNullOrEmpty(str);
     public static bool ContainsOnlyDigit(this string strSource)
     {
-        for (int i = 0; i < strSource.Length; i++)
+        var length = strSource.Length;
+        for (int i = 0; i < length; i++)
         {
-            if (!Char.IsDigit(strSource[i]))
+            if (!char.IsDigit(strSource[i]))
                 return false;
         }
         return true;
@@ -98,21 +100,23 @@ public static class ExtensionMethods
     public static string GetOnlyDigit(this string? strSource)
     {
         if (string.IsNullOrEmpty(strSource))
-            return "";
-        var sb = new StringBuilder();
-        for (int i = 0; i < strSource.Length; i++)
+            return string.Empty;
+		var length = strSource.Length;
+		var sb = new StringBuilder(length + 1);
+        for (int i = 0; i < length; i++)
         {
-            if (Char.IsDigit(strSource[i]))
-                sb.Append(strSource[i]);
+            var ch = strSource[i];
+            if (char.IsDigit(ch))
+                sb.Append(ch);
         }
         return sb.ToString();
     }
-    public static string Formatted(this DateTime dt) => dt.ToString("dd.MM.yyyy HH:mm:ss");
-    public static int ToTimeStamp(this DateTime dt) => (int)(dt.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+    public static string Formatted(this DateTime dt) => dt.ToString(_dtFormat);
+    public static int ToTimeStamp(this DateTime dt) => (int)(dt.Subtract(DateTime.UnixEpoch)).TotalSeconds;
     public static int ToUnixTimeStamp(this DateTime dt) => ToTimeStamp(dt);
     public static DateTime ToDateTime(this int seconds)
     {
-        var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        var epoch = DateTime.UnixEpoch;
         var timeSpan = TimeSpan.FromSeconds(seconds);
         epoch = epoch.Add(timeSpan);
         return epoch.ToLocalTime();
@@ -127,32 +131,35 @@ public static class ExtensionMethods
         if (is_empty_start || (!is_empty_start! && strSource.Contains(strStart) && strSource.Contains(strEnd)))
         {
             if (is_empty_start)
-            {
-                var sb = new StringBuilder();
-                for (int i = 0; i < strSource.Length; i++)
+			{
+				var length = strSource.Length;
+				var sb = new StringBuilder(length + 1);
+                for (int i = 0; i < length; i++)
                 {
-                    if (char.IsDigit(strSource[i]))
+                    var ch = strSource[i];
+                    if (char.IsDigit(ch))
                         break;
-                    sb.Append(strSource[i]);
+                    sb.Append(ch);
                 }
                 strStart = sb.ToString();
             } // если начало пустое, значит нужно найти первый digit символ
-            if (strStart == "")
+            if (strStart == string.Empty)
                 return replace;
 
             string[] splitted = strSource.Split(strStart);
-            if (splitted.Length <= x) return replace;
+            if (splitted.Length <= x)
+                return replace;
             return splitted[x].Split(strEnd)[0];
         }
         else return replace;
     }
     public static bool RemoveAsset(this Inventory.V2.SteamInventory inventory, Inventory.V2.Models.Asset asset)
     {
-        return inventory.rgInventory.Remove($"{asset.classid}_{asset.instanceid}");
+        return inventory.rgInventory.Remove(asset.classid + '_' + asset.instanceid);
     }
     public static bool RemoveAsset(this Inventory.V2.SteamInventory inventory, string classid, string instanceid)
-    {
-        return inventory.rgInventory.Remove($"{classid}_{instanceid}");
+	{
+		return inventory.rgInventory.Remove(classid + '_' + instanceid);
     }
 	public static string GetRandomString(this int length)
 	{
