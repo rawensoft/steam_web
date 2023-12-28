@@ -595,7 +595,7 @@ public class UserLogin
 			steamid = Session!.SteamID
 		});
 		string content = Convert.ToBase64String(memStream2.ToArray());
-		var protoRequest = new ProtobufRequest("https://api.steampowered.com/IAuthenticationService/UpdateAuthSessionWithSteamGuardCode/v1", content)
+		var protoRequest = new ProtobufRequest(SteamApiUrls.IAuthenticationService_UpdateAuthSessionWithSteamGuardCode_v1, content)
 		{
 			UserAgent = _platform == EAuthTokenPlatformType.MobileApp ? Downloader.UserAgentSteamMobileApp : SessionData.UserAgentBrowser,
 			Proxy = _proxy,
@@ -634,9 +634,7 @@ public class UserLogin
 			request_id = _request_id!,
 		});
 		string content = Convert.ToBase64String(memStream3.ToArray());
-		memStream3.Close();
-		memStream3.Dispose();
-		var protoRequest = new ProtobufRequest("https://api.steampowered.com/IAuthenticationService/PollAuthSessionStatus/v1", content)
+		var protoRequest = new ProtobufRequest(SteamApiUrls.IAuthenticationService_PollAuthSessionStatus_v1, content)
 		{
 			UserAgent = _platform == EAuthTokenPlatformType.MobileApp ? Downloader.UserAgentSteamMobileApp : SessionData.UserAgentBrowser,
 			Proxy = _proxy,
