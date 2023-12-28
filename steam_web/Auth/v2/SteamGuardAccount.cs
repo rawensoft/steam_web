@@ -11,6 +11,7 @@ using SteamWeb.Auth.v2.Models;
 using SteamWeb.Auth.v2.DTO;
 using TimeAligner = SteamWeb.Auth.v1.TimeAligner;
 using APIEndpoints = SteamWeb.Auth.v1.APIEndpoints;
+using SteamWeb.Auth.v2.Enums;
 
 namespace SteamWeb.Auth.v2;
 public class SteamGuardAccount
@@ -36,6 +37,10 @@ public class SteamGuardAccount
     [JsonPropertyName("fully_enrolled")] public bool FullyEnrolled { get; set; } = false;
     [JsonPropertyName("session")] public SessionData? Session { get; set; } = null;
 	[JsonPropertyName("added_through")] public ADD_THROUGH AddedThrough { get; init; }
+    /// <summary>
+    /// Показывает какой ClientId был последним после вызова <see cref="CheckSession"/> или <see cref="CheckSessionAsync"/>
+    /// </summary>
+    [JsonIgnore] public ulong LastClientId { get; private set; } = 0;
 	private static byte[] _steamGuardCodeTranslations = new byte[] { 50, 51, 52, 53, 54, 55, 56, 57, 66, 67, 68, 70, 71, 72, 74, 75, 77, 78, 80, 81, 82, 84, 86, 87, 88, 89 };
 
     public bool DeactivateAuthenticator()
@@ -562,27 +567,134 @@ public class SteamGuardAccount
             return new();
         var obj = Serializer.Deserialize<CAuthentication_GetAuthSessionsForAccount_Response>(response.Stream);
         return obj;
-    }
-    public CAuthentication_GetAuthSessionInfo_Response? GetAuthSessionInfo(CAuthentication_GetAuthSessionInfo_Request requestDetails)
-    {
-        if (Session == null)
-            return null;
-        using var memStream1 = new MemoryStream();
-        Serializer.Serialize(memStream1, requestDetails);
-        var request = new ProtobufRequest(SteamPoweredUrls.IAuthenticationService_GetAuthSessionInfo_v1, Convert.ToBase64String(memStream1.ToArray()))
-        {
-            UserAgent = SessionData.UserAgentMobile,
-            Proxy = Proxy,
-            AccessToken = Session.AccessToken
-        };
-        using var response = Downloader.PostProtobuf(request);
-        if (response.EResult != EResult.OK)
-            return null;
-        var obj = Serializer.Deserialize<CAuthentication_GetAuthSessionInfo_Response>(response.Stream);
-        return obj;
-    }
+	}
+	public async Task<CAuthentication_GetAuthSessionsForAccount_Response?> GetAuthSessionsForAccountAsync()
+	{
+		if (Session == null)
+			return null;
+		var request = new ProtobufRequest(SteamPoweredUrls.IAuthenticationService_GetAuthSessionsForAccount_v1, string.Empty)
+		{
+			UserAgent = SessionData.UserAgentMobile,
+			Proxy = Proxy,
+			AccessToken = Session.AccessToken,
+			IsMobile = true
+		};
+		using var response = await Downloader.GetProtobufAsync(request);
+		if (response.EResult != EResult.OK)
+			return null;
+		if (response.Stream == null)
+			return new();
+		var obj = Serializer.Deserialize<CAuthentication_GetAuthSessionsForAccount_Response>(response.Stream);
+		return obj;
+	}
 
-    public string GenerateConfirmationURL(string tag = "conf")
+	public CAuthentication_GetAuthSessionInfo_Response? GetAuthSessionInfo(CAuthentication_GetAuthSessionInfo_Request requestDetails)
+	{
+		if (Session == null)
+			return null;
+		using var memStream1 = new MemoryStream();
+		Serializer.Serialize(memStream1, requestDetails);
+		var request = new ProtobufRequest(SteamPoweredUrls.IAuthenticationService_GetAuthSessionInfo_v1, Convert.ToBase64String(memStream1.ToArray()))
+		{
+			UserAgent = SessionData.UserAgentMobile,
+			Proxy = Proxy,
+			AccessToken = Session.AccessToken
+		};
+		using var response = Downloader.PostProtobuf(request);
+		if (response.EResult != EResult.OK)
+			return null;
+		var obj = Serializer.Deserialize<CAuthentication_GetAuthSessionInfo_Response>(response.Stream);
+		return obj;
+	}
+	public async Task<CAuthentication_GetAuthSessionInfo_Response?> GetAuthSessionInfoAsync(CAuthentication_GetAuthSessionInfo_Request requestDetails)
+	{
+		if (Session == null)
+			return null;
+		using var memStream1 = new MemoryStream();
+		Serializer.Serialize(memStream1, requestDetails);
+		var request = new ProtobufRequest(SteamPoweredUrls.IAuthenticationService_GetAuthSessionInfo_v1, Convert.ToBase64String(memStream1.ToArray()))
+		{
+			UserAgent = SessionData.UserAgentMobile,
+			Proxy = Proxy,
+			AccessToken = Session.AccessToken
+		};
+		using var response = await Downloader.PostProtobufAsync(request);
+		if (response.EResult != EResult.OK)
+			return null;
+		var obj = Serializer.Deserialize<CAuthentication_GetAuthSessionInfo_Response>(response.Stream);
+		return obj;
+	}
+
+	public bool UpdateAuthSessionWithMobileConfirmation(CAuthentication_GetAuthSessionInfo_Request requestDetails, CAuthentication_GetAuthSessionInfo_Response responseDetails) =>
+        UpdateAuthSessionWithMobileConfirmation(requestDetails.client_id, (short) responseDetails.version, responseDetails.requested_persistence);
+	public async Task<bool> UpdateAuthSessionWithMobileConfirmationAsync(CAuthentication_GetAuthSessionInfo_Request requestDetails, CAuthentication_GetAuthSessionInfo_Response responseDetails) =>
+		await UpdateAuthSessionWithMobileConfirmationAsync(requestDetails.client_id, (short)responseDetails.version, responseDetails.requested_persistence);
+	public bool UpdateAuthSessionWithMobileConfirmation(ulong clientId, short version, ESessionPersistence requested_persistence)
+	{
+		var requestDetails_1 = new CAuthentication_UpdateAuthSessionWithMobileConfirmation_Request
+		{
+			client_id = clientId,
+			confirm = true,
+			persistence = requested_persistence,
+			steamid = Session!.SteamID,
+			version = version,
+		};
+		var hmac = new HMACSHA256(Convert.FromBase64String(SharedSecret));
+		var signatureBytes = new List<byte>(19);
+		signatureBytes.AddRange(BitConverter.GetBytes(requestDetails_1.version));
+		signatureBytes.AddRange(BitConverter.GetBytes(requestDetails_1.client_id));
+		signatureBytes.AddRange(BitConverter.GetBytes(requestDetails_1.steamid));
+		requestDetails_1.signature = hmac.ComputeHash(signatureBytes.ToArray());
+
+		using var memStream1 = new MemoryStream();
+		Serializer.Serialize(memStream1, requestDetails_1);
+		var base64 = Convert.ToBase64String(memStream1.ToArray());
+
+		var request = new ProtobufRequest(SteamApiUrls.IAuthenticationService_UpdateAuthSessionWithMobileConfirmation_v1, base64)
+		{
+			UserAgent = SessionData.UserAgentMobileApp,
+			Proxy = Proxy,
+			AccessToken = Session!.AccessToken,
+			IsMobile = true,
+			Session = Session
+		};
+		using var response = Downloader.PostProtobuf(request);
+		return response.EResult == EResult.OK;
+	}
+	public async Task<bool> UpdateAuthSessionWithMobileConfirmationAsync(ulong clientId, short version, ESessionPersistence requested_persistence)
+	{
+		var requestDetails = new CAuthentication_UpdateAuthSessionWithMobileConfirmation_Request
+		{
+			client_id = clientId,
+			confirm = true,
+			persistence = requested_persistence,
+			steamid = Session!.SteamID,
+			version = version,
+		};
+		var hmac = new HMACSHA256(Convert.FromBase64String(SharedSecret));
+		var signatureBytes = new List<byte>(19);
+		signatureBytes.AddRange(BitConverter.GetBytes(requestDetails.version));
+		signatureBytes.AddRange(BitConverter.GetBytes(requestDetails.client_id));
+		signatureBytes.AddRange(BitConverter.GetBytes(requestDetails.steamid));
+		requestDetails.signature = hmac.ComputeHash(signatureBytes.ToArray());
+
+		using var memStream1 = new MemoryStream();
+		Serializer.Serialize(memStream1, requestDetails);
+		var base64 = Convert.ToBase64String(memStream1.ToArray());
+
+		var request = new ProtobufRequest(SteamApiUrls.IAuthenticationService_UpdateAuthSessionWithMobileConfirmation_v1, base64)
+		{
+			UserAgent = SessionData.UserAgentMobileApp,
+			Proxy = Proxy,
+			AccessToken = Session!.AccessToken,
+			IsMobile = true,
+			Session = Session
+		};
+		using var response = await Downloader.PostProtobufAsync(request);
+		return response.EResult == EResult.OK;
+	}
+
+	public string GenerateConfirmationURL(string tag = "conf")
     {
         var sb = new StringBuilder(4);
 		sb.Append(APIEndpoints.COMMUNITY_BASE);
