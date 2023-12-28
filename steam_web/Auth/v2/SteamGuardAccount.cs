@@ -141,9 +141,9 @@ public class SteamGuardAccount
     /// <code>Error</code>
     /// </returns>
     public bool RefreshSession()
-    {
-        if (Session == null)
-            return false;
+	{
+		if (Session == null || Session.AccessToken.IsEmpty())
+			return false;
         using var memStream1 = new MemoryStream();
         Serializer.Serialize(memStream1, new UpdateTokenRequest()
         {
@@ -165,7 +165,6 @@ public class SteamGuardAccount
         Session.AccessToken = token.access_token;
         return true;
     }
-
     /// <summary>
     /// Refreshes the Steam session. Necessary to perform confirmations if your session has expired or changed.
     /// </summary>
@@ -176,9 +175,9 @@ public class SteamGuardAccount
     /// <code>Error</code>
     /// </returns>
     public async Task<bool> RefreshSessionAsync()
-    {
-        if (Session == null)
-            return false;
+	{
+		if (Session == null || Session.AccessToken.IsEmpty())
+			return false;
         using var memStream1 = new MemoryStream();
         Serializer.Serialize(memStream1, new UpdateTokenRequest()
         {
@@ -202,7 +201,7 @@ public class SteamGuardAccount
     }
     public bool CheckSession()
     {
-        if (Session == null)
+        if (Session == null || Session.AccessToken.IsEmpty())
             return false;
         var request = new GetRequest(SteamPoweredUrls.IAuthenticationService_GetAuthSessionsForAccount_v1, Proxy, Session)
         {
@@ -221,8 +220,6 @@ public class SteamGuardAccount
     }
     public async Task<bool> CheckSessionAsync()
     {
-        if (Session == null)
-            return false;
         var request = new GetRequest(SteamPoweredUrls.IAuthenticationService_GetAuthSessionsForAccount_v1, Proxy, Session)
         {
             UserAgent = SessionData.UserAgentMobile,
@@ -235,6 +232,8 @@ public class SteamGuardAccount
         var sessionInfo = JsonSerializer.Deserialize<API.Models.Response<AuthSessionForAccount>>(response.Data);
         sessionInfo!.success = true;
         if (sessionInfo.response?.client_ids == null)
+		if (Session == null || Session.AccessToken.IsEmpty())
+			return false;
             return false;
         return true;
     }
