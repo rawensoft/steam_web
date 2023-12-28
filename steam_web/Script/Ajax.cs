@@ -10,6 +10,11 @@ using SteamWeb.Script.DTO.Listinging;
 using SteamWeb.Script.DTO.Historing;
 using SteamWeb.Auth.Interfaces;
 using System.Text.RegularExpressions;
+using System.Text;
+using ProtoBuf;
+using SteamWeb.Auth.v2.DTO;
+using SteamWeb.Auth.v2.Models;
+using System.Text.Json.Serialization;
 
 namespace SteamWeb.Script;
 public static class Ajax
@@ -959,4 +964,76 @@ public static class Ajax
             var time = DateOnly.ParseExact(time_el.TextContent.GetClearWebString(), "h:mmtt");
         }
     }
+
+    [Obsolete]
+	public static bool salevote(ISessionProvider? session, Proxy? proxy, int voteId, int appId)
+	{
+		var postRequest = new PostRequest(SteamPoweredUrls.SaleVote, Downloader.AppFormUrlEncoded)
+		{
+			IsAjax = true,
+            Referer = SteamPoweredUrls.SteamAwards,
+            Proxy = proxy,
+            Session = session,
+		};
+        postRequest.AddPostData("sessionid", session!.SessionID, false).AddPostData("voteid", voteId)
+			.AddPostData("appid", appId).AddPostData("developerid", 0);
+		var response = Downloader.Post(postRequest);
+		return response.Success;
+	}
+	[Obsolete]
+	public static async Task<bool> salevote_async(ISessionProvider? session, Proxy? proxy, int voteId, int appId)
+	{
+		var postRequest = new PostRequest(SteamPoweredUrls.SaleVote, Downloader.AppFormUrlEncoded)
+		{
+			IsAjax = true,
+			Referer = SteamPoweredUrls.SteamAwards,
+			Proxy = proxy,
+			Session = session,
+		};
+		postRequest.AddPostData("sessionid", session!.SessionID, false).AddPostData("voteid", voteId)
+			.AddPostData("appid", appId).AddPostData("developerid", 0);
+		var response = await Downloader.PostAsync(postRequest);
+		return response.Success;
+	}
+
+    public static StoreUserConfig? get_web_token(ISessionProvider? session, Proxy? proxy)
+    {
+        var request = new GetRequest(SteamPoweredUrls.SteamAwards, proxy, session)
+        {
+            UseVersion2 = true,
+        };
+        var response = Downloader.Get(request);
+        if (!response.Success)
+            return null;
+        var data = response.Data?.GetBetween("data-store_user_config=\"", "\">");
+        if (data == null)
+            return null;
+        data = HttpUtility.HtmlDecode(data);
+        var obj = JsonSerializer.Deserialize<StoreUserConfig>(data!);
+		return obj;
+    }
+	public static CStoreSalesService_SetVote_Response? set_vote(string web_token, Proxy? proxy, int voteid, int appid, int sale_appid)
+	{
+        var requestDetails = new CStoreSalesService_SetVote_Request
+        {
+            appid = appid,
+            sale_appid = sale_appid,
+            voteid = voteid,
+        };
+		using var memStream1 = new MemoryStream();
+		Serializer.Serialize(memStream1, requestDetails);
+        string url = "https://api.steampowered.com/IStoreSalesService/SetVote/v1";
+		var request = new ProtobufRequest(url, Convert.ToBase64String(memStream1.ToArray()))
+		{
+			UserAgent = SessionData.UserAgentMobile,
+			Proxy = proxy,
+			AccessToken = web_token,
+            IsMobile = true
+		};
+		using var response = Downloader.PostProtobuf(request);
+		if (response.EResult != EResult.OK)
+			return null;
+        var obj = Serializer.Deserialize<CStoreSalesService_SetVote_Response>(response.Stream);
+		return obj;
+	}
 }
