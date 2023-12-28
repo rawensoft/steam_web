@@ -58,7 +58,7 @@ public static class Downloader
     {
         var uri = new Uri(request.Url);
 #if FACTORY
-		var client = RestClientFactory.Factory.GetClient(proxy, uri);
+		var client = RestClientFactory.Factory.GetClient(request.Proxy, uri);
 #else
 		var client = GetClient(request.Proxy, uri);
 #endif
@@ -124,7 +124,7 @@ public static class Downloader
 	{
 		var uri = new Uri(request.Url);
 #if FACTORY
-		var client = RestClientFactory.Factory.GetClient(proxy, uri);
+		var client = RestClientFactory.Factory.GetClient(request.Proxy, uri);
 #else
 		var client = GetClient(request.Proxy, uri);
 #endif
