@@ -1,16 +1,22 @@
-﻿using System.Security.Cryptography;
+﻿using System.Net;
 using System.Text;
 using ProtoBuf;
 using SteamWeb.Auth.v2.Enums;
 using SteamWeb.Auth.v2.Models;
 using SteamWeb.Extensions;
 using SteamWeb.Web;
-using Util = SteamWeb.Auth.v1.Util;
 
 namespace SteamWeb.Auth.v2;
 public class UserLogin
 {
-    public string Login { get; init; }
+	private const string SocketError = "SOCKS server failed to connect to the destination.";
+	private const string UnauthorizedError = "You don't have permission to access \"http&#58;&#47;&#47;store&#46;steampowered&#46;com&#47;\" on this server.";
+	private const string CookieSteamCountry = "steamCountry";
+	private const string CookieBrowserId = "browserid";
+	private const string CookieSessionId = "sessionid";
+
+
+	public string Login { get; init; }
     public string Password { get; init; }
     /// <summary>
     /// Появится только после BeginAuthSessionViaCredentials
@@ -56,7 +62,7 @@ public class UserLogin
     private bool _isNeedEmailCode = false;
     private bool _isNeedConfirm = false;
     private NEXT_STEP _nextStep = NEXT_STEP.Begin;
-    private readonly System.Net.IWebProxy? _proxy = null;
+    private readonly IWebProxy? _proxy = null;
     private byte[]? _request_id = null;
     private ulong _client_id = 0;
     private readonly EAuthTokenPlatformType _platform;
@@ -71,8 +77,8 @@ public class UserLogin
         Password = passwd;
         _platform = platform;
     }
-    public UserLogin(string login, string passwd, EAuthTokenPlatformType platform, System.Net.IWebProxy proxy) : this(login, passwd, platform) => _proxy = proxy;
-	public UserLogin(string login, string passwd, EAuthTokenPlatformType platform, System.Net.IWebProxy proxy, CancellationToken? cts) :
+    public UserLogin(string login, string passwd, EAuthTokenPlatformType platform, IWebProxy proxy) : this(login, passwd, platform) => _proxy = proxy;
+	public UserLogin(string login, string passwd, EAuthTokenPlatformType platform, IWebProxy proxy, CancellationToken? cts) :
         this(login, passwd, platform, proxy) => _cts = cts;
 	public UserLogin(string login, string passwd, EAuthTokenPlatformType platform, CancellationToken? cts) : this(login, passwd, platform) => _cts = cts;
 
@@ -101,15 +107,16 @@ public class UserLogin
         if (_nextStep != NEXT_STEP.Begin)
             return false;
         var usetAgent = _platform == EAuthTokenPlatformType.MobileApp ? Downloader.UserAgentOkHttp : SessionData.UserAgentBrowser;
-        var getRequest = new GetRequest("https://store.steampowered.com/")
+        var getRequest = new GetRequest(Downloader.BASE_POWERED)
         {
+			Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application",
             UserAgent = usetAgent,
             Proxy = _proxy,
             IsMobile = _platform == EAuthTokenPlatformType.MobileApp,
 			CancellationToken = _cts
 		};
-        var response = Downloader.Get(getRequest);
-		if (response.ErrorMessage == "SOCKS server failed to connect to the destination.")
+		var response = Downloader.Get(getRequest);
+		if (response.ErrorMessage == SocketError)
 		{
 			_result = LoginResult.ProxyError;
 			return false;
@@ -124,27 +131,26 @@ public class UserLogin
 			_result = LoginResult.ConnectionError;
 			return false;
 		}
-		if (response.Cookie == null)
+		if (response.CookieContainer == null)
         {
-            if (response.Data?.Contains("You don't have permission to access \"http&#58;&#47;&#47;store&#46;steampowered&#46;com&#47;\" on this server.") == true)
+            if (response.Data?.Contains(UnauthorizedError) == true)
                 LastEResult = EResult.RateLimitExceeded;
             _isCookieNotGet = true;
             return false;
         }
-        string? steamCountry = null, browserID = null, sessionID = null;
-        foreach (var item in response.Cookie.Split("; "))
+		
+		string? steamCountry = null, browserID = null, sessionID = null;
+		var cookies = response.CookieContainer.GetAllCookies();
+		foreach (Cookie cookie in cookies)
         {
-            var splitted = item.Split('=');
-            if (splitted.Length != 2)
-                continue;
-            if (splitted[0] == "steamCountry")
-                steamCountry = splitted[1];
-            else if (splitted[0] == "browserid")
-                browserID = splitted[1];
-            else if (splitted[0] == "sessionid")
-                sessionID = splitted[1];
+            if (cookie.Name == CookieSteamCountry)
+                steamCountry = cookie.Value;
+            else if (cookie.Name == CookieBrowserId)
+                browserID = cookie.Value;
+            else if (cookie.Name == CookieSessionId)
+                sessionID = cookie.Value;
         }
-        if (steamCountry.IsEmpty() || browserID.IsEmpty() || sessionID.IsEmpty())
+		if (steamCountry.IsEmpty() || browserID.IsEmpty() || sessionID.IsEmpty())
         {
             _isCookieNotGet = true;
             return false;
@@ -163,7 +169,7 @@ public class UserLogin
 		};
         using var responseProto1 = Downloader.GetProtobuf(getRequestProto);
 		LastEResult = responseProto1.EResult;
-		if (responseProto1.ErrorMessage == "SOCKS server failed to connect to the destination.")
+		if (responseProto1.ErrorMessage == SocketError)
 		{
 			_result = LoginResult.ProxyError;
 			return false;
@@ -179,50 +185,60 @@ public class UserLogin
 			return false;
 		}
 		if (responseProto1.EResult != EResult.OK)
-            return false;
+		{
+			return false;
+		}
         var rsaResponse = Serializer.Deserialize<PasswordRSAResponse>(responseProto1.Stream);
         _isRSANotGet = false;
 
-        byte[] encryptedPasswordBytes;
-        using var rsaEncryptor = new RSACryptoServiceProvider();
-        var passwordBytes = Encoding.ASCII.GetBytes(Password);
-        var rsaParameters = rsaEncryptor.ExportParameters(false);
-        rsaParameters.Exponent = Util.HexStringToByteArray(rsaResponse.publickey_exp);
-        rsaParameters.Modulus = Util.HexStringToByteArray(rsaResponse.publickey_mod);
-        rsaEncryptor.ImportParameters(rsaParameters);
-        encryptedPasswordBytes = rsaEncryptor.Encrypt(passwordBytes, false);
-        string encryptedPassword = Convert.ToBase64String(encryptedPasswordBytes, Base64FormattingOptions.None);
-
-        using var memStream1 = new MemoryStream();
-        dynamic request = _platform == EAuthTokenPlatformType.MobileApp ? new AuthSessionMobileRequest()
-        {
-            account_name = Login,
-            encrypted_password = Helpers.Encrypt(Password, rsaResponse.publickey_mod, rsaResponse.publickey_exp),
-            encryption_timestamp = rsaResponse.timestamp,
-            device_details = new()
-        } : new AuthSessionDesktopRequest()
-        {
-            account_name = Login,
-            encrypted_password = encryptedPassword,
-            encryption_timestamp = rsaResponse.timestamp,
-            device_details = new()
-            {
-                device_friendly_name = SessionData.UserAgentBrowser,
-                platform_type = _platform
-            }
-        };
-        Serializer.Serialize(memStream1, request);
+		string encryptedPassword = Helpers.Encrypt(Password, rsaResponse.publickey_mod, rsaResponse.publickey_exp);
+		using var memStream1 = new MemoryStream();
+		if (_platform == EAuthTokenPlatformType.MobileApp)
+		{
+			var request = new AuthSessionMobileRequest()
+			{
+				account_name = Login,
+				encrypted_password = encryptedPassword,
+				encryption_timestamp = rsaResponse.timestamp,
+				device_details = new()
+			};
+			Serializer.Serialize(memStream1, request);
+		}
+		else
+		{
+			var request = new AuthSessionDesktopRequest()
+			{
+				account_name = Login,
+				encrypted_password = encryptedPassword,
+				encryption_timestamp = rsaResponse.timestamp,
+				device_details = new()
+				{
+					device_friendly_name = usetAgent,
+					platform_type = _platform
+				}
+			};
+			Serializer.Serialize(memStream1, request);
+		}
         string content = Convert.ToBase64String(memStream1.ToArray());
+		var stringCookies = new StringBuilder(9);
+		stringCookies.Append(SessionData.DefaultMobileCookie);
+		stringCookies.Append("steamCountry=");
+		stringCookies.Append(steamCountry);
+		stringCookies.Append("; browserid=");
+		stringCookies.Append(browserID);
+		stringCookies.Append("; sessionid=");
+		stringCookies.Append(sessionID);
+		stringCookies.Append("; ");
 		var postRequestProto = new ProtobufRequest(SteamApiUrls.IAuthenticationService_BeginAuthSessionViaCredentials_v1, content)
         {
             Proxy = _proxy,
             UserAgent = usetAgent,
-            Cookie = $"{SessionData.DefaultMobileCookie}steamCountry={steamCountry}; browserid={browserID}; sessionid={sessionID}; ",
+            Cookie = stringCookies.ToString(),
 			CancellationToken = _cts
 		};
         using var responseProto2 = Downloader.PostProtobuf(postRequestProto);
         LastEResult = responseProto2.EResult;
-		if (responseProto2.ErrorMessage == "SOCKS server failed to connect to the destination.")
+		if (responseProto2.ErrorMessage == SocketError)
 		{
 			_result = LoginResult.ProxyError;
 			return false;
@@ -303,7 +319,7 @@ public class UserLogin
 		};
         using var response = Downloader.PostProtobuf(protoRequest);
         LastEResult = response.EResult;
-		if (response.ErrorMessage == "SOCKS server failed to connect to the destination.")
+		if (response.ErrorMessage == SocketError)
 		{
 			_result = LoginResult.ProxyError;
 			return false;
@@ -342,7 +358,7 @@ public class UserLogin
 		};
         using var response = Downloader.PostProtobuf(protoRequest);
         LastEResult = response.EResult;
-		if (response.ErrorMessage == "SOCKS server failed to connect to the destination.")
+		if (response.ErrorMessage == SocketError)
 		{
 			_result = LoginResult.ProxyError;
 			return false;
@@ -368,20 +384,21 @@ public class UserLogin
         return true;
     }
 
-    public async Task<bool> BeginAuthSessionViaCredentialsAsync()
-    {
-        if (_nextStep != NEXT_STEP.Begin)
-            return false;
-        var usetAgent = _platform == EAuthTokenPlatformType.MobileApp ? Downloader.UserAgentSteamMobileApp : SessionData.UserAgentBrowser;
-        var getRequest = new GetRequest("https://store.steampowered.com/")
-        {
-            UserAgent = usetAgent,
-            Proxy = _proxy,
-            IsMobile = _platform == EAuthTokenPlatformType.MobileApp,
+	public async Task<bool> BeginAuthSessionViaCredentialsAsync()
+	{
+		if (_nextStep != NEXT_STEP.Begin)
+			return false;
+		var usetAgent = _platform == EAuthTokenPlatformType.MobileApp ? Downloader.UserAgentOkHttp : SessionData.UserAgentBrowser;
+		var getRequest = new GetRequest(Downloader.BASE_POWERED)
+		{
+			Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application",
+			UserAgent = usetAgent,
+			Proxy = _proxy,
+			IsMobile = _platform == EAuthTokenPlatformType.MobileApp,
 			CancellationToken = _cts
 		};
 		var response = await Downloader.GetAsync(getRequest);
-		if (response.ErrorMessage == "SOCKS server failed to connect to the destination.")
+		if (response.ErrorMessage == SocketError)
 		{
 			_result = LoginResult.ProxyError;
 			return false;
@@ -396,25 +413,24 @@ public class UserLogin
 			_result = LoginResult.ConnectionError;
 			return false;
 		}
-		if (response.Cookie == null)
+		if (response.CookieContainer == null)
 		{
-			if (response.Data?.Contains("You don't have permission to access \"http&#58;&#47;&#47;store&#46;steampowered&#46;com&#47;\" on this server.") == true)
+			if (response.Data?.Contains(UnauthorizedError) == true)
 				LastEResult = EResult.RateLimitExceeded;
 			_isCookieNotGet = true;
 			return false;
 		}
+
 		string? steamCountry = null, browserID = null, sessionID = null;
-		foreach (var item in response.Cookie.Split("; "))
+		var cookies = response.CookieContainer.GetAllCookies();
+		foreach (Cookie cookie in cookies)
 		{
-			var splitted = item.Split('=');
-			if (splitted.Length != 2)
-				continue;
-			if (splitted[0] == "steamCountry")
-				steamCountry = splitted[1];
-			else if (splitted[0] == "browserid")
-				browserID = splitted[1];
-			else if (splitted[0] == "sessionid")
-				sessionID = splitted[1];
+			if (cookie.Name == CookieSteamCountry)
+				steamCountry = cookie.Value;
+			else if (cookie.Name == CookieBrowserId)
+				browserID = cookie.Value;
+			else if (cookie.Name == CookieSessionId)
+				sessionID = cookie.Value;
 		}
 		if (steamCountry.IsEmpty() || browserID.IsEmpty() || sessionID.IsEmpty())
 		{
@@ -435,7 +451,7 @@ public class UserLogin
 		};
 		using var responseProto1 = await Downloader.GetProtobufAsync(getRequestProto);
 		LastEResult = responseProto1.EResult;
-		if (responseProto1.ErrorMessage == "SOCKS server failed to connect to the destination.")
+		if (responseProto1.ErrorMessage == SocketError)
 		{
 			_result = LoginResult.ProxyError;
 			return false;
@@ -451,52 +467,60 @@ public class UserLogin
 			return false;
 		}
 		if (responseProto1.EResult != EResult.OK)
+		{
 			return false;
+		}
 		var rsaResponse = Serializer.Deserialize<PasswordRSAResponse>(responseProto1.Stream);
 		_isRSANotGet = false;
-		responseProto1.Stream.Close();
-		responseProto1.Stream.Dispose();
 
-		byte[] encryptedPasswordBytes;
-		using var rsaEncryptor = new RSACryptoServiceProvider();
-		var passwordBytes = Encoding.ASCII.GetBytes(Password);
-		var rsaParameters = rsaEncryptor.ExportParameters(false);
-		rsaParameters.Exponent = Util.HexStringToByteArray(rsaResponse.publickey_exp);
-		rsaParameters.Modulus = Util.HexStringToByteArray(rsaResponse.publickey_mod);
-		rsaEncryptor.ImportParameters(rsaParameters);
-		encryptedPasswordBytes = rsaEncryptor.Encrypt(passwordBytes, false);
-		string encryptedPassword = Convert.ToBase64String(encryptedPasswordBytes, Base64FormattingOptions.None);
-
+		string encryptedPassword = Helpers.Encrypt(Password, rsaResponse.publickey_mod, rsaResponse.publickey_exp);
 		using var memStream1 = new MemoryStream();
-		dynamic request = _platform == EAuthTokenPlatformType.MobileApp ? new AuthSessionMobileRequest()
+		if (_platform == EAuthTokenPlatformType.MobileApp)
 		{
-			account_name = Login,
-			encrypted_password = Helpers.Encrypt(Password, rsaResponse.publickey_mod, rsaResponse.publickey_exp),
-			encryption_timestamp = rsaResponse.timestamp,
-			device_details = new()
-		} : new AuthSessionDesktopRequest()
-		{
-			account_name = Login,
-			encrypted_password = encryptedPassword,
-			encryption_timestamp = rsaResponse.timestamp,
-			device_details = new()
+			var request = new AuthSessionMobileRequest()
 			{
-				device_friendly_name = SessionData.UserAgentBrowser,
-				platform_type = _platform
-			}
-		};
-		Serializer.Serialize(memStream1, request);
+				account_name = Login,
+				encrypted_password = encryptedPassword,
+				encryption_timestamp = rsaResponse.timestamp,
+				device_details = new()
+			};
+			Serializer.Serialize(memStream1, request);
+		}
+		else
+		{
+			var request = new AuthSessionDesktopRequest()
+			{
+				account_name = Login,
+				encrypted_password = encryptedPassword,
+				encryption_timestamp = rsaResponse.timestamp,
+				device_details = new()
+				{
+					device_friendly_name = usetAgent,
+					platform_type = _platform
+				}
+			};
+			Serializer.Serialize(memStream1, request);
+		}
 		string content = Convert.ToBase64String(memStream1.ToArray());
+		var stringCookies = new StringBuilder(9);
+		stringCookies.Append(SessionData.DefaultMobileCookie);
+		stringCookies.Append("steamCountry=");
+		stringCookies.Append(steamCountry);
+		stringCookies.Append("; browserid=");
+		stringCookies.Append(browserID);
+		stringCookies.Append("; sessionid=");
+		stringCookies.Append(sessionID);
+		stringCookies.Append("; ");
 		var postRequestProto = new ProtobufRequest(SteamApiUrls.IAuthenticationService_BeginAuthSessionViaCredentials_v1, content)
 		{
 			Proxy = _proxy,
 			UserAgent = usetAgent,
-			Cookie = $"{SessionData.DefaultMobileCookie}steamCountry={steamCountry}; browserid={browserID}; sessionid={sessionID}; ",
+			Cookie = stringCookies.ToString(),
 			CancellationToken = _cts
 		};
 		using var responseProto2 = await Downloader.PostProtobufAsync(postRequestProto);
 		LastEResult = responseProto2.EResult;
-		if (responseProto2.ErrorMessage == "SOCKS server failed to connect to the destination.")
+		if (responseProto2.ErrorMessage == SocketError)
 		{
 			_result = LoginResult.ProxyError;
 			return false;
@@ -543,15 +567,17 @@ public class UserLogin
 				_isNeedEmailCode = true;
 			else if (item == EAuthSessionGuardType.DeviceCode)
 				_isNeedTwoFactorCode = true;
-			else _isNeedConfirm = true;
+			else
+				_isNeedConfirm = true;
 		}
 		if (_isNeedConfirm || _isNeedTwoFactorCode || _isNeedEmailCode)
 			_nextStep = NEXT_STEP.Update;
-		else _nextStep = NEXT_STEP.Poll;
+		else
+			_nextStep = NEXT_STEP.Poll;
 		return true;
 	}
-    public async Task<bool> UpdateAuthSessionWithSteamGuardCodeAsync(string fa2Code)
-    {
+	public async Task<bool> UpdateAuthSessionWithSteamGuardCodeAsync(string fa2Code)
+	{
 		if (fa2Code.IsEmpty())
 		{
 			if (Data.IsEmpty())
@@ -577,7 +603,7 @@ public class UserLogin
 		};
 		using var response = await Downloader.PostProtobufAsync(protoRequest);
 		LastEResult = response.EResult;
-		if (response.ErrorMessage == "SOCKS server failed to connect to the destination.")
+		if (response.ErrorMessage == SocketError)
 		{
 			_result = LoginResult.ProxyError;
 			return false;
@@ -618,7 +644,7 @@ public class UserLogin
 		};
 		using var response = await Downloader.PostProtobufAsync(protoRequest);
 		LastEResult = response.EResult;
-		if (response.ErrorMessage == "SOCKS server failed to connect to the destination.")
+		if (response.ErrorMessage == SocketError)
 		{
 			_result = LoginResult.ProxyError;
 			return false;
