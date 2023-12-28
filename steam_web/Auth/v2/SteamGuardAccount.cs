@@ -432,10 +432,11 @@ public class SteamGuardAccount
             return false;
         if (confs.Length == 0)
             return true;
-        string tag = "reject";
-        string url = $"{APIEndpoints.COMMUNITY_BASE}/mobileconf/multiajaxop?op=allow&{GenerateConfirmationQueryParams(tag)}";
-        var sb = new StringBuilder().Append("cid[]=").Append(confs[0].id).Append("&ck[]=").Append(confs[0].nonce);
-        for (int i = 1; i < confs.Length; i++)
+		int length = confs.Length;
+		string tag = "reject";
+		string url = APIEndpoints.COMMUNITY_BASE + "/mobileconf/multiajaxop?op=allow&" + GenerateConfirmationQueryParams(tag);
+		var sb = new StringBuilder().Append("cid[]=").Append(confs[0].id).Append("&ck[]=").Append(confs[0].nonce);
+        for (int i = 1; i < length; i++)
         {
             var conf = confs[i];
             sb.Append("&cid[]=");
