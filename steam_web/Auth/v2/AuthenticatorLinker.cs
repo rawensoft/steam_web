@@ -95,7 +95,7 @@ public class AuthenticatorLinker
             return false;
         using var memStream1 = new MemoryStream();
         Serializer.Serialize(memStream1, new CTwoFactor_Status_Request() { steamid = session.SteamID });
-        var protoRequest = new ProtobufRequest("https://api.steampowered.com/ITwoFactorService/QueryStatus/v1", Convert.ToBase64String(memStream1.ToArray()))
+        var protoRequest = new ProtobufRequest(SteamApiUrls.ITwoFactorService_QueryStatus_v1, Convert.ToBase64String(memStream1.ToArray()))
         {
             AccessToken = session.AccessToken,
             Proxy = proxy,
@@ -113,7 +113,7 @@ public class AuthenticatorLinker
             return false;
         using var memStream1 = new MemoryStream();
         Serializer.Serialize(memStream1, new CTwoFactor_Status_Request() { steamid = session.SteamID });
-        var protoRequest = new ProtobufRequest("https://api.steampowered.com/ITwoFactorService/QueryStatus/v1", Convert.ToBase64String(memStream1.ToArray()))
+        var protoRequest = new ProtobufRequest(SteamApiUrls.ITwoFactorService_QueryStatus_v1, Convert.ToBase64String(memStream1.ToArray()))
         {
             AccessToken = session.AccessToken,
             Proxy = proxy,
@@ -177,7 +177,7 @@ public class AuthenticatorLinker
             version = 2
         });
         string content = Convert.ToBase64String(memStream1.ToArray());
-        var protoRequest = new ProtobufRequest($"https://api.steampowered.com/ITwoFactorService/AddAuthenticator/v1", content)
+        var protoRequest = new ProtobufRequest(SteamApiUrls.ITwoFactorService_AddAuthenticator_v1, content)
         {
             AccessToken = session.AccessToken,
             Proxy = proxy,
@@ -275,7 +275,7 @@ public class AuthenticatorLinker
             Serializer.Serialize(memStream1, request);
             string content = Convert.ToBase64String(memStream1.ToArray());
 
-            var protoRequest = new ProtobufRequest("https://api.steampowered.com/ITwoFactorService/FinalizeAddAuthenticator/v1", content)
+            var protoRequest = new ProtobufRequest(SteamApiUrls.ITwoFactorService_FinalizeAddAuthenticator_v1, content)
             {
                 AccessToken = session.AccessToken,
                 Proxy = proxy,
@@ -488,7 +488,7 @@ public class AuthenticatorLinker
 			device_identifier = DeviceID,
 		});
 		string content = Convert.ToBase64String(memStream1.ToArray());
-		var protoRequest = new ProtobufRequest("https://api.steampowered.com/ITwoFactorService/AddAuthenticator/v1", content)
+		var protoRequest = new ProtobufRequest(SteamApiUrls.ITwoFactorService_AddAuthenticator_v1, content)
 		{
 			AccessToken = session.AccessToken,
 			Proxy = proxy,
@@ -541,7 +541,7 @@ public class AuthenticatorLinker
 		Serializer.Serialize(memStream1, request);
 		string content = Convert.ToBase64String(memStream1.ToArray());
 
-		var protoRequest = new ProtobufRequest("https://api.steampowered.com/ITwoFactorService/FinalizeAddAuthenticator/v1", content)
+		var protoRequest = new ProtobufRequest(SteamApiUrls.ITwoFactorService_FinalizeAddAuthenticator_v1, content)
 		{
 			AccessToken = session.AccessToken,
 			Proxy = proxy,
@@ -576,7 +576,7 @@ public class AuthenticatorLinker
             return null;
         using var memStream1 = new MemoryStream();
         Serializer.Serialize(memStream1, request);
-        var protoRequest = new ProtobufRequest("https://api.steampowered.com/IPhoneService/SetAccountPhoneNumber/v1", Convert.ToBase64String(memStream1.ToArray()))
+        var protoRequest = new ProtobufRequest(SteamApiUrls.IPhoneService_SetAccountPhoneNumber_v1, Convert.ToBase64String(memStream1.ToArray()))
         {
             AccessToken = session.AccessToken,
             Proxy = proxy,
@@ -592,7 +592,7 @@ public class AuthenticatorLinker
     {
         if (session == null)
             return null;
-        var protoRequest = new ProtobufRequest("https://api.steampowered.com/IPhoneService/IsAccountWaitingForEmailConfirmation/v1", "")
+        var protoRequest = new ProtobufRequest(SteamApiUrls.IPhoneService_IsAccountWaitingForEmailConfirmation_v1, string.Empty)
         {
             AccessToken = session.AccessToken,
             Proxy = proxy,
@@ -610,7 +610,7 @@ public class AuthenticatorLinker
             return SENDVERIFCODE.BadSession;
         using var memStream1 = new MemoryStream();
         Serializer.Serialize(memStream1, request);
-        var protoRequest = new ProtobufRequest("https://api.steampowered.com/IPhoneService/SendPhoneVerificationCode/v1", Convert.ToBase64String(memStream1.ToArray()))
+        var protoRequest = new ProtobufRequest(SteamApiUrls.IPhoneService_SendPhoneVerificationCode_v1, Convert.ToBase64String(memStream1.ToArray()))
         {
             AccessToken = session.AccessToken,
             Proxy = proxy,
@@ -638,7 +638,7 @@ public class AuthenticatorLinker
             return SENDVERIFCODE.BadSession;
         using var memStream1 = new MemoryStream();
         Serializer.Serialize(memStream1, request);
-        var protoRequest = new ProtobufRequest("https://api.steampowered.com/IPhoneService/VerifyAccountPhoneWithCode/v1", Convert.ToBase64String(memStream1.ToArray()))
+        var protoRequest = new ProtobufRequest(SteamApiUrls.IPhoneService_VerifyAccountPhoneWithCode_v1, Convert.ToBase64String(memStream1.ToArray()))
         {
             AccessToken = session.AccessToken,
             Proxy = proxy,
@@ -663,7 +663,7 @@ public class AuthenticatorLinker
             return null;
         using var memStream1 = new MemoryStream();
         Serializer.Serialize(memStream1, request);
-        var protoRequest = new ProtobufRequest("https://api.steampowered.com/IPhoneService/SetAccountPhoneNumber/v1", Convert.ToBase64String(memStream1.ToArray()))
+        var protoRequest = new ProtobufRequest(SteamApiUrls.IPhoneService_SetAccountPhoneNumber_v1, Convert.ToBase64String(memStream1.ToArray()))
         {
             AccessToken = session.AccessToken,
             Proxy = proxy,
@@ -679,7 +679,7 @@ public class AuthenticatorLinker
     {
         if (session == null)
             return null;
-        var protoRequest = new ProtobufRequest("https://api.steampowered.com/IPhoneService/IsAccountWaitingForEmailConfirmation/v1", "")
+        var protoRequest = new ProtobufRequest(SteamApiUrls.IPhoneService_SetAccountPhoneNumber_v1, string.Empty)
         {
             AccessToken = session.AccessToken,
             Proxy = proxy,
@@ -697,7 +697,7 @@ public class AuthenticatorLinker
             return SENDVERIFCODE.BadSession;
         using var memStream1 = new MemoryStream();
         Serializer.Serialize(memStream1, request);
-        var protoRequest = new ProtobufRequest("https://api.steampowered.com/IPhoneService/SendPhoneVerificationCode/v1", Convert.ToBase64String(memStream1.ToArray()))
+        var protoRequest = new ProtobufRequest(SteamApiUrls.IPhoneService_SendPhoneVerificationCode_v1, Convert.ToBase64String(memStream1.ToArray()))
         {
             AccessToken = session.AccessToken,
             Proxy = proxy,
@@ -725,7 +725,7 @@ public class AuthenticatorLinker
             return SENDVERIFCODE.BadSession;
         using var memStream1 = new MemoryStream();
         Serializer.Serialize(memStream1, request);
-        var protoRequest = new ProtobufRequest("https://api.steampowered.com/IPhoneService/VerifyAccountPhoneWithCode/v1", Convert.ToBase64String(memStream1.ToArray()))
+        var protoRequest = new ProtobufRequest(SteamApiUrls.IPhoneService_VerifyAccountPhoneWithCode_v1, Convert.ToBase64String(memStream1.ToArray()))
         {
             AccessToken = session.AccessToken,
             Proxy = proxy,

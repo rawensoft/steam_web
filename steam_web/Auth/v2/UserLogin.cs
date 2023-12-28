@@ -156,7 +156,7 @@ public class UserLogin
         var tmp = Convert.ToBase64String(memStream.ToArray());
         memStream.Close();
         memStream.Dispose();
-        var getRequestProto = new ProtobufRequest("https://api.steampowered.com/IAuthenticationService/GetPasswordRSAPublicKey/v1", tmp)
+        var getRequestProto = new ProtobufRequest(SteamApiUrls.IAuthenticationService_GetPasswordRSAPublicKey_v1, tmp)
         {
             Proxy = _proxy,
             UserAgent = usetAgent,
@@ -219,7 +219,7 @@ public class UserLogin
         string content = Convert.ToBase64String(memStream1.ToArray());
         memStream1.Close();
         memStream1.Dispose();
-        var postRequestProto = new ProtobufRequest("https://api.steampowered.com/IAuthenticationService/BeginAuthSessionViaCredentials/v1", content)
+		var postRequestProto = new ProtobufRequest(SteamApiUrls.IAuthenticationService_BeginAuthSessionViaCredentials_v1, content)
         {
             Proxy = _proxy,
             UserAgent = usetAgent,
@@ -303,7 +303,7 @@ public class UserLogin
         string content = Convert.ToBase64String(memStream2.ToArray());
         memStream2.Close();
         memStream2!.Dispose();
-        var protoRequest = new ProtobufRequest("https://api.steampowered.com/IAuthenticationService/UpdateAuthSessionWithSteamGuardCode/v1", content)
+        var protoRequest = new ProtobufRequest(SteamApiUrls.IAuthenticationService_UpdateAuthSessionWithSteamGuardCode_v1, content)
         {
             UserAgent = _platform == EAuthTokenPlatformType.MobileApp ? Downloader.UserAgentSteamMobileApp : SessionData.UserAgentBrowser,
             Proxy = _proxy,
@@ -349,7 +349,7 @@ public class UserLogin
         string content = Convert.ToBase64String(memStream3.ToArray());
         memStream3.Close();
         memStream3.Dispose();
-        var protoRequest = new ProtobufRequest("https://api.steampowered.com/IAuthenticationService/PollAuthSessionStatus/v1", content)
+        var protoRequest = new ProtobufRequest(SteamApiUrls.IAuthenticationService_PollAuthSessionStatus_v1, content)
         {
             UserAgent = _platform == EAuthTokenPlatformType.MobileApp ? Downloader.UserAgentSteamMobileApp : SessionData.UserAgentBrowser,
             Proxy = _proxy,
@@ -445,7 +445,7 @@ public class UserLogin
 		var tmp = Convert.ToBase64String(memStream.ToArray());
 		memStream.Close();
 		memStream.Dispose();
-		var getRequestProto = new ProtobufRequest("https://api.steampowered.com/IAuthenticationService/GetPasswordRSAPublicKey/v1", tmp)
+		var getRequestProto = new ProtobufRequest(SteamApiUrls.IAuthenticationService_GetPasswordRSAPublicKey_v1, tmp)
 		{
 			Proxy = _proxy,
 			UserAgent = usetAgent,
@@ -508,7 +508,7 @@ public class UserLogin
 		string content = Convert.ToBase64String(memStream1.ToArray());
 		memStream1.Close();
 		memStream1.Dispose();
-		var postRequestProto = new ProtobufRequest("https://api.steampowered.com/IAuthenticationService/BeginAuthSessionViaCredentials/v1", content)
+		var postRequestProto = new ProtobufRequest(SteamApiUrls.IAuthenticationService_BeginAuthSessionViaCredentials_v1, content)
 		{
 			Proxy = _proxy,
 			UserAgent = usetAgent,
