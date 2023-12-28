@@ -93,7 +93,8 @@ public class UserLogin
         else if (LastEResult == EResult.AccountLimitExceeded ||
             LastEResult == EResult.RateLimitExceeded ||
             LastEResult == EResult.AccountActivityLimitExceeded ||
-            LastEResult == EResult.PhoneActivityLimitExceeded)
+            LastEResult == EResult.PhoneActivityLimitExceeded ||
+			LastEResult == EResult.AccountLoginDeniedThrottle)
             _result = LoginResult.RateExceeded;
         else if (_isCookieNotGet == true)
             _result = LoginResult.BadCookie;
