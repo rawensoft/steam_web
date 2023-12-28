@@ -735,7 +735,8 @@ public class SteamGuardAccount
         while (true)
         {
             int n4 = n3 - 1;
-            if (n3 <= 0) break;
+            if (n3 <= 0)
+                break;
             array[n4] = (byte)time;
             time >>= 8;
             n3 = n4;
