@@ -5,10 +5,8 @@ using RestSharp;
 using System.Net.Sockets;
 
 namespace SteamWeb.Web.DTO;
-
 public class Response
 {
-    private const string HeaderNameLocation = "Location";
     private const string HeaderValueLocation = "steammobile://lostauth/";
     private const string HeaderNameXEResult = "X-eresult";
 
@@ -32,7 +30,7 @@ public class Response
 			{
 				switch (header.Name)
 				{
-					case HeaderNameLocation:
+					case SteamKnownHeaders.Location:
 						if (header.Value!.ToString() == HeaderValueLocation)
 							LostAuth = true;
 						break;
@@ -83,12 +81,12 @@ public class Response
 			{
 				switch (name)
 				{
-					case HeaderNameLocation:
-						if (res.Headers[HeaderNameLocation] == HeaderValueLocation)
+					case SteamKnownHeaders.Location:
+						if (res.Headers[SteamKnownHeaders.Location] == HeaderValueLocation)
 							LostAuth = true;
 						break;
 					case HeaderNameXEResult:
-						EResult = (EResult)res.Headers[HeaderNameLocation]!.ParseInt32();
+						EResult = (EResult)res.Headers[SteamKnownHeaders.Location]!.ParseInt32();
 						break;
 				}
 			}
