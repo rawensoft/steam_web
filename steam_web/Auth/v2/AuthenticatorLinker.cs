@@ -190,7 +190,7 @@ public class AuthenticatorLinker
             {
                 if (countryCode.IsEmpty() || phoneNumber.IsEmpty())
                     return LinkResult.MustProvidePhoneNumber;
-                var responseSetNumber = SetAccountPhoneNumber(new() { phone_number = phoneNumber, phone_country_code = countryCode });
+                var responseSetNumber = SetAccountPhoneNumber(new() { phone_number = phoneNumber!, phone_country_code = countryCode! });
                 if (responseSetNumber == null)
                     return LinkResult.GeneralFailure;
                 setNumberExecuted = true;
@@ -206,7 +206,7 @@ public class AuthenticatorLinker
         {
             if (!setNumberExecuted)
             {
-                var responseSetNumber = SetAccountPhoneNumber(new() { phone_number = phoneNumber, phone_country_code = countryCode });
+                var responseSetNumber = SetAccountPhoneNumber(new() { phone_number = phoneNumber!, phone_country_code = countryCode! });
                 if (responseSetNumber == null)
                     return LinkResult.GeneralFailure;
                 setNumberExecuted = true;

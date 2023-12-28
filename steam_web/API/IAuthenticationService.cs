@@ -18,7 +18,7 @@ public static class IAuthenticationService
     /// <param name="proxy"></param>
     /// <param name="session"></param>
     /// <returns>default если ошибка в запросе или нет сессии</returns>
-    public static async Task<Response<AuthSessionForAccount>> GetAuthSessionsForAccountAsync(SessionData session, Proxy proxy, CancellationToken? cts = null)
+    public static async Task<Response<AuthSessionForAccount>> GetAuthSessionsForAccountAsync(SessionData session, Proxy? proxy, CancellationToken? cts = null)
     {
         if (session == null)
             return default;
@@ -46,7 +46,7 @@ public static class IAuthenticationService
     /// <param name="proxy"></param>
     /// <param name="session"></param>
     /// <returns>default если ошибка в запросе или нет сессии</returns>
-    public static Response<AuthSessionForAccount> GetAuthSessionsForAccount(SessionData session, Proxy proxy, CancellationToken? cts = null)
+    public static Response<AuthSessionForAccount> GetAuthSessionsForAccount(SessionData session, Proxy? proxy, CancellationToken? cts = null)
     {
         if (session == null)
             return default;
@@ -78,7 +78,7 @@ public static class IAuthenticationService
     /// <param name="proxy"></param>
     /// <param name="session"></param>
     /// <returns></returns>
-    public static async Task<(EResult, UpdateTokenResponse)> GenerateAccessTokenForAppAsync(SessionData session, Proxy proxy, CancellationToken? cts = null)
+    public static async Task<(EResult, UpdateTokenResponse)> GenerateAccessTokenForAppAsync(SessionData session, Proxy? proxy, CancellationToken? cts = null)
     {
         if (session == null)
             return (EResult.Invalid, default);
@@ -118,7 +118,7 @@ public static class IAuthenticationService
     /// <param name="proxy"></param>
     /// <param name="session"></param>
     /// <returns></returns>
-    public static (EResult, UpdateTokenResponse) GenerateAccessTokenForApp(SessionData session, Proxy proxy, CancellationToken? cts = null)
+    public static (EResult, UpdateTokenResponse) GenerateAccessTokenForApp(SessionData session, Proxy? proxy, CancellationToken? cts = null)
     {
         if (session == null)
             return (EResult.Invalid, default);

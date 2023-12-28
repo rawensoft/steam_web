@@ -154,8 +154,6 @@ public class UserLogin
         using var memStream = new MemoryStream();
         Serializer.Serialize(memStream, new PasswordRSARequest() { account_name = Login });
         var tmp = Convert.ToBase64String(memStream.ToArray());
-        memStream.Close();
-        memStream.Dispose();
         var getRequestProto = new ProtobufRequest(SteamApiUrls.IAuthenticationService_GetPasswordRSAPublicKey_v1, tmp)
         {
             Proxy = _proxy,
@@ -184,8 +182,6 @@ public class UserLogin
             return false;
         var rsaResponse = Serializer.Deserialize<PasswordRSAResponse>(responseProto1.Stream);
         _isRSANotGet = false;
-        responseProto1.Stream.Close();
-        responseProto1.Stream.Dispose();
 
         byte[] encryptedPasswordBytes;
         using var rsaEncryptor = new RSACryptoServiceProvider();
@@ -217,8 +213,6 @@ public class UserLogin
         };
         Serializer.Serialize(memStream1, request);
         string content = Convert.ToBase64String(memStream1.ToArray());
-        memStream1.Close();
-        memStream1.Dispose();
 		var postRequestProto = new ProtobufRequest(SteamApiUrls.IAuthenticationService_BeginAuthSessionViaCredentials_v1, content)
         {
             Proxy = _proxy,
@@ -244,10 +238,10 @@ public class UserLogin
 			return false;
 		}
 		if (responseProto2.EResult != EResult.OK)
-            return false;
-        var authSession = Serializer.Deserialize<AuthSessionResponse>(responseProto2.Stream);
-        responseProto2.Stream.Close();
-        responseProto2.Stream.Dispose();
+		{
+			return false;
+		}
+		var authSession = Serializer.Deserialize<AuthSessionResponse>(responseProto2.Stream);
 
         SteamID64 = authSession.steamid;
         Session = new()
@@ -298,11 +292,9 @@ public class UserLogin
             client_id = _client_id,
             code = fa2Code,
             code_type = IsNeedEmailCode ? EAuthSessionGuardType.EmailCode : EAuthSessionGuardType.DeviceCode,
-            steamid = Session.SteamID
+            steamid = Session!.SteamID
         });
         string content = Convert.ToBase64String(memStream2.ToArray());
-        memStream2.Close();
-        memStream2!.Dispose();
         var protoRequest = new ProtobufRequest(SteamApiUrls.IAuthenticationService_UpdateAuthSessionWithSteamGuardCode_v1, content)
         {
             UserAgent = _platform == EAuthTokenPlatformType.MobileApp ? Downloader.UserAgentSteamMobileApp : SessionData.UserAgentBrowser,
@@ -326,11 +318,6 @@ public class UserLogin
 			_result = LoginResult.ConnectionError;
 			return false;
 		}
-		if (response.Stream != null)
-        {
-            response.Stream.Close();
-            response.Stream.Dispose();
-        }
         if (response.EResult != EResult.OK)
             return false;
         _nextStep = NEXT_STEP.Poll;
@@ -347,8 +334,6 @@ public class UserLogin
             request_id = _request_id!,
         });
         string content = Convert.ToBase64String(memStream3.ToArray());
-        memStream3.Close();
-        memStream3.Dispose();
         var protoRequest = new ProtobufRequest(SteamApiUrls.IAuthenticationService_PollAuthSessionStatus_v1, content)
         {
             UserAgent = _platform == EAuthTokenPlatformType.MobileApp ? Downloader.UserAgentSteamMobileApp : SessionData.UserAgentBrowser,
@@ -375,8 +360,6 @@ public class UserLogin
 		if (response.EResult != EResult.OK)
             return false;
         var authPoll0 = Serializer.Deserialize<AuthPollResponse>(response.Stream);
-        response.Stream.Close();
-        response.Stream.Dispose();
         if (authPoll0.access_token.IsEmpty() || authPoll0.refresh_token.IsEmpty())
             return false;
         Session!.AccessToken = authPoll0.access_token;
@@ -443,8 +426,6 @@ public class UserLogin
 		using var memStream = new MemoryStream();
 		Serializer.Serialize(memStream, new PasswordRSARequest() { account_name = Login });
 		var tmp = Convert.ToBase64String(memStream.ToArray());
-		memStream.Close();
-		memStream.Dispose();
 		var getRequestProto = new ProtobufRequest(SteamApiUrls.IAuthenticationService_GetPasswordRSAPublicKey_v1, tmp)
 		{
 			Proxy = _proxy,
@@ -506,8 +487,6 @@ public class UserLogin
 		};
 		Serializer.Serialize(memStream1, request);
 		string content = Convert.ToBase64String(memStream1.ToArray());
-		memStream1.Close();
-		memStream1.Dispose();
 		var postRequestProto = new ProtobufRequest(SteamApiUrls.IAuthenticationService_BeginAuthSessionViaCredentials_v1, content)
 		{
 			Proxy = _proxy,
@@ -533,10 +512,10 @@ public class UserLogin
 			return false;
 		}
 		if (responseProto2.EResult != EResult.OK)
+		{
 			return false;
+		}
 		var authSession = Serializer.Deserialize<AuthSessionResponse>(responseProto2.Stream);
-		responseProto2.Stream.Close();
-		responseProto2.Stream.Dispose();
 
 		SteamID64 = authSession.steamid;
 		Session = new()
@@ -587,11 +566,9 @@ public class UserLogin
 			client_id = _client_id,
 			code = fa2Code,
 			code_type = IsNeedEmailCode ? EAuthSessionGuardType.EmailCode : EAuthSessionGuardType.DeviceCode,
-			steamid = Session.SteamID
+			steamid = Session!.SteamID
 		});
 		string content = Convert.ToBase64String(memStream2.ToArray());
-		memStream2.Close();
-		memStream2!.Dispose();
 		var protoRequest = new ProtobufRequest("https://api.steampowered.com/IAuthenticationService/UpdateAuthSessionWithSteamGuardCode/v1", content)
 		{
 			UserAgent = _platform == EAuthTokenPlatformType.MobileApp ? Downloader.UserAgentSteamMobileApp : SessionData.UserAgentBrowser,
@@ -615,17 +592,12 @@ public class UserLogin
 			_result = LoginResult.ConnectionError;
 			return false;
 		}
-		if (response.Stream != null)
-		{
-			response.Stream.Close();
-			response.Stream.Dispose();
-		}
 		if (response.EResult != EResult.OK)
 			return false;
 		_nextStep = NEXT_STEP.Poll;
 		return true;
 	}
-    public async Task<bool> PollAuthSessionStatusAsync()
+	public async Task<bool> PollAuthSessionStatusAsync()
 	{
 		if (_nextStep != NEXT_STEP.Poll || FullyEnrolled)
 			return false;
@@ -664,8 +636,6 @@ public class UserLogin
 		if (response.EResult != EResult.OK)
 			return false;
 		var authPoll0 = Serializer.Deserialize<AuthPollResponse>(response.Stream);
-		response.Stream.Close();
-		response.Stream.Dispose();
 		if (authPoll0.access_token.IsEmpty() || authPoll0.refresh_token.IsEmpty())
 			return false;
 		Session!.AccessToken = authPoll0.access_token;
