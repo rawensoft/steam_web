@@ -455,36 +455,42 @@ public class SteamGuardAccount
     }
 
 
-    public async Task<bool> AcceptConfirmationAsync(Confirmation conf, bool withCredentials)
+    public async Task<(ACCEPT_STATUS, string?)> AcceptConfirmationAsync(Confirmation conf, bool withCredentials)
     {
         if (Session == null)
-            return false;
-        string tag = "accept";
+			return (ACCEPT_STATUS.BadSession, "Нет сессии");
+		string tag = "accept";
         string url = $"{APIEndpoints.COMMUNITY_BASE}/mobileconf/ajaxop?op=allow&{GenerateConfirmationQueryParams(tag)}&cid={conf.id}&ck={conf.nonce}";
         string content = withCredentials ? "{\"withCredentials\":true}" : "{\"withCredentials\":false}";
         var request = new PostRequest(url, content, Downloader.AppJson, Proxy, Session, null, Downloader.UserAgentOkHttp) { UseVersion2 = true };
         var response = await Downloader.PostAsync(request);
         if (response.LostAuth)
-            return false;
-        if (!response.Success || response.Data.IsEmpty()) return false;
-        var confResponse = JsonSerializer.Deserialize<SendConfirmationResponse>(response.Data);
-        return confResponse!.Success;
-    }
-    public async Task<bool> CancelConfirmationAsync(Confirmation conf, bool withCredentials)
+			return (ACCEPT_STATUS.NeedAuth, "Нужно авторизоваться");
+		if (!response.Success || response.Data.IsEmpty())
+			return (ACCEPT_STATUS.Error, response.ErrorMessage ?? response.ErrorException?.Message);
+		var confResponse = JsonSerializer.Deserialize<SendConfirmationResponse>(response.Data!);
+		if (confResponse!.Success)
+			return (ACCEPT_STATUS.Success, null);
+		return (ACCEPT_STATUS.Error, response.Data);
+	}
+    public async Task<(ACCEPT_STATUS, string?)> CancelConfirmationAsync(Confirmation conf, bool withCredentials)
     {
         if (Session == null)
-            return false;
-        string tag = "reject";
+		    return (ACCEPT_STATUS.BadSession, "Нет сессии");
+		string tag = "reject";
         string url = $"{APIEndpoints.COMMUNITY_BASE}/mobileconf/ajaxop?op=allow&{GenerateConfirmationQueryParams(tag)}&cid={conf.id}&ck={conf.nonce}";
         string content = withCredentials ? "{\"withCredentials\":true}" : "{\"withCredentials\":false}";
         var request = new PostRequest(url, content, Downloader.AppJson, Proxy, Session, null, Downloader.UserAgentOkHttp) { UseVersion2 = true };
         var response = await Downloader.PostAsync(request);
         if (response.LostAuth)
-            return false;
-        if (!response.Success || response.Data.IsEmpty()) return false;
-        var confResponse = JsonSerializer.Deserialize<SendConfirmationResponse>(response.Data);
-        return confResponse!.Success;
-    }
+			return (ACCEPT_STATUS.NeedAuth, "Нужно авторизоваться");
+		if (!response.Success || response.Data.IsEmpty())
+			return (ACCEPT_STATUS.Error, response.ErrorMessage ?? response.ErrorException?.Message);
+		var confResponse = JsonSerializer.Deserialize<SendConfirmationResponse>(response.Data!);
+		if (confResponse!.Success)
+			return (ACCEPT_STATUS.Success, null);
+		return (ACCEPT_STATUS.Error, response.Data);
+	}
     public async Task<bool> AcceptMultiConfirmationsAsync(Confirmation[] confs)
     {
         if (Session == null)
