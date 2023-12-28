@@ -290,99 +290,122 @@ public class SteamGuardAccount
         if (response.EResult != EResult.OK)
             return null;
         var wallet = Serializer.Deserialize<CUserAccount_GetWalletDetails_Response>(response.Stream);
-        return wallet;
-    }
-    public Confirmation[] FetchConfirmations()
+		return wallet;
+	}
+    
+    public ConfirmationsResponse FetchConfirmations()
     {
-        if (Session == null)
-            return new Confirmation[0];
-        long time = TimeAligner.GetSteamTime();
-        string tag = "list";
-        var request = new GetRequest(SteamCommunityUrls.MobileConf_GetList, Proxy, Session)
-        {
-            UseVersion2 = true,
-            UserAgent = SessionData.UserAgentMobile
-        }.AddQuery("p", DeviceID).AddQuery("a", Session.SteamID)
-        .AddQuery("k", _generateConfirmationHashForTime(time, tag)).AddQuery("t", time).AddQuery("m", "react").AddQuery("tag", tag);
+		if (Session == null)
+			return new() { message = "Нет сессии" };
+		long time = TimeAligner.GetSteamTime();
+		string tag = "list";
+		var request = new GetRequest(SteamCommunityUrls.MobileConf_GetList, Proxy, Session)
+		{
+			UseVersion2 = true,
+			UserAgent = SessionData.UserAgentMobile
+		}.AddQuery("p", DeviceID).AddQuery("a", Session.SteamID)
+		.AddQuery("k", _generateConfirmationHashForTime(time, tag)!).AddQuery("t", time).AddQuery("m", "react").AddQuery("tag", tag);
 
-        var response = Downloader.Get(request);
-        if (!response.Success)
-            return new Confirmation[0];
-        var options = new JsonSerializerOptions
-        {
-            NumberHandling = JsonNumberHandling.AllowReadingFromString
-        };
-        var confs = JsonSerializer.Deserialize<ConfirmationsResponse>(response.Data!, options);
-        return confs!.conf;
-    }
-    public async Task<Confirmation[]> FetchConfirmationsAsync()
+		var response = Downloader.Get(request);
+		if (!response.Success)
+			return new() { message = response.ErrorException?.Message ?? response.ErrorMessage ?? response.Data + "|" + response.StatusCode + "|" + response.SocketErrorCode };
+		try
+		{
+			var options = new JsonSerializerOptions
+			{
+				NumberHandling = JsonNumberHandling.AllowReadingFromString
+			};
+			var confs = JsonSerializer.Deserialize<ConfirmationsResponse>(response.Data!, options);
+			return confs!;
+		}
+		catch (Exception e)
+		{
+			return new() { message = e.Message + "|" + response.Data };
+		}
+	}
+    public async Task<ConfirmationsResponse> FetchConfirmationsAsync()
     {
         if (Session == null)
-            return new Confirmation[0];
-        long time = TimeAligner.GetSteamTime();
+			return new() { message = "Нет сессии" };
+		long time = TimeAligner.GetSteamTime();
         string tag = "list";
         var request = new GetRequest(SteamCommunityUrls.MobileConf_GetList, Proxy, Session)
         {
             UseVersion2 = true,
             UserAgent = SessionData.UserAgentMobile
         }.AddQuery("p", DeviceID).AddQuery("a", Session.SteamID)
-        .AddQuery("k", _generateConfirmationHashForTime(time, tag)).AddQuery("t", time).AddQuery("m", "react").AddQuery("tag", tag);
+        .AddQuery("k", _generateConfirmationHashForTime(time, tag)!).AddQuery("t", time).AddQuery("m", "react").AddQuery("tag", tag);
 
         var response = await Downloader.GetAsync(request);
-        if (!response.Success)
-            return new Confirmation[0];
-		var options = new JsonSerializerOptions
-		{
-			NumberHandling = JsonNumberHandling.AllowReadingFromString
-		};
-		var confs = JsonSerializer.Deserialize<ConfirmationsResponse>(response.Data!, options);
-        return confs!.conf;
+		if (!response.Success)
+			return new() { message = response.ErrorException?.Message ?? response.ErrorMessage! };
+        try
+        {
+			var options = new JsonSerializerOptions
+			{
+				NumberHandling = JsonNumberHandling.AllowReadingFromString
+			};
+			var confs = JsonSerializer.Deserialize<ConfirmationsResponse>(response.Data!, options);
+			return confs!;
+		}
+        catch (Exception e)
+        {
+            return new() { message = e.Message + "|" + response.Data };
+        }
     }
 
-    public bool AcceptConfirmation(Confirmation conf, bool withCredentials)
+    public (ACCEPT_STATUS, string?) AcceptConfirmation(Confirmation conf, bool withCredentials)
     {
         if (Session == null)
-            return false;
+            return (ACCEPT_STATUS.BadSession, "Нет сессии");
         string tag = "accept";
-        string url = $"{APIEndpoints.COMMUNITY_BASE}/mobileconf/ajaxop?op=allow&{GenerateConfirmationQueryParams(tag)}&cid={conf.id}&ck={conf.nonce}";
+        string url = APIEndpoints.COMMUNITY_BASE + "/mobileconf/ajaxop?op=allow&" + GenerateConfirmationQueryParams(tag) + "&cid=" + conf.id + "&ck=" + conf.nonce;
         string content = withCredentials ? "{\"withCredentials\":true}" : "{\"withCredentials\":false}";
-        var request = new PostRequest(url, content, Downloader.AppJson, Proxy, Session, null, Downloader.UserAgentOkHttp)
+        var request = new PostRequest(url, content, Downloader.AppJson, Proxy!, Session)
         {
             UseVersion2 = true,
-            Timeout = 90000
-        };
+            Timeout = 90000,
+            UserAgent = Downloader.UserAgentOkHttp
+		};
         var response = Downloader.Post(request);
         if (response.LostAuth)
-            return false;
-        if (!response.Success || response.Data.IsEmpty()) return false;
-        var confResponse = JsonSerializer.Deserialize<SendConfirmationResponse>(response.Data);
-        return confResponse!.Success;
+			return (ACCEPT_STATUS.NeedAuth, "Нужно авторизоваться");
+		if (!response.Success || response.Data.IsEmpty())
+            return (ACCEPT_STATUS.Error, response.ErrorMessage ?? response.ErrorException?.Message);
+        var confResponse = JsonSerializer.Deserialize<SendConfirmationResponse>(response.Data!);
+        if (confResponse!.Success)
+			return (ACCEPT_STATUS.Success, null);
+		return (ACCEPT_STATUS.Error, response.Data);
     }
-    public bool CancelConfirmation(Confirmation conf, bool withCredentials)
+    public (ACCEPT_STATUS, string?) CancelConfirmation(Confirmation conf, bool withCredentials)
     {
         if (Session == null)
-            return false;
-        string tag = "reject";
-        string url = $"{APIEndpoints.COMMUNITY_BASE}/mobileconf/ajaxop?op=allow&{GenerateConfirmationQueryParams(tag)}&cid={conf.id}&ck={conf.nonce}";
-        string content = withCredentials ? "{\"withCredentials\":true}" : "{\"withCredentials\":false}";
-        var request = new PostRequest(url, content, Downloader.AppJson, Proxy, Session, null, Downloader.UserAgentOkHttp) { UseVersion2 = true };
+			return (ACCEPT_STATUS.BadSession, "Нет сессии");
+		string tag = "reject";
+		string url = APIEndpoints.COMMUNITY_BASE + "/mobileconf/ajaxop?op=allow&" + GenerateConfirmationQueryParams(tag) + "&cid=" + conf.id + "&ck=" + conf.nonce;
+		string content = withCredentials ? "{\"withCredentials\":true}" : "{\"withCredentials\":false}";
+        var request = new PostRequest(url, content, Downloader.AppJson, Proxy!, Session, null!, Downloader.UserAgentOkHttp) { UseVersion2 = true };
         var response = Downloader.Post(request);
-        if (response.LostAuth)
-            return false;
-        if (!response.Success || response.Data.IsEmpty()) return false;
-        var confResponse = JsonSerializer.Deserialize<SendConfirmationResponse>(response.Data);
-        return confResponse!.Success;
-    }
+		if (response.LostAuth)
+			return (ACCEPT_STATUS.NeedAuth, "Нужно авторизоваться");
+		if (!response.Success || response.Data.IsEmpty())
+			return (ACCEPT_STATUS.Error, response.ErrorMessage ?? response.ErrorException?.Message);
+		var confResponse = JsonSerializer.Deserialize<SendConfirmationResponse>(response.Data!);
+		if (confResponse!.Success)
+			return (ACCEPT_STATUS.Success, null);
+		return (ACCEPT_STATUS.Error, response.Data);
+	}
     public bool AcceptMultiConfirmations(Confirmation[] confs)
     {
         if (Session == null)
             return false;
         if (confs.Length == 0)
             return true;
-        string tag = "accept";
-        string url = $"{APIEndpoints.COMMUNITY_BASE}/mobileconf/multiajaxop?op=allow&{GenerateConfirmationQueryParams(tag)}";
-        var sb = new StringBuilder().Append("cid[]=").Append(confs[0].id).Append("&ck[]=").Append(confs[0].nonce);
-        for (int i = 1; i < confs.Length; i++)
+        int length = confs.Length;
+		string tag = "accept";
+        string url = APIEndpoints.COMMUNITY_BASE + "/mobileconf/multiajaxop?op=allow&" + GenerateConfirmationQueryParams(tag);
+        var sb = new StringBuilder(length * 4 + 2).Append("cid[]=").Append(confs[0].id).Append("&ck[]=").Append(confs[0].nonce);
+        for (int i = 1; i < length; i++)
         {
             var conf = confs[i];
             sb.Append("&cid[]=");
