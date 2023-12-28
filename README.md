@@ -19,3 +19,18 @@ SteamWeb предназначен для выполнения запрос в St
 - Доступны все методы для выставления на продажу предметов
 - Для точного парсинга, в некоторых методах, реализован парсер html [AngleSharp](https://github.com/AngleSharp/AngleSharp), для более точного получения нужных данных
 - Прокси позволяет выбрать его тип и в любой момент его выключить или включить
+
+## Самостоятельная сборка
+1. Скачать и разархивировать проект
+2. Установить необходимые зависимости
+3. Для работы RSFactory нужно [скачать последнюю версию](https://github.com/rawensoft/restclient_factory/releases) и разархивировать в любое место
+4. В зависимостях удалить RestClientFactory
+5. Добавить RestClientFactory.dll в зависимостях
+6. После `Reference Include="RestClientFactory"` добавить `Condition="$(DefineConstants.Contains('FACTORY'))"`
+7. (Опционально) Указать после `HintPath` `<Private>False</Private>`
+
+## Зависимости
+- [AngleSharp 1.0.7](https://www.nuget.org/packages/AngleSharp/1.0.7/)
+- [protobuf-net 3.2.30](https://www.nuget.org/packages/protobuf-net/3.2.30)
+- [RestSharp 110.2.0](https://www.nuget.org/packages/RestSharp/110.2.0)
+- (Опционально) [RestClientFactory](https://github.com/rawensoft/restclient_factory)
