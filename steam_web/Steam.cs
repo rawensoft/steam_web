@@ -1236,10 +1236,10 @@ public static partial class Steam
     {
         if (communityId < 76561197960265729L || !Regex.IsMatch(communityId.ToString(CultureInfo.InvariantCulture), "^7656119([0-9]{10})$"))
             return string.Empty;
-        communityId -= 76561197960265728L;
+        communityId -= SteamIDConverter;
         ulong num = communityId % 2L;
         communityId -= num;
-        string input = string.Format("U:{0}:{1}", num, (uint)(communityId - SteamIDConverter));
+        string input = string.Format("U:{0}:{1}", num, (uint)communityId);
         if (!Regex.IsMatch(input, "^U:[0-1]:([0-9]{1,10})$")) return string.Empty;
         return input;
     }
