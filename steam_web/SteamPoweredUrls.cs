@@ -63,5 +63,6 @@ internal static class SteamPoweredUrls
     public const string Login_GetRSAKey = "https://help.steampowered.com/en/login/getrsakey";
     public const string Wizard_AjaxAccountRecoveryChangePassword = "https://help.steampowered.com/en/wizard/AjaxAccountRecoveryChangePassword";
     public const string Wizard_AjaxAccountRecoveryVerifyPassword = "https://help.steampowered.com/en/wizard/AjaxAccountRecoveryVerifyPassword";
-
+	public const string SaleVote = "https://store.steampowered.com/salevote";
+	public const string SteamAwards = "https://store.steampowered.com/steamawards";
 }
