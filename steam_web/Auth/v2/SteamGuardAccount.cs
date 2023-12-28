@@ -203,40 +203,47 @@ public class SteamGuardAccount
     {
         if (Session == null || Session.AccessToken.IsEmpty())
             return false;
-        var request = new GetRequest(SteamPoweredUrls.IAuthenticationService_GetAuthSessionsForAccount_v1, Proxy, Session)
+        var request = new ProtobufRequest(SteamPoweredUrls.IAuthenticationService_GetAuthSessionsForAccount_v1, string.Empty)
         {
-            UserAgent = SessionData.UserAgentMobile,
-            UseVersion2 = true
-        }.AddQuery("access_token", Session.AccessToken).AddQuery("origin", "SteamMobile").AddQuery("input_protobuf_encoded", string.Empty);
-        var response = Downloader.Get(request);
-        if (!response.Success || response.Data.IsEmpty())
-            return false;
-        return response.EResult == EResult.OK && response.Data.IsEmpty();
-        var sessionInfo = JsonSerializer.Deserialize<API.Models.Response<AuthSessionForAccount>>(response.Data);
-        sessionInfo!.success = true;
-        if (sessionInfo.response?.client_ids == null)
-            return false;
-        return true;
+            UserAgent = SessionData.UserAgentMobileApp,
+            AccessToken = Session.AccessToken,
+            Proxy = Proxy,
+            Session = Session,
+            IsMobile = true
+        };
+        using var response = Downloader.GetProtobuf(request);
+        if (!response.Success)
+			return false;
+        if (response.Stream != null)
+        {
+			var clientId = Serializer.Deserialize<CAuthentication_GetAuthSessionInfo_Request>(response.Stream);
+            LastClientId = clientId.client_id;
+		}
+		return response.EResult == EResult.OK;
     }
     public async Task<bool> CheckSessionAsync()
-    {
-        var request = new GetRequest(SteamPoweredUrls.IAuthenticationService_GetAuthSessionsForAccount_v1, Proxy, Session)
-        {
-            UserAgent = SessionData.UserAgentMobile,
-            UseVersion2 = true
-        }.AddQuery("access_token", Session.AccessToken).AddQuery("origin", "SteamMobile").AddQuery("input_protobuf_encoded", string.Empty);
-        var response = await Downloader.GetAsync(request);
-        if (!response.Success || response.Data.IsEmpty())
-            return false;
-        return response.EResult == EResult.OK && response.Data.IsEmpty();
-        var sessionInfo = JsonSerializer.Deserialize<API.Models.Response<AuthSessionForAccount>>(response.Data);
-        sessionInfo!.success = true;
-        if (sessionInfo.response?.client_ids == null)
+	{
 		if (Session == null || Session.AccessToken.IsEmpty())
 			return false;
+		var request = new ProtobufRequest(SteamPoweredUrls.IAuthenticationService_GetAuthSessionsForAccount_v1, string.Empty)
+		{
+			UserAgent = SessionData.UserAgentMobileApp,
+			AccessToken = Session.AccessToken,
+			Proxy = Proxy,
+			Session = Session,
+			IsMobile = true
+		};
+		using var response = await Downloader.GetProtobufAsync(request);
+		if (!response.Success)
             return false;
-        return true;
+		if (response.Stream != null)
+		{
+			var clientId = Serializer.Deserialize<CAuthentication_GetAuthSessionInfo_Request>(response.Stream);
+			LastClientId = clientId.client_id;
+		}
+		return response.EResult == EResult.OK;
     }
+
     /// <summary>
     /// Получает информацию о кошельке аккаунта
     /// </summary>
