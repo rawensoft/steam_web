@@ -317,104 +317,105 @@ public class AuthenticatorLinker
     /// </returns>
     public async Task<LinkResult> AddAuthenticatorMobileAsync()
     {
-        if (!allowAuthenticator)
-            return LinkResult.AuthenticatorNotAllowed;
-        if (session == null)
-            return LinkResult.GeneralFailure;
-        if (needAddMobile && !isEmailConfirmed)
-        {
-            var emailConfirm = await IsAccountWaitingForEmailConfirmationAsync();
-            if (emailConfirm == null)
-                return LinkResult.GeneralFailure;
-            if (emailConfirm.awaiting_email_confirmation)
-                return LinkResult.MustConfirmEmail;
-            isEmailConfirmed = true;
-        }
-        if ((needAddMobile && isEmailConfirmed && !isCodeToPhoneNumberSended) ||
-            (!needAddMobile && !isCodeToPhoneNumberSended))
-        {
-            var sendPhoneVerifCode = await SendPhoneVerificationCodeAsync(new() { language = 0 });
-            if (sendPhoneVerifCode == SENDVERIFCODE.BadSession ||
-                sendPhoneVerifCode == SENDVERIFCODE.Error ||
-                sendPhoneVerifCode == SENDVERIFCODE.No)
-                return LinkResult.GeneralFailure;
-            if (sendPhoneVerifCode == SENDVERIFCODE.TooManyRequests)
-                return LinkResult.TooManyRequests;
-            isCodeToPhoneNumberSended = true;
-        }
+		if (!allowAuthenticator)
+			return LinkResult.AuthenticatorNotAllowed;
+		if (session == null)
+			return LinkResult.GeneralFailure;
+		if (needAddMobile && !isEmailConfirmed)
+		{
+			var emailConfirm = await IsAccountWaitingForEmailConfirmationAsync();
+			if (emailConfirm == null)
+				return LinkResult.GeneralFailure;
+			if (emailConfirm.awaiting_email_confirmation)
+				return LinkResult.MustConfirmEmail;
+			isEmailConfirmed = true;
+		}
+		if ((needAddMobile && isEmailConfirmed && !isCodeToPhoneNumberSended) ||
+			(!needAddMobile && !isCodeToPhoneNumberSended))
+		{
+			var sendPhoneVerifCode = await SendPhoneVerificationCodeAsync(new() { language = 0 });
+			if (sendPhoneVerifCode == SENDVERIFCODE.BadSession ||
+				sendPhoneVerifCode == SENDVERIFCODE.Error ||
+				sendPhoneVerifCode == SENDVERIFCODE.No)
+				return LinkResult.GeneralFailure;
+			if (sendPhoneVerifCode == SENDVERIFCODE.TooManyRequests)
+				return LinkResult.TooManyRequests;
+			isCodeToPhoneNumberSended = true;
+		}
 
-        using var memStream1 = new MemoryStream();
-        Serializer.Serialize(memStream1, new CTwoFactor_AddAuthenticator_Request_Mobile()
-        {
-            steamid = session.SteamID,
-            authenticator_type = 1,
-            device_identifier = DeviceID,
-            sms_phone_id = "1",
-            version = 2
-        });
-        var protoRequest = new ProtobufRequest($"https://api.steampowered.com/ITwoFactorService/AddAuthenticator/v1", Convert.ToBase64String(memStream1.ToArray()))
-        {
-            AccessToken = session.AccessToken,
-            Proxy = proxy,
-            UserAgent = SessionData.UserAgentMobile
-        };
-        using var response = await Downloader.PostProtobufAsync(protoRequest);
-        if (!response.Success || response.EResult != EResult.OK)
-        {
-            if (response.EResult == EResult.NoVerifiedPhone && !setNumberExecuted)
-            {
-                if (countryCode.IsEmpty() || phoneNumber.IsEmpty())
-                    return LinkResult.MustProvidePhoneNumber;
-                var responseSetNumber = await SetAccountPhoneNumberAsync(new() { phone_number = phoneNumber, phone_country_code = countryCode });
-                if (responseSetNumber == null)
-                    return LinkResult.GeneralFailure;
-                setNumberExecuted = true;
-                needAddMobile = true;
-                phoneNumber = responseSetNumber.phone_number_formatted;
-                return LinkResult.MustConfirmEmail;
-            }
-            return LinkResult.GeneralFailure;
-        }
-        var addAuthenticatorResponse = Serializer.Deserialize<CTwoFactor_AddAuthenticator_Response>(response.Stream);
+		using var memStream1 = new MemoryStream();
+		Serializer.Serialize(memStream1, new CTwoFactor_AddAuthenticator_Request_Mobile()
+		{
+			steamid = session.SteamID,
+			authenticator_type = 1,
+			device_identifier = DeviceID,
+			sms_phone_id = "1",
+			version = 2
+		});
+		string content = Convert.ToBase64String(memStream1.ToArray());
+		var protoRequest = new ProtobufRequest(SteamApiUrls.ITwoFactorService_AddAuthenticator_v1, content)
+		{
+			AccessToken = session.AccessToken,
+			Proxy = proxy,
+			UserAgent = SessionData.UserAgentMobile
+		};
+		using var response = await Downloader.PostProtobufAsync(protoRequest);
+		if (!response.Success || response.EResult != EResult.OK)
+		{
+			if (response.EResult == EResult.NoVerifiedPhone && !setNumberExecuted)
+			{
+				if (countryCode.IsEmpty() || phoneNumber.IsEmpty())
+					return LinkResult.MustProvidePhoneNumber;
+				var responseSetNumber = await SetAccountPhoneNumberAsync(new() { phone_number = phoneNumber!, phone_country_code = countryCode! });
+				if (responseSetNumber == null)
+					return LinkResult.GeneralFailure;
+				setNumberExecuted = true;
+				needAddMobile = true;
+				phoneNumber = responseSetNumber.phone_number_formatted;
+				return LinkResult.MustConfirmEmail;
+			}
+			return LinkResult.GeneralFailure;
+		}
+		var addAuthenticatorResponse = Serializer.Deserialize<CTwoFactor_AddAuthenticator_Response>(response.Stream);
 
-        if (addAuthenticatorResponse.status == 2)
-        {
-            if (!setNumberExecuted)
-            {
-                var responseSetNumber = await SetAccountPhoneNumberAsync(new() { phone_number = phoneNumber, phone_country_code = countryCode });
-                if (responseSetNumber == null)
-                    return LinkResult.GeneralFailure;
-                setNumberExecuted = true;
-                needAddMobile = true;
-                phoneNumber = responseSetNumber.phone_number_formatted;
-                return LinkResult.MustConfirmEmail;
-            }
-            return LinkResult.GeneralFailure;
-        }
-        if (addAuthenticatorResponse.status == 29)
-            return LinkResult.AuthenticatorPresent;
-        if (addAuthenticatorResponse.status != 1)
-            return LinkResult.GeneralFailure;
+		if (addAuthenticatorResponse.status == 2)
+		{
+			if (!setNumberExecuted)
+			{
+				var responseSetNumber = await SetAccountPhoneNumberAsync(new() { phone_number = phoneNumber!, phone_country_code = countryCode! });
+				if (responseSetNumber == null)
+					return LinkResult.GeneralFailure;
+				setNumberExecuted = true;
+				needAddMobile = true;
+				phoneNumber = responseSetNumber.phone_number_formatted;
+				return LinkResult.MustConfirmEmail;
+			}
+			return LinkResult.GeneralFailure;
+		}
+		if (addAuthenticatorResponse.status == 29)
+			return LinkResult.AuthenticatorPresent;
+		if (addAuthenticatorResponse.status != 1)
+			return LinkResult.GeneralFailure;
 
-        LinkedAccount = new()
-        {
-            AccountName = addAuthenticatorResponse.account_name,
-            RevocationCode = addAuthenticatorResponse.revocation_code,
-            DeviceID = DeviceID,
-            IdentitySecret = Convert.ToBase64String(addAuthenticatorResponse.identity_secret),
-            Secret1 = Convert.ToBase64String(addAuthenticatorResponse.secret_1),
-            SerialNumber = addAuthenticatorResponse.serial_number,
-            ServerTime = addAuthenticatorResponse.server_time,
-            SharedSecret = Convert.ToBase64String(addAuthenticatorResponse.shared_secret),
-            Status = addAuthenticatorResponse.status,
-            Session = session,
-            Proxy = proxy,
-            TokenGID = addAuthenticatorResponse.token_gid,
-            URI = addAuthenticatorResponse.uri,
+		LinkedAccount = new()
+		{
+			AccountName = addAuthenticatorResponse.account_name,
+			RevocationCode = addAuthenticatorResponse.revocation_code,
+			DeviceID = DeviceID,
+			IdentitySecret = Convert.ToBase64String(addAuthenticatorResponse.identity_secret),
+			Secret1 = Convert.ToBase64String(addAuthenticatorResponse.secret_1),
+			SerialNumber = addAuthenticatorResponse.serial_number,
+			ServerTime = addAuthenticatorResponse.server_time,
+			SharedSecret = Convert.ToBase64String(addAuthenticatorResponse.shared_secret),
+			Status = addAuthenticatorResponse.status,
+			Session = session,
+			Proxy = proxy,
+			TokenGID = addAuthenticatorResponse.token_gid,
+			URI = addAuthenticatorResponse.uri,
 			AddedThrough = ADD_THROUGH.PhoneNumber
 		};
-        return LinkResult.AwaitingFinalization;
-    }
+		return LinkResult.AwaitingFinalization;
+	}
     /// <summary>
     /// Завершает привязку аунтентификатора
     /// </summary>
@@ -428,56 +429,58 @@ public class AuthenticatorLinker
     /// </returns>
     public async Task<FinalizeResult> FinalizeAddAuthenticatorMobileAsync(string smsCode)
     {
-        if (!allowAuthenticator)
-            return FinalizeResult.AuthenticatorNotAllowed;
-        //The act of checking the SMS code is necessary for Steam to finalize adding the phone number to the account.
-        //Of course, we only want to check it if we're adding a phone number in the first place...
+		if (!allowAuthenticator)
+			return FinalizeResult.AuthenticatorNotAllowed;
+		//The act of checking the SMS code is necessary for Steam to finalize adding the phone number to the account.
+		//Of course, we only want to check it if we're adding a phone number in the first place...
 
-        if (session == null)
-            return FinalizeResult.GeneralFailure;
-        using var memStream1 = new MemoryStream();
-        var request = new CTwoFactor_FinalizeAddAuthenticator_Request()
-        {
-            steamid = session.SteamID,
-            activation_code = smsCode,
-            validate_sms_code = true
-        };
-        int tries = 0;
-        while (tries <= 30)
-        {
-            request.authenticator_code = LinkedAccount.GenerateSteamGuardCode();
-            request.authenticator_time = TimeAligner.GetSteamTime();
-            Serializer.Serialize(memStream1, request);
-            string content = Convert.ToBase64String(memStream1.ToArray());
+		if (session == null)
+			return FinalizeResult.GeneralFailure;
+		using var memStream1 = new MemoryStream();
+		var request = new CTwoFactor_FinalizeAddAuthenticator_Request()
+		{
+			steamid = session.SteamID,
+			activation_code = smsCode,
+			validate_sms_code = true
+		};
+		int tries = 0;
+		while (tries <= 30)
+		{
+			request.authenticator_code = LinkedAccount.GenerateSteamGuardCode();
+			request.authenticator_time = TimeAligner.GetSteamTime();
+			Serializer.Serialize(memStream1, request);
+			string content = Convert.ToBase64String(memStream1.ToArray());
 
-            var protoRequest = new ProtobufRequest("https://api.steampowered.com/ITwoFactorService/FinalizeAddAuthenticator/v1", content)
-            {
-                AccessToken = session.AccessToken,
-                Proxy = proxy,
-                UserAgent = SessionData.UserAgentMobile
-            };
-            using var response = await Downloader.PostProtobufAsync(protoRequest);
-            if (!response.Success || response.EResult != EResult.OK) return FinalizeResult.GeneralFailure;
-            var finalizeResponse = Serializer.Deserialize<CTwoFactor_FinalizeAddAuthenticator_Response>(response.Stream);
+			var protoRequest = new ProtobufRequest(SteamApiUrls.ITwoFactorService_FinalizeAddAuthenticator_v1, content)
+			{
+				AccessToken = session.AccessToken,
+				Proxy = proxy,
+				UserAgent = SessionData.UserAgentMobile
+			};
+			using var response = await Downloader.PostProtobufAsync(protoRequest);
+			if (!response.Success || response.EResult != EResult.OK)
+				return FinalizeResult.GeneralFailure;
+			var finalizeResponse = Serializer.Deserialize<CTwoFactor_FinalizeAddAuthenticator_Response>(response.Stream);
 
-            if (finalizeResponse.status == 89)
-                return FinalizeResult.BadSMSCode;
-            if (finalizeResponse.status == 88 && tries >= 30)
-                return FinalizeResult.UnableToGenerateCorrectCodes;
-            if (!finalizeResponse.success)
-            {
-                request.validate_sms_code = false;
-                request.activation_code = null;
-                tries++;
-                continue;
-            }
+			if (finalizeResponse.status == 89)
+				return FinalizeResult.BadSMSCode;
+			if (finalizeResponse.status == 88 && tries >= 30)
+				return FinalizeResult.UnableToGenerateCorrectCodes;
+			if (!finalizeResponse.success)
+			{
+				request.validate_sms_code = false;
+				request.activation_code = null;
+				tries++;
+				continue;
+			}
 
-            LinkedAccount.FullyEnrolled = true;
-            return FinalizeResult.Success;
-        }
+			LinkedAccount.FullyEnrolled = true;
+			return FinalizeResult.Success;
+		}
 
-        return FinalizeResult.GeneralFailure;
-    }
+		return FinalizeResult.GeneralFailure;
+	}
+
 
 	public LinkResult AddAuthenticatorEmail()
 	{
