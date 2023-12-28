@@ -413,7 +413,7 @@ public class SteamGuardAccount
             sb.Append("&ck[]=");
             sb.Append(conf.nonce);
         }
-        var request = new PostRequest(url, sb.ToString(), Downloader.AppFormUrlEncoded, Proxy, Session, null, Downloader.UserAgentOkHttp)
+        var request = new PostRequest(url, sb.ToString(), Downloader.AppFormUrlEncoded, Proxy!, Session, null!, Downloader.UserAgentOkHttp)
         {
             UseVersion2 = true,
             Timeout = 90000
@@ -423,7 +423,7 @@ public class SteamGuardAccount
             return false;
         if (!response.Success || response.Data.IsEmpty())
             return false;
-        var confResponse = JsonSerializer.Deserialize<SendConfirmationResponse>(response.Data);
+        var confResponse = JsonSerializer.Deserialize<SendConfirmationResponse>(response.Data!);
         return confResponse!.Success;
     }
     public bool CancelMultiConfirmations(Confirmation[] confs)
@@ -444,13 +444,13 @@ public class SteamGuardAccount
             sb.Append("&ck[]=");
             sb.Append(conf.nonce);
         }
-        var request = new PostRequest(url, sb.ToString(), Downloader.AppFormUrlEncoded, Proxy, Session, null, Downloader.UserAgentOkHttp) { UseVersion2 = true };
+        var request = new PostRequest(url, sb.ToString(), Downloader.AppFormUrlEncoded, Proxy!, Session, null!, Downloader.UserAgentOkHttp) { UseVersion2 = true };
         var response = Downloader.Post(request);
         if (response.LostAuth)
             return false;
         if (!response.Success || response.Data.IsEmpty())
             return false;
-        var confResponse = JsonSerializer.Deserialize<SendConfirmationResponse>(response.Data);
+        var confResponse = JsonSerializer.Deserialize<SendConfirmationResponse>(response.Data!);
         return confResponse!.Success;
     }
 
