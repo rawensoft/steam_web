@@ -11,17 +11,17 @@ public static class TimeAligner
     public static int GetSteamTime()
     {
         if (!aligned) AlignTime();
-        return Util.GetSystemUnixTime() + timeDifference;
+        return DateTime.UtcNow.ToTimeStamp() + timeDifference;
     }
     public static async Task<long> GetSteamTimeAsync()
     {
         if (!aligned) await AlignTimeAsync();
-        return Util.GetSystemUnixTime() + timeDifference;
+        return DateTime.UtcNow.ToTimeStamp() + timeDifference;
     }
 
     public static void AlignTime()
     {
-        int currentTime = Util.GetSystemUnixTime();
+        int currentTime = DateTime.UtcNow.ToTimeStamp();
         using var client = new WebClient();
         try
         {
@@ -35,7 +35,7 @@ public static class TimeAligner
     }
     public static async Task AlignTimeAsync()
     {
-        int currentTime = Util.GetSystemUnixTime();
+        int currentTime = DateTime.UtcNow.ToTimeStamp();
         using var client = new WebClient();
         try
         {
