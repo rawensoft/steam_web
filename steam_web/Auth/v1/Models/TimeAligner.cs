@@ -3,7 +3,7 @@ using System.Text.Json;
 using SteamWeb.Extensions;
 
 namespace SteamWeb.Auth.v1;
-public partial class TimeAligner
+public static class TimeAligner
 {
     private static bool aligned = false;
     private static int timeDifference = 0;
