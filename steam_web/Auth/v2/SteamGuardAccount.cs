@@ -154,8 +154,8 @@ public class SteamGuardAccount
         {
             AccessToken = Session.AccessToken,
             Proxy = Proxy,
-            UserAgent = SessionData.UserAgentMobile
-        };
+            UserAgent = SessionData.UserAgentMobileApp
+		};
         using var response = Downloader.PostProtobuf(request);
         if (!response.Success || response.EResult != EResult.OK)
             return false;
@@ -188,8 +188,8 @@ public class SteamGuardAccount
         {
             AccessToken = Session.AccessToken,
             Proxy = Proxy,
-            UserAgent = SessionData.UserAgentMobile
-        };
+            UserAgent = SessionData.UserAgentMobileApp
+		};
         using var response = await Downloader.PostProtobufAsync(request);
         if (!response.Success || response.EResult != EResult.OK)
             return false;
