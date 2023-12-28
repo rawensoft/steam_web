@@ -2,23 +2,25 @@
 using System.Collections.Concurrent;
 using System.Net;
 using SteamWeb.Auth.Interfaces;
+using System.Text.Json.Serialization;
 
 namespace SteamWeb.Auth.v2.Models;
 public class SessionData : ISessionProvider
 {
-    public const string DefaultMobileCookie = "mobileClient=android; mobileClientVersion=777777 3.6.3; ";
-    public const string UserAgentMobile = "Mozilla/5.0 (Linux; Android 5.1.1; SM-G977N Build/LMY48Z; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/74.0.3729.136 Mobile Safari/537.36";
-    public const string UserAgentBrowser = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36";
+    public const string DefaultMobileCookie = "mobileClient=android; mobileClientVersion=777777 3.7.2; ";
+    public const string UserAgentMobile = "Dalvik/2.1.0 (Linux; U; Android 5.1.1; ASUS_Z01QD Build/QKQ1.190825.002; Valve Steam App Version/3)";
+    public const string UserAgentBrowser = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36";
+	public const string UserAgentMobileApp = "okhttp/4.9.2";
 
-    internal ConcurrentDictionary<string, Cookie> _cookies { get; init; } = new();
-    public string SessionID { get; set; }
-    public string AccessToken { get; set; }
-    public string RefreshToken { get; set; }
-    public string BrowserId { get; set; }
-    public string SteamCountry { get; set; }
-    public ulong SteamID { get; set; }
-    public EAuthTokenPlatformType PlatformType { get; init; }
-    public string SteamLanguage { get; set; } = "english";
+	internal ConcurrentDictionary<string, Cookie> _cookies { get; init; } = new();
+	[JsonPropertyName("session_id")] public string SessionID { get; set; }
+	[JsonPropertyName("access_token")] public string AccessToken { get; set; }
+	[JsonPropertyName("refresh_token")] public string RefreshToken { get; set; }
+	[JsonPropertyName("browser_id")] public string BrowserId { get; set; }
+	[JsonPropertyName("steam_country")] public string SteamCountry { get; set; }
+	[JsonPropertyName("steam_id")] public ulong SteamID { get; set; }
+	[JsonPropertyName("platform")] public EAuthTokenPlatformType PlatformType { get; init; }
+	[JsonPropertyName("steam_language")] public string SteamLanguage { get; set; } = "english";
 
     public void AddCookieToContainer(CookieContainer? container, Uri url, bool inc_mobile_cookie)
     {
