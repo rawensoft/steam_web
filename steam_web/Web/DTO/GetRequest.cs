@@ -7,6 +7,7 @@ namespace SteamWeb.Web.DTO;
 
 public class GetRequest
 {
+    public string? Accept { get; set; } = null;
     public int CurrentRedirect { get; set; } = 0;
     public CookieContainer? CookieContainer { get; set; } = null;
     public int MaxRedirects { get; set; } = 10;
@@ -73,6 +74,7 @@ public class GetRequest
         foreach (var query in QueryParametrs)
             request.AddQueryParameter(query.Key, query.Value, false);
     }
+
     public string GetUserAgent()
     {
         if (UserAgent != null)
@@ -85,6 +87,8 @@ public class GetRequest
     }
     public string GetAccept()
     {
+        if (Accept != null)
+            return Accept;
         if (IsMobile && IsAjax)
             return "text/javascript, text/html, application/xml, text/xml, *";
         if (UseVersion2)
