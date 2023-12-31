@@ -9,6 +9,8 @@ internal static class SteamApiUrls
 	public const string ITwoFactorService_QueryStatus_v1 = "https://api.steampowered.com/ITwoFactorService/QueryStatus/v1";
 	public const string ITwoFactorService_AddAuthenticator_v1 = "https://api.steampowered.com/ITwoFactorService/AddAuthenticator/v1";
 	public const string ITwoFactorService_FinalizeAddAuthenticator_v1 = "https://api.steampowered.com/ITwoFactorService/FinalizeAddAuthenticator/v1";
+	public const string ITwoFactorService_RemoveAuthenticatorViaChallengeStart_v1 = "https://api.steampowered.com/ITwoFactorService/RemoveAuthenticatorViaChallengeStart/v1/";
+	public const string ITwoFactorService_RemoveAuthenticatorViaChallengeContinue_v1 = "https://api.steampowered.com/ITwoFactorService/RemoveAuthenticatorViaChallengeContinue/v1/";
 
 	public const string IPhoneService_SetAccountPhoneNumber_v1 = "https://api.steampowered.com/IPhoneService/SetAccountPhoneNumber/v1";
 	public const string IPhoneService_IsAccountWaitingForEmailConfirmation_v1 = "https://api.steampowered.com/IPhoneService/IsAccountWaitingForEmailConfirmation/v1";
