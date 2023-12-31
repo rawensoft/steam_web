@@ -57,15 +57,16 @@ public class UserLogin
     public bool IsNeedTwoFactorCode => _isNeedTwoFactorCode;
     public bool IsNeedEmailCode => _isNeedEmailCode;
     public bool IsNeedConfirm => _isNeedConfirm;
+	internal string? WeakToken { get; private set; } = null;
+	internal IWebProxy? Proxy { get; init; } = null;
+	internal EAuthTokenPlatformType Platform { get; init; }
 
-    private bool _isNeedTwoFactorCode = false;
+	private bool _isNeedTwoFactorCode = false;
     private bool _isNeedEmailCode = false;
     private bool _isNeedConfirm = false;
     private NEXT_STEP _nextStep = NEXT_STEP.Begin;
-    private readonly IWebProxy? _proxy = null;
     private byte[]? _request_id = null;
     private ulong _client_id = 0;
-    private readonly EAuthTokenPlatformType _platform;
     private bool? _isCookieNotGet = null;
     private bool? _isRSANotGet = null;
     private LoginResult _result = LoginResult.GeneralFailure;
@@ -75,9 +76,9 @@ public class UserLogin
     {
         Login = login;
         Password = passwd;
-        _platform = platform;
+        Platform = platform;
     }
-    public UserLogin(string login, string passwd, EAuthTokenPlatformType platform, IWebProxy proxy) : this(login, passwd, platform) => _proxy = proxy;
+    public UserLogin(string login, string passwd, EAuthTokenPlatformType platform, IWebProxy proxy) : this(login, passwd, platform) => Proxy = proxy;
 	public UserLogin(string login, string passwd, EAuthTokenPlatformType platform, IWebProxy proxy, CancellationToken? cts) :
         this(login, passwd, platform, proxy) => _cts = cts;
 	public UserLogin(string login, string passwd, EAuthTokenPlatformType platform, CancellationToken? cts) : this(login, passwd, platform) => _cts = cts;
@@ -107,13 +108,13 @@ public class UserLogin
     {
         if (_nextStep != NEXT_STEP.Begin)
             return false;
-        var usetAgent = _platform == EAuthTokenPlatformType.MobileApp ? Downloader.UserAgentOkHttp : SessionData.UserAgentBrowser;
+        var usetAgent = Platform == EAuthTokenPlatformType.MobileApp ? Downloader.UserAgentOkHttp : SessionData.UserAgentBrowser;
         var getRequest = new GetRequest(Downloader.BASE_POWERED)
         {
 			Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application",
             UserAgent = usetAgent,
-            Proxy = _proxy,
-            IsMobile = _platform == EAuthTokenPlatformType.MobileApp,
+            Proxy = Proxy,
+            IsMobile = Platform == EAuthTokenPlatformType.MobileApp,
 			CancellationToken = _cts
 		};
 		var response = Downloader.Get(getRequest);
@@ -163,7 +164,7 @@ public class UserLogin
         var tmp = Convert.ToBase64String(memStream.ToArray());
         var getRequestProto = new ProtobufRequest(SteamApiUrls.IAuthenticationService_GetPasswordRSAPublicKey_v1, tmp)
         {
-            Proxy = _proxy,
+            Proxy = Proxy,
             UserAgent = usetAgent,
             Cookie = SessionData.DefaultMobileCookie,
 			CancellationToken = _cts
@@ -194,7 +195,7 @@ public class UserLogin
 
 		string encryptedPassword = Helpers.Encrypt(Password, rsaResponse.publickey_mod, rsaResponse.publickey_exp);
 		using var memStream1 = new MemoryStream();
-		if (_platform == EAuthTokenPlatformType.MobileApp)
+		if (Platform == EAuthTokenPlatformType.MobileApp)
 		{
 			var request = new AuthSessionMobileRequest()
 			{
@@ -215,7 +216,7 @@ public class UserLogin
 				device_details = new()
 				{
 					device_friendly_name = usetAgent,
-					platform_type = _platform
+					platform_type = Platform
 				}
 			};
 			Serializer.Serialize(memStream1, request);
@@ -232,7 +233,7 @@ public class UserLogin
 		stringCookies.Append("; ");
 		var postRequestProto = new ProtobufRequest(SteamApiUrls.IAuthenticationService_BeginAuthSessionViaCredentials_v1, content)
         {
-            Proxy = _proxy,
+            Proxy = Proxy,
             UserAgent = usetAgent,
             Cookie = stringCookies.ToString(),
 			CancellationToken = _cts
@@ -267,12 +268,13 @@ public class UserLogin
             BrowserId = browserID!,
             SessionID = sessionID!,
             SteamCountry = steamCountry!,
-            PlatformType = _platform,
+            PlatformType = Platform,
         };
         _client_id = authSession.client_id;
         _request_id = authSession.request_id;
+		WeakToken = authSession.weak_token;
 
-        var length = authSession.allowed_confirmations.Length;
+		var length = authSession.allowed_confirmations.Length;
         Approve = new EAuthSessionGuardType[length];
         for (int i = 0; i < length; i++)
         {
@@ -314,8 +316,8 @@ public class UserLogin
         string content = Convert.ToBase64String(memStream2.ToArray());
         var protoRequest = new ProtobufRequest(SteamApiUrls.IAuthenticationService_UpdateAuthSessionWithSteamGuardCode_v1, content)
         {
-            UserAgent = _platform == EAuthTokenPlatformType.MobileApp ? Downloader.UserAgentSteamMobileApp : SessionData.UserAgentBrowser,
-            Proxy = _proxy,
+            UserAgent = Platform == EAuthTokenPlatformType.MobileApp ? Downloader.UserAgentSteamMobileApp : SessionData.UserAgentBrowser,
+            Proxy = Proxy,
 			CancellationToken = _cts
 		};
         using var response = Downloader.PostProtobuf(protoRequest);
@@ -353,8 +355,8 @@ public class UserLogin
         string content = Convert.ToBase64String(memStream3.ToArray());
         var protoRequest = new ProtobufRequest(SteamApiUrls.IAuthenticationService_PollAuthSessionStatus_v1, content)
         {
-            UserAgent = _platform == EAuthTokenPlatformType.MobileApp ? Downloader.UserAgentSteamMobileApp : SessionData.UserAgentBrowser,
-            Proxy = _proxy,
+            UserAgent = Platform == EAuthTokenPlatformType.MobileApp ? Downloader.UserAgentSteamMobileApp : SessionData.UserAgentBrowser,
+            Proxy = Proxy,
             CancellationToken = _cts
 		};
         using var response = Downloader.PostProtobuf(protoRequest);
@@ -389,13 +391,13 @@ public class UserLogin
 	{
 		if (_nextStep != NEXT_STEP.Begin)
 			return false;
-		var usetAgent = _platform == EAuthTokenPlatformType.MobileApp ? Downloader.UserAgentOkHttp : SessionData.UserAgentBrowser;
+		var usetAgent = Platform == EAuthTokenPlatformType.MobileApp ? Downloader.UserAgentOkHttp : SessionData.UserAgentBrowser;
 		var getRequest = new GetRequest(Downloader.BASE_POWERED)
 		{
 			Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application",
 			UserAgent = usetAgent,
-			Proxy = _proxy,
-			IsMobile = _platform == EAuthTokenPlatformType.MobileApp,
+			Proxy = Proxy,
+			IsMobile = Platform == EAuthTokenPlatformType.MobileApp,
 			CancellationToken = _cts
 		};
 		var response = await Downloader.GetAsync(getRequest);
@@ -445,7 +447,7 @@ public class UserLogin
 		var tmp = Convert.ToBase64String(memStream.ToArray());
 		var getRequestProto = new ProtobufRequest(SteamApiUrls.IAuthenticationService_GetPasswordRSAPublicKey_v1, tmp)
 		{
-			Proxy = _proxy,
+			Proxy = Proxy,
 			UserAgent = usetAgent,
 			Cookie = SessionData.DefaultMobileCookie,
 			CancellationToken = _cts
@@ -476,7 +478,7 @@ public class UserLogin
 
 		string encryptedPassword = Helpers.Encrypt(Password, rsaResponse.publickey_mod, rsaResponse.publickey_exp);
 		using var memStream1 = new MemoryStream();
-		if (_platform == EAuthTokenPlatformType.MobileApp)
+		if (Platform == EAuthTokenPlatformType.MobileApp)
 		{
 			var request = new AuthSessionMobileRequest()
 			{
@@ -497,7 +499,7 @@ public class UserLogin
 				device_details = new()
 				{
 					device_friendly_name = usetAgent,
-					platform_type = _platform
+					platform_type = Platform
 				}
 			};
 			Serializer.Serialize(memStream1, request);
@@ -514,7 +516,7 @@ public class UserLogin
 		stringCookies.Append("; ");
 		var postRequestProto = new ProtobufRequest(SteamApiUrls.IAuthenticationService_BeginAuthSessionViaCredentials_v1, content)
 		{
-			Proxy = _proxy,
+			Proxy = Proxy,
 			UserAgent = usetAgent,
 			Cookie = stringCookies.ToString(),
 			CancellationToken = _cts
@@ -549,10 +551,11 @@ public class UserLogin
 			BrowserId = browserID!,
 			SessionID = sessionID!,
 			SteamCountry = steamCountry!,
-			PlatformType = _platform,
+			PlatformType = Platform,
 		};
 		_client_id = authSession.client_id;
 		_request_id = authSession.request_id;
+		WeakToken = authSession.weak_token;
 
 		var length = authSession.allowed_confirmations.Length;
 		Approve = new EAuthSessionGuardType[length];
@@ -598,8 +601,8 @@ public class UserLogin
 		string content = Convert.ToBase64String(memStream2.ToArray());
 		var protoRequest = new ProtobufRequest(SteamApiUrls.IAuthenticationService_UpdateAuthSessionWithSteamGuardCode_v1, content)
 		{
-			UserAgent = _platform == EAuthTokenPlatformType.MobileApp ? Downloader.UserAgentSteamMobileApp : SessionData.UserAgentBrowser,
-			Proxy = _proxy,
+			UserAgent = Platform == EAuthTokenPlatformType.MobileApp ? Downloader.UserAgentSteamMobileApp : SessionData.UserAgentBrowser,
+			Proxy = Proxy,
 			CancellationToken = _cts
 		};
 		using var response = await Downloader.PostProtobufAsync(protoRequest);
@@ -637,8 +640,8 @@ public class UserLogin
 		string content = Convert.ToBase64String(memStream3.ToArray());
 		var protoRequest = new ProtobufRequest(SteamApiUrls.IAuthenticationService_PollAuthSessionStatus_v1, content)
 		{
-			UserAgent = _platform == EAuthTokenPlatformType.MobileApp ? Downloader.UserAgentSteamMobileApp : SessionData.UserAgentBrowser,
-			Proxy = _proxy,
+			UserAgent = Platform == EAuthTokenPlatformType.MobileApp ? Downloader.UserAgentSteamMobileApp : SessionData.UserAgentBrowser,
+			Proxy = Proxy,
 			CancellationToken = _cts
 		};
 		using var response = await Downloader.PostProtobufAsync(protoRequest);
