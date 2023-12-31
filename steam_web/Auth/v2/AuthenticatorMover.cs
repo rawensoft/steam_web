@@ -7,7 +7,7 @@ using SteamWeb.Extensions;
 using SteamWeb.Web;
 
 namespace SteamWeb.Auth.v2;
-public class AuthentificatorMover
+public class AuthenticatorMover
 {
 	private readonly IWebProxy? _proxy;
 	private readonly UserLogin _userLogin;
@@ -31,7 +31,7 @@ public class AuthentificatorMover
 	/// </param>
 	/// 
 	/// <exception cref="ArgumentException"/>
-	public AuthentificatorMover(UserLogin userLogin)
+	public AuthenticatorMover(UserLogin userLogin)
 	{
 		if (userLogin.LastEResult != EResult.OK)
 			throw new ArgumentException("Последний EResult не OK", nameof(userLogin));
