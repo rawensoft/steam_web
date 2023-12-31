@@ -12,7 +12,7 @@ using System.Collections.Concurrent;
 namespace SteamWeb.Web;
 public static class Downloader
 {
-    public const string MobileCookie = "mobileClient=android; mobileClientVersion=777777 3.0.0; Steam_Language=english";
+    public const string MobileCookie = "mobileClient=android; mobileClientVersion=777777 3.7.2; Steam_Language=english";
     public const string AppFormUrlEncoded = "application/x-www-form-urlencoded";
     public const string AppJson = "application/json";
     public const string AppOctetSteam = "application/octet-stream";
