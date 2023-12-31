@@ -16,7 +16,9 @@ using SteamWeb.Auth.v2.Enums;
 namespace SteamWeb.Auth.v2;
 public class SteamGuardAccount
 {
-    [JsonPropertyName("shared_secret")] public string SharedSecret { get; init; }
+	private static byte[] _steamGuardCodeTranslations = new byte[] { 50, 51, 52, 53, 54, 55, 56, 57, 66, 67, 68, 70, 71, 72, 74, 75, 77, 78, 80, 81, 82, 84, 86, 87, 88, 89 };
+
+	[JsonPropertyName("shared_secret")] public string SharedSecret { get; init; }
     [JsonPropertyName("serial_number")] public ulong SerialNumber { get; init; }
     [JsonPropertyName("revocation_code")] public string RevocationCode { get; init; }
     [JsonPropertyName("uri")] public string URI { get; init; }
@@ -41,16 +43,15 @@ public class SteamGuardAccount
     /// Показывает какой ClientId был последним после вызова <see cref="CheckSession"/> или <see cref="CheckSessionAsync"/>
     /// </summary>
     [JsonIgnore] public ulong LastClientId { get; private set; } = 0;
-	private static byte[] _steamGuardCodeTranslations = new byte[] { 50, 51, 52, 53, 54, 55, 56, 57, 66, 67, 68, 70, 71, 72, 74, 75, 77, 78, 80, 81, 82, 84, 86, 87, 88, 89 };
-
-    public bool DeactivateAuthenticator()
+	
+    public CTwoFactor_RemoveAuthenticator_Response RemoveAuthenticator(bool remove_all_steamguard_cookies)
     {
         if (Session == null)
-            return false;
+            return new();
         using var memStream1 = new MemoryStream();
         Serializer.Serialize(memStream1, new CTwoFactor_RemoveAuthenticator_Request()
         {
-            //remove_all_steamguard_cookies = true,
+            remove_all_steamguard_cookies = remove_all_steamguard_cookies,
             revocation_code = RevocationCode,
             revocation_reason = 1,
             steamguard_scheme = 1,
@@ -59,22 +60,22 @@ public class SteamGuardAccount
         {
             AccessToken = Session.AccessToken,
             Proxy = Proxy,
-            UserAgent = SessionData.UserAgentMobile
+            UserAgent = SessionData.UserAgentMobileApp
         };
         using var response = Downloader.PostProtobuf(request);
         if (!response.Success || response.EResult != EResult.OK)
-            return false;
-        var obj = Serializer.Deserialize<CTwoFactor_RemoveAuthenticator_Response>(response.Stream);
-        return obj.success;
+			return new();
+		var obj = Serializer.Deserialize<CTwoFactor_RemoveAuthenticator_Response>(response.Stream);
+        return obj;
 	}
-	public async Task<bool> DeactivateAuthenticatorAsync()
+	public async Task<CTwoFactor_RemoveAuthenticator_Response> RemoveAuthenticatorAsync(bool remove_all_steamguard_cookies)
 	{
 		if (Session == null)
-			return false;
+			return new();
 		using var memStream1 = new MemoryStream();
 		Serializer.Serialize(memStream1, new CTwoFactor_RemoveAuthenticator_Request()
 		{
-			//remove_all_steamguard_cookies = true,
+			remove_all_steamguard_cookies = remove_all_steamguard_cookies,
 			revocation_code = RevocationCode,
 			revocation_reason = 1,
 			steamguard_scheme = 1,
@@ -83,13 +84,13 @@ public class SteamGuardAccount
 		{
 			AccessToken = Session.AccessToken,
 			Proxy = Proxy,
-			UserAgent = SessionData.UserAgentMobile
+			UserAgent = SessionData.UserAgentMobileApp
 		};
 		using var response = await Downloader.PostProtobufAsync(request);
 		if (!response.Success || response.EResult != EResult.OK)
-			return false;
+			return new();
 		var obj = Serializer.Deserialize<CTwoFactor_RemoveAuthenticator_Response>(response.Stream);
-		return obj.success;
+		return obj;
 	}
 
 	/// <summary>
