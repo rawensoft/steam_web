@@ -34,8 +34,8 @@ public static partial class Steam
         if (att_phone.has_phone == true && SDA != null)
         {
             SDA.Proxy = proxy;
-            var status = await Task.Run(() => SDA.DeactivateAuthenticator());
-            return status;
+            var result = await SDA.RemoveAuthenticatorAsync(false);
+            return result.success;
         }
         var request = new PostRequest(SteamPoweredUrls.TwoFactor_ManageAction, Downloader.AppFormUrlEncoded)
             .AddPostData("action", "email").AddPostData("sessionid", session.SessionID).AddPostData("email_authenticator_check", "on");
@@ -50,7 +50,8 @@ public static partial class Steam
         if (att_phone.has_phone == true && SDA != null)
         {
             SDA.Proxy = proxy;
-            return SDA.DeactivateAuthenticator();
+			var result = SDA.RemoveAuthenticator(false);
+			return result.success;
         }
         var request = new PostRequest(SteamPoweredUrls.TwoFactor_ManageAction, Downloader.AppFormUrlEncoded)
             .AddPostData("action", "email").AddPostData("sessionid", session.SessionID).AddPostData("email_authenticator_check", "on");
