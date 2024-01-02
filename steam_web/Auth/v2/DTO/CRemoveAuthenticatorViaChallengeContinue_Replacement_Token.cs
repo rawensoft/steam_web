@@ -17,8 +17,8 @@ public class CRemoveAuthenticatorViaChallengeContinue_Replacement_Token
     [ProtoMember(4)]
     public string uri { get; set; }
 
-    [ProtoMember(5, DataFormat = DataFormat.FixedSize)]
-    public ulong server_time { get; set; }
+    [ProtoMember(5)]
+    public int server_time { get; set; }
 
     [ProtoMember(6)]
     public string account_name { get; set; }
