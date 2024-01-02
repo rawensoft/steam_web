@@ -5,12 +5,16 @@ using SteamWeb.Auth.v2.Enums;
 using SteamWeb.Auth.v2.Models;
 using SteamWeb.Extensions;
 using SteamWeb.Web;
+using SDAv1 = SteamWeb.Auth.v1.SteamGuardAccount;
+using SDAv2 = SteamWeb.Auth.v2.SteamGuardAccount;
 
 namespace SteamWeb.Auth.v2;
 public class AuthenticatorMover
 {
 	private readonly IWebProxy? _proxy;
 	private readonly UserLogin _userLogin;
+	private CRemoveAuthenticatorViaChallengeContinue_Replacement_Token? _token = null;
+	private readonly string _deviceId = AuthenticatorLinker.GenerateDeviceID();
 
 	public EResult LastEResult { get; private set; } = EResult.OK;
 
@@ -79,5 +83,50 @@ public class AuthenticatorMover
 			return new();
 		var obj = Serializer.Deserialize<CTwoFactor_RemoveAuthenticatorViaChallengeContinue_Response>(response.Stream);
 		return obj;
+	}
+
+	public SDAv1? GetSteamGuardv1()
+	{
+		if (_token == null)
+			return null;
+		var sda = new SDAv1
+		{
+			Session = null,
+			AccountName = _token.account_name,
+			DeviceID = _deviceId,
+			FullyEnrolled = true,
+			IdentitySecret = Convert.ToBase64String(_token.identity_secret),
+			RevocationCode = _token.revocation_code,
+			Secret1 = Convert.ToBase64String(_token.secret_1),
+			SerialNumber = _token.serial_number.ToString(),
+			ServerTime = _token.server_time,
+			SharedSecret = Convert.ToBase64String(_token.shared_secret),
+			Status = _token.status,
+			TokenGID = _token.token_gid,
+			URI = _token.uri,
+		};
+		return sda;
+	}
+	public SDAv2? GetSteamGuardv2()
+	{
+		if (_token == null)
+			return null;
+		var sda = new SDAv2
+		{
+			Session = null,
+			AccountName = _token.account_name,
+			DeviceID = _deviceId,
+			FullyEnrolled = true,
+			IdentitySecret = Convert.ToBase64String(_token.identity_secret),
+			RevocationCode = _token.revocation_code,
+			Secret1 = Convert.ToBase64String(_token.secret_1),
+			SerialNumber = _token.serial_number,
+			ServerTime = _token.server_time,
+			SharedSecret = Convert.ToBase64String(_token.shared_secret),
+			Status = _token.status,
+			TokenGID = _token.token_gid,
+			URI = _token.uri,
+		};
+		return sda;
 	}
 }

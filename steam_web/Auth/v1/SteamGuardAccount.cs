@@ -19,5 +19,5 @@ public class SteamGuardAccount
     /// Set to true if the authenticator has actually been applied to the account.
     /// </summary>
     [JsonPropertyName("fully_enrolled")] public bool FullyEnrolled { get; set; } = false;
-    public SessionData Session { get; set; }
+    public SessionData? Session { get; set; }
 }
