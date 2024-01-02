@@ -25,7 +25,7 @@ public class AuthenticatorMover
 	/// </summary>
 	/// 
 	/// <param name="userLogin">
-	/// Свойство <see cref="UserLogin.NextStep"/> должно быть <see cref="NEXT_STEP.Poll"/>
+	/// Свойство <see cref="UserLogin.NextStep"/> должно быть <see cref="NEXT_STEP.Update"/>
 	/// <para/>
 	/// Свойство <see cref="UserLogin.LastEResult"/> должно быть <see cref="EResult.OK"/>
 	/// <para/>
@@ -40,7 +40,7 @@ public class AuthenticatorMover
 		if (userLogin.LastEResult != EResult.OK)
 			throw new ArgumentException("Последний EResult не OK", nameof(userLogin));
 
-		if (userLogin.NextStep != NEXT_STEP.Poll)
+		if (userLogin.NextStep != NEXT_STEP.Update)
 			throw new ArgumentException("Следующий шаг должен быть Poll", nameof(userLogin));
 
 		if (userLogin.WeakToken.IsEmpty())
