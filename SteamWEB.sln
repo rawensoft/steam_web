@@ -5,6 +5,8 @@ VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SteamWeb", "steam_web\SteamWeb.csproj", "{BFCF3301-40B0-4F8A-91C3-525029447EB5}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleSteamGuardEmail", "ExampleSteamGuardEmail\ExampleSteamGuardEmail.csproj", "{9E996840-8B88-462A-9912-1F3C89273508}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,14 @@ Global
 		{BFCF3301-40B0-4F8A-91C3-525029447EB5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BFCF3301-40B0-4F8A-91C3-525029447EB5}.ReleaseFactory|Any CPU.ActiveCfg = ReleaseFactory|Any CPU
 		{BFCF3301-40B0-4F8A-91C3-525029447EB5}.ReleaseFactory|Any CPU.Build.0 = ReleaseFactory|Any CPU
+		{9E996840-8B88-462A-9912-1F3C89273508}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E996840-8B88-462A-9912-1F3C89273508}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E996840-8B88-462A-9912-1F3C89273508}.DebugFactory|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E996840-8B88-462A-9912-1F3C89273508}.DebugFactory|Any CPU.Build.0 = Debug|Any CPU
+		{9E996840-8B88-462A-9912-1F3C89273508}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E996840-8B88-462A-9912-1F3C89273508}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E996840-8B88-462A-9912-1F3C89273508}.ReleaseFactory|Any CPU.ActiveCfg = Release|Any CPU
+		{9E996840-8B88-462A-9912-1F3C89273508}.ReleaseFactory|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

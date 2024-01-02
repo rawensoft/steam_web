@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>steam_guard_email</AssemblyName>
+    <StartupObject>ExampleSteamGuardEmail.Program</StartupObject>
+    <Authors>ryx_rw</Authors>
+    <Company>RAWENSOFT</Company>
+    <Product>Steam Guard Email Linker</Product>
+  </PropertyGroup>
+	
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    	<DebugType>embedded</DebugType>
+    </PropertyGroup>
+    
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugFactory|AnyCPU'">
+    	<DebugType>embedded</DebugType>
+    	<DefineConstants>$(DefineConstants);FACTORY</DefineConstants>
+    </PropertyGroup>
+    
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    	<DebugType>embedded</DebugType>
+    </PropertyGroup>
+    
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseFactory|AnyCPU'">
+    	<DebugType>embedded</DebugType>
+    	<DefineConstants>$(DefineConstants);FACTORY</DefineConstants>
+    	<Optimize>True</Optimize>
+    </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\steam_web\SteamWeb.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="RestClientFactory" Condition="$(DefineConstants.Contains('FACTORY'))">
+      <HintPath>..\..\restclient_factory\RestClientFactory\bin\Publish\RestClientFactory.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
