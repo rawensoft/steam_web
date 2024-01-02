@@ -67,6 +67,24 @@ public class AuthenticatorMover
 		var obj = Serializer.Deserialize<CTwoFactor_RemoveAuthenticatorViaChallengeStart_Response>(response.Stream);
 		return obj;
 	}
+	public async Task<CTwoFactor_RemoveAuthenticatorViaChallengeStart_Response> RemoveAuthenticatorViaChallengeStartAsync()
+	{
+		var request = new ProtobufRequest(SteamApiUrls.ITwoFactorService_RemoveAuthenticatorViaChallengeStart_v1, string.Empty)
+		{
+			AccessToken = _userLogin.WeakToken,
+			Proxy = _proxy,
+			UserAgent = SessionData.UserAgentMobileApp
+		};
+		using var response = await Downloader.PostProtobufAsync(request);
+		LastEResult = response.EResult;
+		if (!response.Success || response.EResult != EResult.OK)
+			return new();
+		if (response.EResult == EResult.OK)
+			return new() { Success = true };
+		var obj = Serializer.Deserialize<CTwoFactor_RemoveAuthenticatorViaChallengeStart_Response>(response.Stream);
+		return obj;
+	}
+
 	public CTwoFactor_RemoveAuthenticatorViaChallengeContinue_Response RemoveAuthenticatorViaChallengeContinue(CTwoFactor_RemoveAuthenticatorViaChallengeContinue_Request request)
 	{
 		using var memStream1 = new MemoryStream();
@@ -82,6 +100,27 @@ public class AuthenticatorMover
 		if (!response.Success || response.EResult != EResult.OK)
 			return new();
 		var obj = Serializer.Deserialize<CTwoFactor_RemoveAuthenticatorViaChallengeContinue_Response>(response.Stream);
+		if (obj.Success)
+			_token = obj.replacement_token;
+		return obj;
+	}
+	public async Task<CTwoFactor_RemoveAuthenticatorViaChallengeContinue_Response> RemoveAuthenticatorViaChallengeContinueAsync(CTwoFactor_RemoveAuthenticatorViaChallengeContinue_Request request)
+	{
+		using var memStream1 = new MemoryStream();
+		Serializer.Serialize(memStream1, request);
+		var req = new ProtobufRequest(SteamApiUrls.ITwoFactorService_RemoveAuthenticatorViaChallengeContinue_v1, Convert.ToBase64String(memStream1.ToArray()))
+		{
+			AccessToken = _userLogin.WeakToken,
+			Proxy = _proxy,
+			UserAgent = SessionData.UserAgentMobileApp
+		};
+		using var response = await Downloader.PostProtobufAsync(req);
+		LastEResult = response.EResult;
+		if (!response.Success || response.EResult != EResult.OK)
+			return new();
+		var obj = Serializer.Deserialize<CTwoFactor_RemoveAuthenticatorViaChallengeContinue_Response>(response.Stream);
+		if (obj.Success)
+			_token = obj.replacement_token;
 		return obj;
 	}
 
