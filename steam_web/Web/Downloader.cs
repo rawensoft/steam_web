@@ -54,7 +54,7 @@ public static class Downloader
 		return client;
 	}
 #endif
-    private static (RestClient, RestRequest) GetRestClient(GetRequest request, Method method, CookieContainer? cookies = null)
+    private static (RestClient, RestRequest) GetRestClient(GetRequest request, Method method, CookieContainer? cookies)
     {
         var uri = new Uri(request.Url);
 #if FACTORY
@@ -104,7 +104,7 @@ public static class Downloader
 
 		return (client, req);
 	}
-    private static (RestClient, RestRequest) GetRestClient(PostRequest request, Method method, CookieContainer? cookies = null)
+    private static (RestClient, RestRequest) GetRestClient(PostRequest request, Method method, CookieContainer? cookies)
     {
         var (client, req) = GetRestClient(request as GetRequest, method, cookies);
 
