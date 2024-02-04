@@ -101,5 +101,20 @@ public class SessionData : ISessionProvider
 		}
 	}
 
-	public string ToStringCookie() => $"{DefaultMobileCookie}steamLoginSecure={SteamID}%7C%7C{AccessToken}; steamCountry={SteamCountry}; browserid={BrowserId}; sessionid={SessionID}";
+	public string ToStringCookie()
+    {
+        var sb = new StringBuilder(13);
+        sb.Append(KnownCookies.DefaultMobileCookie);
+		sb.Append("steamLoginSecure=");
+		sb.Append(SteamID);
+		sb.Append("%7C%7C");
+		sb.Append(AccessToken);
+		sb.Append("; steamCountry=");
+		sb.Append(SteamCountry);
+		sb.Append("; browserid=");
+		sb.Append(BrowserId);
+		sb.Append("; sessionid=");
+		sb.Append(SessionID);
+        return sb.ToString();
+	}
 }
