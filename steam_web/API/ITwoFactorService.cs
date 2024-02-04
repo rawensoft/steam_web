@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace SteamWeb.API;
 public static class ITwoFactorService
 {
-    public static async Task<Response<QueryStatus>> QueryStatus(Proxy proxy, string access_token, ulong steamid)
+    public static async Task<Response<QueryStatus>> QueryStatus(Proxy? proxy, string access_token, ulong steamid)
     {
         var request = new PostRequest(SteamPoweredUrls.ITwoFactorService_QueryStatus_v1, Downloader.AppFormUrlEncoded)
         {
@@ -20,7 +20,7 @@ public static class ITwoFactorService
         if (!response.Success) return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<QueryStatus>>(response.Data);
+            var obj = JsonSerializer.Deserialize<Response<QueryStatus>>(response.Data!);
             obj.success = true;
             return obj;
         }

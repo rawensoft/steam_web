@@ -520,7 +520,7 @@ public class SteamGuardAccount
             return false;
         if (!response.Success || response.Data.IsEmpty())
             return false;
-        var confResponse = JsonSerializer.Deserialize<SendConfirmationResponse>(response.Data);
+        var confResponse = JsonSerializer.Deserialize<SendConfirmationResponse>(response.Data!);
         return confResponse!.Success;
     }
     public async Task<bool> CancelMultiConfirmationsAsync(Confirmation[] confs)
@@ -546,7 +546,7 @@ public class SteamGuardAccount
             return false;
         if (!response.Success || response.Data.IsEmpty())
             return false;
-        var confResponse = JsonSerializer.Deserialize<SendConfirmationResponse>(response.Data);
+        var confResponse = JsonSerializer.Deserialize<SendConfirmationResponse>(response.Data!);
         return confResponse!.Success;
     }
 
@@ -728,7 +728,8 @@ public class SteamGuardAccount
         int n2 = 8;
         if (tag != null)
         {
-            if (tag.Length > 32) n2 = 8 + 32;
+            if (tag.Length > 32)
+                n2 = 8 + 32;
             else n2 = 8 + tag.Length;
         }
         byte[] array = new byte[n2];
@@ -742,7 +743,8 @@ public class SteamGuardAccount
             time >>= 8;
             n3 = n4;
         }
-        if (tag != null) Array.Copy(Encoding.UTF8.GetBytes(tag), 0, array, 8, n2 - 8);
+        if (tag != null)
+            Array.Copy(Encoding.UTF8.GetBytes(tag), 0, array, 8, n2 - 8);
         try
         {
             HMACSHA1 hmacGenerator = new HMACSHA1();

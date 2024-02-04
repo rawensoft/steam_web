@@ -22,7 +22,7 @@ public class SteamInventory
     public string? error { get; init; }
     public bool is_too_many_requests { get; init; } = false;
 
-    public static SteamInventory Load(ISessionProvider session, System.Net.IWebProxy proxy, ulong steamid64, uint appid, string context = "2", bool trading = false)
+    public static SteamInventory Load(ISessionProvider? session, System.Net.IWebProxy? proxy, ulong steamid64, uint appid, string context = "2", bool trading = false)
     {
         string url = GetUrl(steamid64, appid, context, trading);
         try
@@ -43,7 +43,7 @@ public class SteamInventory
         { return new() { error = e.Message}; }
         
     }
-    public async static Task<SteamInventory> LoadAsync(ISessionProvider session, System.Net.IWebProxy proxy, ulong steamid64, uint appid, string context = "2", bool trading = false)
+    public async static Task<SteamInventory> LoadAsync(ISessionProvider? session, System.Net.IWebProxy? proxy, ulong steamid64, uint appid, string context = "2", bool trading = false)
     {
         string url = GetUrl(steamid64, appid, context, trading);
         try
@@ -73,7 +73,7 @@ public class SteamInventory
     /// <param name="Proxy"></param>
     /// <param name="context">Применяется, если appid = 753</param>
     /// <returns></returns>
-    public async static Task<SteamInventory> LoadAsync(ISessionProvider session, Proxy proxy, string steamid64, string appid, string context = "2")
+    public async static Task<SteamInventory> LoadAsync(ISessionProvider? session, Proxy? proxy, string steamid64, string appid, string context = "2")
      => await LoadAsync(session, proxy, steamid64.ParseUInt64(), appid.ParseUInt32(), context);
     public static SteamInventory Restore(string steamid64, string appid, string? dir = null)
     {

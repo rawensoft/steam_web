@@ -13,7 +13,6 @@ using System.Text.RegularExpressions;
 using System.Text;
 using ProtoBuf;
 using SteamWeb.Auth.v2.DTO;
-using SteamWeb.Auth.v2.Models;
 using System.Text.Json.Serialization;
 
 namespace SteamWeb.Script;

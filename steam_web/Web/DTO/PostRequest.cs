@@ -17,13 +17,13 @@ public class PostRequest : GetRequest
 
     public PostRequest(string url, string contentType) : base(url) => ContentType = contentType;
     public PostRequest(string url, string content, string contentType) : this(url, contentType) => Content = content;
-    public PostRequest(string url, string content, string contentType, IWebProxy proxy) : this(url, content, contentType) => Proxy = proxy;
-    public PostRequest(string url, string content, string contentType, ISessionProvider session) : this(url, content, contentType) => Session = session;
-    public PostRequest(string url, string content, string contentType, IWebProxy proxy, ISessionProvider session)
+    public PostRequest(string url, string content, string contentType, IWebProxy? proxy) : this(url, content, contentType) => Proxy = proxy;
+    public PostRequest(string url, string content, string contentType, ISessionProvider? session) : this(url, content, contentType) => Session = session;
+    public PostRequest(string url, string content, string contentType, IWebProxy? proxy, ISessionProvider? session)
         : this(url, content, contentType, proxy) => Session = session;
-    public PostRequest(string url, string content, string contentType, IWebProxy proxy, ISessionProvider session, string referer)
+    public PostRequest(string url, string content, string contentType, IWebProxy? proxy, ISessionProvider? session, string? referer)
         : this(url, content, contentType, proxy, session) => Referer = referer;
-    public PostRequest(string url, string content, string contentType, IWebProxy proxy, ISessionProvider session, string referer, string userAgent)
+    public PostRequest(string url, string content, string contentType, IWebProxy? proxy, ISessionProvider? session, string? referer, string userAgent)
         : this(url, content, contentType, proxy, session, referer) => UserAgent = userAgent;
 
     public string GetContent()

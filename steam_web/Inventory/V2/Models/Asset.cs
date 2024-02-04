@@ -1,6 +1,6 @@
 ﻿namespace SteamWeb.Inventory.V2.Models
 {
-    public sealed class Asset
+	public sealed class Asset
     {
         public string id { get; init; }
         public string classid { get; init; }
