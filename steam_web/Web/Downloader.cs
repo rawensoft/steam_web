@@ -212,6 +212,24 @@ public static class Downloader
             return ("api.steampowered.com", "https://api.steampowered.com");
         return (null, null);
     }
+    private static bool IsRedirect(RestResponse response, GetRequest request)
+    {
+		int statusCode = (int)response.StatusCode;
+		if (statusCode >= 300 && statusCode <= 399 && request.CurrentRedirect < request.MaxRedirects)
+		{
+			foreach (var header in response.Headers!)
+			{
+				if (header.Name == KnownHeaders.Location)
+				{
+					request.Url = header.Value!.ToString()!;
+					request.CurrentRedirect++;
+					return true;
+				}
+			}
+		}
+        return false;
+	}
+
 
     public static async Task<StringResponse> PostAsync(PostRequest request)
     {
@@ -220,20 +238,9 @@ public static class Downloader
 		var res = await (request.CancellationToken == null ? client.ExecuteAsync(req) : client.ExecuteAsync(req, request.CancellationToken.Value));
         if (request.Session != null)
             RewriteCookie(res.Cookies, request.Session, cookies, request.Url);
-        int statusCode = (int)res.StatusCode;
-        if (statusCode >= 300 && statusCode <= 399 && request.CurrentRedirect < request.MaxRedirects)
-        {
-            foreach (var header in res.Headers!)
-            {
-                if (header.Name == SteamKnownHeaders.Location)
-                {
-                    request.Url = header.Value!.ToString()!;
-                    request.CurrentRedirect++;
-                    return await PostAsync(request);
-                }
-            }
-        }
-        return new(res, res.Cookies);
+        if (IsRedirect(res, request))
+			return await PostAsync(request);
+		return new(res, res.Cookies);
     }
     public static StringResponse Post(PostRequest request)
     {
@@ -242,20 +249,9 @@ public static class Downloader
 		var res = request.CancellationToken == null ? client.Execute(req) : client.Execute(req, request.CancellationToken.Value);
         if (request.Session != null)
             RewriteCookie(res.Cookies, request.Session, cookies, request.Url);
-        int statusCode = (int)res.StatusCode;
-        if (statusCode >= 300 && statusCode <= 399 && request.CurrentRedirect < request.MaxRedirects)
-        {
-            foreach (var header in res.Headers!)
-            {
-                if (header.Name == "Location")
-                {
-                    request.Url = header.Value!.ToString()!;
-                    request.CurrentRedirect++;
-                    return Post(request);
-                }
-            }
-        }
-        return new(res, res.Cookies);
+		if (IsRedirect(res, request))
+			return Post(request);
+		return new(res, res.Cookies);
     }
     public static async Task<StringResponse> GetAsync(GetRequest request)
     {
@@ -264,20 +260,9 @@ public static class Downloader
 		var res = await (request.CancellationToken == null ? client.ExecuteAsync(req) : client.ExecuteAsync(req, request.CancellationToken.Value));
         if (request.Session != null)
             RewriteCookie(res.Cookies, request.Session, cookies, request.Url);
-        int statusCode = (int)res.StatusCode;
-        if (statusCode >= 300 && statusCode <= 399 && request.CurrentRedirect < request.MaxRedirects)
-        {
-            foreach (var header in res.Headers!)
-            {
-                if (header.Name == "Location")
-                {
-                    request.Url = header.Value!.ToString()!;
-                    request.CurrentRedirect++;
-                    return await GetAsync(request);
-                }
-            }
-        }
-        return new(res, res.Cookies);
+		if (IsRedirect(res, request))
+			return await GetAsync(request);
+		return new(res, res.Cookies);
     }
     public static StringResponse Get(GetRequest request)
 	{
@@ -286,20 +271,9 @@ public static class Downloader
 		var res = request.CancellationToken == null ? client.Execute(req) : client.Execute(req, request.CancellationToken.Value);
 		if (request.Session != null)
             RewriteCookie(res.Cookies, request.Session, cookies, request.Url);
-		int statusCode = (int)res.StatusCode;
-        if (statusCode >= 300 && statusCode <= 399 && request.CurrentRedirect < request.MaxRedirects)
-        {
-            foreach (var header in res.Headers!)
-            {
-                if (header.Name == "Location")
-                {
-                    request.Url = header.Value!.ToString()!;
-                    request.CurrentRedirect++;
-                    return Get(request);
-                }
-            }
-        }
-        return new(res, res.Cookies);
+		if (IsRedirect(res, request))
+			return Get(request);
+		return new(res, res.Cookies);
     }
 
     public static async Task<StringResponse> UploadFilesToRemoteUrlAsync(PostRequest request, string filename)
