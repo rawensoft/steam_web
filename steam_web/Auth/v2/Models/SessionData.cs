@@ -9,16 +9,109 @@ using SteamWeb.Web;
 namespace SteamWeb.Auth.v2.Models;
 public class SessionData : ISessionProvider
 {
+	#region private fields
+	private Cookie? _sessionidCookie = null;
+	private Cookie? _steamLoginSecureCookie = null;
+	private Cookie? _browseridCookie = null;
+	private Cookie? _steamCountryCookie = null;
+	private Cookie? _steamLanguageCookie = null;
 
-	internal ConcurrentDictionary<string, Cookie> _cookies { get; init; } = new();
-	[JsonPropertyName("session_id")] public string SessionID { get; set; }
-	[JsonPropertyName("access_token")] public string AccessToken { get; set; }
+	private string _sessionID;
+	private string _accessToken;
+	private string _browserId;
+	private string _steamCountry;
+	private string _steamLanguage = "english";
+	private ulong _steamID;
+	#endregion
+	#region public fields
+	internal ConcurrentDictionary<string, Cookie> _cookies { get; init; } = new(2, 24);
+	[JsonPropertyName("session_id")] public string SessionID
+	{
+		get => _sessionID;
+		set
+		{
+			_sessionID = value;
+			if (value.IsEmpty())
+				_sessionidCookie = null;
+			else if (_sessionidCookie == null)
+				_sessionidCookie = new Cookie("sessionid", SessionID) { Secure = true };
+			else
+				_sessionidCookie.Value = value;
+		}
+	}
+	[JsonPropertyName("access_token")] public string AccessToken
+	{
+		get => _accessToken;
+		set
+		{
+			_accessToken = value;
+			if (value.IsEmpty() || SteamID == 0)
+				_steamLoginSecureCookie = null;
+			else if (_steamLoginSecureCookie == null)
+				_steamLoginSecureCookie = new Cookie("steamLoginSecure", SteamID + "%7C%7C" + value) { Secure = true, HttpOnly = true };
+			else
+				_steamLoginSecureCookie.Value = SteamID + "%7C%7C" + value;
+		}
+	}
 	[JsonPropertyName("refresh_token")] public string RefreshToken { get; set; }
-	[JsonPropertyName("browser_id")] public string BrowserId { get; set; }
-	[JsonPropertyName("steam_country")] public string SteamCountry { get; set; }
-	[JsonPropertyName("steam_id")] public ulong SteamID { get; set; }
+	[JsonPropertyName("browser_id")] public string BrowserId
+	{
+		get => _browserId;
+		set
+		{
+			_browserId = value;
+			if (value.IsEmpty())
+				_browseridCookie = null;
+			else if (_browseridCookie == null)
+				_browseridCookie = new Cookie("browserid", BrowserId) { Secure = true };
+			else
+				_browseridCookie.Value = value;
+		}
+	}
+	[JsonPropertyName("steam_country")] public string SteamCountry
+	{
+		get => _steamCountry;
+		set
+		{
+			_steamCountry = value;
+			if (value.IsEmpty())
+				_steamCountryCookie = null;
+			else if (_steamCountryCookie == null)
+				_steamCountryCookie = new Cookie("steamCountry", SteamCountry) { Secure = true, HttpOnly = true };
+			else
+				_steamCountryCookie.Value = value;
+		}
+	}
+	[JsonPropertyName("steam_id")] public ulong SteamID
+	{
+		get => _steamID;
+		set
+		{
+			_steamID = value;
+			if (AccessToken.IsEmpty() || value == 0)
+				_steamLoginSecureCookie = null;
+			else if (_steamLoginSecureCookie == null)
+				_steamLoginSecureCookie = new Cookie("steamLoginSecure", value + "%7C%7C" + AccessToken) { Secure = true, HttpOnly = true };
+			else
+				_steamLoginSecureCookie.Value = value + "%7C%7C" + AccessToken;
+		}
+	}
 	[JsonPropertyName("platform")] public EAuthTokenPlatformType PlatformType { get; init; }
-	[JsonPropertyName("steam_language")] public string SteamLanguage { get; set; } = "english";
+	[JsonPropertyName("steam_language")] public string SteamLanguage
+	{
+		get => _steamLanguage;
+		set
+		{
+			_steamLanguage = value;
+			if (value.IsEmpty())
+				_steamLanguageCookie = null;
+			else if (_steamLanguageCookie == null)
+				_steamLanguageCookie = new Cookie("Steam_Language", SteamLanguage) { Secure = true };
+			else
+				_steamLanguageCookie.Value = value;
+		}
+	}
+	#endregion
 
 	public void AddCookieToContainer(CookieContainer? container, Uri url, bool inc_mobile_cookie)
     {
