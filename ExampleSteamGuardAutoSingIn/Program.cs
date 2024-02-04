@@ -92,8 +92,11 @@ internal static class Program
 			 * Проверяем сессию, т.к. через неё получаем нужный client_id
 			 * Если access_token истёк, тогда обновляем его
 			 */
-			if (!guard.CheckSession() || (!guard.RefreshSession() && !guard.CheckSession()))
+			if (!guard.CheckSession() && (!guard.RefreshSession() && !guard.CheckSession()))
+			{
+				mres.Wait(Delay);
 				continue;
+			}
 			if (lastClientId != guard.LastClientId)
 			{
 				var request = new SteamWeb.Auth.v2.DTO.CAuthentication_GetAuthSessionInfo_Request()
