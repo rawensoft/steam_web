@@ -13,8 +13,8 @@ public static class ITwoFactorService
         var request = new PostRequest(SteamPoweredUrls.ITwoFactorService_QueryStatus_v1, Downloader.AppFormUrlEncoded)
         {
             Proxy = proxy,
-            UserAgent = Downloader.UserAgentOkHttp
-        }
+            UserAgent = KnownUserAgents.OkHttp
+		}
         .AddPostData("access_token", access_token).AddPostData("steamid", steamid);
         var response = await Downloader.PostAsync(request);
         if (!response.Success) return new();

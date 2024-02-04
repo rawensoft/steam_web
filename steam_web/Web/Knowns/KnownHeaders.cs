@@ -1,9 +1,5 @@
-﻿#if !FACTORY
-#endif
-
-namespace SteamWeb.Web;
-
-public static class SteamKnownHeaders
+﻿namespace SteamWeb.Web;
+public static class KnownHeaders
 {
 	public const string AcceptLanguage = "Accept-Language";
 	public const string CacheControl = "Cache-Control";

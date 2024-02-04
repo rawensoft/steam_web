@@ -5,6 +5,11 @@ using SteamWeb.Extensions;
 using RestSharp;
 using System.Web;
 using SteamWeb.Auth.Interfaces;
+
+
+
+
+
 #if !FACTORY
 using System.Collections.Concurrent;
 #endif
@@ -12,21 +17,11 @@ using System.Collections.Concurrent;
 namespace SteamWeb.Web;
 public static class Downloader
 {
-    public const string MobileCookie = "mobileClient=android; mobileClientVersion=777777 3.7.2; Steam_Language=english";
     public const string AppFormUrlEncoded = "application/x-www-form-urlencoded";
     public const string AppJson = "application/json";
     public const string AppOctetSteam = "application/octet-stream";
     public const string MultiPartForm = "multipart/form-data";
-    private const string BuffLoginUrl = "https://buff.163.com/account/login/steam?back_url=/account/steam_bind/finish";
-	public const string BASE_COMMUNITY = "https://steamcommunity.com";
-	public const string BASE_POWERED = "https://store.steampowered.com/";
-
-	public const string UserAgentSteam = "Mozilla/5.0 (Windows; U; Windows NT 10.0; en-US; Valve Steam Client/default/1607131459; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36";
-    public const string UserAgentChrome = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36";
-    public const string UserAgentMobile = "Mozilla/5.0 (Linux; Android 8.0.0; F8331) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Mobile Safari/537.36";
-    public const string UserAgentSteamMobileApp = "Dalvik/2.1.0 (Linux; U; Android 5.1.1; SM-G977N Build/LMY48Z; Valve Steam App Version/3)";
-    public const string UserAgentOkHttp = "okhttp/3.12.12";
-
+    
 #if !FACTORY
     private static readonly ConcurrentDictionary<int, RestClient> _clients = new(4, 1000);
 
@@ -66,37 +61,37 @@ public static class Downloader
         {
             CookieContainer = cookies
 		};
-		req.AddHeader(KnownHeaders.Accept, request.GetAccept());
-		req.AddHeader(KnownHeaders.UserAgent, request.GetUserAgent());
+		req.AddHeader(RestSharp.KnownHeaders.Accept, request.GetAccept());
+		req.AddHeader(RestSharp.KnownHeaders.UserAgent, request.GetUserAgent());
 		request.AddHeaders(req);
 		request.AddQuery(req);
 
 		if (request.Referer != null)
-			req.AddHeader(SteamKnownHeaders.Referer, request.Referer);
+			req.AddHeader(KnownHeaders.Referer, request.Referer);
 		if (request.Cookie != null)
-			req.AddHeader(KnownHeaders.Cookie, request.Cookie);
+			req.AddHeader(RestSharp.KnownHeaders.Cookie, request.Cookie);
         if (request.Url.StartsWith(SteamCommunityUrls.Market_RemoveListing))
-			req.AddHeader(SteamKnownHeaders.XPrototypeVersion, "1.7");
+			req.AddHeader(KnownHeaders.XPrototypeVersion, "1.7");
 
 		if (request.IsAjax)
 		{
 			if (!request.IsMobile)
 			{
-				req.AddHeader(SteamKnownHeaders.AcceptLanguage, "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7");
-				req.AddHeader(SteamKnownHeaders.Dnt, "1");
-				req.AddHeader(SteamKnownHeaders.CacheControl, "no-cache");
-				req.AddHeader(SteamKnownHeaders.UpgradeInsecureRequests, "1");
-				req.AddHeader(SteamKnownHeaders.Pragma, "no-cache");
-				req.AddHeader(SteamKnownHeaders.SecFetchDest, "empty");
-				req.AddHeader(SteamKnownHeaders.SecFetchMode, "cors");
-				req.AddHeader(SteamKnownHeaders.SecFetchSite, "same-origin");
+				req.AddHeader(KnownHeaders.AcceptLanguage, "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7");
+				req.AddHeader(KnownHeaders.Dnt, "1");
+				req.AddHeader(KnownHeaders.CacheControl, "no-cache");
+				req.AddHeader(KnownHeaders.UpgradeInsecureRequests, "1");
+				req.AddHeader(KnownHeaders.Pragma, "no-cache");
+				req.AddHeader(KnownHeaders.SecFetchDest, "empty");
+				req.AddHeader(KnownHeaders.SecFetchMode, "cors");
+				req.AddHeader(KnownHeaders.SecFetchSite, "same-origin");
 			}
-			req.AddHeader(SteamKnownHeaders.XRequestedWith, request.GetXRequestedWidth()!);
+			req.AddHeader(KnownHeaders.XRequestedWith, request.GetXRequestedWidth()!);
 		}
 		else if (!request.IsMobile)
 		{
-			req.AddHeader(SteamKnownHeaders.Dnt, "1");
-			req.AddHeader(SteamKnownHeaders.UpgradeInsecureRequests, "1");
+			req.AddHeader(KnownHeaders.Dnt, "1");
+			req.AddHeader(KnownHeaders.UpgradeInsecureRequests, "1");
 		}
 		request.AddQuery(req);
 		if (request.Timeout > 0)
@@ -108,10 +103,10 @@ public static class Downloader
     {
         var (client, req) = GetRestClient(request as GetRequest, method, cookies);
 
-		req.AddHeader(KnownHeaders.ContentType, request.ContentType);
+		req.AddHeader(RestSharp.KnownHeaders.ContentType, request.ContentType);
 		req.AddStringBody(request.GetContent(), request.ContentType);
 		if (!request.SecOpenIDNonce.IsEmpty() && req.CookieContainer != null)
-			req.CookieContainer.Add(new Uri(BASE_COMMUNITY), new Cookie("sessionidSecureOpenIDNonce", request.SecOpenIDNonce)
+			req.CookieContainer.Add(new Uri(KnownUri.BASE_COMMUNITY), new Cookie("sessionidSecureOpenIDNonce", request.SecOpenIDNonce)
             {
                 HttpOnly = true,
                 Secure = true
@@ -132,9 +127,9 @@ public static class Downloader
 		{
 			CookieContainer = new()
 		};
-		req.AddHeader(KnownHeaders.Accept, "application/octet-stream, application/json, text/plain, */*");
+		req.AddHeader(RestSharp.KnownHeaders.Accept, "application/octet-stream, application/json, text/plain, */*");
 		if (!request.Cookie.IsEmpty())
-			req.AddHeader(KnownHeaders.Cookie, request.Cookie!);
+			req.AddHeader(RestSharp.KnownHeaders.Cookie, request.Cookie!);
 		if (!request.AccessToken.IsEmpty())
 			req.AddQueryParameter("access_token", request.AccessToken);
 		if (request.Timeout > 0)
@@ -142,7 +137,7 @@ public static class Downloader
 
 		if (method == Method.Post)
 		{
-			req.AddHeader(KnownHeaders.ContentType, AppFormUrlEncoded);
+			req.AddHeader(RestSharp.KnownHeaders.ContentType, AppFormUrlEncoded);
 			var sb = new StringBuilder();
 			sb.Append("input_protobuf_encoded=");
 			sb.Append(HttpUtility.UrlEncode(request.ProtoData));
@@ -177,12 +172,14 @@ public static class Downloader
 		return client!;
 	}
 #endif
+
+
 	private static CookieContainer AddCookieSession(string url, ISessionProvider? session)
-    {
-        if (session == null)
-            return new();
-        var cookies = new CookieContainer();
-		var uri = new Uri(url == BuffLoginUrl ? "https://steamcommunity.com" : url);
+	{
+		var cookies = new CookieContainer();
+		if (session == null)
+            return cookies;
+		var uri = new Uri(url == KnownUri.BuffLoginUrl ? KnownUri.BASE_COMMUNITY : url);
         session.AddCookieToContainer(cookies, uri);
         return cookies;
 	}
@@ -205,12 +202,12 @@ public static class Downloader
 	/// <returns>Host, Origin</returns>
 	private static (string?, string?) GetHostOrigin(string url)
     {
-        if (url.StartsWith("https://steamcommunity.com"))
-            return ("steamcommunity.com", "https://steamcommunity.com");
+        if (url.StartsWith(KnownUri.BASE_COMMUNITY))
+            return ("steamcommunity.com", KnownUri.BASE_COMMUNITY);
         if (url.StartsWith("https://steampowered.com"))
             return ("steampowered.com", "https://steampowered.com");
-        if (url.StartsWith("https://store.steampowered.com"))
-            return ("store.steampowered.com", "https://store.steampowered.com");
+        if (url.StartsWith(KnownUri.BASE_POWERED))
+            return ("store.steampowered.com", KnownUri.BASE_POWERED);
         if (url.StartsWith("https://api.steampowered.com"))
             return ("api.steampowered.com", "https://api.steampowered.com");
         return (null, null);
@@ -410,7 +407,7 @@ public static class Downloader
         var client = new RestClient(new RestClientOptions()
         {
             BaseUrl = new Uri(url),
-            UserAgent = UserAgentChrome,
+            UserAgent = KnownUserAgents.WindowsBrowser,
             Proxy = proxy?.UseProxy == true ? proxy : null,
             //CookieContainer = cookie_container
         });
@@ -418,8 +415,8 @@ public static class Downloader
         {
             CookieContainer = cookie_container
         };
-        request.AddHeader(KnownHeaders.Accept, "image/webp,image/apng,image/*,*/*;q=0.8");
-        request.AddHeader(SteamKnownHeaders.Referer, "https://store.steampowered.com/join/");
+        request.AddHeader(RestSharp.KnownHeaders.Accept, "image/webp,image/apng,image/*,*/*;q=0.8");
+        request.AddHeader(KnownHeaders.Referer, "https://store.steampowered.com/join/");
 		var response = await (cts == null ? client.ExecuteAsync(request) : client.ExecuteAsync(request, cts.Value));
 		string new_cookie = response.Cookies.Count > 0 ? "" : null;
         for (int i = 0; i < response.Cookies.Count; i++)
@@ -446,7 +443,7 @@ public static class Downloader
         var client = new RestClient(new RestClientOptions
         {
             BaseUrl = new(url),
-            UserAgent = UserAgentChrome,
+            UserAgent = KnownUserAgents.WindowsBrowser,
             Proxy = proxy?.UseProxy == true ? proxy : null,
             //CookieContainer = cookie_container
         });
@@ -454,8 +451,8 @@ public static class Downloader
         {
             CookieContainer = cookie_container
         };
-        request.AddHeader(KnownHeaders.Accept, "image/webp,image/apng,image/*,*/*;q=0.8");
-        request.AddHeader(SteamKnownHeaders.Referer, "https://store.steampowered.com/join/");
+        request.AddHeader(RestSharp.KnownHeaders.Accept, "image/webp,image/apng,image/*,*/*;q=0.8");
+        request.AddHeader(KnownHeaders.Referer, "https://store.steampowered.com/join/");
 		var response = cts == null ? client.Execute(request) : client.Execute(request, cts.Value);
 		string new_cookie = response.Cookies.Count > 0 ? "" : null;
         for (int i = 0; i < response.Cookies.Count; i++)

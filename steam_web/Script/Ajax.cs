@@ -1025,7 +1025,7 @@ public static class Ajax
         string url = "https://api.steampowered.com/IStoreSalesService/SetVote/v1";
 		var request = new ProtobufRequest(url, Convert.ToBase64String(memStream1.ToArray()))
 		{
-			UserAgent = SessionData.UserAgentMobile,
+			UserAgent = KnownUserAgents.WindowsBrowser,
 			Proxy = proxy,
 			AccessToken = web_token,
             IsMobile = true

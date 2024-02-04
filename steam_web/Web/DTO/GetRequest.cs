@@ -81,9 +81,9 @@ public class GetRequest
             return UserAgent;
 
         if (UseVersion2)
-            return Downloader.UserAgentOkHttp;
+            return KnownUserAgents.OkHttp;
         else
-            return Downloader.UserAgentChrome;
+            return KnownUserAgents.WindowsBrowser;
     }
     public string GetAccept()
     {

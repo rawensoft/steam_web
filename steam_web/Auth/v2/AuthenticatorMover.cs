@@ -2,7 +2,6 @@
 using ProtoBuf;
 using SteamWeb.Auth.v2.DTO;
 using SteamWeb.Auth.v2.Enums;
-using SteamWeb.Auth.v2.Models;
 using SteamWeb.Extensions;
 using SteamWeb.Web;
 using SDAv1 = SteamWeb.Auth.v1.SteamGuardAccount;
@@ -56,7 +55,7 @@ public class AuthenticatorMover
 		{
 			AccessToken = _userLogin.WeakToken,
 			Proxy = _proxy,
-			UserAgent = SessionData.UserAgentMobileApp
+			UserAgent = KnownUserAgents.OkHttp
 		};
 		using var response = Downloader.PostProtobuf(request);
 		LastEResult = response.EResult;
@@ -73,7 +72,7 @@ public class AuthenticatorMover
 		{
 			AccessToken = _userLogin.WeakToken,
 			Proxy = _proxy,
-			UserAgent = SessionData.UserAgentMobileApp
+			UserAgent = KnownUserAgents.OkHttp
 		};
 		using var response = await Downloader.PostProtobufAsync(request);
 		LastEResult = response.EResult;
@@ -93,7 +92,7 @@ public class AuthenticatorMover
 		{
 			AccessToken = _userLogin.WeakToken,
 			Proxy = _proxy,
-			UserAgent = SessionData.UserAgentMobileApp
+			UserAgent = KnownUserAgents.OkHttp
 		};
 		using var response = Downloader.PostProtobuf(req);
 		LastEResult = response.EResult;
@@ -112,7 +111,7 @@ public class AuthenticatorMover
 		{
 			AccessToken = _userLogin.WeakToken,
 			Proxy = _proxy,
-			UserAgent = SessionData.UserAgentMobileApp
+			UserAgent = KnownUserAgents.OkHttp
 		};
 		using var response = await Downloader.PostProtobufAsync(req);
 		LastEResult = response.EResult;

@@ -12,8 +12,8 @@ public static class IGameServersService
     {
         var request = new GetRequest(SteamPoweredUrls.IGameServersService_GetAccountList_v1, proxy)
         {
-            UserAgent = Downloader.UserAgentOkHttp
-        }.AddQuery("key", key);
+            UserAgent = KnownUserAgents.OkHttp
+		}.AddQuery("key", key);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();

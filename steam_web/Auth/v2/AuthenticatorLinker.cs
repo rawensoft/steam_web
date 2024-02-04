@@ -99,7 +99,7 @@ public class AuthenticatorLinker
         {
             AccessToken = session.AccessToken,
             Proxy = proxy,
-            UserAgent = SessionData.UserAgentMobile
+            UserAgent = KnownUserAgents.OkHttp
         };
         using var response = Downloader.PostProtobuf(protoRequest);
         if (!response.Success || response.EResult != EResult.OK)
@@ -117,8 +117,8 @@ public class AuthenticatorLinker
         {
             AccessToken = session.AccessToken,
             Proxy = proxy,
-            UserAgent = SessionData.UserAgentMobile
-        };
+            UserAgent = KnownUserAgents.OkHttp
+		};
         using var response = await Downloader.PostProtobufAsync(protoRequest);
         if (!response.Success || response.EResult != EResult.OK)
             return false;
@@ -181,8 +181,8 @@ public class AuthenticatorLinker
         {
             AccessToken = session.AccessToken,
             Proxy = proxy,
-            UserAgent = SessionData.UserAgentMobile
-        };
+            UserAgent = KnownUserAgents.OkHttp
+		};
         using var response = Downloader.PostProtobuf(protoRequest);
         if (!response.Success || response.EResult != EResult.OK)
         {
@@ -279,8 +279,8 @@ public class AuthenticatorLinker
             {
                 AccessToken = session.AccessToken,
                 Proxy = proxy,
-                UserAgent = SessionData.UserAgentMobile
-            };
+                UserAgent = KnownUserAgents.OkHttp
+			};
             using var response = Downloader.PostProtobuf(protoRequest);
             if (!response.Success || response.EResult != EResult.OK) return FinalizeResult.GeneralFailure;
             var finalizeResponse = Serializer.Deserialize<CTwoFactor_FinalizeAddAuthenticator_Response>(response.Stream);
@@ -357,7 +357,7 @@ public class AuthenticatorLinker
 		{
 			AccessToken = session.AccessToken,
 			Proxy = proxy,
-			UserAgent = SessionData.UserAgentMobile
+			UserAgent = KnownUserAgents.OkHttp
 		};
 		using var response = await Downloader.PostProtobufAsync(protoRequest);
 		if (!response.Success || response.EResult != EResult.OK)
@@ -455,7 +455,7 @@ public class AuthenticatorLinker
 			{
 				AccessToken = session.AccessToken,
 				Proxy = proxy,
-				UserAgent = SessionData.UserAgentMobile
+				UserAgent = KnownUserAgents.OkHttp
 			};
 			using var response = await Downloader.PostProtobufAsync(protoRequest);
 			if (!response.Success || response.EResult != EResult.OK)
@@ -495,7 +495,7 @@ public class AuthenticatorLinker
 		{
 			AccessToken = session.AccessToken,
 			Proxy = proxy,
-			UserAgent = SessionData.UserAgentMobile
+			UserAgent = KnownUserAgents.OkHttp
 		};
 		using var response = Downloader.PostProtobuf(protoRequest);
 		if (!response.Success || response.EResult != EResult.OK)
@@ -548,7 +548,7 @@ public class AuthenticatorLinker
 		{
 			AccessToken = session.AccessToken,
 			Proxy = proxy,
-			UserAgent = SessionData.UserAgentMobile
+			UserAgent = KnownUserAgents.OkHttp
 		};
 		using var response = Downloader.PostProtobuf(protoRequest);
 		if (!response.Success || response.EResult != EResult.OK)
@@ -581,7 +581,7 @@ public class AuthenticatorLinker
 		{
 			AccessToken = session.AccessToken,
 			Proxy = proxy,
-			UserAgent = SessionData.UserAgentMobile
+			UserAgent = KnownUserAgents.OkHttp
 		};
 		using var response = await Downloader.PostProtobufAsync(protoRequest);
 		if (!response.Success || response.EResult != EResult.OK)
@@ -634,7 +634,7 @@ public class AuthenticatorLinker
 		{
 			AccessToken = session.AccessToken,
 			Proxy = proxy,
-			UserAgent = SessionData.UserAgentMobile
+			UserAgent = KnownUserAgents.OkHttp
 		};
 		using var response = await Downloader.PostProtobufAsync(protoRequest);
 		if (!response.Success || response.EResult != EResult.OK)
@@ -670,8 +670,8 @@ public class AuthenticatorLinker
         {
             AccessToken = session.AccessToken,
             Proxy = proxy,
-            UserAgent = SessionData.UserAgentMobile
-        };
+            UserAgent = KnownUserAgents.OkHttp
+		};
         using var response = Downloader.PostProtobuf(protoRequest);
         if (!response.Success || (response.EResult != EResult.OK && response.EResult != EResult.Pending))
             return null;
@@ -686,7 +686,7 @@ public class AuthenticatorLinker
         {
             AccessToken = session.AccessToken,
             Proxy = proxy,
-            UserAgent = SessionData.UserAgentMobile
+            UserAgent = KnownUserAgents.OkHttp
         };
         using var response = Downloader.PostProtobuf(protoRequest);
         if (!response.Success || response.EResult != EResult.OK)
@@ -704,8 +704,8 @@ public class AuthenticatorLinker
         {
             AccessToken = session.AccessToken,
             Proxy = proxy,
-            UserAgent = SessionData.UserAgentMobile
-        };
+            UserAgent = KnownUserAgents.OkHttp
+		};
         using var response = Downloader.PostProtobuf(protoRequest);
         if (response.EResult == EResult.RateLimitExceeded)
             return SENDVERIFCODE.TooManyRequests;
@@ -732,8 +732,8 @@ public class AuthenticatorLinker
         {
             AccessToken = session.AccessToken,
             Proxy = proxy,
-            UserAgent = SessionData.UserAgentMobile
-        };
+            UserAgent = KnownUserAgents.OkHttp
+		};
         using var response = Downloader.PostProtobuf(protoRequest);
         if (!response.Success || response.EResult != EResult.OK)
             return SENDVERIFCODE.Error;
@@ -757,8 +757,8 @@ public class AuthenticatorLinker
         {
             AccessToken = session.AccessToken,
             Proxy = proxy,
-            UserAgent = SessionData.UserAgentMobile
-        };
+            UserAgent = KnownUserAgents.OkHttp
+		};
         using var response = await Downloader.PostProtobufAsync(protoRequest);
         if (!response.Success || (response.EResult != EResult.OK && response.EResult != EResult.Pending))
             return null;
@@ -773,7 +773,7 @@ public class AuthenticatorLinker
         {
             AccessToken = session.AccessToken,
             Proxy = proxy,
-            UserAgent = SessionData.UserAgentMobile
+            UserAgent = KnownUserAgents.OkHttp
         };
         using var response = await Downloader.PostProtobufAsync(protoRequest);
         if (!response.Success || response.EResult != EResult.OK)
@@ -791,7 +791,7 @@ public class AuthenticatorLinker
         {
             AccessToken = session.AccessToken,
             Proxy = proxy,
-            UserAgent = SessionData.UserAgentMobile
+            UserAgent = KnownUserAgents.OkHttp
         };
         using var response = await Downloader.PostProtobufAsync(protoRequest);
         if (response.EResult == EResult.RateLimitExceeded)
@@ -819,8 +819,8 @@ public class AuthenticatorLinker
         {
             AccessToken = session.AccessToken,
             Proxy = proxy,
-            UserAgent = SessionData.UserAgentMobile
-        };
+            UserAgent = KnownUserAgents.OkHttp
+		};
         using var response = await Downloader.PostProtobufAsync(protoRequest);
         if (!response.Success || response.EResult != EResult.OK)
             return SENDVERIFCODE.Error;

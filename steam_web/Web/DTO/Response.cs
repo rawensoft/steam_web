@@ -30,7 +30,7 @@ public class Response
 			{
 				switch (header.Name)
 				{
-					case SteamKnownHeaders.Location:
+					case KnownHeaders.Location:
 						if (header.Value!.ToString() == HeaderValueLocation)
 							LostAuth = true;
 						break;
@@ -81,12 +81,12 @@ public class Response
 			{
 				switch (name)
 				{
-					case SteamKnownHeaders.Location:
-						if (res.Headers[SteamKnownHeaders.Location] == HeaderValueLocation)
+					case KnownHeaders.Location:
+						if (res.Headers[KnownHeaders.Location] == HeaderValueLocation)
 							LostAuth = true;
 						break;
 					case HeaderNameXEResult:
-						EResult = (EResult)res.Headers[SteamKnownHeaders.Location]!.ParseInt32();
+						EResult = (EResult)res.Headers[KnownHeaders.Location]!.ParseInt32();
 						break;
 				}
 			}

@@ -26,7 +26,7 @@ public static class IAuthenticationService
         {
             Session = session,
             Proxy = proxy,
-            UserAgent = SessionData.UserAgentMobile,
+            UserAgent = KnownUserAgents.SteamMobileBrowser,
             UseVersion2 = true,
 			CancellationToken = cts
 		}.AddQuery("access_token", session.AccessToken);
@@ -54,7 +54,7 @@ public static class IAuthenticationService
         {
             Session = session,
             Proxy = proxy,
-            UserAgent = SessionData.UserAgentMobile,
+            UserAgent = KnownUserAgents.SteamMobileBrowser,
             UseVersion2 = true,
 			CancellationToken = cts
 		}.AddQuery("access_token", session.AccessToken);
@@ -92,7 +92,7 @@ public static class IAuthenticationService
         {
             Session = session,
             Proxy = proxy,
-            UserAgent = SessionData.UserAgentMobile,
+            UserAgent = KnownUserAgents.SteamMobileBrowser,
             AccessToken = session.AccessToken,
 			CancellationToken = cts
 		};
@@ -132,7 +132,7 @@ public static class IAuthenticationService
         {
             Session = session,
             Proxy = proxy,
-            UserAgent = SessionData.UserAgentMobile,
+            UserAgent = KnownUserAgents.SteamMobileBrowser,
             AccessToken = session.AccessToken,
             CancellationToken = cts
         };

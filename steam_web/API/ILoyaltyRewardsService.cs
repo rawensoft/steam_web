@@ -19,8 +19,8 @@ public static class ILoyaltyRewardsService
     {
         var request = new GetRequest(SteamPoweredUrls.ILoyaltyRewardsService_GetSummary_v1, proxy)
         {
-            UserAgent = Downloader.UserAgentOkHttp
-        }
+            UserAgent = KnownUserAgents.OkHttp
+		}
         .AddQuery("access_token", access_token).AddQuery("steamid", steamid);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
@@ -47,8 +47,8 @@ public static class ILoyaltyRewardsService
     {
         var request = new GetRequest(SteamPoweredUrls.ILoyaltyRewardsService_GetSummary_v1, proxy)
         {
-            UserAgent = Downloader.UserAgentOkHttp
-        }
+            UserAgent = KnownUserAgents.OkHttp
+		}
         .AddQuery("access_token", access_token).AddQuery("steamid", steamid);
         var response = Downloader.Get(request);
         if (!response.Success)

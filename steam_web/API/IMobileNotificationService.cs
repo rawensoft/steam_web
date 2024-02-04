@@ -12,8 +12,8 @@ public static class IMobileNotificationService
     {
         var request = new GetRequest(SteamPoweredUrls.IMobileNotificationService_GetUserNotificationCounts_v1, proxy)
         {
-            UserAgent = Downloader.UserAgentOkHttp
-        }
+            UserAgent = KnownUserAgents.OkHttp
+		}
         .AddQuery("access_token", access_token);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)

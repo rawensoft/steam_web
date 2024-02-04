@@ -60,8 +60,8 @@ public class SteamGuardAccount
         {
             AccessToken = Session.AccessToken,
             Proxy = Proxy,
-            UserAgent = SessionData.UserAgentMobileApp
-        };
+            UserAgent = KnownUserAgents.OkHttp
+		};
         using var response = Downloader.PostProtobuf(request);
         if (!response.Success || response.EResult != EResult.OK)
 			return new();
@@ -84,7 +84,7 @@ public class SteamGuardAccount
 		{
 			AccessToken = Session.AccessToken,
 			Proxy = Proxy,
-			UserAgent = SessionData.UserAgentMobileApp
+			UserAgent = KnownUserAgents.OkHttp
 		};
 		using var response = await Downloader.PostProtobufAsync(request);
 		if (!response.Success || response.EResult != EResult.OK)
@@ -160,7 +160,7 @@ public class SteamGuardAccount
         {
             AccessToken = Session.AccessToken,
             Proxy = Proxy,
-            UserAgent = SessionData.UserAgentMobileApp
+            UserAgent = KnownUserAgents.OkHttp
 		};
         using var response = Downloader.PostProtobuf(request);
         if (!response.Success || response.EResult != EResult.OK)
@@ -194,7 +194,7 @@ public class SteamGuardAccount
         {
             AccessToken = Session.AccessToken,
             Proxy = Proxy,
-            UserAgent = SessionData.UserAgentMobileApp
+            UserAgent = KnownUserAgents.OkHttp
 		};
         using var response = await Downloader.PostProtobufAsync(request);
         if (!response.Success || response.EResult != EResult.OK)
@@ -211,7 +211,7 @@ public class SteamGuardAccount
             return false;
         var request = new ProtobufRequest(SteamPoweredUrls.IAuthenticationService_GetAuthSessionsForAccount_v1, string.Empty)
         {
-            UserAgent = SessionData.UserAgentMobileApp,
+            UserAgent = KnownUserAgents.OkHttp,
             AccessToken = Session.AccessToken,
             Proxy = Proxy,
             Session = Session,
@@ -233,7 +233,7 @@ public class SteamGuardAccount
 			return false;
 		var request = new ProtobufRequest(SteamPoweredUrls.IAuthenticationService_GetAuthSessionsForAccount_v1, string.Empty)
 		{
-			UserAgent = SessionData.UserAgentMobileApp,
+			UserAgent = KnownUserAgents.OkHttp,
 			AccessToken = Session.AccessToken,
 			Proxy = Proxy,
 			Session = Session,
@@ -263,7 +263,7 @@ public class SteamGuardAccount
         Serializer.Serialize(memStream1, requestDetails);
         var request = new ProtobufRequest(SteamPoweredUrls.IUserAccountService_GetClientWalletDetails_v1, Convert.ToBase64String(memStream1.ToArray()))
         {
-            UserAgent = SessionData.UserAgentMobile,
+            UserAgent = KnownUserAgents.OkHttp,
             Proxy = Proxy,
             Session = Session,
             AccessToken = Session.AccessToken
@@ -287,7 +287,7 @@ public class SteamGuardAccount
         Serializer.Serialize(memStream1, requestDetails);
         var request = new ProtobufRequest(SteamPoweredUrls.IUserAccountService_GetClientWalletDetails_v1, Convert.ToBase64String(memStream1.ToArray()))
         {
-            UserAgent = SessionData.UserAgentMobile,
+            UserAgent = KnownUserAgents.OkHttp,
             Proxy = Proxy,
             Session = Session,
             AccessToken = Session.AccessToken
@@ -308,7 +308,7 @@ public class SteamGuardAccount
 		var request = new GetRequest(SteamCommunityUrls.MobileConf_GetList, Proxy, Session)
 		{
 			UseVersion2 = true,
-			UserAgent = SessionData.UserAgentMobile
+			UserAgent = KnownUserAgents.SteamMobileBrowser
 		}.AddQuery("p", DeviceID).AddQuery("a", Session.SteamID)
 		.AddQuery("k", _generateConfirmationHashForTime(time, tag)!).AddQuery("t", time).AddQuery("m", "react").AddQuery("tag", tag);
 
@@ -338,8 +338,8 @@ public class SteamGuardAccount
         var request = new GetRequest(SteamCommunityUrls.MobileConf_GetList, Proxy, Session)
         {
             UseVersion2 = true,
-            UserAgent = SessionData.UserAgentMobile
-        }.AddQuery("p", DeviceID).AddQuery("a", Session.SteamID)
+            UserAgent = KnownUserAgents.SteamMobileBrowser
+		}.AddQuery("p", DeviceID).AddQuery("a", Session.SteamID)
         .AddQuery("k", _generateConfirmationHashForTime(time, tag)!).AddQuery("t", time).AddQuery("m", "react").AddQuery("tag", tag);
 
         var response = await Downloader.GetAsync(request);
@@ -371,7 +371,7 @@ public class SteamGuardAccount
         {
             UseVersion2 = true,
             Timeout = 90000,
-            UserAgent = Downloader.UserAgentOkHttp
+            UserAgent = KnownUserAgents.OkHttp
 		};
         var response = Downloader.Post(request);
         if (response.LostAuth)
@@ -390,7 +390,7 @@ public class SteamGuardAccount
 		string tag = "reject";
 		string url = APIEndpoints.COMMUNITY_BASE + "/mobileconf/ajaxop?op=allow&" + GenerateConfirmationQueryParams(tag) + "&cid=" + conf.id + "&ck=" + conf.nonce;
 		string content = withCredentials ? "{\"withCredentials\":true}" : "{\"withCredentials\":false}";
-        var request = new PostRequest(url, content, Downloader.AppJson, Proxy!, Session, null!, Downloader.UserAgentOkHttp) { UseVersion2 = true };
+        var request = new PostRequest(url, content, Downloader.AppJson, Proxy!, Session, null!, KnownUserAgents.OkHttp) { UseVersion2 = true };
         var response = Downloader.Post(request);
 		if (response.LostAuth)
 			return (ACCEPT_STATUS.NeedAuth, "Нужно авторизоваться");
@@ -419,7 +419,7 @@ public class SteamGuardAccount
             sb.Append("&ck[]=");
             sb.Append(conf.nonce);
         }
-        var request = new PostRequest(url, sb.ToString(), Downloader.AppFormUrlEncoded, Proxy!, Session, null!, Downloader.UserAgentOkHttp)
+        var request = new PostRequest(url, sb.ToString(), Downloader.AppFormUrlEncoded, Proxy!, Session, null!, KnownUserAgents.OkHttp)
         {
             UseVersion2 = true,
             Timeout = 90000
@@ -450,7 +450,7 @@ public class SteamGuardAccount
             sb.Append("&ck[]=");
             sb.Append(conf.nonce);
         }
-        var request = new PostRequest(url, sb.ToString(), Downloader.AppFormUrlEncoded, Proxy!, Session, null!, Downloader.UserAgentOkHttp) { UseVersion2 = true };
+        var request = new PostRequest(url, sb.ToString(), Downloader.AppFormUrlEncoded, Proxy!, Session, null!, KnownUserAgents.OkHttp) { UseVersion2 = true };
         var response = Downloader.Post(request);
         if (response.LostAuth)
             return false;
@@ -468,7 +468,7 @@ public class SteamGuardAccount
 		string tag = "accept";
         string url = $"{APIEndpoints.COMMUNITY_BASE}/mobileconf/ajaxop?op=allow&{GenerateConfirmationQueryParams(tag)}&cid={conf.id}&ck={conf.nonce}";
         string content = withCredentials ? "{\"withCredentials\":true}" : "{\"withCredentials\":false}";
-        var request = new PostRequest(url, content, Downloader.AppJson, Proxy, Session, null, Downloader.UserAgentOkHttp) { UseVersion2 = true };
+        var request = new PostRequest(url, content, Downloader.AppJson, Proxy, Session, null, KnownUserAgents.OkHttp) { UseVersion2 = true };
         var response = await Downloader.PostAsync(request);
         if (response.LostAuth)
 			return (ACCEPT_STATUS.NeedAuth, "Нужно авторизоваться");
@@ -486,7 +486,7 @@ public class SteamGuardAccount
 		string tag = "reject";
         string url = $"{APIEndpoints.COMMUNITY_BASE}/mobileconf/ajaxop?op=allow&{GenerateConfirmationQueryParams(tag)}&cid={conf.id}&ck={conf.nonce}";
         string content = withCredentials ? "{\"withCredentials\":true}" : "{\"withCredentials\":false}";
-        var request = new PostRequest(url, content, Downloader.AppJson, Proxy, Session, null, Downloader.UserAgentOkHttp) { UseVersion2 = true };
+        var request = new PostRequest(url, content, Downloader.AppJson, Proxy, Session, null, KnownUserAgents.OkHttp) { UseVersion2 = true };
         var response = await Downloader.PostAsync(request);
         if (response.LostAuth)
 			return (ACCEPT_STATUS.NeedAuth, "Нужно авторизоваться");
@@ -514,7 +514,7 @@ public class SteamGuardAccount
             sb.Append("&ck[]=");
             sb.Append(conf.nonce);
         }
-        var request = new PostRequest(url, sb.ToString(), Downloader.AppFormUrlEncoded, Proxy, Session, null, Downloader.UserAgentOkHttp) { UseVersion2 = true };
+        var request = new PostRequest(url, sb.ToString(), Downloader.AppFormUrlEncoded, Proxy, Session, null, KnownUserAgents.OkHttp) { UseVersion2 = true };
         var response = await Downloader.PostAsync(request);
         if (response.LostAuth)
             return false;
@@ -540,7 +540,7 @@ public class SteamGuardAccount
             sb.Append("&ck[]=");
             sb.Append(conf.nonce);
         }
-        var request = new PostRequest(url, sb.ToString(), Downloader.AppFormUrlEncoded, Proxy, Session, null, Downloader.UserAgentOkHttp) { UseVersion2 = true };
+        var request = new PostRequest(url, sb.ToString(), Downloader.AppFormUrlEncoded, Proxy, Session, null, KnownUserAgents.OkHttp) { UseVersion2 = true };
         var response = await Downloader.PostAsync(request);
         if (response.LostAuth)
             return false;
@@ -556,7 +556,7 @@ public class SteamGuardAccount
             return null;
         var request = new ProtobufRequest(SteamPoweredUrls.IAuthenticationService_GetAuthSessionsForAccount_v1, string.Empty)
         {
-            UserAgent = SessionData.UserAgentMobile,
+            UserAgent = KnownUserAgents.OkHttp,
             Proxy = Proxy,
             AccessToken = Session.AccessToken,
             IsMobile = true
@@ -575,7 +575,7 @@ public class SteamGuardAccount
 			return null;
 		var request = new ProtobufRequest(SteamPoweredUrls.IAuthenticationService_GetAuthSessionsForAccount_v1, string.Empty)
 		{
-			UserAgent = SessionData.UserAgentMobile,
+			UserAgent = KnownUserAgents.OkHttp,
 			Proxy = Proxy,
 			AccessToken = Session.AccessToken,
 			IsMobile = true
@@ -597,7 +597,7 @@ public class SteamGuardAccount
 		Serializer.Serialize(memStream1, requestDetails);
 		var request = new ProtobufRequest(SteamPoweredUrls.IAuthenticationService_GetAuthSessionInfo_v1, Convert.ToBase64String(memStream1.ToArray()))
 		{
-			UserAgent = SessionData.UserAgentMobile,
+			UserAgent = KnownUserAgents.OkHttp,
 			Proxy = Proxy,
 			AccessToken = Session.AccessToken
 		};
@@ -615,7 +615,7 @@ public class SteamGuardAccount
 		Serializer.Serialize(memStream1, requestDetails);
 		var request = new ProtobufRequest(SteamPoweredUrls.IAuthenticationService_GetAuthSessionInfo_v1, Convert.ToBase64String(memStream1.ToArray()))
 		{
-			UserAgent = SessionData.UserAgentMobile,
+			UserAgent = KnownUserAgents.OkHttp,
 			Proxy = Proxy,
 			AccessToken = Session.AccessToken
 		};
@@ -653,7 +653,7 @@ public class SteamGuardAccount
 
 		var request = new ProtobufRequest(SteamApiUrls.IAuthenticationService_UpdateAuthSessionWithMobileConfirmation_v1, base64)
 		{
-			UserAgent = SessionData.UserAgentMobileApp,
+			UserAgent = KnownUserAgents.OkHttp,
 			Proxy = Proxy,
 			AccessToken = Session!.AccessToken,
 			IsMobile = true,
@@ -685,7 +685,7 @@ public class SteamGuardAccount
 
 		var request = new ProtobufRequest(SteamApiUrls.IAuthenticationService_UpdateAuthSessionWithMobileConfirmation_v1, base64)
 		{
-			UserAgent = SessionData.UserAgentMobileApp,
+			UserAgent = KnownUserAgents.OkHttp,
 			Proxy = Proxy,
 			AccessToken = Session!.AccessToken,
 			IsMobile = true,
