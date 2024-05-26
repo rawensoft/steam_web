@@ -297,88 +297,116 @@ public static partial class Steam
         return AboutProfile.Deserialize(response.Data!);
     }
 
-    public static async Task<WebApiKey> GetWebAPIKeyAsync(ISessionProvider session, System.Net.IWebProxy proxy)
+    /// <summary>
+    /// Парсит Api ключ со страницы api ключа
+    /// </summary>
+    /// <param name="session">Сессия аккаунта</param>
+    /// <param name="proxy">Проки аккаунта</param>
+    /// <returns>Спарсенные данные со страницы</returns>
+    public static async Task<WebApiKey> GetWebAPIKeyAsync(ISessionProvider session, IWebProxy? proxy)
     {
-        var response = await Downloader.GetAsync(new(SteamCommunityUrls.Dev_APIKey, proxy, session));
-        if (!response.Success)
-            return new WebApiKey(response.Data!);
-        else if (response.Data == "<!DOCTYPE html>")
-        {
-            var to1 = new WebApiKey("Бан\\блок на запросы.");
-            return to1;
-        }
-        else if (response.Data!.Contains("<p><a style=\"font-size: 16px;\" href=\"https://support.steampowered.com/kb_article.php?ref=3330-IAGK-7663\">"))
-        {
-            var to1 = new WebApiKey(response.Data.GetBetween("<p>", "</p>")!);
-            return to1;
-        }
-        else if (response.Data.Contains("Register for a new Steam Web API Key"))
-        {
-            var request = new PostRequest(SteamCommunityUrls.Dev_RegisterKey, Downloader.AppFormUrlEncoded)
-            {
-                Session = session,
-                Proxy = proxy
-            }.AddPostData("domain", "localhost").AddPostData("agreeToTerms", "agreed").AddPostData("sessionid", session.SessionID).AddPostData("Submit", "Зарегистрировать");
-            response = await Downloader.PostAsync(request);
-        }
-        else if (response.Data.Contains("Access Denied"))
-        {
-            var to1 = new WebApiKey("Access Denied");
-            return to1;
-        }
-        else if (response.Data.Contains("A new free account") || response.Data.Contains("Sign In"))
-        {
-            var to1 = new WebApiKey("The session has expired. The session needs to be updated.");
-            return to1;
-        }
-        HtmlParser html = new HtmlParser();
-        var parser = await html.ParseDocumentAsync(response.Data!);
-        var children = parser.GetElementById("bodyContents_ex")?.Children;
-        if (children == null)
-            return new("Неверная страница");
-        var to = new WebApiKey(children[2].InnerHtml.Replace(" ", "").Split(':')[1], children[1].InnerHtml.Replace(" ", "").Split(':')[1]);
-        return to;
-    }
-    public static WebApiKey GetWebAPIKey(ISessionProvider session, System.Net.IWebProxy proxy)
+		var response = await Downloader.GetAsync(new(SteamCommunityUrls.Dev_APIKey, proxy, session));
+		if (!response.Success)
+			return new WebApiKey(response.Data!);
+		else if (response.Data == "<!DOCTYPE html>")
+		{
+			var to1 = new WebApiKey("Бан\\блок на запросы.") { RawHtml = response.Data };
+			return to1;
+		}
+		else if (response.Data!.Contains("<p><a style=\"font-size: 16px;\" href=\"https://support.steampowered.com/kb_article.php?ref=3330-IAGK-7663\">"))
+		{
+			var to1 = new WebApiKey(response.Data.GetBetween("<p>", "</p>")!) { RawHtml = response.Data };
+			return to1;
+		}
+		else if (response.Data.Contains("Access Denied"))
+		{
+			var to1 = new WebApiKey("Access Denied") { RawHtml = response.Data };
+			return to1;
+		}
+
+		HtmlParser html = new HtmlParser();
+		var parser = await html.ParseDocumentAsync(response.Data!);
+		var isNeedRegisterKey = parser.GetElementsByClassName("agree").Length > 0;
+		if (isNeedRegisterKey)
+			return new("Нужна регистрация api ключа") { RawHtml = response.Data };
+
+		var isSignUp = parser.GetElementsByClassName("login_create_btn").Length > 0;
+		if (isSignUp)
+			return new("Необходимо войти в аккаунт") { RawHtml = response.Data };
+
+		var children = parser.GetElementById("bodyContents_ex")?.Children;
+		if (children == null)
+			return new("Неверная страница") { RawHtml = response.Data };
+		if (3 > children.Count())
+			return new("Проблема в данных страницы:\n" + response.Data) { RawHtml = response.Data };
+
+		var el1 = children[1].InnerHtml.Replace(" ", "");
+		var split1 = el1.Split(':');
+		if (2 > split1.Length)
+			return new("Проблема в данных key:\n" + response.Data) { RawHtml = response.Data };
+
+		var el2 = children[2].InnerHtml.Replace(" ", "");
+		var split2 = el2.Split(':');
+		if (2 > split2.Length)
+			return new("Проблема в данных domain:\n" + response.Data) { RawHtml = response.Data };
+
+		var to = new WebApiKey(split2[1], split1[1]);
+		return to;
+	}
+	/// <summary>
+	/// Парсит Api ключ со страницы api ключа
+	/// </summary>
+	/// <param name="session">Сессия аккаунта</param>
+	/// <param name="proxy">Проки аккаунта</param>
+	/// <returns>Спарсенные данные со страницы</returns>
+	public static WebApiKey GetWebAPIKey(ISessionProvider session, IWebProxy? proxy)
     {
         var response = Downloader.Get(new(SteamCommunityUrls.Dev_APIKey, proxy, session));
         if (!response.Success)
             return new WebApiKey(response.Data!);
         else if (response.Data == "<!DOCTYPE html>")
         {
-            var to1 = new WebApiKey("Бан\\блок на запросы.");
+            var to1 = new WebApiKey("Бан\\блок на запросы.") { RawHtml = response.Data };
             return to1;
         }
         else if (response.Data!.Contains("<p><a style=\"font-size: 16px;\" href=\"https://support.steampowered.com/kb_article.php?ref=3330-IAGK-7663\">"))
         {
-            var to1 = new WebApiKey(response.Data.GetBetween("<p>", "</p>")!);
+            var to1 = new WebApiKey(response.Data.GetBetween("<p>", "</p>")!) { RawHtml = response.Data };
             return to1;
-        }
-        else if (response.Data.Contains("Register for a new Steam Web API Key"))
-        {
-            var request = new PostRequest(SteamCommunityUrls.Dev_RegisterKey, Downloader.AppFormUrlEncoded)
-            {
-                Session = session,
-                Proxy = proxy
-            }.AddPostData("domain", "localhost").AddPostData("agreeToTerms", "agreed").AddPostData("sessionid", session.SessionID).AddPostData("Submit", "Зарегистрировать");
-            response = Downloader.Post(request);
         }
         else if (response.Data.Contains("Access Denied"))
         {
-            var to1 = new WebApiKey("Access Denied");
+            var to1 = new WebApiKey("Access Denied") { RawHtml = response.Data };
             return to1;
         }
-        else if (response.Data.Contains("A new free account") || response.Data.Contains("Sign In"))
-        {
-            var to1 = new WebApiKey("The session has expired. The session needs to be updated.");
-            return to1;
-        }
+
         HtmlParser html = new HtmlParser();
         var parser = html.ParseDocument(response.Data!);
+        var isNeedRegisterKey = parser.GetElementsByClassName("agree").Length > 0;
+        if (isNeedRegisterKey)
+            return new("Нужна регистрация api ключа") { RawHtml = response.Data };
+
+        var isSignUp = parser.GetElementsByClassName("login_create_btn").Length > 0;
+        if (isSignUp)
+            return new("Необходимо войти в аккаунт") { RawHtml = response.Data };
+
         var children = parser.GetElementById("bodyContents_ex")?.Children;
         if (children == null)
-            return new("Неверная страница");
-        var to = new WebApiKey(children[2].InnerHtml.Replace(" ", "").Split(':')[1], children[1].InnerHtml.Replace(" ", "").Split(':')[1]);
+            return new("Неверная страница") { RawHtml = response.Data };
+        if (3 > children.Count())
+            return new("Проблема в данных страницы:\n" + response.Data) { RawHtml = response.Data };
+
+        var el1 = children[1].InnerHtml.Replace(" ", "");
+        var split1 = el1.Split(':');
+        if (2 > split1.Length)
+            return new("Проблема в данных key:\n" + response.Data) { RawHtml = response.Data };
+
+        var el2 = children[2].InnerHtml.Replace(" ", "");
+        var split2 = el2.Split(':');
+        if (2 > split2.Length)
+            return new("Проблема в данных domain:\n" + response.Data) { RawHtml = response.Data };
+
+        var to = new WebApiKey(split2[1], split1[1]);
         return to;
     }
 
@@ -437,7 +465,7 @@ public static partial class Steam
     /// Получает trade ссылку и разрешения маркета
     /// </summary>
     /// <returns>true если запрос выполнен успешно, Null если трейд ссылка не найдена, Null если разрешений маркета нет</returns>
-    public static (bool, string?, WebTradeEligibility?) GetTradeURL(ISessionProvider session, System.Net.IWebProxy proxy)
+    public static (bool, string?, WebTradeEligibility?) GetTradeURL(ISessionProvider session, IWebProxy proxy)
     {
         var response = Downloader.Get(new(SteamCommunityUrls.Market_EligibilityCheck, proxy, session));
         if (!response.Success)
@@ -472,7 +500,7 @@ public static partial class Steam
     /// Получает trade ссылку и разрешения маркета
     /// </summary>
     /// <returns>true если запрос выполнен успешно, Null если трейд ссылка не найдена, Null если разрешений маркета нет</returns>
-    public static async Task<(bool, string?, WebTradeEligibility?)> GetTradeURLAsync(ISessionProvider session, System.Net.IWebProxy proxy)
+    public static async Task<(bool, string?, WebTradeEligibility?)> GetTradeURLAsync(ISessionProvider session, IWebProxy proxy)
     {
         var response = await Downloader.GetAsync(new(SteamCommunityUrls.Market_EligibilityCheck, proxy, session));
         if (!response.Success)
