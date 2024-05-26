@@ -170,6 +170,29 @@ public static class ExtensionMethods
 			sb.Append(_chars[random.Next(lengthChars)]);
 		return sb.ToString();
 	}
+    public static Confirmation? GetByCreatorId(this Confirmation[] confs, ulong creatorid)
+    {
+        var length = confs.Length;
+        for (int i = 0; i < length; i++)
+        {
+            var conf = confs[i];
+            if (conf.creator_id == creatorid)
+                return conf;
+        }
+        return null;
+    }
+    public static Confirmation? GetByCreatorId(this ConfirmationsResponse confs, ulong creatorid)
+    {
+        var length = confs.conf.Length;
+        for (int i = 0; i < length; i++)
+        {
+            var conf = confs[i];
+            if (conf.creator_id == creatorid)
+                return conf;
+        }
+        return null;
+    }
+
 
     /// <summary>
     /// Проверяем браузерную сессию на активность
