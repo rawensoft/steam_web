@@ -176,10 +176,8 @@ public class SessionData : ISessionProvider
 	}
 	private void RewriteCookie(Cookie cookie)
 	{
-		if (cookie.Value.IsEmpty())
-			return;
-		if (cookie.Domain == KnownUri.HOST_COMMUNITY || cookie.Domain == KnownUri.HOST_API ||
-			cookie.Domain == KnownUri.HOST_STORE || cookie.Domain == KnownUri.HOST_HELP)
+		if (!cookie.Value.IsEmpty() && (cookie.Domain == KnownUri.HOST_COMMUNITY || cookie.Domain == KnownUri.HOST_API ||
+			cookie.Domain == KnownUri.HOST_STORE || cookie.Domain == KnownUri.HOST_HELP))
 		{
 			if (cookie.Name == KnownCookies.COOKIE_NAME_SESSIONID)
 				SessionID = cookie.Value;
