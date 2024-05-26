@@ -531,6 +531,89 @@ public static partial class Steam
 		return (true, trade_url.IsEmpty() ? null : trade_url, webState);
     }
 
+    /// <summary>
+    /// Производит парсинг страницы трейда
+    /// </summary>
+    /// <param name="session">Сессия аккаунта</param>
+    /// <param name="proxy">Прокси для запроса</param>
+    /// <param name="tradeofferid">Id трейда</param>
+    /// <returns>Спарсенные данные со страницы</returns>
+    public static TradeOfferData GetTradeData(ISessionProvider session, IWebProxy? proxy, ulong tradeofferid)
+    {
+        var response = Downloader.Get(new(SteamCommunityUrls.TradeOffer + tradeofferid, proxy, session));
+        if (!response.Success)
+            return new() { TradeOfferId = tradeofferid };
+
+        var html = new HtmlParser();
+        var doc = html.ParseDocument(response.Data!);
+        var errorMsg = doc.GetElementById("error_msg");
+        if (errorMsg != null)
+            return new() { TradeOfferId = tradeofferid, Error = errorMsg.InnerHtml.GetClearWebString()  };
+        var linkForgotten = doc.GetElementsByClassName("login_create_btn");
+        if (linkForgotten.Any())
+            return new() { TradeOfferId = tradeofferid, Error = "Необходимо войти в аккаунт" };
+
+        var isMarketAllowed = response.Data!.GetBetween("var g_bMarketAllowed = ", ";")!;
+        var partnerSID64 = response.Data!.GetBetween("var g_ulTradePartnerSteamID = '", "';");
+        var partnerProbation = response.Data!.GetBetween("var g_bTradePartnerProbation = ", ";")!;
+        var partnerName = response.Data!.GetBetween("var g_strTradePartnerPersonaName = \"", "\";");
+        var youSID64 = response.Data!.GetBetween("UserYou.SetSteamId( '", "' );");
+        var youName = response.Data!.GetBetween("var g_strYourPersonaName = \"", "\";");
+        var sessionId = response.Data!.GetBetween("var g_sessionID = \"", "\";");
+        var tradeStatus = response.Data!.GetBetween("var g_rgCurrentTradeStatus = ", ";");
+
+        var tradeData = new TradeOfferData
+        {
+            IsSuccess = true,
+            TradeOfferId = tradeofferid,
+        };
+        tradeData.SetTradeStatus(tradeStatus);
+        tradeData.SetYou(youName, sessionId, isMarketAllowed, youSID64);
+        tradeData.SetPartner(partnerName, partnerProbation, partnerSID64);
+        return tradeData;
+	}
+	/// <summary>
+	/// Производит парсинг страницы трейда
+	/// </summary>
+	/// <param name="session">Сессия аккаунта</param>
+	/// <param name="proxy">Прокси для запроса</param>
+	/// <param name="tradeofferid">Id трейда</param>
+	/// <returns>Спарсенные данные со страницы</returns>
+	public static async Task<TradeOfferData> GetTradeDataAsync(ISessionProvider session, IWebProxy? proxy, ulong tradeofferid)
+	{
+		var response = await Downloader.GetAsync(new(SteamCommunityUrls.TradeOffer + tradeofferid, proxy, session));
+		if (!response.Success)
+			return new() { TradeOfferId = tradeofferid };
+
+		var html = new HtmlParser();
+		var doc = await html.ParseDocumentAsync(response.Data!);
+		var errorMsg = doc.GetElementById("error_msg");
+		if (errorMsg != null)
+			return new() { TradeOfferId = tradeofferid, Error = errorMsg.InnerHtml.GetClearWebString() };
+		var linkForgotten = doc.GetElementsByClassName("login_create_btn");
+		if (linkForgotten.Any())
+			return new() { TradeOfferId = tradeofferid, Error = "Необходимо войти в аккаунт" };
+
+		var isMarketAllowed = response.Data!.GetBetween("var g_bMarketAllowed = ", ";")!;
+		var partnerSID64 = response.Data!.GetBetween("var g_ulTradePartnerSteamID = '", "';");
+		var partnerProbation = response.Data!.GetBetween("var g_bTradePartnerProbation = ", ";")!;
+		var partnerName = response.Data!.GetBetween("var g_strTradePartnerPersonaName = \"", "\";");
+		var youSID64 = response.Data!.GetBetween("UserYou.SetSteamId( '", "' );");
+		var youName = response.Data!.GetBetween("var g_strYourPersonaName = \"", "\";");
+		var sessionId = response.Data!.GetBetween("var g_sessionID = \"", "\";");
+		var tradeStatus = response.Data!.GetBetween("var g_rgCurrentTradeStatus = ", ";");
+
+		var tradeData = new TradeOfferData
+		{
+			IsSuccess = true,
+			TradeOfferId = tradeofferid,
+		};
+		tradeData.SetTradeStatus(tradeStatus);
+		tradeData.SetYou(youName, sessionId, isMarketAllowed, youSID64);
+		tradeData.SetPartner(partnerName, partnerProbation, partnerSID64);
+		return tradeData;
+	}
+
     public static async Task<(LoginResultv2, SessionDatav2?)> AuthAsync(UserLoginv2 user_login)
     {
         if (user_login.FullyEnrolled)
