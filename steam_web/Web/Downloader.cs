@@ -113,7 +113,6 @@ public static class Downloader
             });
 
         return (client, req);
-
 	}
 	private static (RestClient, RestRequest) GetRestClient(ProtobufRequest request, Method method)
 	{

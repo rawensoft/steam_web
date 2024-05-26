@@ -10,10 +10,9 @@ using SteamWeb.Script.DTO.Listinging;
 using SteamWeb.Script.DTO.Historing;
 using SteamWeb.Auth.Interfaces;
 using System.Text.RegularExpressions;
-using System.Text;
 using ProtoBuf;
-using SteamWeb.Auth.v2.DTO;
 using System.Text.Json.Serialization;
+using SteamWeb.Script.Models;
 
 namespace SteamWeb.Script;
 public static class Ajax
@@ -1035,4 +1034,76 @@ public static class Ajax
         var obj = Serializer.Deserialize<CStoreSalesService_SetVote_Response>(response.Stream);
 		return obj;
 	}
+
+    /// <summary>
+    /// Используется для создания запроса на регистрацию api ключа
+    /// </summary>
+    /// <param name="session">Сессия аккаунта</param>
+    /// <param name="proxy">Прокси для запроса</param>
+    /// <param name="domain">Указанный domain в ключе</param>
+    /// <returns>Ответ на запрос</returns>
+    public static RequestKeyResponse dev_requestkey(ISessionProvider session, Proxy? proxy, string domain)
+    {
+        var request = new PostRequest(SteamCommunityUrls.Dev_RequestKey, Downloader.AppFormUrlEncoded)
+        {
+            IsAjax = true,
+            UseVersion2 = true,
+            Session = session,
+            Proxy = proxy,
+            Referer = SteamCommunityUrls.Dev_APIKey
+        }.AddPostData("domain", domain).AddPostData("request_id", "0", false)
+        .AddPostData("sessionid", session!.SessionID).AddPostData("agreeToTerms", "true", false);
+        var response = Downloader.Post(request);
+        if (!response.Success)
+            return new();
+        var options = new JsonSerializerOptions
+        {
+            NumberHandling = JsonNumberHandling.AllowReadingFromString,
+        };
+        var obj = JsonSerializer.Deserialize<RequestKeyResponse>(response.Data!, options);
+        return obj!;
+	}
+	/// <summary>
+	/// Используется для проверки состояния подтверждения создания ключа и получение его в текстовом виде
+    /// <para/>
+    /// Рекомендуется отправлять запрос раз в 4-е секунды
+	/// </summary>
+	/// <param name="session">Сессия аккаунта</param>
+	/// <param name="proxy">Прокси для запроса</param>
+	/// <param name="domain">Указанный domain в ключе</param>
+	/// <param name="request_id">Id запроса, указан в <see cref="RequestKeyResponse.RequestId"/></param>
+	/// <returns>Ответ на запрос</returns>
+	public static RequestKeyResponse dev_requestkey(ISessionProvider session, Proxy? proxy, string domain, ulong request_id)
+    {
+        var request = new PostRequest(SteamCommunityUrls.Dev_RequestKey, Downloader.AppFormUrlEncoded)
+        {
+            IsAjax = true,
+            UseVersion2 = true,
+            Session = session,
+            Proxy = proxy,
+            Referer = SteamCommunityUrls.Dev_APIKey
+        }.AddPostData("domain", domain).AddPostData("request_id", request_id)
+        .AddPostData("sessionid", session!.SessionID).AddPostData("agreeToTerms", "true", false);
+        var response = Downloader.Post(request);
+        if (!response.Success)
+            return new();
+        var options = new JsonSerializerOptions
+        {
+            NumberHandling = JsonNumberHandling.AllowReadingFromString,
+        };
+        var obj = JsonSerializer.Deserialize<RequestKeyResponse>(response.Data!, options);
+        return obj!;
+    }
+	/// <summary>
+	/// Используется для проверки состояния подтверждения создания ключа и получение его в текстовом виде
+	/// <para/>
+	/// Рекомендуется отправлять запрос раз в 4-е секунды
+	/// </summary>
+	/// <param name="session">Сессия аккаунта</param>
+	/// <param name="proxy">Прокси для запроса</param>
+	/// <param name="domain">Указанный domain в ключе</param>
+	/// <param name="request">Оригинальный ответ на запроса</param>
+	/// <returns>Ответ на запрос</returns>
+	public static RequestKeyResponse dev_requestkey(ISessionProvider session, Proxy? proxy, string domain, RequestKeyResponse request)
+        => dev_requestkey(session, proxy, domain, request.RequestId!.Value);
 }

@@ -11,6 +11,7 @@ internal static class SteamCommunityUrls
     public const string Actions_QueryLocations = "https://steamcommunity.com/actions/QueryLocations";
     public const string Dev_APIKey = "https://steamcommunity.com/dev/apikey";
     public const string Dev_RegisterKey = "https://steamcommunity.com/dev/registerkey";
+    public const string Dev_RequestKey = "https://steamcommunity.com/dev/requestkey";
     public const string Market_EligibilityCheck = "https://steamcommunity.com/market/eligibilitycheck/?goto=%2Fmy%2Ftradeoffers%2Fprivacy";
     public const string Market_Listings = "https://steamcommunity.com/market/listings";
     public const string Market_PriceOverview = "https://steamcommunity.com/market/priceoverview";
