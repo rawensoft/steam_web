@@ -6,5 +6,6 @@ public enum ConfirmationType : byte
     TradeOffer = 2,
     MarketSellTransaction = 3,
     ChangeNumber = 5,
-    AccountRecovery = 6
+    AccountRecovery = 6,
+    RegisterApiKey = 9,
 }
