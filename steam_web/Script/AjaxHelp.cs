@@ -179,8 +179,8 @@ public static class AjaxHelp
             Referer = referer,
             IsAjax = true
         };
-        request.AddPostData("sessionid", session.SessionID, false).AddPostData("wizard_ajax", 1).AddPostData("s", s, false)
-            .AddPostData("account", account, false).AddPostData("email", HttpUtility.UrlEncode(email), false);
+        request.AddPostData("sessionid", session.SessionID, false).AddPostData("wizard_ajax", 1).AddPostData("gamepad", 0)
+			.AddPostData("s", s, false).AddPostData("account", account, false).AddPostData("email", HttpUtility.UrlEncode(email), false);
         var response = await Downloader.PostAsync(request);
         if (!response.Success)
             return new();
@@ -210,8 +210,8 @@ public static class AjaxHelp
             Referer = referer,
             IsAjax = true
         };
-        request.AddPostData("sessionid", session.SessionID).AddPostData("wizard_ajax", 1).AddPostData("s", s).AddPostData("account", account)
-            .AddPostData("email", email).AddPostData("email_change_code", email_change_code);
+        request.AddPostData("sessionid", session.SessionID).AddPostData("wizard_ajax", 1).AddPostData("s", s).AddPostData("gamepad", 0)
+            .AddPostData("account", account).AddPostData("email", HttpUtility.UrlEncode(email), false).AddPostData("email_change_code", email_change_code);
         var response = await Downloader.PostAsync(request);
         if (!response.Success)
             return new();
@@ -443,7 +443,7 @@ public static class AjaxHelp
             IsAjax = true
         };
         request.AddPostData("sessionid", session.SessionID).AddPostData("s", s).AddPostData("lost", GetLost(lost)).AddPostData("reset", GetReset(reset))
-            .AddPostData("password", Helpers.Encrypt(password, rsa.publickey_mod, rsa.publickey_exp)).AddPostData("rsatimestamp", rsa.timestamp);
+            .AddPostData("password", Helpers.Encrypt(password, rsa.publickey_mod!, rsa.publickey_exp!)).AddPostData("rsatimestamp", rsa.timestamp!);
         var response = await Downloader.PostAsync(request);
         if (!response.Success)
             return new();
