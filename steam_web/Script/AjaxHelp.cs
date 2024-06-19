@@ -382,22 +382,6 @@ public static class AjaxHelp
         return new();
     }
 
-    public static async Task<string> DoLogin(System.Net.IWebProxy proxy, string username, string password, SteamRSA rsa, string fa2 = "", string email = "", string pc_name = "", string captcha_text = "", ulong captcha_gid = 0)
-    {
-        var request = new PostRequest(SteamCommunityUrls.Login_DoLogin, Downloader.AppFormUrlEncoded)
-        {
-            Proxy = proxy,
-            Referer = "https://steamcommunity.com/mobilelogin?oauth_client_id=DE45CD61&oauth_scope=read_profile%20write_profile%20read_client%20write_client",
-            IsAjax = true
-        };
-        request.AddPostData("donotcache", DateTime.UtcNow.ToTimeStamp()).AddPostData("password", Helpers.Encrypt(password, rsa.publickey_mod, rsa.publickey_exp))
-            .AddPostData("username", username).AddPostData("twofactorcode", fa2).AddPostData("captcha_text", captcha_text).AddPostData("emailsteamid", "")
-            .AddPostData("rsatimestamp", rsa.timestamp).AddPostData("emailauth", email).AddPostData("loginfriendlyname", pc_name).AddPostData("remember_login", "true");
-        request.AddPostData("captchagid", captcha_gid > 0 ? captcha_gid.ToString() : "-1");
-        var response = await Downloader.PostAsync(request);
-        return response.Data;
-    }
-    
     public static async Task<PhoneAjax> PhoneAjaxAsync(ISessionProvider session, System.Net.IWebProxy proxy)
     {
         var request = new PostRequest(SteamCommunityUrls.SteamGuard_PhoneAjax, Downloader.AppFormUrlEncoded)
