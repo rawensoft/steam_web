@@ -9,14 +9,12 @@ using SteamWeb.Auth.Interfaces;
 namespace SteamWeb.Script;
 public static class AjaxHelp
 {
-    /// <summary>
-    /// Проверка номера для рега его на акк
-    /// </summary>
-    /// <param name="Session"></param>
-    /// <param name="proxy"></param>
-    /// <param name="number">номер как +7 9991112233</param>
-    /// <returns></returns>
-    public static async Task<AjaxValidPhone> AjaxValidNumberAsync(ISessionProvider session, System.Net.IWebProxy proxy, string number)
+	/// <summary>
+	/// Проверка номера для рега его на акк
+	/// </summary>
+	/// <param name="number">Номер как +7 9991112233</param>
+	/// <returns></returns>
+	public static async Task<AjaxValidPhone> AjaxValidNumberAsync(ISessionProvider session, System.Net.IWebProxy proxy, string number)
     {
         var request = new PostRequest(SteamPoweredUrls.Phone_Validate, Downloader.AppFormUrlEncoded)
         {
@@ -70,14 +68,14 @@ public static class AjaxHelp
         return new();
     }
 
-    /// <summary>
-    /// Отправка запроса на смену данных в мобильное приложение\код на почту
-    /// </summary>
-    /// <param name="Session"></param>
-    /// <param name="s"></param>
-    /// <param name="referer">url открытия страницы смены данных</param>
-    /// <returns></returns>
-    public static async Task<AjaxDefault> AjaxSendAccountRecoveryCodeAsync(ISessionProvider session, System.Net.IWebProxy proxy, string s, string referer, TypeMethod method)
+	/// <summary>
+	/// Отправка запроса на смену данных в мобильное приложение\код на почту
+	/// </summary>
+	/// <param name="s">s параметр полученный от steam</param>
+	/// <param name="referer">Url открытия страницы смены данных</param>
+	/// <param name="method">Какой запрос, на подтверждение владения аккаунтом, отправлять</param>
+	/// <returns></returns>
+	public static async Task<AjaxDefault> AjaxSendAccountRecoveryCodeAsync(ISessionProvider session, System.Net.IWebProxy proxy, string s, string referer, TypeMethod method)
     {
         var request = new PostRequest(SteamPoweredUrls.Wizard_AjaxSendAccountRecoveryCode, Downloader.AppFormUrlEncoded)
         {
@@ -100,15 +98,18 @@ public static class AjaxHelp
         return new();
     }
 
-    /// <summary>
-    /// Проверка подтверждения на смену данных. Для продолжения должно быть:
-    /// <code>
-    /// if (AjaxPollRecoveryConf.success && !AjaxPollRecoveryConf.continue) return;
-    /// </code>
-    /// </summary>
-    /// <param name="referer">url открытия страницы смены данных</param>
-    /// <returns></returns>
-    public static async Task<AjaxPollRecoveryConf> AjaxPollAccountRecoveryConfirmationAsync(ISessionProvider session, System.Net.IWebProxy proxy, string s, TypeReset reset, TypeMethod method, string referer)
+	/// <summary>
+	/// Проверка подтверждения на смену данных. Для продолжения должно быть:
+	/// <code>
+	/// if (AjaxPollRecoveryConf.success && !AjaxPollRecoveryConf.continue) return;
+	/// </code>
+	/// </summary>
+	/// <param name="s">s параметр полученный от steam</param>
+	/// <param name="method">Какой запрос, на подтверждение владения аккаунтом, отправлять</param>
+	/// <param name="reset">Какие данные сбрасываем\изменяем</param>
+	/// <param name="referer">url открытия страницы смены данных</param>
+	/// <returns></returns>
+	public static async Task<AjaxPollRecoveryConf> AjaxPollAccountRecoveryConfirmationAsync(ISessionProvider session, System.Net.IWebProxy proxy, string s, TypeReset reset, TypeMethod method, string referer)
     {
         var request = new PostRequest(SteamPoweredUrls.Wizard_AjaxPollAccountRecoveryConfirmation, Downloader.AppFormUrlEncoded)
         {
@@ -132,12 +133,15 @@ public static class AjaxHelp
         return new();
     }
 
-    /// <summary>
-    /// Проверка подтверждения\кода с почты
-    /// </summary>
-    /// <param name="code">Для мобильного подтверждения оставить пустую строку</param>
-    /// <returns></returns>
-    public static async Task<AjaxNext> AjaxVerifyAccountRecoveryCodeAsync(ISessionProvider session, System.Net.IWebProxy proxy, string code, string s, TypeMethod method, TypeReset reset, string referer)
+	/// <summary>
+	/// Проверка подтверждения\кода с почты
+	/// </summary>
+	/// <param name="code">Для мобильного подтверждения оставить пустую строку</param>
+	/// <param name="s">s параметр полученный от steam</param>
+	/// <param name="method">Какой запрос, на подтверждение владения аккаунтом, был выбран</param>
+	/// <param name="reset">Какие данные сбрасываем\изменяем</param>
+	/// <returns></returns>
+	public static async Task<AjaxNext> AjaxVerifyAccountRecoveryCodeAsync(ISessionProvider session, System.Net.IWebProxy proxy, string code, string s, TypeMethod method, TypeReset reset, string referer)
     {
         var request = new GetRequest(SteamPoweredUrls.Wizard_AjaxVerifyAccountRecoveryCode, proxy, session, referer)
         {
@@ -158,13 +162,15 @@ public static class AjaxHelp
         return new();
     }
 
-    /// <summary>
-    /// Отправить код на почту, на которую нужно сменить
-    /// </summary>
-    /// <param name="email">Новая почта</param>
-    /// <param name="account">steamid32</param>
-    /// <returns></returns>
-    public static async Task<AjaxEmailConfirm> AjaxAccountRecoveryChangeEmailAsync(ISessionProvider session, System.Net.IWebProxy proxy, string email, string account, string s, string referer)
+	/// <summary>
+	/// Отправить код на почту, на которую нужно сменить
+	/// </summary>
+	/// <param name="email">Новая почта</param>
+	/// <param name="account">steamid32</param>
+	/// <param name="s">s параметр полученный от steam</param>
+	/// <param name="referer">url страницы смены данных</param>
+	/// <returns></returns>
+	public static async Task<AjaxEmailConfirm> AjaxAccountRecoveryChangeEmailAsync(ISessionProvider session, System.Net.IWebProxy proxy, string email, string account, string s, string referer)
     {
         var request = new PostRequest(SteamPoweredUrls.Wizard_AjaxAccountRecoveryChangeEmail, Downloader.AppFormUrlEncoded)
         {
@@ -295,13 +301,11 @@ public static class AjaxHelp
     }
     
     /// <summary>
-    /// 
+    /// Получает RSA от steam
     /// </summary>
-    /// <param name="session">Nullable</param>
-    /// <param name="proxy"></param>
-    /// <param name="login"></param>
-    /// <param name="referer"></param>
-    /// <returns></returns>
+    /// <param name="login">Логин аккаунта</param>
+    /// <param name="referer">Текущий url страницы</param>
+    /// <returns>Класс содержащий данные RSA</returns>
     public static async Task<SteamRSA> GetRSAKeyAsync(ISessionProvider session, System.Net.IWebProxy proxy, string login, string referer)
     {
         var request = new PostRequest(SteamCommunityUrls.Login_GetRSAKey, Downloader.AppFormUrlEncoded)
@@ -437,18 +441,16 @@ public static class AjaxHelp
         return new();
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="Session"></param>
-    /// <param name="proxy"></param>
-    /// <param name="rsa"></param>
-    /// <param name="s"></param>
-    /// <param name="reset"></param>
-    /// <param name="password">Оригинальный пароль</param>
-    /// <param name="rsatimestamp"></param>
-    /// <returns></returns>
-    public static async Task<AjaxNext> AjaxAccountRecoveryVerifyPassword(ISessionProvider session, System.Net.IWebProxy proxy, SteamRSA rsa, string s, TypeReset reset, TypeLost lost, string password)
+	/// <summary>
+	/// Отправляет пароль на проверку. Используется если нужно подтвердить владение аккаунтов, обычно после мобильного подтверждения, если отказ от почтового.
+	/// </summary>
+	/// <param name="rsa"></param>
+	/// <param name="s"></param>
+	/// <param name="reset"></param>
+	/// <param name="lost"></param>
+	/// <param name="password">Оригинальный пароль (не зашифрованный)</param>
+	/// <returns></returns>
+	public static async Task<AjaxNext> AjaxAccountRecoveryVerifyPassword(ISessionProvider session, System.Net.IWebProxy proxy, SteamRSA rsa, string s, TypeReset reset, TypeLost lost, string password)
     {
         var request = new PostRequest(SteamPoweredUrls.Wizard_AjaxAccountRecoveryVerifyPassword, Downloader.AppFormUrlEncoded)
         {
