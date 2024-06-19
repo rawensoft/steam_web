@@ -194,14 +194,47 @@ public static class AjaxHelp
         return new();
     }
 
-    /// <summary>
-    /// Подтверждение смены почты
-    /// </summary>
-    /// <param name="email">Новая почта</param>
-    /// <param name="email_code">Код смены с новой почты</param>
-    /// <param name="account">Account ID</param>
-    /// <returns></returns>
-    public static async Task<AjaxNext> AjaxAccountRecoveryConfirmChangeEmailAsync(ISessionProvider session, System.Net.IWebProxy proxy, string email, string email_change_code, string account, string s, string referer)
+	/// <summary>
+	/// Отправить код на почту, на которую нужно сменить
+	/// </summary>
+	/// <param name="email">Новая почта</param>
+	/// <param name="account">steamid32</param>
+	/// <param name="s">s параметр полученный от steam</param>
+	/// <param name="referer">url страницы смены данных</param>
+	/// <returns></returns>
+	public static AjaxEmailConfirm AjaxAccountRecoveryChangeEmail(ISessionProvider session, System.Net.IWebProxy proxy, string email, string account, string s, string referer)
+	{
+		var request = new PostRequest(SteamPoweredUrls.Wizard_AjaxAccountRecoveryChangeEmail, Downloader.AppFormUrlEncoded)
+		{
+			Session = session,
+			Proxy = proxy,
+			Referer = referer,
+			IsAjax = true
+		};
+		request.AddPostData("sessionid", session.SessionID, false).AddPostData("wizard_ajax", 1).AddPostData("gamepad", 0)
+			.AddPostData("s", s, false).AddPostData("account", account, false).AddPostData("email", HttpUtility.UrlEncode(email), false);
+		var response = Downloader.Post(request);
+		if (!response.Success)
+			return new();
+		try
+		{
+			var obj = JsonSerializer.Deserialize<AjaxEmailConfirm>(response.Data!);
+			return obj!;
+		}
+		catch (Exception ex)
+		{ }
+		return new();
+	}
+
+	/// <summary>
+	/// Подтверждение смены почты
+	/// </summary>
+	/// <param name="email">Новая почта</param>
+	/// <param name="email_change_code">Код смены с новой почты</param>
+	/// <param name="account">steamid32</param>
+	/// <param name="s">s параметр полученный от steam</param>
+	/// <returns></returns>
+	public static async Task<AjaxNext> AjaxAccountRecoveryConfirmChangeEmailAsync(ISessionProvider session, System.Net.IWebProxy proxy, string email, string email_change_code, string account, string s, string referer)
     {
         var request = new PostRequest(SteamPoweredUrls.Wizard_AjaxAccountRecoveryConfirmChangeEmail, Downloader.AppFormUrlEncoded)
         {
@@ -225,12 +258,44 @@ public static class AjaxHelp
         return new();
     }
 
-    /// <summary>
-    /// Проверка пароля
-    /// </summary>
-    /// <param name="password">пароль</param>
-    /// <returns></returns>
-    public static async Task<AjaxPasswordAvailable> AjaxCheckPasswordAvailableAsync(ISessionProvider session, System.Net.IWebProxy proxy, string password, string referer)
+	/// <summary>
+	/// Подтверждение смены почты
+	/// </summary>
+	/// <param name="email">Новая почта</param>
+	/// <param name="email_change_code">Код смены с новой почты</param>
+	/// <param name="account">steamid32</param>
+	/// <param name="s">s параметр полученный от steam</param>
+	/// <returns></returns>
+	public static AjaxNext AjaxAccountRecoveryConfirmChangeEmail(ISessionProvider session, System.Net.IWebProxy proxy, string email, string email_change_code, string account, string s, string referer)
+	{
+		var request = new PostRequest(SteamPoweredUrls.Wizard_AjaxAccountRecoveryConfirmChangeEmail, Downloader.AppFormUrlEncoded)
+		{
+			Session = session,
+			Proxy = proxy,
+			Referer = referer,
+			IsAjax = true
+		};
+		request.AddPostData("sessionid", session.SessionID).AddPostData("wizard_ajax", 1).AddPostData("s", s).AddPostData("gamepad", 0)
+			.AddPostData("account", account).AddPostData("email", HttpUtility.UrlEncode(email), false).AddPostData("email_change_code", email_change_code);
+		var response = Downloader.Post(request);
+		if (!response.Success)
+			return new();
+		try
+		{
+			var obj = JsonSerializer.Deserialize<AjaxNext>(response.Data!);
+			return obj!;
+		}
+		catch (Exception ex)
+		{ }
+		return new();
+	}
+
+	/// <summary>
+	/// Проверка пароля
+	/// </summary>
+	/// <param name="password">пароль</param>
+	/// <returns></returns>
+	public static async Task<AjaxPasswordAvailable> AjaxCheckPasswordAvailableAsync(ISessionProvider session, System.Net.IWebProxy proxy, string password, string referer)
     {
         var request = new PostRequest(SteamPoweredUrls.Wizard_AjaxCheckPasswordAvailable, Downloader.AppFormUrlEncoded)
         {
