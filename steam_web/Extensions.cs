@@ -67,8 +67,17 @@ public static class ExtensionMethods
         if (ulong.TryParse(value, out ulong result))
             return result;
         return 0;
-    }
-    public static double ParseDouble(this string? value)
+	}
+	public static decimal ParseDecimal(this string? value)
+	{
+		if (value == null)
+			return 0m;
+		value = value.Replace(".", ",");
+		if (decimal.TryParse(value, out decimal result))
+			return result;
+		return 0m;
+	}
+	public static double ParseDouble(this string? value)
 	{
 		if (value == null)
 			return 0d;
