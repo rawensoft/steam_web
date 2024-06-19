@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SteamWeb.Script.Models
+﻿namespace SteamWeb.Script.Models;
+public class SteamRSA
 {
-    public class SteamRSA
-    {
-        public bool success { get; set; } = false;
-        public string publickey_mod { get; set; } = null;
-        public string publickey_exp { get; set; } = null;
-        public string timestamp { get; set; } = null;
-        public string token_gid { get; set; } = null;
-    }
+    public bool success { get; init; } = false;
+    public string? publickey_mod { get; init; } = null;
+    public string? publickey_exp { get; init; } = null;
+    public string? timestamp { get; init; } = null;
+    public string? token_gid { get; init; } = null;
 }

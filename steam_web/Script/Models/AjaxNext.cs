@@ -1,14 +1,12 @@
 ﻿using SteamWeb.Extensions;
 using System.Text.Json.Serialization;
 
-namespace SteamWeb.Script.Models
+namespace SteamWeb.Script.Models;
+public class AjaxNext
 {
-    public class AjaxNext
-    {
-        public string hash { get; set; } = null;
-        public string errorMsg { get; set; } = null;
+    public string? hash { get; init; } = null;
+    public string? errorMsg { get; init; } = null;
 
-        [JsonIgnore] public bool IsHash => !hash.IsEmpty();
-        [JsonIgnore] public bool IsError => !errorMsg.IsEmpty();
-    }
+    [JsonIgnore] public bool IsHash => !hash.IsEmpty();
+    [JsonIgnore] public bool IsError => !errorMsg.IsEmpty();
 }

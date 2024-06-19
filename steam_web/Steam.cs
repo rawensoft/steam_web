@@ -141,7 +141,7 @@ public static partial class Steam
     /// <param name="session"></param>
     /// <param name="proxy"></param>
     /// <returns>True имеется</returns>
-    public static bool CheckOnKT(ISessionProvider session, System.Net.IWebProxy proxy)
+    public static bool CheckOnKT(ISessionProvider session, IWebProxy proxy)
     {
         var response = Downloader.Get(new(SteamCommunityUrls.My_Edit_Info, proxy, session));
         if (response.Data?.Contains("profile_fatalerror") == true &&

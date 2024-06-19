@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SteamWeb.Script.Models
+﻿namespace SteamWeb.Script.Models;
+public class PhoneAjax
 {
-    public class PhoneAjax
-    {
-        public bool? has_phone { get; set; } = null;
-    }
+    public bool? has_phone { get; init; } = null;
 }
