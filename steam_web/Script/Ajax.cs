@@ -884,7 +884,8 @@ public static class Ajax
             Session = session,
             Proxy = proxy,
             IsAjax = true,
-			CancellationToken = cts
+			CancellationToken = cts,
+            Referer = SteamPoweredUrls.Explore,
 		};
         request.AddPostData("sessionid", session.SessionID).AddPostData("queuetype", queuetype);
         var response = await Downloader.PostAsync(request);
@@ -909,7 +910,8 @@ public static class Ajax
             Session = session,
             Proxy = proxy,
             IsAjax = true,
-			CancellationToken = cts
+			CancellationToken = cts,
+			Referer = SteamPoweredUrls.Explore,
 		};
         request.AddPostData("sessionid", session.SessionID).AddPostData("queuetype", queuetype);
         var response = Downloader.Post(request);
