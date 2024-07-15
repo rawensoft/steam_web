@@ -196,12 +196,12 @@ public static class SteamIDs
         {
             try
             {
-                var data = File.ReadAllLines(PathToSteamIDsFile);
-                foreach (var item in data)
+                using var fs = new FileStream(PathToSteamIDsFile, FileMode.Open, FileAccess.Read);
+                var sr = new StreamReader(fs);
+                string? str = null;
+                while (!(str = sr.ReadLine()).IsEmpty())
                 {
-                    if (string.IsNullOrEmpty(item))
-                        continue;
-                    string[] splitted = item.Split('=');
+                    string[] splitted = str!.Split('=');
                     if (splitted[0] != market_hash_name)
                         continue;
                     return splitted[1].ParseUInt32();
