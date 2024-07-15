@@ -5,11 +5,6 @@ using SteamWeb.Extensions;
 using RestSharp;
 using System.Web;
 using SteamWeb.Auth.Interfaces;
-
-
-
-
-
 #if !FACTORY
 using System.Collections.Concurrent;
 #endif
@@ -93,7 +88,6 @@ public static class Downloader
 			req.AddHeader(KnownHeaders.Dnt, "1");
 			req.AddHeader(KnownHeaders.UpgradeInsecureRequests, "1");
 		}
-		request.AddQuery(req);
 		if (request.Timeout > 0)
 			req.Timeout = request.Timeout;
 
