@@ -7,6 +7,7 @@ using System.Text;
 namespace SteamWeb;
 public static class SteamIDs
 {
+    private static readonly object _locker = new();
     /// <summary>
     /// Key - Market Hash Name, Value - SteamID
     /// </summary>
@@ -21,7 +22,8 @@ public static class SteamIDs
         set
         {
             _isKeepInRAM = value;
-            mSteamIDs.Clear();
+            lock(_locker)
+                mSteamIDs.Clear();
         }
     }
     public static string PathToSteamIDsFile { get; private set; } = Environment.CurrentDirectory + "\\steam_ids";
@@ -45,19 +47,22 @@ public static class SteamIDs
                 return;
             try
             {
-                var data = File.ReadAllLines(PathToSteamIDsFile);
-                mSteamIDs.Clear();
-                var length = data.Length;
-                for (int i = 0; i < length; i++)
+                lock (_locker)
                 {
-                    var item = data[i];
-					if (string.IsNullOrEmpty(item))
-						continue;
-					var splitted = item.Split('=');
-					var name = splitted[0];
-					if (!mSteamIDs.ContainsKey(name))
-						mSteamIDs.Add(name, splitted[1].ParseUInt32());
-				}
+                    var data = File.ReadAllLines(PathToSteamIDsFile);
+                    mSteamIDs.Clear();
+                    var length = data.Length;
+                    for (int i = 0; i < length; i++)
+                    {
+                        var item = data[i];
+                        if (string.IsNullOrEmpty(item))
+                            continue;
+                        var splitted = item.Split('=');
+                        var name = splitted[0];
+                        if (!mSteamIDs.ContainsKey(name))
+                            mSteamIDs.Add(name, splitted[1].ParseUInt32());
+                    }
+                }
             }
             catch (Exception e)
             { }
@@ -70,16 +75,21 @@ public static class SteamIDs
     /// <param name="isClearSave">Нужно ли записать в файл, а не добавить в файл</param>
     public static void SaveSteamIDs(bool isClearSave)
     {
-        var sb = new StringBuilder(mSteamIDs.Count * 4 + 2);
-        foreach (var item in mSteamIDs)
-		{
-			sb.Append(item.Key);
-			sb.Append('=');
-			sb.Append(item.Value);
-			sb.Append('\n');
-		}
-        if (isClearSave) File.WriteAllText(PathToSteamIDsFile, sb.ToString());
-        else File.AppendAllText(PathToSteamIDsFile, sb.ToString());
+        lock (_locker)
+        {
+            var sb = new StringBuilder(mSteamIDs.Count * 4 + 2);
+            foreach (var item in mSteamIDs)
+            {
+                sb.Append(item.Key);
+                sb.Append('=');
+                sb.Append(item.Value);
+                sb.Append('\n');
+            }
+            if (isClearSave)
+                File.WriteAllText(PathToSteamIDsFile, sb.ToString());
+            else
+                File.AppendAllText(PathToSteamIDsFile, sb.ToString());
+        }
     }
 
 
@@ -190,7 +200,8 @@ public static class SteamIDs
     {
         try
         {
-            File.AppendAllLines(PathToSteamIDsFile, new string[] { market_hash_name + '=' + id });
+            lock(_locker)
+                File.AppendAllLines(PathToSteamIDsFile, new string[] { market_hash_name + '=' + id });
         }
         catch (Exception)
         { }
