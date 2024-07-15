@@ -31,8 +31,14 @@ public static class ExtensionMethods
         T[] result = new T[length];
         Array.Copy(data, index, result, 0, length);
         return result;
-    }
-    public static short ParseInt16(this string? value)
+	}
+	public static byte ParseByte(this string? value)
+	{
+		if (byte.TryParse(value, out byte result))
+			return result;
+		return 0;
+	}
+	public static short ParseInt16(this string? value)
     {
         if (short.TryParse(value, out short result))
             return result;
