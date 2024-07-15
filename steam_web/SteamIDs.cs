@@ -173,7 +173,22 @@ public static class SteamIDs
             return item_nameid;
         return 0;
     }
-
+    public static bool TryAddItemID(string market_hash_name, uint item_nameid, bool afterSave)
+    {
+        lock (_locker)
+        {
+            if (IsKeepInRAM)
+            {
+                if (!mSteamIDs.TryAdd(market_hash_name, item_nameid))
+                    return false;
+            }
+            else
+                File.AppendAllLines(PathToSteamIDsFile, new string[] { market_hash_name + '=' + item_nameid });
+        }
+        if (IsKeepInRAM && afterSave)
+            SaveSteamIDs(true);
+        return true;
+    }
 
     private static uint GetItemID(string market_hash_name)
     {
