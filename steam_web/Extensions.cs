@@ -128,14 +128,21 @@ public static class ExtensionMethods
         return sb.ToString();
     }
     public static string Formatted(this DateTime dt) => dt.ToString(_dtFormat);
-    public static int ToTimeStamp(this DateTime dt) => (int)(dt.Subtract(DateTime.UnixEpoch)).TotalSeconds;
+    public static int ToTimeStamp(this DateTime dt)
+    {
+        var seconds = new DateTimeOffset(dt).ToUnixTimeSeconds();
+		return (int)seconds;
+	}
     public static int ToUnixTimeStamp(this DateTime dt) => ToTimeStamp(dt);
+    /// <summary>
+    /// Возвращает локальное время
+    /// </summary>
+    /// <param name="seconds">unix временная метка в секундах</param>
+    /// <returns>Локальное время, на основе unix метки</returns>
     public static DateTime ToDateTime(this int seconds)
     {
-        var epoch = DateTime.UnixEpoch;
-        var timeSpan = TimeSpan.FromSeconds(seconds);
-        epoch = epoch.Add(timeSpan);
-        return epoch.ToLocalTime();
+        var offset = DateTimeOffset.FromUnixTimeSeconds(seconds);
+		return offset.DateTime.ToLocalTime();
     }
     public static int ToInt32(this bool value) => value ? 1 : 0;
     public static string? GetBetween(this string strSource, string strStart, string strEnd, string? replace = null, int x = 0)
