@@ -300,20 +300,20 @@ public static class Ajax
         return new();
     }
 
-    public static async Task<MarketSearchResponse> market_search_render_async(ISessionProvider session, System.Net.IWebProxy proxy, MarketSearchRequest request, CancellationToken? cts = null)
+    public static async Task<MarketSearchResponse> market_search_render_async(ISessionProvider? session, System.Net.IWebProxy? proxy, MarketSearchRequest request)
     {
         var getRequest = new GetRequest(SteamCommunityUrls.Market_Search_Render, proxy, session)
         {
             Session = session,
             Proxy = proxy,
             IsAjax = true,
-			CancellationToken = cts
+			CancellationToken = request.CancellationToken
 		};
         if (!request.Query.IsEmpty())
             getRequest.AddQuery("query", request.Query);
-        getRequest.AddQuery("start", request.Start).AddQuery("count", request.Count).AddQuery("search_descriptions", request.Search_Descriptions)
-            .AddQuery("norender", request.NoRender).AddQuery("sort_column", request.Sort_Column.ToString().ToLower())
-            .AddQuery("sort_dir", request.Sort_Dir.ToString().ToLower()).AddQuery("appid", request.AppId);
+        getRequest.AddQuery("start", request.Offset).AddQuery("count", request.Limit).AddQuery("search_descriptions", request.SearchDescriptions)
+            .AddQuery("norender", request.NoRender).AddQuery("sort_column", request.SortColumn.ToString().ToLower())
+            .AddQuery("sort_dir", request.SortDir.ToString().ToLower()).AddQuery("appid", request.AppId);
         if (request.Category730Types.Count > 0 || request.Category730Weapons.Count > 0)
         {
             getRequest.AddQuery("category_730_ItemSet[]", "any").AddQuery("category_730_ProPlayer[]", "any");
@@ -339,20 +339,20 @@ public static class Ajax
         { }
         return new();
     }
-    public static MarketSearchResponse market_search_render(ISessionProvider session, System.Net.IWebProxy proxy, MarketSearchRequest request, CancellationToken? cts = null)
+    public static MarketSearchResponse market_search_render(ISessionProvider? session, System.Net.IWebProxy? proxy, MarketSearchRequest request)
     {
         var getRequest = new GetRequest(SteamCommunityUrls.Market_Search_Render, proxy, session)
         {
             Session = session,
             Proxy = proxy,
             IsAjax = true,
-			CancellationToken = cts
-		};
+            CancellationToken = request.CancellationToken
+        };
         if (!request.Query.IsEmpty())
             getRequest.AddQuery("query", request.Query);
-        getRequest.AddQuery("start", request.Start).AddQuery("count", request.Count).AddQuery("search_descriptions", request.Search_Descriptions)
-            .AddQuery("norender", request.NoRender).AddQuery("sort_column", request.Sort_Column.ToString().ToLower())
-            .AddQuery("sort_dir", request.Sort_Dir.ToString().ToLower()).AddQuery("appid", request.AppId);
+        getRequest.AddQuery("start", request.Offset).AddQuery("count", request.Limit).AddQuery("search_descriptions", request.SearchDescriptions)
+            .AddQuery("norender", request.NoRender).AddQuery("sort_column", request.SortColumn.ToString().ToLower())
+            .AddQuery("sort_dir", request.SortDir.ToString().ToLower()).AddQuery("appid", request.AppId);
         if (request.Category730Types.Count > 0 || request.Category730Weapons.Count > 0)
         {
             getRequest.AddQuery("category_730_ItemSet[]", "any").AddQuery("category_730_ProPlayer[]", "any");
