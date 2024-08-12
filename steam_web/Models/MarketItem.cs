@@ -65,11 +65,12 @@ public sealed class MarketItem
 
     public ItemPriceHistory[] GetHistoryGraphByHours(int hours = 24)
     {
+        const long ticks_one_hour = 36000000000;
+
         if (hours == 0)
             return Array.Empty<ItemPriceHistory>();
 
         var list = new List<ItemPriceHistory>(HistoryGraph.Length);
-        var ticks_one_hour = 36000000000;
         var now_ticks = DateTime.Now.Ticks;
         var ticks_to_scan = (now_ticks - (ticks_one_hour * hours));
         for (int i = 0; i < HistoryGraph.Length; i++)
