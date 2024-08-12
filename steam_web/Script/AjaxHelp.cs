@@ -546,42 +546,4 @@ public static class AjaxHelp
             return new();
         }
     }
-
-    public static string GetOpCode(OP_CODES op) => op switch
-    {
-        OP_CODES.GetSMSCode => "get_sms_code",
-        OP_CODES.GetPhoneNumber => "get_phone_number",
-        OP_CODES.RetryEmailVerification => "retry_email_verification",
-        OP_CODES.ReSendSMS => "resend_sms",
-        _ => "email_verification",
-    };
-    public static int GetMethod(TypeMethod method) => method switch
-    {
-        TypeMethod.Mobile => 8,
-        TypeMethod.Email => 2,
-        _ => -1
-    };
-    public static int GetReset(TypeReset reset) => reset switch
-    {
-        TypeReset.Email => 2,
-        TypeReset.Password => 1,
-        TypeReset.Phone => 4,
-        TypeReset.KTEmail => 0,
-        TypeReset.KTGuard => 0,
-        TypeReset.KTPhone => 0,
-        TypeReset.KTPassword => 0,
-        _ => -1
-    };
-    public static int GetIssueID(TypeReset reset) => reset switch
-    {
-        TypeReset.Email => 409,
-        TypeReset.Password => 406,
-        TypeReset.Phone => 403,
-        TypeReset.KTEmail => 0,
-        TypeReset.KTGuard => 0,
-        TypeReset.KTPhone => 0,
-        TypeReset.KTPassword => 0,
-        _ => -1
-    };
-    public static byte GetLost(TypeLost lost) => (byte)lost;
 }
