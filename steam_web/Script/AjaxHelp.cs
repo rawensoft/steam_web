@@ -29,12 +29,13 @@ public static class AjaxHelp
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<AjaxValidPhone>(response.Data);
+            var obj = JsonSerializer.Deserialize<AjaxValidPhone>(response.Data!)!;
             return obj;
         }
-        catch (Exception ex)
-        { }
-        return new();
+        catch (Exception)
+        {
+            return new();
+        }
     }
 
     /// <summary>
@@ -61,12 +62,13 @@ public static class AjaxHelp
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<AjaxOp>(response.Data.Replace("\"state\":false", "\"state\":\"false\""));
+            var obj = JsonSerializer.Deserialize<AjaxOp>(response.Data!.Replace("\"state\":false", "\"state\":\"false\""))!;
             return obj;
         }
-        catch (Exception ex)
-        { }
-        return new();
+        catch (Exception)
+        {
+            return new();
+        }
     }
 
 	/// <summary>
@@ -91,12 +93,13 @@ public static class AjaxHelp
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<AjaxDefault>(response.Data);
+            var obj = JsonSerializer.Deserialize<AjaxDefault>(response.Data!)!;
             return obj;
         }
-        catch (Exception ex)
-        { }
-        return new();
+        catch (Exception)
+        {
+            return new();
+        }
     }
 
 	/// <summary>
@@ -124,12 +127,13 @@ public static class AjaxHelp
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<AjaxPollRecoveryConf>(response.Data);
+            var obj = JsonSerializer.Deserialize<AjaxPollRecoveryConf>(response.Data!)!;
             return obj;
         }
-        catch (Exception ex)
-        { }
-        return new();
+        catch (Exception)
+        {
+            return new();
+        }
     }
 
 	/// <summary>
@@ -156,12 +160,13 @@ public static class AjaxHelp
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<AjaxNext>(response.Data);
+            var obj = JsonSerializer.Deserialize<AjaxNext>(response.Data!)!;
             return obj;
         }
-        catch (Exception ex)
-        { }
-        return new();
+        catch (Exception)
+        {
+            return new();
+        }
     }
 
 	/// <summary>
@@ -186,12 +191,13 @@ public static class AjaxHelp
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<AjaxEmailConfirm>(response.Data);
+            var obj = JsonSerializer.Deserialize<AjaxEmailConfirm>(response.Data!)!;
             return obj;
         }
-        catch (Exception ex)
-        { }
-        return new();
+        catch (Exception)
+        {
+            return new();
+        }
     }
 
 	/// <summary>
@@ -216,13 +222,14 @@ public static class AjaxHelp
 			return new();
 		try
 		{
-			var obj = JsonSerializer.Deserialize<AjaxEmailConfirm>(response.Data!);
-			return obj!;
-		}
-		catch (Exception ex)
-		{ }
-		return new();
-	}
+			var obj = JsonSerializer.Deserialize<AjaxEmailConfirm>(response.Data!)!;
+			return obj;
+        }
+        catch (Exception)
+        {
+            return new();
+        }
+    }
 
 	/// <summary>
 	/// Подтверждение смены почты
@@ -248,12 +255,13 @@ public static class AjaxHelp
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<AjaxNext>(response.Data);
+            var obj = JsonSerializer.Deserialize<AjaxNext>(response.Data!)!;
             return obj;
         }
-        catch (Exception ex)
-        { }
-        return new();
+        catch (Exception)
+        {
+            return new();
+        }
     }
 
 	/// <summary>
@@ -280,13 +288,14 @@ public static class AjaxHelp
 			return new();
 		try
 		{
-			var obj = JsonSerializer.Deserialize<AjaxNext>(response.Data!);
-			return obj!;
-		}
-		catch (Exception ex)
-		{ }
-		return new();
-	}
+			var obj = JsonSerializer.Deserialize<AjaxNext>(response.Data!)!;
+			return obj;
+        }
+        catch (Exception)
+        {
+            return new();
+        }
+    }
 
 	/// <summary>
 	/// Проверка пароля
@@ -309,12 +318,13 @@ public static class AjaxHelp
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<AjaxPasswordAvailable>(response.Data);
+            var obj = JsonSerializer.Deserialize<AjaxPasswordAvailable>(response.Data!)!;
             return obj;
         }
-        catch (Exception ex)
-        { }
-        return new();
+        catch (Exception)
+        {
+            return new();
+        }
     }
 
     public static async Task<AjaxNext> AjaxAccountRecoveryResetPhoneNumberAsync(AjaxInfoRequest ajaxRequest)
@@ -333,12 +343,13 @@ public static class AjaxHelp
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<AjaxNext>(response.Data);
+            var obj = JsonSerializer.Deserialize<AjaxNext>(response.Data!)!;
             return obj;
         }
-        catch (Exception ex)
-        { }
-        return new();
+        catch (Exception)
+        {
+            return new();
+        }
     }
 
     public static async Task<AjaxNextStep> AjaxAccountRecoveryGetNextStepAsync(AjaxInfoRequest ajaxRequest)
@@ -359,12 +370,13 @@ public static class AjaxHelp
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<AjaxNextStep>(response.Data);
+            var obj = JsonSerializer.Deserialize<AjaxNextStep>(response.Data!)!;
             return obj;
         }
-        catch (Exception ex)
-        { }
-        return new();
+        catch (Exception)
+        {
+            return new();
+        }
     }
     
     /// <summary>
@@ -394,12 +406,13 @@ public static class AjaxHelp
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<SteamRSA>(response.Data);
+            var obj = JsonSerializer.Deserialize<SteamRSA>(response.Data!)!;
             return obj;
         }
-        catch (Exception ex)
-        { }
-        return new();
+        catch (Exception)
+        {
+            return new();
+        }
     }
 
     public static async Task<AjaxNext> AjaxAccountRecoveryChangePasswordAsync(AjaxWizardRequest ajaxRequest, string account, string password, SteamRSA rsa)
@@ -421,12 +434,13 @@ public static class AjaxHelp
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<AjaxNext>(response.Data);
+            var obj = JsonSerializer.Deserialize<AjaxNext>(response.Data!)!;
             return obj;
         }
-        catch (Exception ex)
-        { }
-        return new();
+        catch (Exception)
+        {
+            return new();
+        }
     }
     
     public static async Task<AjaxLicense> AjaxRegisterKey(AjaxDefaultRequest ajaxRequest, string product_key)
@@ -445,12 +459,13 @@ public static class AjaxHelp
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<AjaxLicense>(response.Data);
+            var obj = JsonSerializer.Deserialize<AjaxLicense>(response.Data!)!;
             return obj;
         }
-        catch (Exception ex)
-        { }
-        return new();
+        catch (Exception)
+        {
+            return new();
+        }
     }
 
     public static async Task<PhoneAjax> PhoneAjaxAsync(AjaxDefaultRequest ajaxRequest)
@@ -468,12 +483,13 @@ public static class AjaxHelp
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<PhoneAjax>(response.Data);
+            var obj = JsonSerializer.Deserialize<PhoneAjax>(response.Data!)!;
             return obj;
         }
-        catch (Exception ex)
-        { }
-        return new();
+        catch (Exception)
+        {
+            return new();
+        }
     }
     public static PhoneAjax PhoneAjax(AjaxDefaultRequest ajaxRequest)
     {
@@ -490,12 +506,13 @@ public static class AjaxHelp
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<PhoneAjax>(response.Data);
+            var obj = JsonSerializer.Deserialize<PhoneAjax>(response.Data!)!;
             return obj;
         }
-        catch (Exception ex)
-        { }
-        return new();
+        catch (Exception)
+        {
+            return new();
+        }
     }
 
 	/// <summary>
@@ -521,12 +538,13 @@ public static class AjaxHelp
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<AjaxNext>(response.Data);
+            var obj = JsonSerializer.Deserialize<AjaxNext>(response.Data!)!;
             return obj;
         }
-        catch (Exception ex)
-        { }
-        return new();
+        catch (Exception)
+        {
+            return new();
+        }
     }
 
     public static string GetOpCode(OP_CODES op) => op switch

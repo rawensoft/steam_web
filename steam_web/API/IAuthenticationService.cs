@@ -33,7 +33,8 @@ public static class IAuthenticationService
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return default;
-        var sessionInfo = JsonSerializer.Deserialize<Response<AuthSessionForAccount>>(response.Data);
+
+        var sessionInfo = JsonSerializer.Deserialize<Response<AuthSessionForAccount>>(response.Data!)!;
         sessionInfo.success = true;
         return sessionInfo;
     }
@@ -62,7 +63,8 @@ public static class IAuthenticationService
         var response = Downloader.Get(request);
         if (!response.Success)
             return default;
-        var sessionInfo = JsonSerializer.Deserialize<Response<AuthSessionForAccount>>(response.Data);
+
+        var sessionInfo = JsonSerializer.Deserialize<Response<AuthSessionForAccount>>(response.Data!)!;
         sessionInfo.success = true;
         return sessionInfo;
     }
@@ -106,8 +108,9 @@ public static class IAuthenticationService
         var token = Serializer.Deserialize<UpdateTokenResponse>(response.Stream);
         if (token.access_token == null)
             return (response.EResult, token);
-        response.Stream.Close();
-        response.Stream.Dispose();
+
+        response.Stream?.Close();
+        response.Stream?.Dispose();
         return (response.EResult, token);
     }
     /// <summary>
@@ -148,8 +151,9 @@ public static class IAuthenticationService
         var token = Serializer.Deserialize<UpdateTokenResponse>(response.Stream);
         if (token.access_token == null)
             return (response.EResult, token);
-        response.Stream.Close();
-        response.Stream.Dispose();
+
+        response.Stream?.Close();
+        response.Stream?.Dispose();
         return (response.EResult, token);
     }
 }

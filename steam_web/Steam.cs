@@ -972,8 +972,8 @@ public static partial class Steam
         if (!response.Success) return new() { errmsg = "Не удалось отправить запрос" };
         try
         {
-            var obj = JsonSerializer.Deserialize<InvormationProfileResponse>(response.Data!);
-            return obj!;
+            var obj = JsonSerializer.Deserialize<InvormationProfileResponse>(response.Data!)!;
+            return obj;
         }
         catch (Exception)
         {
@@ -1000,8 +1000,8 @@ public static partial class Steam
             return new() { success = false, message = response.Data! };
         try
         {
-            var obj = JsonSerializer.Deserialize<UploadImageResponse>(response.Data!);
-            return obj!;
+            var obj = JsonSerializer.Deserialize<UploadImageResponse>(response.Data!)!;
+            return obj;
         }
         catch (Exception)
         {
@@ -1100,7 +1100,7 @@ public static partial class Steam
         else if (response.Data == "<!DOCTYPE html>")
             return new("Бан на запросы");
         HtmlParser html = new HtmlParser();
-        var parser = await html.ParseDocumentAsync(response.Data);
+        var parser = await html.ParseDocumentAsync(response.Data!);
         var personaldata_container = parser.GetElementById("personaldata_elements_container");
         if (personaldata_container == null)
         {
@@ -1235,7 +1235,7 @@ public static partial class Steam
         else if (response.Data == "<!DOCTYPE html>")
             return new("Бан на запросы");
         HtmlParser html = new HtmlParser();
-        var parser = await html.ParseDocumentAsync(response.Data);
+        var parser = await html.ParseDocumentAsync(response.Data!);
         var personaldata_container = parser.GetElementById("personaldata_elements_container");
         if (personaldata_container == null)
         {

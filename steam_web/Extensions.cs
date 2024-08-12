@@ -316,7 +316,7 @@ public static class ExtensionMethods
             return false;
 		else
 		{
-			session.AccessToken = new_token_response.Item2.access_token;
+			session.AccessToken = new_token_response.Item2!.access_token;
             return true;
 		}
 	}

@@ -94,8 +94,10 @@ public sealed class MarketItem
         {
             item.RequiresBillingInfo = html.Contains("g_bRequiresBillingInfo = true;");
         }
-        catch (Exception ex) { }
-        item.item_nameid = html.GetBetween("Market_LoadOrderSpread(", ");")?.Replace(" ", "");
+        catch (Exception) { }
+        var item_id = html.GetBetween("Market_LoadOrderSpread(", ");");
+        if (!item_id.IsEmpty())
+		    item.item_nameid = item_id!.Replace(" ", string.Empty);
         item.Language = html.GetBetween("g_strLanguage = \"", "\";");
         item.SessionID = html.GetBetween("g_sessionID = \"", "\";");
         item.SteamID = html.GetBetween("g_steamID = \"", "\";");
@@ -107,9 +109,9 @@ public sealed class MarketItem
         {
             string raw = html.GetBetween("var g_rgWalletInfo = ", ";");
             if (raw != null)
-                item.WalletInfo = JsonSerializer.Deserialize<WalletInfo>(raw, options);
+                item.WalletInfo = JsonSerializer.Deserialize<WalletInfo>(raw, options)!;
         }
-        catch (Exception ex) { }
+        catch (Exception) { }
 
         HtmlParser parser = new HtmlParser();
         var doc = parser.ParseDocument(html);
@@ -122,10 +124,10 @@ public sealed class MarketItem
 
         try
         {
-            var list = JsonSerializer.Deserialize<JsonElement[][]>(html.GetBetween("var line1=", ";"));
+            var list = JsonSerializer.Deserialize<JsonElement[][]>(html.GetBetween("var line1=", ";")!, options)!;
             item.HistoryGraph = PriceHistory.SortPriceHistory(list);
         }
-        catch (Exception ex) { }
+        catch (Exception) { }
         return item;
     }
 }

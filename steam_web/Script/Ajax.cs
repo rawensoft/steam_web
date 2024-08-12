@@ -332,12 +332,13 @@ public static class Ajax
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<MarketSearchResponse>(response.Data);
+            var obj = JsonSerializer.Deserialize<MarketSearchResponse>(response.Data!)!;
             return obj;
         }
         catch (Exception)
-        { }
-        return new();
+        {
+            return new(); 
+        }
     }
     public static MarketSearchResponse market_search_render(ISessionProvider? session, System.Net.IWebProxy? proxy, MarketSearchRequest request)
     {
@@ -371,12 +372,13 @@ public static class Ajax
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<MarketSearchResponse>(response.Data);
+            var obj = JsonSerializer.Deserialize<MarketSearchResponse>(response.Data!)!;
             return obj;
         }
         catch (Exception)
-        { }
-        return new();
+        {
+            return new();
+        }
     }
 
     public static async Task<Data<WebApiToken>> pointssummary_ajaxgetasyncconfig_async(ISessionProvider session, System.Net.IWebProxy proxy, CancellationToken? cts = null)
