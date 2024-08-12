@@ -384,20 +384,23 @@ public static class Downloader
         request.AddHeader(RestSharp.KnownHeaders.Accept, "image/webp,image/apng,image/*,*/*;q=0.8");
         request.AddHeader(KnownHeaders.Referer, "https://store.steampowered.com/join/");
 		var response = await (cts == null ? client.ExecuteAsync(request) : client.ExecuteAsync(request, cts.Value));
-		string new_cookie = response.Cookies.Count > 0 ? "" : null;
-        for (int i = 0; i < response.Cookies.Count; i++)
+        var sb = new StringBuilder(11);
+        for (int i = 0; i < response.Cookies?.Count; i++)
         {
             var item = response.Cookies[i];
-            new_cookie += $"{item.Name}={item.Value}; ";
+            sb.Append(item.Name);
+            sb.Append('=');
+            sb.Append(item.Value);
+            sb.Append("; ");
         }
         if (!response.IsSuccessful)
         {
             if (response.Content?.Length > 0)
-                return (false, Encoding.UTF8.GetBytes(response.Content), new_cookie);
-            return (false, new byte[0], new_cookie);
+                return (false, Encoding.UTF8.GetBytes(response.Content), sb.ToString());
+            return (false, Array.Empty<byte>(), sb.ToString());
         }
         client.Dispose();
-        return (true, response.RawBytes, new_cookie);
+        return (true, response.RawBytes ?? Array.Empty<byte>(), sb.ToString());
     }
     public static (bool, byte[], string) GetCaptcha(string captchagid, IWebProxy? proxy = null, ISessionProvider? session = null, CancellationToken? cts = null)
     {
@@ -419,20 +422,23 @@ public static class Downloader
         request.AddHeader(RestSharp.KnownHeaders.Accept, "image/webp,image/apng,image/*,*/*;q=0.8");
         request.AddHeader(KnownHeaders.Referer, "https://store.steampowered.com/join/");
 		var response = cts == null ? client.Execute(request) : client.Execute(request, cts.Value);
-		string new_cookie = response.Cookies.Count > 0 ? "" : null;
-        for (int i = 0; i < response.Cookies.Count; i++)
+        var sb = new StringBuilder(11);
+        for (int i = 0; i < response.Cookies?.Count; i++)
         {
             var item = response.Cookies[i];
-            new_cookie += $"{item.Name}={item.Value}; ";
+            sb.Append(item.Name);
+            sb.Append('=');
+            sb.Append(item.Value);
+            sb.Append("; ");
         }
         if (!response.IsSuccessful)
         {
             if (response.Content?.Length > 0)
-                return (false, Encoding.UTF8.GetBytes(response.Content), new_cookie);
-            return (false, new byte[0], new_cookie);
+                return (false, Encoding.UTF8.GetBytes(response.Content), sb.ToString());
+            return (false, Array.Empty<byte>(), sb.ToString());
         }
         client.Dispose();
-        return (true, response.RawBytes, new_cookie);
+        return (true, response.RawBytes ?? Array.Empty<byte>(), sb.ToString());
     }
 
     public static async Task<MemoryResponse> GetProtobufAsync(ProtobufRequest request)
