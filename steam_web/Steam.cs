@@ -24,7 +24,7 @@ public static partial class Steam
     /// Значение которое отнимается или прибавляется к steamid64\steamid32
     /// </summary>
     public const ulong SteamIDConverter = 76561197960265728;
-    private static Regex rgxTradeurl1 = new(@"https://steamcommunity\.com/tradeoffer/new/\?partner=\d{1,12}&token=\S{4,10}", RegexOptions.Compiled);
+    private static Regex _rgxTradeurl1 = new(@"^https://steamcommunity.com/tradeoffer/new/[?]partner=(\d{1,12})&token=(\S{4,10})$", RegexOptions.Compiled | RegexOptions.Singleline, TimeSpan.FromSeconds(1));
     
     public static async Task<bool> SwitchToMailCodeAsync(AjaxDefaultRequest ajaxRequest, SteamGuardAccuntv2? SDA)
     {
@@ -1438,15 +1438,23 @@ public static partial class Steam
     /// <returns>true если трейд ссылка разбита</returns>
     public static (bool, uint, string?) SplitTradeURL(string tradeUrl)
     {
-        if (!tradeUrl.IsEmpty() && rgxTradeurl1.IsMatch(tradeUrl))
+        if (tradeUrl.IsEmpty())
+            return (false, 0, null);
+        try
         {
-            var query = tradeUrl.Split('?')[1];
-            var @params = query.Split('&');
-            var partner = @params[0].Split('=')[1].ParseUInt32();
-            var token = @params[1].Split('=')[1];
-            return (true, partner, token);
+            var match = _rgxTradeurl1.Match(tradeUrl);
+            if (match.Success)
+            {
+                var partner = match.Groups[1].Value.ParseUInt32();
+                var token = match.Groups[2].Value;
+                return (true, partner, token);
+            }
+            return (false, 0, null);
         }
-        return (false, 0, null);
+        catch (RegexMatchTimeoutException)
+        {
+            return (false, 0, null);
+        }
     }
 
     /// <summary>
