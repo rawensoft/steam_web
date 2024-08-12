@@ -44,7 +44,7 @@ public class SteamGuardAccount
     /// </summary>
     [JsonIgnore] public ulong LastClientId { get; private set; } = 0;
 	
-    public CTwoFactor_RemoveAuthenticator_Response RemoveAuthenticator(bool remove_all_steamguard_cookies)
+    public CTwoFactor_RemoveAuthenticator_Response RemoveAuthenticator(bool remove_all_steamguard_cookies, CancellationToken? token = null)
     {
         if (Session == null)
             return new();
@@ -60,7 +60,8 @@ public class SteamGuardAccount
         {
             AccessToken = Session.AccessToken,
             Proxy = Proxy,
-            UserAgent = KnownUserAgents.OkHttp
+            UserAgent = KnownUserAgents.OkHttp,
+            CancellationToken = token,
 		};
         using var response = Downloader.PostProtobuf(request);
         if (!response.Success || response.EResult != EResult.OK)
@@ -68,7 +69,7 @@ public class SteamGuardAccount
 		var obj = Serializer.Deserialize<CTwoFactor_RemoveAuthenticator_Response>(response.Stream);
         return obj;
 	}
-	public async Task<CTwoFactor_RemoveAuthenticator_Response> RemoveAuthenticatorAsync(bool remove_all_steamguard_cookies)
+	public async Task<CTwoFactor_RemoveAuthenticator_Response> RemoveAuthenticatorAsync(bool remove_all_steamguard_cookies, CancellationToken? token = null)
 	{
 		if (Session == null)
 			return new();
@@ -84,8 +85,9 @@ public class SteamGuardAccount
 		{
 			AccessToken = Session.AccessToken,
 			Proxy = Proxy,
-			UserAgent = KnownUserAgents.OkHttp
-		};
+			UserAgent = KnownUserAgents.OkHttp,
+            CancellationToken = token,
+        };
 		using var response = await Downloader.PostProtobufAsync(request);
 		if (!response.Success || response.EResult != EResult.OK)
 			return new();
@@ -146,7 +148,7 @@ public class SteamGuardAccount
     /// <code>WGTokenExpired</code>
     /// <code>Error</code>
     /// </returns>
-    public bool RefreshSession()
+    public bool RefreshSession(CancellationToken? token = null)
 	{
 		if (Session == null || Session.AccessToken.IsEmpty())
 			return false;
@@ -160,15 +162,16 @@ public class SteamGuardAccount
         {
             AccessToken = Session.AccessToken,
             Proxy = Proxy,
-            UserAgent = KnownUserAgents.OkHttp
-		};
+            UserAgent = KnownUserAgents.OkHttp,
+            CancellationToken = token,
+        };
         using var response = Downloader.PostProtobuf(request);
         if (!response.Success || response.EResult != EResult.OK)
             return false;
-        var token = Serializer.Deserialize<UpdateTokenResponse>(response.Stream);
-        if (token.access_token == null)
+        var obj = Serializer.Deserialize<UpdateTokenResponse>(response.Stream);
+        if (obj.access_token == null)
             return false;
-        Session.AccessToken = token.access_token;
+        Session.AccessToken = obj.access_token;
         return true;
     }
     /// <summary>
@@ -180,7 +183,7 @@ public class SteamGuardAccount
     /// <code>WGTokenExpired</code>
     /// <code>Error</code>
     /// </returns>
-    public async Task<bool> RefreshSessionAsync()
+    public async Task<bool> RefreshSessionAsync(CancellationToken? token = null)
 	{
 		if (Session == null || Session.AccessToken.IsEmpty())
 			return false;
@@ -194,18 +197,19 @@ public class SteamGuardAccount
         {
             AccessToken = Session.AccessToken,
             Proxy = Proxy,
-            UserAgent = KnownUserAgents.OkHttp
-		};
+            UserAgent = KnownUserAgents.OkHttp,
+            CancellationToken = token,
+        };
         using var response = await Downloader.PostProtobufAsync(request);
         if (!response.Success || response.EResult != EResult.OK)
             return false;
-        var token = Serializer.Deserialize<UpdateTokenResponse>(response.Stream);
-        if (token.access_token == null)
+        var obj = Serializer.Deserialize<UpdateTokenResponse>(response.Stream);
+        if (obj.access_token == null)
             return false;
-        Session.AccessToken = token.access_token;
+        Session.AccessToken = obj.access_token;
         return true;
     }
-    public bool CheckSession()
+    public bool CheckSession(CancellationToken? token = null)
     {
         if (Session == null || Session.AccessToken.IsEmpty())
             return false;
@@ -215,7 +219,8 @@ public class SteamGuardAccount
             AccessToken = Session.AccessToken,
             Proxy = Proxy,
             Session = Session,
-            IsMobile = true
+            IsMobile = true,
+            CancellationToken = token,
         };
         using var response = Downloader.GetProtobuf(request);
         if (!response.Success)
@@ -227,7 +232,7 @@ public class SteamGuardAccount
 		}
 		return response.EResult == EResult.OK;
     }
-    public async Task<bool> CheckSessionAsync()
+    public async Task<bool> CheckSessionAsync(CancellationToken? token = null)
 	{
 		if (Session == null || Session.AccessToken.IsEmpty())
 			return false;
@@ -237,8 +242,9 @@ public class SteamGuardAccount
 			AccessToken = Session.AccessToken,
 			Proxy = Proxy,
 			Session = Session,
-			IsMobile = true
-		};
+			IsMobile = true,
+            CancellationToken = token,
+        };
 		using var response = await Downloader.GetProtobufAsync(request);
 		if (!response.Success)
             return false;
@@ -255,7 +261,7 @@ public class SteamGuardAccount
     /// </summary>
     /// <param name="request">Какую информацию получить</param>
     /// <returns>Null при ошибке</returns>
-    public CUserAccount_GetWalletDetails_Response? WalletDetails(CUserAccount_GetClientWalletDetails_Request requestDetails)
+    public CUserAccount_GetWalletDetails_Response? WalletDetails(CUserAccount_GetClientWalletDetails_Request requestDetails, CancellationToken? token = null)
     {
         if (Session == null)
             return null;
@@ -266,7 +272,8 @@ public class SteamGuardAccount
             UserAgent = KnownUserAgents.OkHttp,
             Proxy = Proxy,
             Session = Session,
-            AccessToken = Session.AccessToken
+            AccessToken = Session.AccessToken,
+            CancellationToken = token,
         };
         using var response = Downloader.PostProtobuf(request);
         if (response.EResult != EResult.OK)
@@ -279,7 +286,7 @@ public class SteamGuardAccount
     /// </summary>
     /// <param name="request">Какую информацию получить</param>
     /// <returns>Null при ошибке</returns>
-    public async Task<CUserAccount_GetWalletDetails_Response?> WalletDetailsAsync(CUserAccount_GetClientWalletDetails_Request requestDetails)
+    public async Task<CUserAccount_GetWalletDetails_Response?> WalletDetailsAsync(CUserAccount_GetClientWalletDetails_Request requestDetails, CancellationToken? token = null)
     {
         if (Session == null)
             return null;
@@ -290,7 +297,8 @@ public class SteamGuardAccount
             UserAgent = KnownUserAgents.OkHttp,
             Proxy = Proxy,
             Session = Session,
-            AccessToken = Session.AccessToken
+            AccessToken = Session.AccessToken,
+            CancellationToken = token,
         };
         using var response = await Downloader.PostProtobufAsync(request);
         if (response.EResult != EResult.OK)
@@ -299,7 +307,7 @@ public class SteamGuardAccount
 		return wallet;
 	}
     
-    public ConfirmationsResponse FetchConfirmations()
+    public ConfirmationsResponse FetchConfirmations(CancellationToken? token = null)
     {
 		if (Session == null)
 			return new() { message = "Нет сессии" };
@@ -308,8 +316,9 @@ public class SteamGuardAccount
 		var request = new GetRequest(SteamCommunityUrls.MobileConf_GetList, Proxy, Session)
 		{
 			UseVersion2 = true,
-			UserAgent = KnownUserAgents.SteamMobileBrowser
-		}.AddQuery("p", DeviceID).AddQuery("a", Session.SteamID)
+			UserAgent = KnownUserAgents.SteamMobileBrowser,
+            CancellationToken = token,
+        }.AddQuery("p", DeviceID).AddQuery("a", Session.SteamID)
 		.AddQuery("k", _generateConfirmationHashForTime(time, tag)!).AddQuery("t", time).AddQuery("m", "react").AddQuery("tag", tag);
 
 		var response = Downloader.Get(request);
@@ -329,7 +338,7 @@ public class SteamGuardAccount
 			return new() { message = e.Message + "|" + response.Data };
 		}
 	}
-    public async Task<ConfirmationsResponse> FetchConfirmationsAsync()
+    public async Task<ConfirmationsResponse> FetchConfirmationsAsync(CancellationToken? token = null)
     {
         if (Session == null)
 			return new() { message = "Нет сессии" };
@@ -338,8 +347,9 @@ public class SteamGuardAccount
         var request = new GetRequest(SteamCommunityUrls.MobileConf_GetList, Proxy, Session)
         {
             UseVersion2 = true,
-            UserAgent = KnownUserAgents.SteamMobileBrowser
-		}.AddQuery("p", DeviceID).AddQuery("a", Session.SteamID)
+            UserAgent = KnownUserAgents.SteamMobileBrowser,
+            CancellationToken = token,
+        }.AddQuery("p", DeviceID).AddQuery("a", Session.SteamID)
         .AddQuery("k", _generateConfirmationHashForTime(time, tag)!).AddQuery("t", time).AddQuery("m", "react").AddQuery("tag", tag);
 
         var response = await Downloader.GetAsync(request);
@@ -360,7 +370,7 @@ public class SteamGuardAccount
         }
     }
 
-    public (ACCEPT_STATUS, string?) AcceptConfirmation(Confirmation conf, bool withCredentials)
+    public (ACCEPT_STATUS, string?) AcceptConfirmation(Confirmation conf, bool withCredentials, CancellationToken? token = null)
     {
         if (Session == null)
             return (ACCEPT_STATUS.BadSession, "Нет сессии");
@@ -371,8 +381,9 @@ public class SteamGuardAccount
         {
             UseVersion2 = true,
             Timeout = 90000,
-            UserAgent = KnownUserAgents.OkHttp
-		};
+            UserAgent = KnownUserAgents.OkHttp,
+            CancellationToken = token,
+        };
         var response = Downloader.Post(request);
         if (response.LostAuth)
 			return (ACCEPT_STATUS.NeedAuth, "Нужно авторизоваться");
@@ -383,14 +394,20 @@ public class SteamGuardAccount
 			return (ACCEPT_STATUS.Success, null);
 		return (ACCEPT_STATUS.Error, response.Data);
     }
-    public (ACCEPT_STATUS, string?) CancelConfirmation(Confirmation conf, bool withCredentials)
+    public (ACCEPT_STATUS, string?) CancelConfirmation(Confirmation conf, bool withCredentials, CancellationToken? token = null)
     {
         if (Session == null)
 			return (ACCEPT_STATUS.BadSession, "Нет сессии");
 		string tag = "reject";
 		string url = APIEndpoints.COMMUNITY_BASE + "/mobileconf/ajaxop?op=allow&" + GenerateConfirmationQueryParams(tag) + "&cid=" + conf.id + "&ck=" + conf.nonce;
 		string content = withCredentials ? "{\"withCredentials\":true}" : "{\"withCredentials\":false}";
-        var request = new PostRequest(url, content, Downloader.AppJson, Proxy!, Session, null!, KnownUserAgents.OkHttp) { UseVersion2 = true };
+        var request = new PostRequest(url, content, Downloader.AppJson, Proxy!, Session)
+        {
+            UseVersion2 = true,
+            Timeout = 90000,
+            UserAgent = KnownUserAgents.OkHttp,
+            CancellationToken = token,
+        };
         var response = Downloader.Post(request);
 		if (response.LostAuth)
 			return (ACCEPT_STATUS.NeedAuth, "Нужно авторизоваться");
@@ -401,7 +418,7 @@ public class SteamGuardAccount
 			return (ACCEPT_STATUS.Success, null);
 		return (ACCEPT_STATUS.Error, response.Data);
 	}
-    public bool AcceptMultiConfirmations(Confirmation[] confs)
+    public bool AcceptMultiConfirmations(Confirmation[] confs, CancellationToken? token = null)
     {
         if (Session == null)
             return false;
@@ -419,10 +436,12 @@ public class SteamGuardAccount
             sb.Append("&ck[]=");
             sb.Append(conf.nonce);
         }
-        var request = new PostRequest(url, sb.ToString(), Downloader.AppFormUrlEncoded, Proxy!, Session, null!, KnownUserAgents.OkHttp)
+        var request = new PostRequest(url, sb.ToString(), Downloader.AppFormUrlEncoded, Proxy!, Session)
         {
             UseVersion2 = true,
-            Timeout = 90000
+            Timeout = 90000,
+            CancellationToken = token,
+            UserAgent = KnownUserAgents.OkHttp,
         };
         var response = Downloader.Post(request);
         if (response.LostAuth)
@@ -432,7 +451,7 @@ public class SteamGuardAccount
         var confResponse = JsonSerializer.Deserialize<SendConfirmationResponse>(response.Data!);
         return confResponse!.Success;
     }
-    public bool CancelMultiConfirmations(Confirmation[] confs)
+    public bool CancelMultiConfirmations(Confirmation[] confs, CancellationToken? token = null)
     {
         if (Session == null)
             return false;
@@ -450,7 +469,13 @@ public class SteamGuardAccount
             sb.Append("&ck[]=");
             sb.Append(conf.nonce);
         }
-        var request = new PostRequest(url, sb.ToString(), Downloader.AppFormUrlEncoded, Proxy!, Session, null!, KnownUserAgents.OkHttp) { UseVersion2 = true };
+        var request = new PostRequest(url, sb.ToString(), Downloader.AppFormUrlEncoded, Proxy!, Session)
+        {
+            UseVersion2 = true,
+            Timeout = 90000,
+            CancellationToken = token,
+            UserAgent = KnownUserAgents.OkHttp,
+        };
         var response = Downloader.Post(request);
         if (response.LostAuth)
             return false;
@@ -461,14 +486,19 @@ public class SteamGuardAccount
     }
 
 
-    public async Task<(ACCEPT_STATUS, string?)> AcceptConfirmationAsync(Confirmation conf, bool withCredentials)
+    public async Task<(ACCEPT_STATUS, string?)> AcceptConfirmationAsync(Confirmation conf, bool withCredentials, CancellationToken? token = null)
     {
         if (Session == null)
 			return (ACCEPT_STATUS.BadSession, "Нет сессии");
 		string tag = "accept";
         string url = $"{APIEndpoints.COMMUNITY_BASE}/mobileconf/ajaxop?op=allow&{GenerateConfirmationQueryParams(tag)}&cid={conf.id}&ck={conf.nonce}";
         string content = withCredentials ? "{\"withCredentials\":true}" : "{\"withCredentials\":false}";
-        var request = new PostRequest(url, content, Downloader.AppJson, Proxy, Session, null, KnownUserAgents.OkHttp) { UseVersion2 = true };
+        var request = new PostRequest(url, content, Downloader.AppJson, Proxy, Session)
+        {
+            UseVersion2 = true,
+            CancellationToken = token,
+            UserAgent = KnownUserAgents.OkHttp,
+        };
         var response = await Downloader.PostAsync(request);
         if (response.LostAuth)
 			return (ACCEPT_STATUS.NeedAuth, "Нужно авторизоваться");
@@ -479,14 +509,19 @@ public class SteamGuardAccount
 			return (ACCEPT_STATUS.Success, null);
 		return (ACCEPT_STATUS.Error, response.Data);
 	}
-    public async Task<(ACCEPT_STATUS, string?)> CancelConfirmationAsync(Confirmation conf, bool withCredentials)
+    public async Task<(ACCEPT_STATUS, string?)> CancelConfirmationAsync(Confirmation conf, bool withCredentials, CancellationToken? token = null)
     {
         if (Session == null)
 		    return (ACCEPT_STATUS.BadSession, "Нет сессии");
 		string tag = "reject";
         string url = $"{APIEndpoints.COMMUNITY_BASE}/mobileconf/ajaxop?op=allow&{GenerateConfirmationQueryParams(tag)}&cid={conf.id}&ck={conf.nonce}";
         string content = withCredentials ? "{\"withCredentials\":true}" : "{\"withCredentials\":false}";
-        var request = new PostRequest(url, content, Downloader.AppJson, Proxy, Session, null, KnownUserAgents.OkHttp) { UseVersion2 = true };
+        var request = new PostRequest(url, content, Downloader.AppJson, Proxy, Session)
+        {
+            UseVersion2 = true,
+            CancellationToken = token,
+            UserAgent = KnownUserAgents.OkHttp,
+        };
         var response = await Downloader.PostAsync(request);
         if (response.LostAuth)
 			return (ACCEPT_STATUS.NeedAuth, "Нужно авторизоваться");
@@ -497,7 +532,7 @@ public class SteamGuardAccount
 			return (ACCEPT_STATUS.Success, null);
 		return (ACCEPT_STATUS.Error, response.Data);
 	}
-    public async Task<bool> AcceptMultiConfirmationsAsync(Confirmation[] confs)
+    public async Task<bool> AcceptMultiConfirmationsAsync(Confirmation[] confs, CancellationToken? token = null)
     {
         if (Session == null)
             return false;
@@ -514,7 +549,12 @@ public class SteamGuardAccount
             sb.Append("&ck[]=");
             sb.Append(conf.nonce);
         }
-        var request = new PostRequest(url, sb.ToString(), Downloader.AppFormUrlEncoded, Proxy, Session, null, KnownUserAgents.OkHttp) { UseVersion2 = true };
+        var request = new PostRequest(url, sb.ToString(), Downloader.AppFormUrlEncoded, Proxy, Session)
+        {
+            UseVersion2 = true,
+            CancellationToken = token,
+            UserAgent = KnownUserAgents.OkHttp,
+        };
         var response = await Downloader.PostAsync(request);
         if (response.LostAuth)
             return false;
@@ -523,7 +563,7 @@ public class SteamGuardAccount
         var confResponse = JsonSerializer.Deserialize<SendConfirmationResponse>(response.Data!);
         return confResponse!.Success;
     }
-    public async Task<bool> CancelMultiConfirmationsAsync(Confirmation[] confs)
+    public async Task<bool> CancelMultiConfirmationsAsync(Confirmation[] confs, CancellationToken? token = null)
     {
         if (Session == null)
             return false;
@@ -540,7 +580,12 @@ public class SteamGuardAccount
             sb.Append("&ck[]=");
             sb.Append(conf.nonce);
         }
-        var request = new PostRequest(url, sb.ToString(), Downloader.AppFormUrlEncoded, Proxy, Session, null, KnownUserAgents.OkHttp) { UseVersion2 = true };
+        var request = new PostRequest(url, sb.ToString(), Downloader.AppFormUrlEncoded, Proxy, Session)
+        {
+            UseVersion2 = true,
+            CancellationToken = token,
+            UserAgent = KnownUserAgents.OkHttp,
+        };
         var response = await Downloader.PostAsync(request);
         if (response.LostAuth)
             return false;
@@ -550,7 +595,7 @@ public class SteamGuardAccount
         return confResponse!.Success;
     }
 
-    public CAuthentication_GetAuthSessionsForAccount_Response? GetAuthSessionsForAccount()
+    public CAuthentication_GetAuthSessionsForAccount_Response? GetAuthSessionsForAccount(CancellationToken? token = null)
     {
         if (Session == null)
             return null;
@@ -559,7 +604,8 @@ public class SteamGuardAccount
             UserAgent = KnownUserAgents.OkHttp,
             Proxy = Proxy,
             AccessToken = Session.AccessToken,
-            IsMobile = true
+            IsMobile = true,
+            CancellationToken = token,
         };
         using var response = Downloader.GetProtobuf(request);
         if (response.EResult != EResult.OK)
@@ -569,7 +615,7 @@ public class SteamGuardAccount
         var obj = Serializer.Deserialize<CAuthentication_GetAuthSessionsForAccount_Response>(response.Stream);
         return obj;
 	}
-	public async Task<CAuthentication_GetAuthSessionsForAccount_Response?> GetAuthSessionsForAccountAsync()
+	public async Task<CAuthentication_GetAuthSessionsForAccount_Response?> GetAuthSessionsForAccountAsync(CancellationToken? token = null)
 	{
 		if (Session == null)
 			return null;
@@ -578,8 +624,9 @@ public class SteamGuardAccount
 			UserAgent = KnownUserAgents.OkHttp,
 			Proxy = Proxy,
 			AccessToken = Session.AccessToken,
-			IsMobile = true
-		};
+			IsMobile = true,
+            CancellationToken = token,
+        };
 		using var response = await Downloader.GetProtobufAsync(request);
 		if (response.EResult != EResult.OK)
 			return null;
@@ -589,7 +636,7 @@ public class SteamGuardAccount
 		return obj;
 	}
 
-	public CAuthentication_GetAuthSessionInfo_Response? GetAuthSessionInfo(CAuthentication_GetAuthSessionInfo_Request requestDetails)
+	public CAuthentication_GetAuthSessionInfo_Response? GetAuthSessionInfo(CAuthentication_GetAuthSessionInfo_Request requestDetails, CancellationToken? token = null)
 	{
 		if (Session == null)
 			return null;
@@ -599,15 +646,16 @@ public class SteamGuardAccount
 		{
 			UserAgent = KnownUserAgents.OkHttp,
 			Proxy = Proxy,
-			AccessToken = Session.AccessToken
-		};
+			AccessToken = Session.AccessToken,
+            CancellationToken = token,
+        };
 		using var response = Downloader.PostProtobuf(request);
 		if (response.EResult != EResult.OK)
 			return null;
 		var obj = Serializer.Deserialize<CAuthentication_GetAuthSessionInfo_Response>(response.Stream);
 		return obj;
 	}
-	public async Task<CAuthentication_GetAuthSessionInfo_Response?> GetAuthSessionInfoAsync(CAuthentication_GetAuthSessionInfo_Request requestDetails)
+	public async Task<CAuthentication_GetAuthSessionInfo_Response?> GetAuthSessionInfoAsync(CAuthentication_GetAuthSessionInfo_Request requestDetails, CancellationToken? token = null)
 	{
 		if (Session == null)
 			return null;
@@ -617,8 +665,9 @@ public class SteamGuardAccount
 		{
 			UserAgent = KnownUserAgents.OkHttp,
 			Proxy = Proxy,
-			AccessToken = Session.AccessToken
-		};
+			AccessToken = Session.AccessToken,
+            CancellationToken = token,
+        };
 		using var response = await Downloader.PostProtobufAsync(request);
 		if (response.EResult != EResult.OK)
 			return null;
@@ -626,11 +675,11 @@ public class SteamGuardAccount
 		return obj;
 	}
 
-	public bool UpdateAuthSessionWithMobileConfirmation(CAuthentication_GetAuthSessionInfo_Request requestDetails, CAuthentication_GetAuthSessionInfo_Response responseDetails) =>
-        UpdateAuthSessionWithMobileConfirmation(requestDetails.client_id, (short) responseDetails.version, responseDetails.requested_persistence);
-	public async Task<bool> UpdateAuthSessionWithMobileConfirmationAsync(CAuthentication_GetAuthSessionInfo_Request requestDetails, CAuthentication_GetAuthSessionInfo_Response responseDetails) =>
-		await UpdateAuthSessionWithMobileConfirmationAsync(requestDetails.client_id, (short)responseDetails.version, responseDetails.requested_persistence);
-	public bool UpdateAuthSessionWithMobileConfirmation(ulong clientId, short version, ESessionPersistence requested_persistence)
+	public bool UpdateAuthSessionWithMobileConfirmation(CAuthentication_GetAuthSessionInfo_Request requestDetails, CAuthentication_GetAuthSessionInfo_Response responseDetails, CancellationToken? token = null) =>
+        UpdateAuthSessionWithMobileConfirmation(requestDetails.client_id, (short) responseDetails.version, responseDetails.requested_persistence, token);
+	public async Task<bool> UpdateAuthSessionWithMobileConfirmationAsync(CAuthentication_GetAuthSessionInfo_Request requestDetails, CAuthentication_GetAuthSessionInfo_Response responseDetails, CancellationToken? token = null) =>
+		await UpdateAuthSessionWithMobileConfirmationAsync(requestDetails.client_id, (short)responseDetails.version, responseDetails.requested_persistence, token);
+	public bool UpdateAuthSessionWithMobileConfirmation(ulong clientId, short version, ESessionPersistence requested_persistence, CancellationToken? token = null)
 	{
 		var requestDetails_1 = new CAuthentication_UpdateAuthSessionWithMobileConfirmation_Request
 		{
@@ -657,12 +706,13 @@ public class SteamGuardAccount
 			Proxy = Proxy,
 			AccessToken = Session!.AccessToken,
 			IsMobile = true,
-			Session = Session
-		};
+			Session = Session,
+            CancellationToken = token,
+        };
 		using var response = Downloader.PostProtobuf(request);
 		return response.EResult == EResult.OK;
 	}
-	public async Task<bool> UpdateAuthSessionWithMobileConfirmationAsync(ulong clientId, short version, ESessionPersistence requested_persistence)
+	public async Task<bool> UpdateAuthSessionWithMobileConfirmationAsync(ulong clientId, short version, ESessionPersistence requested_persistence, CancellationToken? token = null)
 	{
 		var requestDetails = new CAuthentication_UpdateAuthSessionWithMobileConfirmation_Request
 		{
@@ -689,8 +739,9 @@ public class SteamGuardAccount
 			Proxy = Proxy,
 			AccessToken = Session!.AccessToken,
 			IsMobile = true,
-			Session = Session
-		};
+			Session = Session,
+            CancellationToken = token,
+        };
 		using var response = await Downloader.PostProtobufAsync(request);
 		return response.EResult == EResult.OK;
 	}
