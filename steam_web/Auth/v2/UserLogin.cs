@@ -78,8 +78,8 @@ public class UserLogin
         Password = passwd;
         Platform = platform;
     }
-    public UserLogin(string login, string passwd, EAuthTokenPlatformType platform, IWebProxy proxy) : this(login, passwd, platform) => Proxy = proxy;
-	public UserLogin(string login, string passwd, EAuthTokenPlatformType platform, IWebProxy proxy, CancellationToken? cts) :
+    public UserLogin(string login, string passwd, EAuthTokenPlatformType platform, IWebProxy? proxy) : this(login, passwd, platform) => Proxy = proxy;
+	public UserLogin(string login, string passwd, EAuthTokenPlatformType platform, IWebProxy? proxy, CancellationToken? cts) :
         this(login, passwd, platform, proxy) => _cts = cts;
 	public UserLogin(string login, string passwd, EAuthTokenPlatformType platform, CancellationToken? cts) : this(login, passwd, platform) => _cts = cts;
 
@@ -295,7 +295,7 @@ public class UserLogin
         else _nextStep = NEXT_STEP.Poll;
         return true;
     }
-    public bool UpdateAuthSessionWithSteamGuardCode(string fa2Code)
+    public bool UpdateAuthSessionWithSteamGuardCode(string? fa2Code)
     {
         if (fa2Code.IsEmpty())
         {
@@ -580,7 +580,7 @@ public class UserLogin
 			_nextStep = NEXT_STEP.Poll;
 		return true;
 	}
-	public async Task<bool> UpdateAuthSessionWithSteamGuardCodeAsync(string fa2Code)
+	public async Task<bool> UpdateAuthSessionWithSteamGuardCodeAsync(string? fa2Code)
 	{
 		if (fa2Code.IsEmpty())
 		{

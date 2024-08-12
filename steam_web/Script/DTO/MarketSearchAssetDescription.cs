@@ -1,20 +1,20 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace SteamWeb.Script.DTO
+namespace SteamWeb.Script.DTO;
+public class MarketSearchAssetDescription
 {
-    public class MarketSearchAssetDescription
-    {
-        [JsonPropertyName("appid")] public uint appid { get; init; } = 0;
-        [JsonPropertyName("classid")] public string classid { get; init; } = null;
-        [JsonPropertyName("instanceid")] public string instanceid { get; init; } = null;
-        [JsonPropertyName("name")] public string name { get; init; } = null;
-        [JsonPropertyName("market_name")] public string market_name { get; init; } = null;
-        [JsonPropertyName("market_hash_name")] public string market_hash_name { get; init; } = null;
-        [JsonPropertyName("market_tradable_restriction")] public uint market_tradable_restriction { get; init; } = 0;
-        [JsonPropertyName("marketable")] public ushort marketable { get; init; } = 0;
-        [JsonPropertyName("tradable")] public ushort tradable { get; init; } = 0;
-        [JsonPropertyName("type")] public string type { get; init; } = null;
-        [JsonPropertyName("commodity")] public uint commodity { get; init; } = 0;
-        [JsonPropertyName("currency")] public ushort currency { get; init; } = 0;
-    }
+    [JsonPropertyName("appid")] public uint AppId { get; init; } = 0;
+    [JsonPropertyName("classid")] public string ClassId { get; init; } = string.Empty;
+    [JsonPropertyName("instanceid")] public string InstanceId { get; init; } = string.Empty;
+    [JsonPropertyName("name")] public string Name { get; init; } = string.Empty;
+    [JsonPropertyName("market_name")] public string MarketName { get; init; } = string.Empty;
+    [JsonPropertyName("market_hash_name")] public string MarketHashName { get; init; } = string.Empty;
+    [JsonPropertyName("market_tradable_restriction")] public uint MarketTradableRestriction { get; init; } = 0;
+    [JsonPropertyName("marketable")] public ushort Marketable { get; init; } = 0;
+    [JsonPropertyName("tradable")] public ushort Tradable { get; init; } = 0;
+    [JsonPropertyName("type")] public string Type { get; init; } = string.Empty;
+	[JsonPropertyName("icon_url")] public string IconUrl { get; init; } = string.Empty;
+	[JsonPropertyName("icon_url_large")] public string IconUrlLarge { get; init; } = string.Empty;
+	[JsonPropertyName("commodity")] public uint Commodity { get; init; } = 0;
+    [JsonPropertyName("currency")] public ushort Currency { get; init; } = 0;
 }

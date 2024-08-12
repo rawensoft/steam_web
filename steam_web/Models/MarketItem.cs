@@ -60,13 +60,14 @@ public sealed class MarketItem
     /// <summary>
     /// История продаж
     /// </summary>
-    public ItemPriceHistory[] HistoryGraph { get; internal set; } = new ItemPriceHistory[0];
+    public ItemPriceHistory[] HistoryGraph { get; internal set; } = Array.Empty<ItemPriceHistory>();
     public string? item_nameid { get; internal set; }
 
     public ItemPriceHistory[] GetHistoryGraphByHours(int hours = 24)
     {
         if (hours == 0)
-            return new ItemPriceHistory[0];
+            return Array.Empty<ItemPriceHistory>();
+
         var list = new List<ItemPriceHistory>(HistoryGraph.Length);
         var ticks_one_hour = 36000000000;
         var now_ticks = DateTime.Now.Ticks;
@@ -77,6 +78,7 @@ public sealed class MarketItem
             var ticks_item = item.Time.Ticks;
             if (ticks_item < ticks_to_scan)
                 break;
+
             list.Add(item);
         }
         return list.ToArray();

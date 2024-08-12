@@ -363,11 +363,11 @@ public static class Downloader
             return new((HttpWebResponse)null) { ErrorException = ex, ErrorMessage = ex.Message };
         }
     }
-    public static async Task<(bool, byte[], string?)> GetCaptchaAsync(string captchagid, Proxy? proxy = null, ISessionProvider? session = null, CancellationToken? cts = null)
+    public static async Task<(bool, byte[], string?)> GetCaptchaAsync(string captchagid, IWebProxy? proxy = null, ISessionProvider? session = null, CancellationToken? cts = null)
     {
         if (captchagid.IsEmpty())
-            return (false, Encoding.UTF8.GetBytes("Не указан CaptchaGID"), null);
-        string url = $"https://store.steampowered.com/login/rendercaptcha?gid={captchagid}";
+            return (false, Encoding.UTF8.GetBytes("Не указан CaptchaGID"), string.Empty);
+        string url = "https://store.steampowered.com/login/rendercaptcha?gid=" + captchagid;
         var cookie_container = new CookieContainer();
         if (session != null)
             session.AddCookieToContainer(cookie_container, new Uri(url));
@@ -375,8 +375,7 @@ public static class Downloader
         {
             BaseUrl = new Uri(url),
             UserAgent = KnownUserAgents.WindowsBrowser,
-            Proxy = proxy?.UseProxy == true ? proxy : null,
-            //CookieContainer = cookie_container
+            Proxy = proxy,
         });
         var request = new RestRequest(string.Empty, Method.Get)
         {
@@ -400,10 +399,10 @@ public static class Downloader
         client.Dispose();
         return (true, response.RawBytes, new_cookie);
     }
-    public static (bool, byte[], string) GetCaptcha(string captchagid, Proxy? proxy = null, ISessionProvider? session = null, CancellationToken? cts = null)
+    public static (bool, byte[], string) GetCaptcha(string captchagid, IWebProxy? proxy = null, ISessionProvider? session = null, CancellationToken? cts = null)
     {
-        if (captchagid.IsEmpty()) return (false, Encoding.UTF8.GetBytes("Не указан CaptchaGID"), null);
-        string url = $"https://store.steampowered.com/login/rendercaptcha?gid={captchagid}";
+        if (captchagid.IsEmpty()) return (false, Encoding.UTF8.GetBytes("Не указан CaptchaGID"), string.Empty);
+        string url = "https://store.steampowered.com/login/rendercaptcha?gid=" + captchagid;
         var cookie_container = new CookieContainer();
         if (session != null)
             session.AddCookieToContainer(cookie_container, new Uri(url));
@@ -411,8 +410,7 @@ public static class Downloader
         {
             BaseUrl = new(url),
             UserAgent = KnownUserAgents.WindowsBrowser,
-            Proxy = proxy?.UseProxy == true ? proxy : null,
-            //CookieContainer = cookie_container
+            Proxy = proxy,
         });
         var request = new RestRequest(string.Empty, Method.Get)
         {

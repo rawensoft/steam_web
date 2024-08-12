@@ -100,7 +100,7 @@ public static partial class Steam
         var elements = doc.GetElementsByClassName("phone_box");
         if (elements.Length > 0)
         {
-            string text = elements[0].TextContent.Replace("\t", "").Replace("\r", "").Replace("\n", "");
+            string text = elements[0].TextContent.GetClearWebString()!;
             return (true, text);
         }
         return (false, response.Data!);
@@ -135,7 +135,7 @@ public static partial class Steam
         var elements = doc.GetElementsByClassName("phone_box");
         if (elements.Length > 0)
         {
-            string text = elements[0].TextContent.Replace("\t", "").Replace("\r", "").Replace("\n", "");
+            string text = elements[0].TextContent.GetClearWebString()!;
             return (true, text);
         }
         return (false, response.Data!);
@@ -233,7 +233,7 @@ public static partial class Steam
             Proxy = ajaxRequest.Proxy,
             CancellationToken = ajaxRequest.CancellationToken,
             IsAjax = true,
-            Referer = $"{SteamCommunityUrls.TradeOffer_New}/?partner={offerpartner}"
+            Referer = SteamCommunityUrls.TradeOffer_New + "/?partner=" + offerpartner
         }
         .AddPostData("sessionid", ajaxRequest.Session!.SessionID).AddPostData("serverid", 1).AddPostData("partner", Steam32ToSteam64(offerpartner))
         .AddPostData("tradeoffermessage", HttpUtility.UrlEncode(tradeoffermessage), false)
@@ -676,7 +676,7 @@ public static partial class Steam
             return (user_login.Result, null);
         return (user_login.Result, user_login.Session);
     }
-    public static async Task<(LoginResultv2, SessionDatav2?)> AuthAsync(string username, string password, string guard_code, System.Net.IWebProxy proxy, EAuthTokenPlatformType platform)
+    public static async Task<(LoginResultv2, SessionDatav2?)> AuthAsync(string username, string password, string? guard_code, IWebProxy? proxy, EAuthTokenPlatformType platform)
     {
         var user_login = new UserLoginv2(username, password, platform, proxy);
         if (user_login.NextStep == NEXT_STEP.Begin && !await user_login.BeginAuthSessionViaCredentialsAsync())
@@ -687,7 +687,7 @@ public static partial class Steam
             return (user_login.Result, null);
         return (user_login.Result, user_login.Session);
     }
-    public static (LoginResultv2, SessionDatav2?) Auth(string username, string password, string guard_code, System.Net.IWebProxy proxy, EAuthTokenPlatformType platform)
+    public static (LoginResultv2, SessionDatav2?) Auth(string username, string password, string? guard_code, IWebProxy? proxy, EAuthTokenPlatformType platform)
     {
         var user_login = new UserLoginv2(username, password, platform, proxy);
         if (user_login.NextStep == NEXT_STEP.Begin && !user_login.BeginAuthSessionViaCredentials())
@@ -1504,9 +1504,7 @@ public static partial class Steam
                     break;
                 }
                 else
-                {
                     nEstimatedAmountOfWalletFundsReceivedByOtherParty--;
-                }
             }
             else
             {
