@@ -7,7 +7,6 @@ using System.Globalization;
 using SteamWeb.Models.Trade;
 using System.Text.RegularExpressions;
 using System.Web;
-using SteamWeb.Auth.Interfaces;
 using SteamWeb.Auth.v2.Enums;
 
 using LoginResultv2 = SteamWeb.Auth.v2.Enums.LoginResult;
@@ -16,6 +15,7 @@ using UserLoginv2 = SteamWeb.Auth.v2.UserLogin;
 using SteamGuardAccuntv2 = SteamWeb.Auth.v2.SteamGuardAccount;
 using SteamWeb.API.Models.IEconService;
 using System.Net;
+using SteamWeb.Script.Models;
 
 namespace SteamWeb;
 public static partial class Steam
@@ -26,56 +26,72 @@ public static partial class Steam
     public const ulong SteamIDConverter = 76561197960265728;
     private static Regex rgxTradeurl1 = new(@"https://steamcommunity\.com/tradeoffer/new/\?partner=\d{1,12}&token=\S{4,10}", RegexOptions.Compiled);
     
-    public static async Task<bool> SwitchToMailCodeAsync(ISessionProvider session, System.Net.IWebProxy proxy, SteamGuardAccuntv2 SDA)
+    public static async Task<bool> SwitchToMailCodeAsync(AjaxDefaultRequest ajaxRequest, SteamGuardAccuntv2? SDA)
     {
-        var att_phone = await Script.AjaxHelp.PhoneAjaxAsync(session, proxy);
+        var att_phone = await Script.AjaxHelp.PhoneAjaxAsync(ajaxRequest);
         if (att_phone.has_phone == null)
             return false;
         if (att_phone.has_phone == true && SDA != null)
         {
-            SDA.Proxy = proxy;
+            SDA.Proxy = ajaxRequest.Proxy;
             var result = await SDA.RemoveAuthenticatorAsync(false);
             return result.success;
         }
+
         var request = new PostRequest(SteamPoweredUrls.TwoFactor_ManageAction, Downloader.AppFormUrlEncoded)
-            .AddPostData("action", "email").AddPostData("sessionid", session.SessionID).AddPostData("email_authenticator_check", "on");
+        {
+            Proxy = ajaxRequest.Proxy,
+            Session = ajaxRequest.Session,
+            CancellationToken = ajaxRequest.CancellationToken,
+        }
+            .AddPostData("action", "email").AddPostData("sessionid", ajaxRequest.Session!.SessionID).AddPostData("email_authenticator_check", "on");
         var response = await Downloader.PostAsync(request);
         return response.Success;
     }
-    public static bool SwitchToMailCode(ISessionProvider session, System.Net.IWebProxy proxy, SteamGuardAccuntv2 SDA)
+    public static bool SwitchToMailCode(AjaxDefaultRequest ajaxRequest, SteamGuardAccuntv2 SDA)
     {
-        var att_phone = Script.AjaxHelp.PhoneAjax(session, proxy);
+        var att_phone = Script.AjaxHelp.PhoneAjax(ajaxRequest);
         if (att_phone.has_phone == null)
             return false;
         if (att_phone.has_phone == true && SDA != null)
         {
-            SDA.Proxy = proxy;
-			var result = SDA.RemoveAuthenticator(false);
-			return result.success;
+            SDA.Proxy = ajaxRequest.Proxy;
+            var result = SDA.RemoveAuthenticator(false);
+            return result.success;
         }
+
         var request = new PostRequest(SteamPoweredUrls.TwoFactor_ManageAction, Downloader.AppFormUrlEncoded)
-            .AddPostData("action", "email").AddPostData("sessionid", session.SessionID).AddPostData("email_authenticator_check", "on");
+        {
+            Proxy = ajaxRequest.Proxy,
+            Session = ajaxRequest.Session,
+            CancellationToken = ajaxRequest.CancellationToken,
+        }
+            .AddPostData("action", "email").AddPostData("sessionid", ajaxRequest.Session!.SessionID).AddPostData("email_authenticator_check", "on");
         var response = Downloader.Post(request);
         return response.Success;
     }
-    public static async Task<(bool, string)> SwitchToNonGuardAsync(ISessionProvider session, System.Net.IWebProxy proxy)
+    public static async Task<(bool, string)> SwitchToNonGuardAsync(DefaultRequest ajaxRequest)
     {
-        var response = await Downloader.GetAsync(new(SteamPoweredUrls.TwoFactor_ManageAction, proxy, session));
+        var response = await Downloader.GetAsync(new(SteamPoweredUrls.TwoFactor_ManageAction, ajaxRequest.Proxy, ajaxRequest.Session)
+        {
+            CancellationToken = ajaxRequest.CancellationToken
+        });
         if (!response.Success)
             return (false, response.ErrorMessage!);
 
         var request = new PostRequest(SteamPoweredUrls.TwoFactor_ManageAction, Downloader.AppFormUrlEncoded)
         {
-            Session = session,
-            Proxy = proxy
+            Session = ajaxRequest.Session,
+            Proxy = ajaxRequest.Proxy,
+            CancellationToken = ajaxRequest.CancellationToken,
         }
-        .AddPostData("action", "none").AddPostData("sessionid", session.SessionID).AddPostData("none_authenticator_check", "on");
+        .AddPostData("action", "none").AddPostData("sessionid", ajaxRequest.Session!.SessionID).AddPostData("none_authenticator_check", "on");
         response = await Downloader.PostAsync(request);
         if (!response.Success)
             return (false, response.ErrorMessage!);
 
         request.PostData.Clear();
-        request.AddPostData("action", "actuallynone").AddPostData("sessionid", session.SessionID);
+        request.AddPostData("action", "actuallynone").AddPostData("sessionid", ajaxRequest.Session!.SessionID);
         response = await Downloader.PostAsync(request);
         if (!response.Success)
             return (false, response.ErrorMessage!);
@@ -89,24 +105,28 @@ public static partial class Steam
         }
         return (false, response.Data!);
     }
-    public static (bool, string) SwitchToNonGuard(ISessionProvider session, System.Net.IWebProxy proxy)
+    public static (bool, string) SwitchToNonGuard(DefaultRequest ajaxRequest)
     {
-        var response = Downloader.Get(new(SteamPoweredUrls.TwoFactor_ManageAction, proxy, session));
+        var response = Downloader.Get(new(SteamPoweredUrls.TwoFactor_ManageAction, ajaxRequest.Proxy, ajaxRequest.Session)
+        {
+            CancellationToken = ajaxRequest.CancellationToken
+        });
         if (!response.Success)
             return (false, response.ErrorMessage!);
 
         var request = new PostRequest(SteamPoweredUrls.TwoFactor_ManageAction, Downloader.AppFormUrlEncoded)
         {
-            Session = session,
-            Proxy = proxy
+            Session = ajaxRequest.Session,
+            Proxy = ajaxRequest.Proxy,
+            CancellationToken = ajaxRequest.CancellationToken,
         }
-        .AddPostData("action", "none").AddPostData("sessionid", session.SessionID).AddPostData("none_authenticator_check", "on");
+        .AddPostData("action", "none").AddPostData("sessionid", ajaxRequest.Session!.SessionID).AddPostData("none_authenticator_check", "on");
         response = Downloader.Post(request);
         if (!response.Success)
             return (false, response.ErrorMessage!);
 
         request.PostData.Clear();
-        request.AddPostData("action", "actuallynone").AddPostData("sessionid", session.SessionID);
+        request.AddPostData("action", "actuallynone").AddPostData("sessionid", ajaxRequest.Session!.SessionID);
         response = Downloader.Post(request);
         if (!response.Success)
             return (false, response.ErrorMessage!);
@@ -127,9 +147,12 @@ public static partial class Steam
     /// <param name="session"></param>
     /// <param name="proxy"></param>
     /// <returns>True имеется</returns>
-    public static async Task<bool> CheckOnKTAsync(ISessionProvider session, System.Net.IWebProxy proxy)
+    public static async Task<bool> CheckOnKTAsync(DefaultRequest ajaxRequest)
     {
-        var response = await Downloader.GetAsync(new(SteamCommunityUrls.My_Edit_Info, proxy, session));
+        var response = await Downloader.GetAsync(new(SteamCommunityUrls.My_Edit_Info, ajaxRequest.Proxy, ajaxRequest.Session)
+        {
+            CancellationToken = ajaxRequest.CancellationToken
+        });
         if (response.Data?.Contains("profile_fatalerror") == true &&
             response.Data?.Contains("profile_fatalerror_message") == true)
             return true;
@@ -141,9 +164,12 @@ public static partial class Steam
     /// <param name="session"></param>
     /// <param name="proxy"></param>
     /// <returns>True имеется</returns>
-    public static bool CheckOnKT(ISessionProvider session, IWebProxy proxy)
+    public static bool CheckOnKT(DefaultRequest ajaxRequest)
     {
-        var response = Downloader.Get(new(SteamCommunityUrls.My_Edit_Info, proxy, session));
+        var response = Downloader.Get(new(SteamCommunityUrls.My_Edit_Info, ajaxRequest.Proxy, ajaxRequest.Session)
+        {
+            CancellationToken = ajaxRequest.CancellationToken
+        });
         if (response.Data?.Contains("profile_fatalerror") == true &&
             response.Data?.Contains("profile_fatalerror_message") == true)
             return true;
@@ -154,17 +180,17 @@ public static partial class Steam
     /// Создаёт трейд
     /// </summary>
     /// <returns>ConfTradeOffer != null если трейд создался и SteamTradeError != null если трейд не создался</returns>
-    public static (ConfTradeOffer?, SteamTradeError?) CreateTrade(ISessionProvider session, System.Net.IWebProxy proxy, NewTradeOffer trade,
-        Token token, string tradeoffermessage, uint offerpartner)
+    public static (ConfTradeOffer?, SteamTradeError?) CreateTrade(DefaultRequest ajaxRequest, NewTradeOffer trade, Token token, string tradeoffermessage, uint offerpartner)
     {
         var request = new PostRequest(SteamCommunityUrls.TradeOffer_New_Send, Downloader.AppFormUrlEncoded)
         {
-            Session = session,
-            Proxy = proxy,
+            Session = ajaxRequest.Session,
+            Proxy = ajaxRequest.Proxy,
+            CancellationToken = ajaxRequest.CancellationToken,
             IsAjax = true,
-            Referer = $"{SteamCommunityUrls.TradeOffer_New}/?partner={offerpartner}"
+            Referer = SteamCommunityUrls.TradeOffer_New + "/?partner=" + offerpartner
         }
-        .AddPostData("sessionid", session.SessionID).AddPostData("serverid", 1).AddPostData("partner", Steam32ToSteam64(offerpartner))
+        .AddPostData("sessionid", ajaxRequest.Session!.SessionID).AddPostData("serverid", 1).AddPostData("partner", Steam32ToSteam64(offerpartner))
         .AddPostData("tradeoffermessage", HttpUtility.UrlEncode(tradeoffermessage), false)
         .AddPostData("json_tradeoffer", HttpUtility.UrlEncode(JsonSerializer.Serialize(trade)), false).AddPostData("captcha", string.Empty)
         .AddPostData("trade_offer_create_params", HttpUtility.UrlEncode(JsonSerializer.Serialize(token)), false);
@@ -199,17 +225,17 @@ public static partial class Steam
     /// Создаёт трейд
     /// </summary>
     /// <returns>ConfTradeOffer != null если трейд создался и SteamTradeError != null если трейд не создался</returns>
-    public static async Task<(ConfTradeOffer?, SteamTradeError?)> CreateTradeAsync(ISessionProvider session, System.Net.IWebProxy proxy,
-        NewTradeOffer trade, Token token, string tradeoffermessage, uint offerpartner)
+    public static async Task<(ConfTradeOffer?, SteamTradeError?)> CreateTradeAsync(DefaultRequest ajaxRequest, NewTradeOffer trade, Token token, string tradeoffermessage, uint offerpartner)
     {
         var request = new PostRequest(SteamCommunityUrls.TradeOffer_New_Send, Downloader.AppFormUrlEncoded)
         {
-            Session = session,
-            Proxy = proxy,
+            Session = ajaxRequest.Session,
+            Proxy = ajaxRequest.Proxy,
+            CancellationToken = ajaxRequest.CancellationToken,
             IsAjax = true,
             Referer = $"{SteamCommunityUrls.TradeOffer_New}/?partner={offerpartner}"
         }
-        .AddPostData("sessionid", session.SessionID).AddPostData("serverid", 1).AddPostData("partner", Steam32ToSteam64(offerpartner))
+        .AddPostData("sessionid", ajaxRequest.Session!.SessionID).AddPostData("serverid", 1).AddPostData("partner", Steam32ToSteam64(offerpartner))
         .AddPostData("tradeoffermessage", HttpUtility.UrlEncode(tradeoffermessage), false)
         .AddPostData("json_tradeoffer", HttpUtility.UrlEncode(JsonSerializer.Serialize(trade)), false).AddPostData("captcha", string.Empty)
         .AddPostData("trade_offer_create_params", HttpUtility.UrlEncode(JsonSerializer.Serialize(token)), false);
@@ -246,14 +272,15 @@ public static partial class Steam
     /// </summary>
     /// <param name="language">язык для смены, пример: russian, english</param>
     /// <returns>True язык изменён</returns>
-    public static async Task<bool> ChangeLanguageAsync(ISessionProvider session, System.Net.IWebProxy proxy, string language)
+    public static async Task<bool> ChangeLanguageAsync(DefaultRequest ajaxRequest, string language)
     {
         var request = new PostRequest(SteamCommunityUrls.Actions_SetLanguage, Downloader.AppFormUrlEncoded)
         {
-            Session = session,
-            Proxy = proxy
+            Session = ajaxRequest.Session,
+            Proxy = ajaxRequest.Proxy,
+            CancellationToken = ajaxRequest.CancellationToken,
         }
-        .AddPostData("language", language).AddPostData("sessionid", session.SessionID);
+        .AddPostData("language", language).AddPostData("sessionid", ajaxRequest.Session!.SessionID);
         var response = await Downloader.PostAsync(request);
         return response.Success;
     }
@@ -262,14 +289,15 @@ public static partial class Steam
     /// </summary>
     /// <param name="language">язык для смены, пример: russian, english</param>
     /// <returns>True язык изменён</returns>
-    public static bool ChangeLanguage(ISessionProvider session, System.Net.IWebProxy proxy, string language)
+    public static bool ChangeLanguage(DefaultRequest ajaxRequest, string language)
     {
         var request = new PostRequest(SteamCommunityUrls.Actions_SetLanguage, Downloader.AppFormUrlEncoded)
         {
-            Session = session,
-            Proxy = proxy
+            Session = ajaxRequest.Session,
+            Proxy = ajaxRequest.Proxy,
+            CancellationToken = ajaxRequest.CancellationToken,
         }
-        .AddPostData("language", language).AddPostData("sessionid", session.SessionID);
+        .AddPostData("language", language).AddPostData("sessionid", ajaxRequest.Session!.SessionID);
         var response = Downloader.Post(request);
         return response.Success;
     }
@@ -278,9 +306,12 @@ public static partial class Steam
     /// Получает информацию со страницы <see href="https://store.steampowered.com/account/">store.steampowered.com/account</see>
     /// </summary>
     /// <returns>Полученные данные</returns>
-    public static async Task<AboutProfile> Get2FAAsync(ISessionProvider session, System.Net.IWebProxy proxy)
+    public static async Task<AboutProfile> Get2FAAsync(DefaultRequest ajaxRequest)
     {
-        var response = await Downloader.GetAsync(new(SteamPoweredUrls.Account, proxy, session));
+        var response = await Downloader.GetAsync(new(SteamPoweredUrls.Account, ajaxRequest.Proxy, ajaxRequest.Session)
+        {
+            CancellationToken = ajaxRequest.CancellationToken,
+        });
         if (!response.Success)
             return new();
         return AboutProfile.Deserialize(response.Data!);
@@ -289,9 +320,12 @@ public static partial class Steam
     /// Получает информацию со страницы <see href="https://store.steampowered.com/account/">store.steampowered.com/account</see>
     /// </summary>
     /// <returns>Полученные данные</returns>
-    public static AboutProfile Get2FA(ISessionProvider session, System.Net.IWebProxy proxy)
+    public static AboutProfile Get2FA(DefaultRequest ajaxRequest)
     {
-        var response = Downloader.Get(new(SteamPoweredUrls.Account, proxy, session));
+        var response = Downloader.Get(new(SteamPoweredUrls.Account, ajaxRequest.Proxy, ajaxRequest.Session)
+        {
+            CancellationToken = ajaxRequest.CancellationToken,
+        });
         if (!response.Success)
             return new();
         return AboutProfile.Deserialize(response.Data!);
@@ -300,12 +334,13 @@ public static partial class Steam
     /// <summary>
     /// Парсит Api ключ со страницы api ключа
     /// </summary>
-    /// <param name="session">Сессия аккаунта</param>
-    /// <param name="proxy">Проки аккаунта</param>
     /// <returns>Спарсенные данные со страницы</returns>
-    public static async Task<WebApiKey> GetWebAPIKeyAsync(ISessionProvider session, IWebProxy? proxy)
+    public static async Task<WebApiKey> GetWebAPIKeyAsync(DefaultRequest ajaxRequest)
     {
-		var response = await Downloader.GetAsync(new(SteamCommunityUrls.Dev_APIKey, proxy, session));
+		var response = await Downloader.GetAsync(new(SteamCommunityUrls.Dev_APIKey, ajaxRequest.Proxy, ajaxRequest.Session)
+        {
+            CancellationToken = ajaxRequest.CancellationToken,
+        });
 		if (!response.Success)
 			return new WebApiKey(response.Data!);
 		else if (response.Data == "<!DOCTYPE html>")
@@ -356,12 +391,13 @@ public static partial class Steam
 	/// <summary>
 	/// Парсит Api ключ со страницы api ключа
 	/// </summary>
-	/// <param name="session">Сессия аккаунта</param>
-	/// <param name="proxy">Проки аккаунта</param>
 	/// <returns>Спарсенные данные со страницы</returns>
-	public static WebApiKey GetWebAPIKey(ISessionProvider session, IWebProxy? proxy)
+	public static WebApiKey GetWebAPIKey(DefaultRequest ajaxRequest)
     {
-        var response = Downloader.Get(new(SteamCommunityUrls.Dev_APIKey, proxy, session));
+        var response = Downloader.Get(new(SteamCommunityUrls.Dev_APIKey, ajaxRequest.Proxy, ajaxRequest.Session)
+        {
+            CancellationToken = ajaxRequest.CancellationToken,
+        });
         if (!response.Success)
             return new WebApiKey(response.Data!);
         else if (response.Data == "<!DOCTYPE html>")
@@ -414,9 +450,12 @@ public static partial class Steam
     /// Загружает текущее состояние доступа к маркету для аккаунта (webTradeEligibilityState)
     /// </summary>
     /// <returns>Null если нет данных</returns>
-    public static WebTradeEligibility? GetWebTradeEligibility(ISessionProvider session, System.Net.IWebProxy proxy)
+    public static WebTradeEligibility? GetWebTradeEligibility(DefaultRequest ajaxRequest)
     {
-        var response = Downloader.Get(new(SteamCommunityUrls.Market_EligibilityCheck, proxy, session));
+        var response = Downloader.Get(new(SteamCommunityUrls.Market_EligibilityCheck, ajaxRequest.Proxy, ajaxRequest.Session)
+        {
+            CancellationToken = ajaxRequest.CancellationToken,
+        });
         if (!response.Success || response.CookieContainer == null)
             return null;
         else if ((!response.Data!.Contains("menuitem supernav username persona_name_text_content") &&
@@ -439,9 +478,12 @@ public static partial class Steam
     /// Загружает текущее состояние доступа к маркету для аккаунта (webTradeEligibilityState)
     /// </summary>
     /// <returns>Null если нет данных</returns>
-    public static async Task<WebTradeEligibility?> GetWebTradeEligibilityAsync(ISessionProvider session, System.Net.IWebProxy proxy)
+    public static async Task<WebTradeEligibility?> GetWebTradeEligibilityAsync(DefaultRequest ajaxRequest)
     {
-        var response = await Downloader.GetAsync(new(SteamCommunityUrls.Market_EligibilityCheck, proxy, session));
+        var response = await Downloader.GetAsync(new(SteamCommunityUrls.Market_EligibilityCheck, ajaxRequest.Proxy, ajaxRequest.Session)
+        {
+            CancellationToken = ajaxRequest.CancellationToken,
+        });
         if (!response.Success || response.CookieContainer == null)
             return null;
         else if ((!response.Data!.Contains("menuitem supernav username persona_name_text_content") &&
@@ -465,9 +507,12 @@ public static partial class Steam
     /// Получает trade ссылку и разрешения маркета
     /// </summary>
     /// <returns>true если запрос выполнен успешно, Null если трейд ссылка не найдена, Null если разрешений маркета нет</returns>
-    public static (bool, string?, WebTradeEligibility?) GetTradeURL(ISessionProvider session, IWebProxy proxy)
+    public static (bool, string?, WebTradeEligibility?) GetTradeURL(DefaultRequest ajaxRequest)
     {
-        var response = Downloader.Get(new(SteamCommunityUrls.Market_EligibilityCheck, proxy, session));
+        var response = Downloader.Get(new(SteamCommunityUrls.Market_EligibilityCheck, ajaxRequest.Proxy, ajaxRequest.Session)
+        {
+            CancellationToken = ajaxRequest.CancellationToken,
+        });
         if (!response.Success)
             return (false, null, null);
         else if (response.Data!.Contains("link_forgot_password"))
@@ -500,9 +545,12 @@ public static partial class Steam
     /// Получает trade ссылку и разрешения маркета
     /// </summary>
     /// <returns>true если запрос выполнен успешно, Null если трейд ссылка не найдена, Null если разрешений маркета нет</returns>
-    public static async Task<(bool, string?, WebTradeEligibility?)> GetTradeURLAsync(ISessionProvider session, IWebProxy proxy)
+    public static async Task<(bool, string?, WebTradeEligibility?)> GetTradeURLAsync(DefaultRequest ajaxRequest)
     {
-        var response = await Downloader.GetAsync(new(SteamCommunityUrls.Market_EligibilityCheck, proxy, session));
+        var response = await Downloader.GetAsync(new(SteamCommunityUrls.Market_EligibilityCheck, ajaxRequest.Proxy, ajaxRequest.Session)
+        {
+            CancellationToken = ajaxRequest.CancellationToken,
+        });
         if (!response.Success)
             return (false, null, null);
         else if (response.Data!.Contains("link_forgot_password"))
@@ -534,13 +582,14 @@ public static partial class Steam
     /// <summary>
     /// Производит парсинг страницы трейда
     /// </summary>
-    /// <param name="session">Сессия аккаунта</param>
-    /// <param name="proxy">Прокси для запроса</param>
     /// <param name="tradeofferid">Id трейда</param>
     /// <returns>Спарсенные данные со страницы</returns>
-    public static TradeOfferData GetTradeData(ISessionProvider session, IWebProxy? proxy, ulong tradeofferid)
+    public static TradeOfferData GetTradeData(DefaultRequest ajaxRequest, ulong tradeofferid)
     {
-        var response = Downloader.Get(new(SteamCommunityUrls.TradeOffer + tradeofferid, proxy, session));
+        var response = Downloader.Get(new(SteamCommunityUrls.TradeOffer + tradeofferid, ajaxRequest.Proxy, ajaxRequest.Session)
+        {
+            CancellationToken = ajaxRequest.CancellationToken,
+        });
         if (!response.Success)
             return new() { TradeOfferId = tradeofferid };
 
@@ -575,13 +624,14 @@ public static partial class Steam
 	/// <summary>
 	/// Производит парсинг страницы трейда
 	/// </summary>
-	/// <param name="session">Сессия аккаунта</param>
-	/// <param name="proxy">Прокси для запроса</param>
 	/// <param name="tradeofferid">Id трейда</param>
 	/// <returns>Спарсенные данные со страницы</returns>
-	public static async Task<TradeOfferData> GetTradeDataAsync(ISessionProvider session, IWebProxy? proxy, ulong tradeofferid)
+	public static async Task<TradeOfferData> GetTradeDataAsync(DefaultRequest ajaxRequest, ulong tradeofferid)
 	{
-		var response = await Downloader.GetAsync(new(SteamCommunityUrls.TradeOffer + tradeofferid, proxy, session));
+		var response = await Downloader.GetAsync(new(SteamCommunityUrls.TradeOffer + tradeofferid, ajaxRequest.Proxy, ajaxRequest.Session)
+        {
+            CancellationToken = ajaxRequest.CancellationToken,
+        });
 		if (!response.Success)
 			return new() { TradeOfferId = tradeofferid };
 
@@ -661,50 +711,55 @@ public static partial class Steam
         return (user_login.Result, user_login.Session);
     }
 
-    public static async Task<MemoryStream?> GetCaptchaImageToMemoryStreamAsync(string captchagid, Proxy? proxy = null, ISessionProvider? session = null)
+    public static async Task<MemoryStream?> GetCaptchaImageToMemoryStreamAsync(string captchagid, DefaultRequest? ajaxRequest = null)
     {
-        var (success, bytes, _) = await Downloader.GetCaptchaAsync(captchagid, proxy, session);
+        var (success, bytes, _) = await Downloader.GetCaptchaAsync(captchagid, ajaxRequest?.Proxy, ajaxRequest?.Session);
         if (!success)
             return null;
         var stream = new MemoryStream(bytes);
         return stream;
     }
-    public static async Task<byte[]> GetCaptchaImageToBytesAsync(string captchagid, Proxy? proxy = null, ISessionProvider? session = null)
+    public static async Task<byte[]> GetCaptchaImageToBytesAsync(string captchagid, DefaultRequest? ajaxRequest = null)
     {
-        var (success, bytes, _) = await Downloader.GetCaptchaAsync(captchagid, proxy, session);
+        var (success, bytes, _) = await Downloader.GetCaptchaAsync(captchagid, ajaxRequest?.Proxy, ajaxRequest?.Session);
         if (!success)
-            return new byte[0];
+            return Array.Empty<byte>();
         return bytes;
     }
-    public static MemoryStream? GetCaptchaImageToMemoryStream(string captchagid, Proxy? proxy = null, ISessionProvider? session = null)
+    public static MemoryStream? GetCaptchaImageToMemoryStream(string captchagid, DefaultRequest? ajaxRequest = null)
     {
-        var (success, bytes, _) = Downloader.GetCaptcha(captchagid, proxy, session);
+        var (success, bytes, _) = Downloader.GetCaptcha(captchagid, ajaxRequest?.Proxy, ajaxRequest?.Session);
         if (!success)
             return null;
         var stream = new MemoryStream(bytes);
         return stream;
     }
-    public static byte[] GetCaptchaImageToBytes(string captchagid, Proxy? proxy = null, ISessionProvider? session = null)
+    public static byte[] GetCaptchaImageToBytes(string captchagid, DefaultRequest? ajaxRequest = null)
     {
-        var (success, bytes, _) = Downloader.GetCaptcha(captchagid, proxy, session);
+        var (success, bytes, _) = Downloader.GetCaptcha(captchagid, ajaxRequest?.Proxy, ajaxRequest?.Session);
         if (!success)
-            return new byte[0];
+            return Array.Empty<byte>();
         return bytes;
     }
     
     /// <summary>
     /// Получает страницу предмета в steam
     /// </summary>
-    /// <param name="appID">app id приложения, чей предмет парсим</param>
+    /// <param name="appId">app id приложения, чей предмет парсим</param>
     /// <param name="market_hash_name">название предмет, который нам нужен</param>
     /// <returns>Полученные данные</returns>
-    public static async Task<MarketItem> GetMarketItemAsync(ISessionProvider? session,IWebProxy? proxy, uint appID, string market_hash_name)
+    public static async Task<MarketItem> GetMarketItemAsync(DefaultRequest ajaxRequest, uint appId, string market_hash_name)
     {
         if (string.IsNullOrEmpty(market_hash_name))
             return new MarketItem() { IsError = true, Data = "Не указан market_hash_name" };
+
         market_hash_name = Uri.EscapeDataString(market_hash_name).Replace("%27", "'").Replace("?", "%3F").Replace("%E2%98%85", "★").Replace("%E2%84%A2", "™");
-        string url = Path.Combine(SteamCommunityUrls.Market_Listings, appID.ToString(), market_hash_name);
-        var response = await Downloader.GetAsync(new(url, proxy, session));
+        string url = Path.Combine(SteamCommunityUrls.Market_Listings, appId.ToString(), market_hash_name);
+        var response = await Downloader.GetAsync(new(url, ajaxRequest.Proxy, ajaxRequest.Session)
+        {
+            CancellationToken = ajaxRequest.CancellationToken
+        });
+
         if (response.Data.IsEmpty())
             return new MarketItem() { IsError = true, Data = "data empty" };
         else if (response.StatusCode == 429)
@@ -721,16 +776,21 @@ public static partial class Steam
     /// <summary>
     /// Получает страницу предмета в steam
     /// </summary>
-    /// <param name="appID">app id приложения, чей предмет парсим</param>
+    /// <param name="appId">app id приложения, чей предмет парсим</param>
     /// <param name="market_hash_name">название предмет, который нам нужен</param>
     /// <returns>Полученные данные</returns>
-    public static MarketItem GetMarketItem(ISessionProvider? session, IWebProxy? proxy, uint appID, string market_hash_name)
+    public static MarketItem GetMarketItem(DefaultRequest ajaxRequest, uint appId, string market_hash_name)
     {
         if (string.IsNullOrEmpty(market_hash_name))
             return new MarketItem() { IsError = true, Data = "Не указан market_hash_name" };
+
         market_hash_name = Uri.EscapeDataString(market_hash_name).Replace("%27", "'").Replace("?", "%3F").Replace("%E2%98%85", "★").Replace("%E2%84%A2", "™");
-		string url = Path.Combine(SteamCommunityUrls.Market_Listings, appID.ToString(), market_hash_name);
-		var response = Downloader.Get(new(url, proxy, session));
+		string url = Path.Combine(SteamCommunityUrls.Market_Listings, appId.ToString(), market_hash_name);
+		var response = Downloader.Get(new(url, ajaxRequest.Proxy, ajaxRequest.Session)
+        {
+            CancellationToken = ajaxRequest.CancellationToken
+        });
+
         if (response.Data.IsEmpty())
             return new MarketItem() { IsError = true, Data = "data empty" };
         else if (response.StatusCode == 429)
@@ -749,16 +809,19 @@ public static partial class Steam
     /// Получает доступные инвентари аккаунта
     /// </summary>
     /// <returns>Коллекция доступных инвентарей, где Key=app_id</returns>
-    public static Dictionary<string, AppContextData> GetAppContextData(ISessionProvider session, IWebProxy proxy) => GetAppContextData(session, proxy, session.SteamID);
+    public static Dictionary<string, AppContextData> GetAppContextData(DefaultRequest ajaxRequest) => GetAppContextData(ajaxRequest, ajaxRequest.Session!.SteamID);
     /// <summary>
     /// Получает доступные инвентари аккаунта
     /// </summary>
     /// <returns>Коллекция доступных инвентарей, где Key=app_id</returns>
-    public static Dictionary<string, AppContextData> GetAppContextData(ISessionProvider session, IWebProxy proxy, ulong steamid64)
+    public static Dictionary<string, AppContextData> GetAppContextData(DefaultRequest ajaxRequest, ulong steamid64)
     {
-        string url = $"https://steamcommunity.com/profiles/" + steamid64 + "/inventory/";
-        string referer = $"https://steamcommunity.com/profiles/" + steamid64;
-        var response = Downloader.Get(new(url, proxy, session, referer));
+        string url = "https://steamcommunity.com/profiles/" + steamid64 + "/inventory/";
+        string referer = "https://steamcommunity.com/profiles/" + steamid64;
+        var response = Downloader.Get(new(url, ajaxRequest.Proxy, ajaxRequest.Session, referer)
+        {
+            CancellationToken = ajaxRequest.CancellationToken,
+        });
         if (!response.Success || response.Data.IsEmpty())
             return new(1);
         return AppContextData.Deserialize(response.Data!);
@@ -767,17 +830,17 @@ public static partial class Steam
     /// Получает доступные инвентари аккаунта
     /// </summary>
     /// <returns>Коллекция доступных инвентарей, где Key=app_id</returns>
-    public static async Task<Dictionary<string, AppContextData>> GetAppContextDataAsync(ISessionProvider session, IWebProxy proxy) =>
-        await GetAppContextDataAsync(session, proxy, session.SteamID);
+    public static async Task<Dictionary<string, AppContextData>> GetAppContextDataAsync(DefaultRequest ajaxRequest) =>
+        await GetAppContextDataAsync(ajaxRequest, ajaxRequest.Session!.SteamID);
     /// <summary>
     /// Получает доступные инвентари аккаунта
     /// </summary>
     /// <returns>Коллекция доступных инвентарей, где Key=app_id</returns>
-    public static async Task<Dictionary<string, AppContextData>> GetAppContextDataAsync(ISessionProvider session, IWebProxy proxy, ulong steamid64)
+    public static async Task<Dictionary<string, AppContextData>> GetAppContextDataAsync(DefaultRequest ajaxRequest, ulong steamid64)
 	{
 		string url = $"https://steamcommunity.com/profiles/" + steamid64 + "/inventory/";
 		string referer = $"https://steamcommunity.com/profiles/" + steamid64;
-		var response = await Downloader.GetAsync(new(url, proxy, session, referer));
+		var response = await Downloader.GetAsync(new(url, ajaxRequest.Proxy, ajaxRequest.Session, referer));
         if (!response.Success || response.Data.IsEmpty())
             return new(1);
         return AppContextData.Deserialize(response.Data!);
@@ -789,24 +852,25 @@ public static partial class Steam
     /// <param name="tradeofferid">id трейда для принятия</param>
     /// <param name="steamid_other">steamid32 аккаунта, который отослал трейд</param>
     /// <returns>False трейд не принят, но иногда может быть принят, для точности используйте API</returns>
-    public static (ConfTradeOffer?, SteamTradeError?) AcceptTrade(ISessionProvider session, IWebProxy proxy, ulong tradeofferid, uint steamid_other)
-        => AcceptTrade(session, proxy, tradeofferid, Steam32ToSteam64(steamid_other));
+    public static (ConfTradeOffer?, SteamTradeError?) AcceptTrade(DefaultRequest ajaxRequest, ulong tradeofferid, uint steamid_other)
+        => AcceptTrade(ajaxRequest, tradeofferid, Steam32ToSteam64(steamid_other));
     /// <summary>
     /// Принимает трейд
     /// </summary>
     /// <param name="tradeofferid">id трейда для принятия</param>
     /// <param name="steamid_other">steamid32 аккаунта, который отослал трейд</param>
     /// <returns>False трейд не принят, но иногда может быть принят, для точности используйте API</returns>
-    public static (ConfTradeOffer?, SteamTradeError?) AcceptTrade(ISessionProvider session, IWebProxy proxy, ulong tradeofferid, ulong steamid64)
+    public static (ConfTradeOffer?, SteamTradeError?) AcceptTrade(DefaultRequest ajaxRequest, ulong tradeofferid, ulong steamid64)
     {
         var request = new PostRequest("https://steamcommunity.com/tradeoffer/" + tradeofferid + "/accept", Downloader.AppFormUrlEncoded)
         {
-            Session = session,
-            Proxy = proxy,
+            Session = ajaxRequest.Session,
+            Proxy = ajaxRequest.Proxy,
+            CancellationToken = ajaxRequest.CancellationToken,
             IsAjax = true,
             Referer = "https://steamcommunity.com/tradeoffer/" + tradeofferid + "/"
         }
-        .AddPostData("sessionid", session.SessionID).AddPostData("serverid", 1).AddPostData("tradeofferid", tradeofferid)
+        .AddPostData("sessionid", ajaxRequest.Session!.SessionID).AddPostData("serverid", 1).AddPostData("tradeofferid", tradeofferid)
         .AddPostData("partner", steamid64).AddPostData("captcha", "");
         var response = Downloader.Post(request);
         try
@@ -835,32 +899,33 @@ public static partial class Steam
             return (null, new() { strError = ex.Message });
         }
     }
-    public static (ConfTradeOffer?, SteamTradeError?) AcceptTrade(ISessionProvider session, System.Net.IWebProxy proxy, Trade trade) =>
-        AcceptTrade(session, proxy, trade.u_tradeofferid, trade.accountid_other);
+    public static (ConfTradeOffer?, SteamTradeError?) AcceptTrade(DefaultRequest ajaxRequest, Trade trade) =>
+        AcceptTrade(ajaxRequest, trade.u_tradeofferid, trade.accountid_other);
     /// <summary>
     /// Принимает трейд
     /// </summary>
     /// <param name="tradeofferid">id трейда для принятия</param>
     /// <param name="steamid_other">steamid32 аккаунта, который отослал трейд</param>
     /// <returns>False трейд не принят, но иногда может быть принят, для точности используйте API</returns>
-    public static async Task<(ConfTradeOffer?, SteamTradeError?)> AcceptTradeAsync(ISessionProvider session, System.Net.IWebProxy proxy, ulong tradeofferid, uint steamid_other)
-        => await AcceptTradeAsync(session, proxy, tradeofferid, Steam32ToSteam64(steamid_other));
+    public static async Task<(ConfTradeOffer?, SteamTradeError?)> AcceptTradeAsync(DefaultRequest ajaxRequest, ulong tradeofferid, uint steamid_other)
+        => await AcceptTradeAsync(ajaxRequest, tradeofferid, Steam32ToSteam64(steamid_other));
     /// <summary>
     /// Принимает трейд
     /// </summary>
     /// <param name="tradeofferid">id трейда для принятия</param>
     /// <param name="steamid_other">steamid32 аккаунта, который отослал трейд</param>
     /// <returns>False трейд не принят, но иногда может быть принят, для точности используйте API</returns>
-    public static async Task<(ConfTradeOffer?, SteamTradeError?)> AcceptTradeAsync(ISessionProvider session, System.Net.IWebProxy proxy, ulong tradeofferid, ulong steamid64)
+    public static async Task<(ConfTradeOffer?, SteamTradeError?)> AcceptTradeAsync(DefaultRequest ajaxRequest, ulong tradeofferid, ulong steamid64)
     {
         var request = new PostRequest("https://steamcommunity.com/tradeoffer/" + tradeofferid + "/accept", Downloader.AppFormUrlEncoded)
         {
-            Session = session,
-            Proxy = proxy,
+            Session = ajaxRequest.Session,
+            Proxy = ajaxRequest.Proxy,
+            CancellationToken = ajaxRequest.CancellationToken,
             IsAjax = true,
 			Referer = "https://steamcommunity.com/tradeoffer/" + tradeofferid + "/"
 		}
-        .AddPostData("sessionid", session.SessionID).AddPostData("serverid", 1).AddPostData("tradeofferid", tradeofferid)
+        .AddPostData("sessionid", ajaxRequest.Session!.SessionID).AddPostData("serverid", 1).AddPostData("tradeofferid", tradeofferid)
         .AddPostData("partner", steamid64).AddPostData("captcha", "");
         var response = await Downloader.PostAsync(request);
         try
@@ -890,14 +955,15 @@ public static partial class Steam
         }
     }
 
-    public static async Task<InvormationProfileResponse> SetAccountInfoAsync(ISessionProvider session, System.Net.IWebProxy proxy, InformationProfileRequest info)
+    public static async Task<InvormationProfileResponse> SetAccountInfoAsync(DefaultRequest ajaxRequest, InformationProfileRequest info)
     {
         string url = "https://steamcommunity.com/profiles/" + info.steamID + "/edit/";
         var request = new PostRequest(url, Downloader.AppFormUrlEncoded)
         {
-            Session = session,
-            Proxy = proxy,
+            Session = ajaxRequest.Session,
+            Proxy = ajaxRequest.Proxy,
             Referer = "https://steamcommunity.com/profiles/" + info.steamID + "/edit/info",
+            CancellationToken = ajaxRequest.CancellationToken
         };
         request.PostData.AddRange(info.GetPostData());
         var response = await Downloader.PostAsync(request);
@@ -918,15 +984,16 @@ public static partial class Steam
             };
         }
     }
-    public static async Task<UploadImageResponse> UploadAvatarAsync(ISessionProvider session, System.Net.IWebProxy proxy, string filename)
+    public static async Task<UploadImageResponse> UploadAvatarAsync(DefaultRequest ajaxRequest, string filename)
     {
         var request = new PostRequest(SteamCommunityUrls.Actions_FileUploader, Downloader.AppFormUrlEncoded)
         {
-            Session = session,
-            Proxy = proxy,
-            Referer = $"https://steamcommunity.com/profiles/{session.SteamID}/edit/avatar",
+            Session = ajaxRequest.Session,
+            Proxy = ajaxRequest.Proxy,
+            Referer = $"https://steamcommunity.com/profiles/{ajaxRequest.Session!.SteamID}/edit/avatar",
+            CancellationToken = ajaxRequest.CancellationToken
         }
-        .AddPostData("type", "player_avatar_image").AddPostData("sId", session.SteamID).AddPostData("sessionid", session.SessionID)
+        .AddPostData("type", "player_avatar_image").AddPostData("sId", ajaxRequest.Session!.SteamID).AddPostData("sessionid", ajaxRequest.Session!.SessionID)
         .AddPostData("doSub", 1).AddPostData("json", 1);
         var response = await Downloader.UploadFilesToRemoteUrlAsync(request, filename);
         if (!response.Success)
@@ -941,10 +1008,13 @@ public static partial class Steam
             return new UploadImageResponse() { success = false, message = $"Ошибка при десерилизации данных '{response.Data}'" };
         }
     }
-    public static async Task<OperationProgress> CSGO_OperationProgressAsync(ISessionProvider session, System.Net.IWebProxy proxy)
+    public static async Task<OperationProgress> CSGO_OperationProgressAsync(DefaultRequest ajaxRequest)
     {
-        string url = $"https://steamcommunity.com/profiles/{session.SteamID}/gcpd/730/?tab=operationquests";
-        var response = await Downloader.GetAsync(new GetRequest(url, proxy, session));
+        string url = $"https://steamcommunity.com/profiles/{ajaxRequest.Session!.SteamID}/gcpd/730/?tab=operationquests";
+        var response = await Downloader.GetAsync(new GetRequest(url, ajaxRequest.Proxy, ajaxRequest.Session)
+        {
+            CancellationToken = ajaxRequest.CancellationToken,
+        });
         if (!response.Success)
             return new OperationProgress("Ошибка при запросе");
         else if (response.Data == "<!DOCTYPE html>")
@@ -1018,10 +1088,13 @@ public static partial class Steam
         }
         return op_progress;
     }
-    public static async Task<AccountMain> CSGO_AccountMainAsync(ISessionProvider session, System.Net.IWebProxy proxy)
+    public static async Task<AccountMain> CSGO_AccountMainAsync(DefaultRequest ajaxRequest)
     {
-        string url = $"https://steamcommunity.com/profiles/{session.SteamID}/gcpd/730/?tab=accountmain";
-        var response = await Downloader.GetAsync(new(url, proxy, session));
+        string url = $"https://steamcommunity.com/profiles/{ajaxRequest.Session!.SteamID}/gcpd/730/?tab=accountmain";
+        var response = await Downloader.GetAsync(new(url, ajaxRequest.Proxy, ajaxRequest.Session)
+        {
+            CancellationToken = ajaxRequest.CancellationToken,
+        });
         if (!response.Success)
             return new("Ошибка при запросе");
         else if (response.Data == "<!DOCTYPE html>")
@@ -1150,10 +1223,13 @@ public static partial class Steam
         }
         return accountMain;
     }
-    public static async Task<Matchmaking> CSGO_MatchmakingAsync(ISessionProvider session, System.Net.IWebProxy proxy)
+    public static async Task<Matchmaking> CSGO_MatchmakingAsync(DefaultRequest ajaxRequest)
     {
-        string url = $"https://steamcommunity.com/profiles/{session.SteamID}/gcpd/730/?tab=matchmaking";
-        var response = await Downloader.GetAsync(new(url, proxy, session));
+        string url = $"https://steamcommunity.com/profiles/{ajaxRequest.Session!.SteamID}/gcpd/730/?tab=matchmaking";
+        var response = await Downloader.GetAsync(new(url, ajaxRequest.Proxy, ajaxRequest.Session)
+        {
+            CancellationToken = ajaxRequest.CancellationToken,
+        });
         if (!response.Success)
             return new("Ошибка при запросе");
         else if (response.Data == "<!DOCTYPE html>")

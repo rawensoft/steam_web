@@ -260,16 +260,14 @@ public static class ExtensionMethods
 	/// <param name="session">Сессия для проверки</param>
 	/// <param name="proxy">Прокси для использования в этом запросе</param>
 	/// <returns>true если сессия валидная, false если сессия null, AccessToken пустой или PlatformType не WebBrowser, а также в других случаях</returns>
-	public static bool IsValid(this SessionData? session, Proxy? proxy = null)
+	public static bool IsValid(this SessionData? session, Proxy? proxy = null, CancellationToken? cancellationToken = null)
     {
         if (session == null || session.AccessToken.IsEmpty() || session.PlatformType != EAuthTokenPlatformType.WebBrowser)
             return false;
 
-		var check_session = API.IAuthenticationService.GetAuthSessionsForAccount(session, proxy);
+		var check_session = API.IAuthenticationService.GetAuthSessionsForAccount(session, proxy, cancellationToken);
 		if (check_session?.response.client_ids == null)
-		{
             return false;
-		}
         return true;
 	}
 	/// <summary>
@@ -278,14 +276,14 @@ public static class ExtensionMethods
 	/// <param name="session">Сессия для обновления</param>
 	/// <param name="proxy">Прокси для использования в этом запросе</param>
 	/// <returns>true если сессия обновлена, false если сессия null, RefreshToken пустой или PlatformType не WebBrowser, а также в других случаях</returns>
-	public static bool Refresh(this SessionData? session, Proxy? proxy = null)
+	public static bool Refresh(this SessionData? session, Proxy? proxy = null, CancellationToken? cancellationToken = null)
 	{
 		if (session == null || session.RefreshToken.IsEmpty() || session.PlatformType != EAuthTokenPlatformType.WebBrowser)
 			return false;
 
-		var new_token_response = API.IAuthenticationService.GenerateAccessTokenForApp(session, proxy);
-		if (new_token_response.Item1 != EResult.OK && new_token_response.Item2?.access_token?.IsEmpty() != true)
-			return false;
+		var new_token_response = API.IAuthenticationService.GenerateAccessTokenForApp(session, proxy, cancellationToken);
+        if (new_token_response.Item1 != EResult.OK || new_token_response.Item2?.access_token?.IsEmpty() != false)
+            return false;
 		else
 		{
 			session.AccessToken = new_token_response.Item2.access_token;
@@ -298,17 +296,15 @@ public static class ExtensionMethods
 	/// <param name="session">Сессия для проверки</param>
 	/// <param name="proxy">Прокси для использования в этом запросе</param>
 	/// <returns>true если сессия валидная, false если сессия null, AccessToken пустой или PlatformType не WebBrowser, а также в других случаях</returns>
-	public static async Task<bool> IsValidAsync(this SessionData? session, Proxy? proxy = null)
+	public static async Task<bool> IsValidAsync(this SessionData? session, Proxy? proxy = null, CancellationToken? cancellationToken = null)
 	{
 		if (session == null || session.AccessToken.IsEmpty() || session.PlatformType != EAuthTokenPlatformType.WebBrowser)
 			return false;
 
-		var check_session = await API.IAuthenticationService.GetAuthSessionsForAccountAsync(session, proxy);
+		var check_session = await API.IAuthenticationService.GetAuthSessionsForAccountAsync(session, proxy, cancellationToken);
 		if (check_session?.response.client_ids == null)
-		{
-			return false;
-		}
-		return true;
+            return false;
+        return true;
 	}
     /// <summary>
 	 /// Обновляет AccessToken браузерной сессии
@@ -316,13 +312,13 @@ public static class ExtensionMethods
 	 /// <param name="session">Сессия для обновления</param>
 	 /// <param name="proxy">Прокси для использования в этом запросе</param>
 	 /// <returns>true если сессия обновлена, false если сессия null, RefreshToken пустой или PlatformType не WebBrowser, а также в других случаях</returns>
-	public static async Task<bool> RefreshAsync(this SessionData? session, Proxy? proxy = null)
+	public static async Task<bool> RefreshAsync(this SessionData? session, Proxy? proxy = null, CancellationToken? cancellationToken = null)
 	{
 		if (session == null || session.RefreshToken.IsEmpty() || session.PlatformType != EAuthTokenPlatformType.WebBrowser)
 			return false;
 
-		var new_token_response = await API.IAuthenticationService.GenerateAccessTokenForAppAsync(session, proxy);
-		if (new_token_response.Item1 != EResult.OK && new_token_response.Item2?.access_token?.IsEmpty() != true)
+		var new_token_response = await API.IAuthenticationService.GenerateAccessTokenForAppAsync(session, proxy, cancellationToken);
+		if (new_token_response.Item1 != EResult.OK || new_token_response.Item2?.access_token?.IsEmpty() != false)
 			return false;
 		else
 		{
