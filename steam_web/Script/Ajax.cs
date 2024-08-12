@@ -8,7 +8,6 @@ using SteamWeb.Script.DTO;
 using SteamWeb.Script.DTO.CookiePreferences;
 using SteamWeb.Script.DTO.Listinging;
 using SteamWeb.Script.DTO.Historing;
-using SteamWeb.Auth.Interfaces;
 using System.Text.RegularExpressions;
 using ProtoBuf;
 using System.Text.Json.Serialization;
@@ -730,8 +729,6 @@ public static class Ajax
     /// <summary>
     /// Оставить комментарий в профиле
     /// </summary>
-    /// <param name="session"></param>
-    /// <param name="proxy"></param>
     /// <param name="comment"></param>
     /// <param name="count">Количество комментариев на странице</param>
     /// <param name="feature2"></param>
@@ -741,8 +738,6 @@ public static class Ajax
     /// <summary>
     /// Оставить комментарий в профиле
     /// </summary>
-    /// <param name="session"></param>
-    /// <param name="proxy"></param>
     /// <param name="comment"></param>
     /// <param name="steamid"></param>
     /// <param name="count">Количество комментариев на странице</param>
@@ -852,21 +847,20 @@ public static class Ajax
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="session"></param>
-    /// <param name="proxy"></param>
     /// <param name="steamid">SteamID аккаунта, у которого производят действия</param>
     /// <param name="action">Тип действия</param>
     /// <param name="steamids">С кем производим действия (не более 100)</param>
-    /// <exception cref="ArgumentException">В steamids должен быть один или больше элементов, но не более 100</exception>
+    /// <exception cref="ArgumentException">steamids не может быть пустым</exception>
+    /// <exception cref="ArgumentOutOfRangeException">steamids не может превышать 100 элементов</exception>
     /// <returns></returns>
     public static async Task<SuccessRgCounts> friends_action_async(DefaultRequest defaultRequest, ulong steamid, FriendsAction action, string[] steamids)
     {
         if (defaultRequest.Session == null)
             return new();
         if (steamids.Length == 0)
-            throw new ArgumentException("steamids не должен быть пустой.");
+            throw new ArgumentException("steamids не должен быть пустой");
         if (steamids.Length > 100)
-            throw new ArgumentOutOfRangeException(nameof(steamids), "steamids не может превышать 100 элементов.");
+            throw new ArgumentOutOfRangeException(nameof(steamids), "steamids не может превышать 100 элементов");
 
         string url = $"https://steamcommunity.com/profiles/{steamid}/friends/action";
         var request = new PostRequest(url, Downloader.AppFormUrlEncoded)
@@ -1101,8 +1095,6 @@ public static class Ajax
     /// <summary>
     /// Используется для создания запроса на регистрацию api ключа
     /// </summary>
-    /// <param name="session">Сессия аккаунта</param>
-    /// <param name="proxy">Прокси для запроса</param>
     /// <param name="domain">Указанный domain в ключе</param>
     /// <returns>Ответ на запрос</returns>
     public static RequestKeyResponse dev_requestkey(DefaultRequest defaultRequest, string domain)
@@ -1132,8 +1124,6 @@ public static class Ajax
     /// <para/>
     /// Рекомендуется отправлять запрос раз в 4-е секунды
 	/// </summary>
-	/// <param name="session">Сессия аккаунта</param>
-	/// <param name="proxy">Прокси для запроса</param>
 	/// <param name="domain">Указанный domain в ключе</param>
 	/// <param name="request_id">Id запроса, указан в <see cref="RequestKeyResponse.RequestId"/></param>
 	/// <returns>Ответ на запрос</returns>
@@ -1164,8 +1154,6 @@ public static class Ajax
 	/// <para/>
 	/// Рекомендуется отправлять запрос раз в 4-е секунды
 	/// </summary>
-	/// <param name="session">Сессия аккаунта</param>
-	/// <param name="proxy">Прокси для запроса</param>
 	/// <param name="domain">Указанный domain в ключе</param>
 	/// <param name="request">Оригинальный ответ на запроса</param>
 	/// <returns>Ответ на запрос</returns>
