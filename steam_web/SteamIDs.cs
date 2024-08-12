@@ -26,7 +26,7 @@ public static class SteamIDs
                 mSteamIDs.Clear();
         }
     }
-    public static string PathToSteamIDsFile { get; private set; } = Environment.CurrentDirectory + "\\steam_ids";
+    public static string PathToSteamIDsFile { get; private set; } = Path.Join(Environment.CurrentDirectory, "steam_ids");
 
     /// <summary>
     /// Изменяет папку, где хранится файл со steam_id
@@ -57,10 +57,14 @@ public static class SteamIDs
                         var item = data[i];
                         if (string.IsNullOrEmpty(item))
                             continue;
+
                         var splitted = item.Split('=');
+                        if (splitted.Length != 2)
+                            continue;
+
                         var name = splitted[0];
-                        if (!mSteamIDs.ContainsKey(name))
-                            mSteamIDs.Add(name, splitted[1].ParseUInt32());
+                        var item_nameid = splitted[1].ParseUInt32();
+                        mSteamIDs.TryAdd(name, item_nameid);
                     }
                 }
             }
