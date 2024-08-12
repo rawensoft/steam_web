@@ -1,5 +1,6 @@
 ﻿using SteamWeb.Auth.v2.Models;
 using SteamWeb.Script.Enums;
+using SteamWeb.Script.Models;
 using SteamWeb.Web;
 using System.Text;
 
@@ -254,13 +255,42 @@ public static class ExtensionMethods
 	};
 	public static byte ToDigitLost(this TypeLost lost) => (byte)lost;
 
-	/// <summary>
-	/// Проверяем браузерную сессию на активность
-	/// </summary>
-	/// <param name="session">Сессия для проверки</param>
-	/// <param name="proxy">Прокси для использования в этом запросе</param>
-	/// <returns>true если сессия валидная, false если сессия null, AccessToken пустой или PlatformType не WebBrowser, а также в других случаях</returns>
-	public static bool IsValid(this SessionData? session, Proxy? proxy = null, CancellationToken? cancellationToken = null)
+    public static AjaxWizardRequest CreateWizard(this AjaxDefaultRequest request, string s, string? referer)
+    {
+        var wizard = new AjaxWizardRequest
+        {
+            Session = request.Session,
+            Proxy = request.Proxy,
+            CancellationToken = request.CancellationToken,
+            Referer = referer,
+            S = s,
+        };
+        return wizard;
+    }
+    public static AjaxInfoRequest CreateInfo(this AjaxWizardRequest request, string account, TypeLost lost, TypeMethod method, TypeReset reset)
+    {
+        var wizard = new AjaxInfoRequest
+        {
+            Session = request.Session,
+            Proxy = request.Proxy,
+            CancellationToken = request.CancellationToken,
+            Referer = request.Referer,
+            S = request.S,
+            Account = account,
+            Lost = lost,
+            Method = method,
+            Reset = reset
+        };
+        return wizard;
+    }
+
+    /// <summary>
+    /// Проверяем браузерную сессию на активность
+    /// </summary>
+    /// <param name="session">Сессия для проверки</param>
+    /// <param name="proxy">Прокси для использования в этом запросе</param>
+    /// <returns>true если сессия валидная, false если сессия null, AccessToken пустой или PlatformType не WebBrowser, а также в других случаях</returns>
+    public static bool IsValid(this SessionData? session, Proxy? proxy = null, CancellationToken? cancellationToken = null)
     {
         if (session == null || session.AccessToken.IsEmpty() || session.PlatformType != EAuthTokenPlatformType.WebBrowser)
             return false;
