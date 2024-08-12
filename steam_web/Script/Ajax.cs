@@ -33,8 +33,8 @@ public static class Ajax
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Success>(response.Data!);
-            obj!.success = 1;
+            var obj = JsonSerializer.Deserialize<Success>(response.Data!)!;
+            obj.success = 1;
             return obj;
         }
         catch (Exception)
@@ -57,8 +57,8 @@ public static class Ajax
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Success>(response.Data!);
-            obj!.success = 1;
+            var obj = JsonSerializer.Deserialize<Success>(response.Data!)!;
+            obj.success = 1;
             return obj;
         }
         catch (Exception)
@@ -87,8 +87,8 @@ public static class Ajax
 			{
 				NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
 			};
-			var obj = JsonSerializer.Deserialize<CancelTrade>(response.Data!, options);
-            obj!.success = true;
+			var obj = JsonSerializer.Deserialize<CancelTrade>(response.Data!, options)!;
+            obj.success = true;
             return obj;
         }
         catch (Exception)
@@ -118,8 +118,8 @@ public static class Ajax
 			{
 				NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
 			};
-			var obj = JsonSerializer.Deserialize<CancelTrade>(response.Data!, options);
-            obj!.success = true;
+			var obj = JsonSerializer.Deserialize<CancelTrade>(response.Data!, options)!;
+            obj.success = true;
             return obj;
         }
         catch (Exception)
@@ -148,8 +148,8 @@ public static class Ajax
 			return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Success>(response.Data!);
-            return obj!;
+            var obj = JsonSerializer.Deserialize<Success>(response.Data!)!;
+            return obj;
         }
         catch (Exception)
         {
@@ -174,8 +174,8 @@ public static class Ajax
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Success>(response.Data!);
-            return obj!;
+            var obj = JsonSerializer.Deserialize<Success>(response.Data!)!;
+            return obj;
         }
         catch (Exception)
         {
@@ -271,12 +271,13 @@ public static class Ajax
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<PriceOverview>(response.Data);
+            var obj = JsonSerializer.Deserialize<PriceOverview>(response.Data!)!;
             return obj;
         }
         catch (Exception)
-        { }
-        return new();
+        {
+            return new();
+        }
     }
     public static PriceOverview market_priceoverview(DefaultRequest defaultRequest, uint appid, string country, ushort currency, string market_hash_name)
     {
@@ -293,12 +294,13 @@ public static class Ajax
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<PriceOverview>(response.Data);
+            var obj = JsonSerializer.Deserialize<PriceOverview>(response.Data!)!;
             return obj;
         }
         catch (Exception)
-        { }
-        return new();
+        {
+            return new();
+        }
     }
 
     public static async Task<MarketSearchResponse> market_search_render_async(DefaultRequest defaultRequest, MarketSearchRequest request)
@@ -396,12 +398,13 @@ public static class Ajax
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Data<WebApiToken>>(response.Data);
+            var obj = JsonSerializer.Deserialize<Data<WebApiToken>>(response.Data!)!;
             return obj;
         }
-        catch (Exception ex)
-        { }
-        return new();
+        catch (Exception)
+        {
+            return new();
+        }
     }
     public static Data<WebApiToken> pointssummary_ajaxgetasyncconfig(DefaultRequest defaultRequest)
     {
@@ -417,12 +420,13 @@ public static class Ajax
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Data<WebApiToken>>(response.Data);
+            var obj = JsonSerializer.Deserialize<Data<WebApiToken>>(response.Data!)!;
             return obj;
         }
-        catch (Exception ex)
-        { }
-        return new();
+        catch (Exception)
+        {
+            return new();
+        }
     }
 
     public static async Task<Listing> market_mylistings_async(DefaultRequest defaultRequest, int count = 100, int start = 0)
@@ -441,7 +445,7 @@ public static class Ajax
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();
-        return Listing.Deserialize(response.Data);
+        return Listing.Deserialize(response.Data!);
     }
     public static Listing market_mylistings(DefaultRequest defaultRequest, int count = 100, int start = 0)
     {
@@ -459,7 +463,7 @@ public static class Ajax
         var response = Downloader.Get(request);
         if (!response.Success)
             return new();
-        return Listing.Deserialize(response.Data);
+        return Listing.Deserialize(response.Data!);
     }
 
     public static async Task<Historing> market_myhistory_async(DefaultRequest defaultRequest, int start = 0, int count = 200)
@@ -476,7 +480,7 @@ public static class Ajax
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new Historing() { IsError = true };
-        else if (response.Data.Contains("There was an error loading your market history. Please try again later."))
+        else if (response.Data!.Contains("There was an error loading your market history. Please try again later."))
             return new Historing() { IsError = true };
         else if (response.Data.Contains("<a href=\\\"https:\\/\\/steamcommunity.com\\/login\\/home\\/?goto=market%2F%2Frender%2F%3Fstart%3D0%26count%3D10\\\">Login<\\/a> to view your Community Market history."))
             return new Historing() { IsAuthtorized = false };
@@ -496,7 +500,7 @@ public static class Ajax
 		var response = Downloader.Get(request);
         if (!response.Success)
             return new Historing() { IsError = true };
-        else if (response.Data.Contains("There was an error loading your market history. Please try again later."))
+        else if (response.Data!.Contains("There was an error loading your market history. Please try again later."))
             return new Historing() { IsError = true };
         else if (response.Data.Contains("<a href=\\\"https:\\/\\/steamcommunity.com\\/login\\/home\\/?goto=market%2F%2Frender%2F%3Fstart%3D0%26count%3D10\\\">Login<\\/a> to view your Community Market history."))
             return new Historing() { IsAuthtorized = false };
@@ -518,7 +522,7 @@ public static class Ajax
         var response = await Downloader.PostAsync(request);
         if (!response.Success)
             return new SellItem();
-        var obj = JsonSerializer.Deserialize<SellItem>(response.Data);
+        var obj = JsonSerializer.Deserialize<SellItem>(response.Data!)!;
         return obj;
     }
     public static SellItem market_sellitem(DefaultRequest defaultRequest, uint appid, string contextid, string assetid, string amount, int price)
@@ -536,7 +540,7 @@ public static class Ajax
         var response = Downloader.Post(request);
         if (!response.Success)
             return new SellItem();
-        var obj = JsonSerializer.Deserialize<SellItem>(response.Data);
+        var obj = JsonSerializer.Deserialize<SellItem>(response.Data!)!;
         return obj;
     }
 
@@ -554,7 +558,8 @@ public static class Ajax
         var response = await Downloader.PostAsync(request);
         if (!response.Success)
             return false;
-        else if (response.Data == "[]") return true;
+        else if (response.Data == "[]")
+            return true;
         return false;
     }
     public static bool market_removelisting(DefaultRequest defaultRequest, string id, string market_hash_name, uint appid)
@@ -571,7 +576,8 @@ public static class Ajax
         var response = Downloader.Post(request);
         if (!response.Success)
             return false;
-        else if (response.Data == "[]") return true;
+        else if (response.Data == "[]")
+            return true;
         return false;
     }
 
@@ -590,7 +596,7 @@ public static class Ajax
         var response = await Downloader.GetAsync(getRequest);
         if (!response.Success)
             return new() { E502L3 = response.StatusCode == 429, InternalError = response.StatusCode == 0 };
-        var obj = JsonSerializer.Deserialize<OrderHistogram>(response.Data);
+        var obj = JsonSerializer.Deserialize<OrderHistogram>(response.Data!)!;
         return obj;
     }
     public static OrderHistogram market_itemordershistogram(OrderHistogramRequest request)
@@ -608,7 +614,7 @@ public static class Ajax
         var response = Downloader.Get(getRequest);
         if (!response.Success)
             return new() { E502L3 = response.StatusCode == 429, InternalError = response.StatusCode == 0 };
-        var obj = JsonSerializer.Deserialize<OrderHistogram>(response.Data);
+        var obj = JsonSerializer.Deserialize<OrderHistogram>(response.Data!)!;
         return obj;
     }
 
@@ -630,7 +636,7 @@ public static class Ajax
         var response = await Downloader.GetAsync(getRequest);
         if (!response.Success)
             return new() { e500 = response.StatusCode == 502 || response.StatusCode == 503 };
-        return PriceHistory.Deserialize(response.Data);
+        return PriceHistory.Deserialize(response.Data!);
     }
     public static PriceHistory market_pricehistory(DefaultRequest defaultRequest, uint appid, string market_hash_name)
     {
@@ -650,7 +656,7 @@ public static class Ajax
         var response = Downloader.Get(getRequest);
         if (!response.Success)
             return new() { e500 = response.StatusCode == 502 || response.StatusCode == 503 };
-        return PriceHistory.Deserialize(response.Data);
+        return PriceHistory.Deserialize(response.Data!);
     }
 
     public static async Task<ItemQueryLocations[]> action_QueryLocations_async(DefaultRequest defaultRequest)
@@ -684,8 +690,8 @@ public static class Ajax
         };
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
-            return new ItemQueryLocations[0];
-        var obj = JsonSerializer.Deserialize<ItemQueryLocations[]>(response.Data);
+            return Array.Empty<ItemQueryLocations>();
+        var obj = JsonSerializer.Deserialize<ItemQueryLocations[]>(response.Data!)!;
         var length = obj.Length;
         for (int i = 0; i < length; i++)
         {
@@ -716,8 +722,8 @@ public static class Ajax
         };
 		var response = await Downloader.GetAsync(request);
         if (!response.Success)
-            return new ItemGroup[0];
-        var obj = JsonSerializer.Deserialize<ItemGroup[]>(response.Data);
+            return Array.Empty<ItemGroup>();
+        var obj = JsonSerializer.Deserialize<ItemGroup[]>(response.Data!)!;
         return obj;
     }
 
@@ -782,16 +788,16 @@ public static class Ajax
             return new();
         else if (response.Data == "<!DOCTYPE html>")
             return new();
-        string data = response.Data.GetBetween("data-loyaltystore=\"", "\">");
+        string data = response.Data!.GetBetween("data-loyaltystore=\"", "\">")!;
         if (data == null)
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<SteamLoyaltyStore>(HttpUtility.HtmlDecode(data));
+            var obj = JsonSerializer.Deserialize<SteamLoyaltyStore>(HttpUtility.HtmlDecode(data))!;
             obj.success = true;
             return obj;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return new();
         }
@@ -815,7 +821,7 @@ public static class Ajax
         }
         var response = await Downloader.PostAsync(request);
         if (!response.Success || response.Data.IsEmpty() || response.Data == "<!DOCTYPE html>" ||
-            response.Data.Contains("btn_blue_steamui btn_medium login_btn")) return new();
+            response.Data!.Contains("btn_blue_steamui btn_medium login_btn")) return new();
         return SteamPurchases.Deserialize(response.Data);
     }
     public static async Task<Success> account_ajaxsetcookiepreferences_async(DefaultRequest defaultRequest, CookiePreferences cookiepreferences)
@@ -832,15 +838,16 @@ public static class Ajax
         request.AddPostData("sessionid", defaultRequest.Session!.SessionID).AddPostData("cookiepreferences", JsonSerializer.Serialize(cookiepreferences));
         var response = await Downloader.PostAsync(request);
         if (!response.Success || response.Data.IsEmpty() || response.Data == "<!DOCTYPE html>" ||
-            response.Data.Contains("btn_blue_steamui btn_medium login_btn")) return new();
+            response.Data!.Contains("btn_blue_steamui btn_medium login_btn")) return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Success>(HttpUtility.HtmlDecode(response.Data));
+            var obj = JsonSerializer.Deserialize<Success>(HttpUtility.HtmlDecode(response.Data))!;
             return obj;
         }
-        catch (Exception ex)
-        { }
-        return new();
+        catch (Exception)
+        {
+            return new();
+        }
     }
     /// <summary>
     /// 
@@ -859,7 +866,7 @@ public static class Ajax
         if (steamids.Length == 0)
             throw new ArgumentException("steamids не должен быть пустой.");
         if (steamids.Length > 100)
-            throw new ArgumentOutOfRangeException("steamids не может превышать 100 элементов.");
+            throw new ArgumentOutOfRangeException(nameof(steamids), "steamids не может превышать 100 элементов.");
 
         string url = $"https://steamcommunity.com/profiles/{steamid}/friends/action";
         var request = new PostRequest(url, Downloader.AppFormUrlEncoded)
@@ -904,15 +911,16 @@ public static class Ajax
             request.AddPostData("steamids%5B%5D", steamids[i]);
         var response = await Downloader.PostAsync(request);
         if (!response.Success || response.Data.IsEmpty() || response.Data == "<!DOCTYPE html>" ||
-            response.Data.Contains("btn_blue_steamui btn_medium login_btn")) return new();
+            response.Data!.Contains("btn_blue_steamui btn_medium login_btn")) return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<SuccessRgCounts>(HttpUtility.HtmlDecode(response.Data));
+            var obj = JsonSerializer.Deserialize<SuccessRgCounts>(HttpUtility.HtmlDecode(response.Data))!;
             return obj;
         }
-        catch (Exception ex)
-        { }
-        return new();
+        catch (Exception)
+        {
+            return new();
+        }
     }
     public static async Task<QueueApps> explore_generatenewdiscoveryqueue_async(DefaultRequest defaultRequest, ushort queuetype = 0)
     {
@@ -929,16 +937,17 @@ public static class Ajax
         request.AddPostData("sessionid", defaultRequest.Session!.SessionID).AddPostData("queuetype", queuetype);
         var response = await Downloader.PostAsync(request);
         if (!response.Success || response.Data.IsEmpty() || response.Data == "<!DOCTYPE html>" ||
-            response.Data.Contains("btn_blue_steamui btn_medium login_btn")) return new();
+            response.Data!.Contains("btn_blue_steamui btn_medium login_btn")) return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<QueueApps>(response.Data);
+            var obj = JsonSerializer.Deserialize<QueueApps>(response.Data)!;
             obj.Success = true;
             return obj;
         }
-        catch (Exception ex)
-        { }
-        return new();
+        catch (Exception)
+        {
+            return new();
+        }
     }
     public static QueueApps explore_generatenewdiscoveryqueue(DefaultRequest defaultRequest, ushort queuetype = 0)
     {
@@ -955,16 +964,17 @@ public static class Ajax
         request.AddPostData("sessionid", defaultRequest.Session!.SessionID).AddPostData("queuetype", queuetype);
         var response = Downloader.Post(request);
         if (!response.Success || response.Data.IsEmpty() || response.Data == "<!DOCTYPE html>" ||
-            response.Data.Contains("btn_blue_steamui btn_medium login_btn")) return new();
+            response.Data!.Contains("btn_blue_steamui btn_medium login_btn")) return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<QueueApps>(response.Data);
+            var obj = JsonSerializer.Deserialize<QueueApps>(response.Data)!;
             obj.Success = true;
             return obj;
         }
-        catch (Exception ex)
-        { }
-        return new();
+        catch (Exception)
+        {
+            return new();
+        }
     }
     public static async Task<InventoryHistory> inventory_history_async(DefaultRequest defaultRequest, InventoryHistoryCursor cursor, uint[] appid)
     {
@@ -983,11 +993,11 @@ public static class Ajax
             request.AddQuery("app%5B%5D", appid[i]);
         var response = await Downloader.GetAsync(request);
         if (!response.Success || response.Data.IsEmpty() || response.Data == "<!DOCTYPE html>" ||
-            response.Data.Contains("btn_blue_steamui btn_medium login_btn")) return new();
+            response.Data!.Contains("btn_blue_steamui btn_medium login_btn")) return new();
         InventoryHistory obj;
         try
         {
-            obj = JsonSerializer.Deserialize<InventoryHistory>(response.Data);
+            obj = JsonSerializer.Deserialize<InventoryHistory>(response.Data)!;
             obj.success = true;
             return obj;
         }
@@ -1114,8 +1124,8 @@ public static class Ajax
         {
             NumberHandling = JsonNumberHandling.AllowReadingFromString,
         };
-        var obj = JsonSerializer.Deserialize<RequestKeyResponse>(response.Data!, options);
-        return obj!;
+        var obj = JsonSerializer.Deserialize<RequestKeyResponse>(response.Data!, options)!;
+        return obj;
 	}
 	/// <summary>
 	/// Используется для проверки состояния подтверждения создания ключа и получение его в текстовом виде
@@ -1146,8 +1156,8 @@ public static class Ajax
         {
             NumberHandling = JsonNumberHandling.AllowReadingFromString,
         };
-        var obj = JsonSerializer.Deserialize<RequestKeyResponse>(response.Data!, options);
-        return obj!;
+        var obj = JsonSerializer.Deserialize<RequestKeyResponse>(response.Data!, options)!;
+        return obj;
     }
 	/// <summary>
 	/// Используется для проверки состояния подтверждения создания ключа и получение его в текстовом виде
