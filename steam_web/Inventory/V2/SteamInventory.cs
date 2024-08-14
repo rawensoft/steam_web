@@ -46,8 +46,12 @@ public class SteamInventory
             return inv;
         }
         catch (Exception e)
-        { return new() { error = e.Message}; }
-        
+        {
+            return new()
+            {
+                error = e.Message
+            };
+        }
     }
     public async static Task<SteamInventory> LoadAsync(DefaultRequest defaultRequest, ulong steamid64, uint appid, byte context = 2, bool trading = false)
     {
@@ -75,7 +79,12 @@ public class SteamInventory
             return inv;
         }
         catch (Exception e)
-        { return new() { error = e.Message }; }
+        {
+            return new()
+            {
+                error = e.Message
+            };
+        }
     }
 
     public static SteamInventory Restore(string steamid64, uint appid, string? dir = null)
@@ -99,11 +108,16 @@ public class SteamInventory
                     Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
                     NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString,
                 };
-                var obj = JsonSerializer.Deserialize<SteamInventory>(data, options);
+                var obj = JsonSerializer.Deserialize<SteamInventory>(data, options)!;
                 return obj;
             }
             catch (Exception e)
-            { return new() { error = e.Message }; }
+            {
+                return new()
+                {
+                    error = e.Message
+                };
+            }
         }
         return new() { error = $"Файла '{path}' не существует" };
     }
