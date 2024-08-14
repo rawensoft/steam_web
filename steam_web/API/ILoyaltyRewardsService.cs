@@ -9,17 +9,18 @@ public static class ILoyaltyRewardsService
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="Proxy"></param>
-    /// <param name="access_token">Можно получить через <code>(await Ajax.pointssummary_ajaxgetasyncconfig(Session, Proxy)).Item2.WebAPI_Token;</code></param>
+    /// <param name="apiRequest">AccessToken можно получить через <code>(await Ajax.pointssummary_ajaxgetasyncconfig(Session, Proxy)).Item2.WebAPI_Token;</code></param>
     /// <param name="steamid">Обязательно тот, к которому относится access_token</param>
     /// <returns></returns>
-    public static async Task<Response<RewardSummary>> GetSummaryAsync(Proxy proxy, string access_token, ulong steamid)
+    public static async Task<Response<RewardSummary>> GetSummaryAsync(ApiRequest apiRequest, ulong steamid)
     {
-        var request = new GetRequest(SteamPoweredUrls.ILoyaltyRewardsService_GetSummary_v1, proxy)
+        var request = new GetRequest(SteamPoweredUrls.ILoyaltyRewardsService_GetSummary_v1)
         {
+            Proxy = apiRequest.Proxy,
+            CancellationToken = apiRequest.CancellationToken,
             UserAgent = KnownUserAgents.OkHttp
 		}
-        .AddQuery("access_token", access_token).AddQuery("steamid", steamid);
+        .AddQuery("access_token", apiRequest.AuthToken!).AddQuery("steamid", steamid);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();
@@ -37,17 +38,18 @@ public static class ILoyaltyRewardsService
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="Proxy"></param>
-    /// <param name="access_token">Можно получить через <code>(await Ajax.pointssummary_ajaxgetasyncconfig(Session, Proxy)).Item2.WebAPI_Token;</code></param>
+    /// <param name="apiRequest">AccessToken можно получить через <code>(await Ajax.pointssummary_ajaxgetasyncconfig(Session, Proxy)).Item2.WebAPI_Token;</code></param>
     /// <param name="steamid">Обязательно тот, к которому относится access_token</param>
     /// <returns></returns>
-    public static Response<RewardSummary> GetSummary(Proxy proxy, string access_token, ulong steamid)
+    public static Response<RewardSummary> GetSummary(ApiRequest apiRequest, ulong steamid)
     {
-        var request = new GetRequest(SteamPoweredUrls.ILoyaltyRewardsService_GetSummary_v1, proxy)
+        var request = new GetRequest(SteamPoweredUrls.ILoyaltyRewardsService_GetSummary_v1)
         {
+            Proxy = apiRequest.Proxy,
+            CancellationToken = apiRequest.CancellationToken,
             UserAgent = KnownUserAgents.OkHttp
 		}
-        .AddQuery("access_token", access_token).AddQuery("steamid", steamid);
+        .AddQuery("access_token", apiRequest.AuthToken!).AddQuery("steamid", steamid);
         var response = Downloader.Get(request);
         if (!response.Success)
             return new();

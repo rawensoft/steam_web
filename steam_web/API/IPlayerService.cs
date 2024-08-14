@@ -1,6 +1,4 @@
 ﻿using SteamWeb.Web;
-using System;
-using System.Threading.Tasks;
 using System.Text.Json;
 using SteamWeb.API.Models.IPlayerService;
 using SteamWeb.API.Models;
@@ -8,19 +6,14 @@ using SteamWeb.API.Models;
 namespace SteamWeb.API;
 public static class IPlayerService
 {
-    /// <summary>
-    /// Returns the customizations (if any) for a profile
-    /// </summary>
-    /// <param name="proxy"></param>
-    /// <param name="key"></param>
-    /// <param name="steamid"></param>
-    /// <param name="include_inactive_customizations"></param>
-    /// <param name="include_purchased_customizations"></param>
-    /// <returns></returns>
-    public static async Task<Response<ProfileCustomization>> GetProfileCustomizationAsync(Proxy proxy, string key, ulong steamid,
+    public static async Task<Response<ProfileCustomization>> GetProfileCustomizationAsync(ApiRequest apiRequest, ulong steamid,
         bool include_inactive_customizations = false, bool include_purchased_customizations = false)
     {
-        var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetProfileCustomization_v1, proxy).AddQuery("key", key).AddQuery("steamid", steamid);
+        var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetProfileCustomization_v1)
+        {
+            Proxy = apiRequest.Proxy,
+            CancellationToken = apiRequest.CancellationToken,
+        }.AddQuery("key", apiRequest.AuthToken!).AddQuery("steamid", steamid);
         if (include_inactive_customizations)
             request.AddQuery("include_inactive_customizations", 1);
         if (include_purchased_customizations)
@@ -40,10 +33,13 @@ public static class IPlayerService
         }
     }
 
-    public static async Task<bool> SetProfileThemeAsync(Proxy proxy, string access_token, string theme_id)
+    public static async Task<bool> SetProfileThemeAsync(ApiRequest apiRequest, string theme_id)
     {
-        var request = new PostRequest(SteamPoweredUrls.IPlayerService_SetProfileTheme_v1, Downloader.AppFormUrlEncoded) { Proxy = proxy }
-            .AddPostData("access_token", access_token).AddPostData("theme_id", theme_id);
+        var request = new PostRequest(SteamPoweredUrls.IPlayerService_SetProfileTheme_v1, Downloader.AppFormUrlEncoded)
+        {
+            Proxy = apiRequest.Proxy,
+            CancellationToken = apiRequest.CancellationToken,
+        }.AddPostData("access_token", apiRequest.AuthToken!).AddPostData("theme_id", theme_id);
         var response = await Downloader.PostAsync(request);
         return response.Success;
     }
@@ -51,13 +47,15 @@ public static class IPlayerService
     /// <summary>
     /// Gets badges that are owned by a specific user
     /// </summary>
-    /// <param name="proxy"></param>
-    /// <param name="key"></param>
     /// <param name="steamid">The player we're asking about</param>
     /// <returns></returns>
-    public static async Task<Response<PlayerBadges>> GetBadgesAsync(Proxy proxy, string key, ulong steamid)
+    public static async Task<Response<PlayerBadges>> GetBadgesAsync(ApiRequest apiRequest, ulong steamid)
     {
-        var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetBadges_v1, proxy).AddQuery("key", key).AddQuery("steamid", steamid);
+        var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetBadges_v1)
+        {
+            Proxy = apiRequest.Proxy,
+            CancellationToken = apiRequest.CancellationToken,
+        }.AddQuery("key", apiRequest.AuthToken!).AddQuery("steamid", steamid);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();
@@ -76,14 +74,16 @@ public static class IPlayerService
     /// <summary>
     /// Gets all the quests needed to get the specified badge, and which are completed
     /// </summary>
-    /// <param name="proxy"></param>
-    /// <param name="key"></param>
     /// <param name="steamid">The player we're asking about</param>
     /// <param name="badgeid">The badge we're asking about</param>
     /// <returns></returns>
-    public static async Task<Response<PlayerQuests>> GetCommunityBadgeProgressAsync(Proxy proxy, string key, ulong steamid, int? badgeid = null)
+    public static async Task<Response<PlayerQuests>> GetCommunityBadgeProgressAsync(ApiRequest apiRequest, ulong steamid, int? badgeid = null)
     {
-        var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetCommunityBadgeProgress_v1, proxy).AddQuery("key", key).AddQuery("steamid", steamid);
+        var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetCommunityBadgeProgress_v1)
+        {
+            Proxy = apiRequest.Proxy,
+            CancellationToken = apiRequest.CancellationToken,
+        }.AddQuery("key", apiRequest.AuthToken!).AddQuery("steamid", steamid);
         if (badgeid.HasValue)
             request.AddQuery("badgeid", badgeid.Value);
         var response = await Downloader.GetAsync(request);
@@ -101,16 +101,13 @@ public static class IPlayerService
         }
     }
 
-    /// <summary>
-    /// Gets the badge the user has set as their favorite
-    /// </summary>
-    /// <param name="proxy"></param>
-    /// <param name="key"></param>
-    /// <param name="steamid"></param>
-    /// <returns></returns>
-    public static async Task<Response<FavoriteBadge>> GetFavoriteBadgeAsync(Proxy proxy, string key, ulong steamid)
+    public static async Task<Response<FavoriteBadge>> GetFavoriteBadgeAsync(ApiRequest apiRequest, ulong steamid)
     {
-        var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetFavoriteBadge_v1, proxy).AddQuery("key", key).AddQuery("steamid", steamid);
+        var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetFavoriteBadge_v1)
+        {
+            Proxy = apiRequest.Proxy,
+            CancellationToken = apiRequest.CancellationToken,
+        }.AddQuery("key", apiRequest.AuthToken!).AddQuery("steamid", steamid);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();
@@ -129,8 +126,6 @@ public static class IPlayerService
     /// <summary>
     /// Return a list of games owned by the player
     /// </summary>
-    /// <param name="proxy"></param>
-    /// <param name="key"></param>
     /// <param name="steamid">The player we're asking about</param>
     /// <param name="include_appinfo">true if we want additional details (name, icon) about each game</param>
     /// <param name="include_played_free_games">Free games are excluded by default. If this is set, free games the user has played will be returned.</param>
@@ -138,10 +133,14 @@ public static class IPlayerService
     /// <param name="skip_unvetted_apps">if set, skip unvetted store apps</param>
     /// <param name="appids_filter">if set, restricts result set to the passed in apps</param>
     /// <returns></returns>
-    public static async Task<Response<PlayerOwnedGames>> GetOwnedGamesAsync(Proxy proxy, string key, ulong steamid, bool include_appinfo = false,
+    public static async Task<Response<PlayerOwnedGames>> GetOwnedGamesAsync(ApiRequest apiRequest, ulong steamid, bool include_appinfo = false,
         bool include_played_free_games = false, bool include_free_sub = false, bool skip_unvetted_apps = false, uint? appids_filter = null)
     {
-        var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetOwnedGames_v1, proxy).AddQuery("key", key).AddQuery("steamid", steamid);
+        var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetOwnedGames_v1)
+        {
+            Proxy = apiRequest.Proxy,
+            CancellationToken = apiRequest.CancellationToken,
+        }.AddQuery("key", apiRequest.AuthToken!).AddQuery("steamid", steamid);
         if (include_appinfo)
             request.AddQuery("include_appinfo", 1);
         if (include_played_free_games)
@@ -170,13 +169,15 @@ public static class IPlayerService
     /// <summary>
     /// Returns the Steam Level of a user
     /// </summary>
-    /// <param name="proxy"></param>
-    /// <param name="key"></param>
     /// <param name="steamid">The player we're asking about</param>
     /// <returns></returns>
-    public static async Task<Response<PlayerSteamLevel>> GetSteamLevelAsync(Proxy proxy, string key, ulong steamid)
+    public static async Task<Response<PlayerSteamLevel>> GetSteamLevelAsync(ApiRequest apiRequest, ulong steamid)
     {
-        var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetSteamLevel_v1, proxy).AddQuery("key", key).AddQuery("steamid", steamid);
+        var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetSteamLevel_v1)
+        {
+            Proxy = apiRequest.Proxy,
+            CancellationToken = apiRequest.CancellationToken,
+        }.AddQuery("key", apiRequest.AuthToken!).AddQuery("steamid", steamid);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();

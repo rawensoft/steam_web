@@ -6,13 +6,15 @@ using SteamWeb.API.Models.IMobileNotificationService;
 namespace SteamWeb.API;
 public static class IMobileNotificationService
 {
-    public static async Task<Response<UserNotificationCounts>> GetUserNotificationCounts(Proxy proxy, string access_token)
+    public static async Task<Response<UserNotificationCounts>> GetUserNotificationCounts(ApiRequest apiRequest)
     {
-        var request = new GetRequest(SteamPoweredUrls.IMobileNotificationService_GetUserNotificationCounts_v1, proxy)
+        var request = new GetRequest(SteamPoweredUrls.IMobileNotificationService_GetUserNotificationCounts_v1)
         {
+            Proxy = apiRequest.Proxy,
+            CancellationToken = apiRequest.CancellationToken,
             UserAgent = KnownUserAgents.OkHttp
-		}
-        .AddQuery("access_token", access_token);
+        }
+        .AddQuery("access_token", apiRequest.AuthToken!);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();

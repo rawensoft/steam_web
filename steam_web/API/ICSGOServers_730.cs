@@ -1,6 +1,4 @@
-﻿using System;
-using System.Text.Json;
-using System.Threading.Tasks;
+﻿using System.Text.Json;
 using SteamWeb.API.Models.ICSGOServers_730;
 using SteamWeb.Web;
 using SteamWeb.API.Models;
@@ -11,12 +9,15 @@ public static class ICSGOServers_730
     /// <summary>
     /// offline, idle, low, normal, medium
     /// </summary>
-    /// <param name="Proxy"></param>
-    /// <param name="key"></param>
     /// <returns></returns>
-    public static async Task<Result<GameServerStatus>> GetGameServersStatusAsync(Proxy proxy, string key)
+    public static async Task<Result<GameServerStatus>> GetGameServersStatusAsync(ApiRequest apiRequest)
     {
-        var response = await Downloader.GetAsync((new GetRequest(SteamPoweredUrls.ICSGOServers_730_GetGameServersStatus_v1, proxy)).AddQuery("key", key));
+        var request = new GetRequest(SteamPoweredUrls.ICSGOServers_730_GetGameServersStatus_v1)
+        {
+            Proxy = apiRequest.Proxy,
+            CancellationToken = apiRequest.CancellationToken,
+        }.AddQuery("key", apiRequest.AuthToken!);
+        var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();
         try
@@ -32,12 +33,15 @@ public static class ICSGOServers_730
     /// <summary>
     /// offline, idle, low, normal, medium
     /// </summary>
-    /// <param name="Proxy"></param>
-    /// <param name="key"></param>
     /// <returns></returns>
-    public static Result<GameServerStatus> GetGameServersStatus(Proxy proxy, string key)
+    public static Result<GameServerStatus> GetGameServersStatus(ApiRequest apiRequest)
     {
-        var response = Downloader.Get((new GetRequest(SteamPoweredUrls.ICSGOServers_730_GetGameServersStatus_v1, proxy)).AddQuery("key", key));
+        var request = new GetRequest(SteamPoweredUrls.ICSGOServers_730_GetGameServersStatus_v1)
+        {
+            Proxy = apiRequest.Proxy,
+            CancellationToken = apiRequest.CancellationToken,
+        }.AddQuery("key", apiRequest.AuthToken!);
+        var response = Downloader.Get(request);
         if (!response.Success)
             return new();
         try

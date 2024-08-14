@@ -1,18 +1,22 @@
-﻿using SteamWeb.API.Models.ISteamUser;
+﻿using SteamWeb.API.Models;
+using SteamWeb.API.Models.ISteamUser;
 using SteamWeb.API.Models.ISteamUserOAuth;
 using SteamWeb.Web;
-using System;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace SteamWeb.API;
 public static class ISteamUserOAuth
 {
-    public static async Task<FriendsList<PlayerFriend>> GetFriendListAsync(Proxy proxy, string access_token)
-        => await GetFriendListAsync(proxy, access_token, "");
-    public static async Task<FriendsList<PlayerFriend>> GetFriendListAsync(Proxy proxy, string access_token, string relationship)
+    public static async Task<FriendsList<PlayerFriend>> GetFriendListAsync(ApiRequest apiRequest)
+        => await GetFriendListAsync(apiRequest, string.Empty);
+    public static async Task<FriendsList<PlayerFriend>> GetFriendListAsync(ApiRequest apiRequest, string relationship)
     {
-        var request = new GetRequest(SteamPoweredUrls.ISteamUserOAuth_GetFriendList_v1, proxy).AddQuery("access_token", access_token);
+        var request = new GetRequest(SteamPoweredUrls.ISteamUserOAuth_GetFriendList_v1)
+        {
+            Proxy = apiRequest.Proxy,
+            CancellationToken = apiRequest.CancellationToken,
+        }
+            .AddQuery("access_token", apiRequest.AuthToken!);
         if (!string.IsNullOrEmpty(relationship))
             request.AddQuery("relationship", relationship);
         var response = await Downloader.GetAsync(request);
@@ -27,11 +31,16 @@ public static class ISteamUserOAuth
             return new();
         }
     }
-    public static async Task<FriendsList<PlayerFriend>> GetFriendListAsync(Proxy proxy, string access_token, ulong steamid)
-        => await GetFriendListAsync(proxy, access_token, steamid, "");
-    public static async Task<FriendsList<PlayerFriend>> GetFriendListAsync(Proxy proxy, string access_token, ulong steamid, string relationship)
+    public static async Task<FriendsList<PlayerFriend>> GetFriendListAsync(ApiRequest apiRequest, ulong steamid)
+        => await GetFriendListAsync(apiRequest, steamid, string.Empty);
+    public static async Task<FriendsList<PlayerFriend>> GetFriendListAsync(ApiRequest apiRequest, ulong steamid, string relationship)
     {
-        var request = new GetRequest(SteamPoweredUrls.ISteamUserOAuth_GetFriendList_v1, proxy).AddQuery("access_token", access_token).AddQuery("steamid", steamid);
+        var request = new GetRequest(SteamPoweredUrls.ISteamUserOAuth_GetFriendList_v1)
+        {
+            Proxy = apiRequest.Proxy,
+            CancellationToken = apiRequest.CancellationToken,
+        }
+            .AddQuery("access_token", apiRequest.AuthToken!).AddQuery("steamid", steamid);
         if (!string.IsNullOrEmpty(relationship))
             request.AddQuery("relationship", relationship);
         var response = await Downloader.GetAsync(request);
@@ -48,9 +57,14 @@ public static class ISteamUserOAuth
         }
     }
 
-    public static async Task<ResponseGroups> GetGroupListAsync(Proxy proxy, string access_token, ulong steamid)
+    public static async Task<ResponseGroups> GetGroupListAsync(ApiRequest apiRequest, ulong steamid)
     {
-        var request = new GetRequest(SteamPoweredUrls.ISteamUserOAuth_GetGroupList_v1, proxy).AddQuery("access_token", access_token).AddQuery("steamid", steamid);
+        var request = new GetRequest(SteamPoweredUrls.ISteamUserOAuth_GetGroupList_v1)
+        {
+            Proxy = apiRequest.Proxy,
+            CancellationToken = apiRequest.CancellationToken,
+        }
+            .AddQuery("access_token", apiRequest.AuthToken!).AddQuery("steamid", steamid);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();
@@ -65,9 +79,14 @@ public static class ISteamUserOAuth
             return new();
         }
     }
-    public static async Task<ResponseGroups> GetGroupListAsync(Proxy proxy, string access_token)
+    public static async Task<ResponseGroups> GetGroupListAsync(ApiRequest apiRequest)
     {
-        var request = new GetRequest(SteamPoweredUrls.ISteamUserOAuth_GetGroupList_v1, proxy).AddQuery("access_token", access_token);
+        var request = new GetRequest(SteamPoweredUrls.ISteamUserOAuth_GetGroupList_v1)
+        {
+            Proxy = apiRequest.Proxy,
+            CancellationToken = apiRequest.CancellationToken,
+        }
+            .AddQuery("access_token", apiRequest.AuthToken!);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();
@@ -83,9 +102,14 @@ public static class ISteamUserOAuth
         }
     }
 
-    public static async Task<TokenDetail> GetTokenDetailsAsync(Proxy proxy, string access_token)
+    public static async Task<TokenDetail> GetTokenDetailsAsync(ApiRequest apiRequest)
     {
-        var request = new GetRequest(SteamPoweredUrls.ISteamUserOAuth_GetTokenDetails, proxy).AddQuery("access_token", access_token);
+        var request = new GetRequest(SteamPoweredUrls.ISteamUserOAuth_GetTokenDetails)
+        {
+            Proxy = apiRequest.Proxy,
+            CancellationToken = apiRequest.CancellationToken,
+        }
+            .AddQuery("access_token", apiRequest.AuthToken!);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();

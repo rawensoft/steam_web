@@ -1,6 +1,8 @@
 ﻿using ProtoBuf;
+using SteamWeb.API.Models;
 using SteamWeb.API.Protobufs;
 using SteamWeb.Auth.v2.Models;
+using SteamWeb.Models;
 using SteamWeb.Web;
 
 namespace SteamWeb.API;
@@ -13,7 +15,7 @@ public static class ISteamNotificationService
 	/// <param name="proxy">Прокси, если необходим</param>
 	/// <param name="request">Запрос</param>
 	/// <returns>Null если запрос не выполнен, в других случаях ответ на запрос</returns>
-	public static CSteamNotification_GetSteamNotifications_Response? GetSteamNotifications(SessionData session, Proxy? proxy, CSteamNotification_GetSteamNotifications_Request request)
+	public static CSteamNotification_GetSteamNotifications_Response? GetSteamNotifications(ApiRequest apiRequest, CSteamNotification_GetSteamNotifications_Request request)
 	{
 		using var memStream1 = new MemoryStream();
 		Serializer.Serialize(memStream1, request);
@@ -21,9 +23,10 @@ public static class ISteamNotificationService
 		var protobufRequest = new ProtobufRequest(SteamPoweredUrls.ISteamNotificationService_GetSteamNotifications_v1, base64)
 		{
 			UserAgent = KnownUserAgents.OkHttp,
-			Proxy = proxy,
-			AccessToken = session.AccessToken,
-			IsMobile = true
+			AccessToken = apiRequest.AuthToken,
+            Proxy = apiRequest.Proxy,
+            CancellationToken = apiRequest.CancellationToken,
+            IsMobile = true
 		};
 		using var protobufResponse = Downloader.GetProtobuf(protobufRequest);
 		if (protobufResponse.EResult != EResult.OK)
@@ -38,7 +41,7 @@ public static class ISteamNotificationService
 	/// <param name="proxy">Прокси, если необходим</param>
 	/// <param name="request">Запрос</param>
 	/// <returns>Null если запрос не выполнен, в других случаях ответ на запрос</returns>
-	public static async Task<CSteamNotification_GetSteamNotifications_Response?> GetSteamNotificationsAsync(SessionData session, Proxy? proxy, CSteamNotification_GetSteamNotifications_Request request)
+	public static async Task<CSteamNotification_GetSteamNotifications_Response?> GetSteamNotificationsAsync(ApiRequest apiRequest, CSteamNotification_GetSteamNotifications_Request request)
 	{
 		using var memStream1 = new MemoryStream();
 		Serializer.Serialize(memStream1, request);
@@ -46,9 +49,10 @@ public static class ISteamNotificationService
 		var protobufRequest = new ProtobufRequest(SteamPoweredUrls.ISteamNotificationService_GetSteamNotifications_v1, base64)
 		{
 			UserAgent = KnownUserAgents.OkHttp,
-			Proxy = proxy,
-			AccessToken = session.AccessToken,
-			IsMobile = true
+            AccessToken = apiRequest.AuthToken,
+            Proxy = apiRequest.Proxy,
+            CancellationToken = apiRequest.CancellationToken,
+            IsMobile = true
 		};
 		using var protobufResponse = await Downloader.GetProtobufAsync(protobufRequest);
 		if (protobufResponse.EResult != EResult.OK)

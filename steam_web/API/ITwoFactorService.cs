@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 namespace SteamWeb.API;
 public static class ITwoFactorService
 {
-    public static async Task<Response<QueryStatus>> QueryStatus(Proxy? proxy, string access_token, ulong steamid)
+    public static async Task<Response<QueryStatus>> QueryStatus(ApiRequest apiRequest, ulong steamid)
     {
         var request = new PostRequest(SteamPoweredUrls.ITwoFactorService_QueryStatus_v1, Downloader.AppFormUrlEncoded)
         {
-            Proxy = proxy,
-            UserAgent = KnownUserAgents.OkHttp
-		}
-        .AddPostData("access_token", access_token).AddPostData("steamid", steamid);
+            Proxy = apiRequest.Proxy,
+            CancellationToken = apiRequest.CancellationToken,
+            UserAgent = KnownUserAgents.OkHttp,
+		}.AddPostData("access_token", apiRequest.AuthToken!).AddPostData("steamid", steamid);
         var response = await Downloader.PostAsync(request);
         if (!response.Success) return new();
         try
