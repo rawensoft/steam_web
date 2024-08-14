@@ -1,8 +1,8 @@
 ﻿using System.Text.Json;
-using SteamWeb.Extensions;
 using SteamWeb.Inventory.V2.Models;
 using SteamWeb.Web;
-using SteamWeb.Auth.Interfaces;
+using System.Text;
+using SteamWeb.Models;
 
 namespace SteamWeb.Inventory.V2;
 public class SteamInventory
@@ -22,43 +22,57 @@ public class SteamInventory
     public string? error { get; init; }
     public bool is_too_many_requests { get; init; } = false;
 
-    public static SteamInventory Load(ISessionProvider? session, System.Net.IWebProxy? proxy, ulong steamid64, uint appid, string context = "2", bool trading = false)
+    public static SteamInventory Load(DefaultRequest defaultRequest, ulong steamid64, uint appid, byte context = 2, bool trading = false)
     {
         string url = GetUrl(steamid64, appid, context, trading);
+        var getRequest = new GetRequest(url)
+        {
+            Proxy = defaultRequest.Proxy,
+            Session = defaultRequest.Session,
+            CancellationToken = defaultRequest.CancellationToken,
+            IsAjax = true,
+        };
+        var response = Downloader.Get(getRequest);
+        if (response.StatusCode == 429)
+            return new() { is_too_many_requests = true, error = "Слишком много запросов. Попробуйте через 10-15 минут, но не пытайтесь обойти эту блокировку, иначе она будет автоматически продлеваться." };
+        else if (!response.Success)
+            return new() { error = response.Data ?? response.ErrorMessage ?? "Нет возвратных данных и данных об ошибке" };
+        else if (string.IsNullOrEmpty(response.Data))
+            return new() { error = $"Пустая data. Статус код: {response.StatusCode} ({response.EResult})" };
+
         try
         {
-            var getRequest = new GetRequest(url, proxy, session) { IsAjax = true };
-            var response = Downloader.Get(getRequest);
-            if (response.StatusCode == 429)
-                return new() { is_too_many_requests = true, error = "Слишком много запросов. Попробуйте через 10-15 минут, но не пытайтесь обойти эту блокировку, иначе она будет автоматически продлеваться." };
-            else if (!response.Success)
-                return new() { error = response.Data ?? response.ErrorMessage ?? "Нет возвратных данных и данных об ошибке" };
-            else if (string.IsNullOrEmpty(response.Data))
-                return new() { error = $"Пустая data. Статус код: {response.StatusCode} ({response.EResult})" };
-            var inv = JsonSerializer.Deserialize<SteamInventory>(GetDataReplaced(response.Data));
-            inv.context = inv.GetContext(appid, context);
+            var inv = JsonSerializer.Deserialize<SteamInventory>(GetDataReplaced(response.Data))!;
+            inv.context = context;
             return inv;
         }
         catch (Exception e)
         { return new() { error = e.Message}; }
         
     }
-    public async static Task<SteamInventory> LoadAsync(ISessionProvider? session, System.Net.IWebProxy? proxy, ulong steamid64, uint appid, string context = "2", bool trading = false)
+    public async static Task<SteamInventory> LoadAsync(DefaultRequest defaultRequest, ulong steamid64, uint appid, byte context = 2, bool trading = false)
     {
         string url = GetUrl(steamid64, appid, context, trading);
+        var getRequest = new GetRequest(url)
+        {
+            Proxy = defaultRequest.Proxy,
+            Session = defaultRequest.Session,
+            CancellationToken = defaultRequest.CancellationToken,
+            IsAjax = true,
+        };
+        var response = await Downloader.GetAsync(getRequest);
+        if (response.StatusCode == 429)
+            return new() { is_too_many_requests = true, error = "Слишком много запросов. Попробуйте через 10-15 минут, но не пытайтесь обойти эту блокировку, иначе она будет автоматически продлеваться." };
+        else if (!response.Success)
+            return new() { error = response.Data ?? response.ErrorMessage ?? response.ErrorException?.Message ?? "Нет возвратных данных и данных об ошибке" };
+        else if (string.IsNullOrEmpty(response.Data))
+            return new() { error = $"Пустая data. Статус код: {response.StatusCode} ({response.EResult})" };
+
         try
         {
-            var getRequest = new GetRequest(url, proxy, session) { IsAjax = true };
-            var response = await Downloader.GetAsync(getRequest);
-            if (response.StatusCode == 429)
-                return new() { is_too_many_requests = true, error = "Слишком много запросов. Попробуйте через 10-15 минут, но не пытайтесь обойти эту блокировку, иначе она будет автоматически продлеваться." };
-            else if (!response.Success)
-                return new() { error = response.Data ?? response.ErrorMessage ?? response.ErrorException?.Message ?? "Нет возвратных данных и данных об ошибке" };
-            else if (string.IsNullOrEmpty(response.Data))
-                return new() { error = $"Пустая data. Статус код: {response.StatusCode} ({response.EResult})" };
-            using var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(GetDataReplaced(response.Data)));
-            var inv = await JsonSerializer.DeserializeAsync<SteamInventory>(stream);
-            inv.context = inv.GetContext(appid, context);
+            using var stream = new MemoryStream(Encoding.UTF8.GetBytes(GetDataReplaced(response.Data)));
+            var inv = await JsonSerializer.DeserializeAsync<SteamInventory>(stream)!;
+            inv!.context = context;
             return inv;
         }
         catch (Exception e)
