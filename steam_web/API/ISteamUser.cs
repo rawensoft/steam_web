@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using SteamWeb.Web;
+﻿using SteamWeb.Web;
 using System.Text.Json;
 using SteamWeb.API.Models.ISteamUser;
 using SteamWeb.API.Enums;
@@ -10,14 +8,7 @@ using System.Text;
 namespace SteamWeb.API;
 public static class ISteamUser
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="Proxy"></param>
-    /// <param name="key"></param>
-    /// <param name="steamids">Comma-delimited list of SteamIDs (max: 100)</param>
-    /// <returns></returns>
-    public static async Task<Response<Players<PlayerSummary>>> GetPlayerSummariesAsync(Proxy proxy, string key, ulong[] steamids)
+    public static async Task<Response<Players<PlayerSummary>>> GetPlayerSummariesAsync(ApiRequest apiRequest, ulong[] steamids)
     {
         if (steamids.Length == 0)
             throw new ArgumentException(nameof(steamids));
@@ -26,10 +17,17 @@ public static class ISteamUser
 
         var sb = new StringBuilder();
         foreach (var steamid in steamids)
-            sb.Append(steamid.ToString()).Append(',');
+            sb.Append(steamid.ToString())
+                .Append(',');
         if (sb[^1] == ',')
             sb.Remove(sb.Length - 1, 1);
-        var request = new GetRequest(SteamPoweredUrls.ISteamUser_GetPlayerSummaries_v2, proxy).AddQuery("key", key).AddQuery("steamids", sb.ToString());
+
+        var request = new GetRequest(SteamPoweredUrls.ISteamUser_GetPlayerSummaries_v2)
+        {
+            Proxy = apiRequest.Proxy,
+            CancellationToken = apiRequest.CancellationToken,
+        }
+            .AddQuery("key", apiRequest.AuthToken!).AddQuery("steamids", sb.ToString());
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();
@@ -44,14 +42,7 @@ public static class ISteamUser
             return new();
         }
     }
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="Proxy"></param>
-    /// <param name="key"></param>
-    /// <param name="steamids">Comma-delimited list of SteamIDs (max: 100)</param>
-    /// <returns></returns>
-    public static Response<Players<PlayerSummary>> GetPlayerSummaries(Proxy proxy, string key, ulong[] steamids)
+    public static Response<Players<PlayerSummary>> GetPlayerSummaries(ApiRequest apiRequest, ulong[] steamids)
     {
         if (steamids.Length == 0)
             throw new ArgumentException(nameof(steamids));
@@ -63,7 +54,13 @@ public static class ISteamUser
             sb.Append(steamid.ToString()).Append(',');
         if (sb[^1] == ',')
             sb.Remove(sb.Length - 1, 1);
-        var request = new GetRequest(SteamPoweredUrls.ISteamUser_GetPlayerSummaries_v2, proxy).AddQuery("key", key).AddQuery("steamids", sb.ToString());
+
+        var request = new GetRequest(SteamPoweredUrls.ISteamUser_GetPlayerSummaries_v2)
+        {
+            Proxy = apiRequest.Proxy,
+            CancellationToken = apiRequest.CancellationToken,
+        }
+            .AddQuery("key", apiRequest.AuthToken!).AddQuery("steamids", sb.ToString());
         var response = Downloader.Get(request);
         if (!response.Success)
             return new();
@@ -79,14 +76,7 @@ public static class ISteamUser
         }
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="Proxy"></param>
-    /// <param name="key"></param>
-    /// <param name="steamids">Comma-delimited list of SteamIDs</param>
-    /// <returns></returns>
-    public static async Task<PlayerBans> GetPlayerBansAsync(Proxy proxy, string key, ulong[] steamids)
+    public static async Task<PlayerBans> GetPlayerBansAsync(ApiRequest apiRequest, ulong[] steamids)
     {
         if (steamids.Length == 0)
             throw new ArgumentException(nameof(steamids));
@@ -98,7 +88,13 @@ public static class ISteamUser
             sb.Append(steamid.ToString()).Append(',');
         if (sb[^1] == ',')
             sb.Remove(sb.Length - 1, 1);
-        var request = new GetRequest(SteamPoweredUrls.ISteamUser_GetPlayerBans_v1, proxy).AddQuery("key", key).AddQuery("steamids", sb.ToString());
+
+        var request = new GetRequest(SteamPoweredUrls.ISteamUser_GetPlayerBans_v1)
+        {
+            Proxy = apiRequest.Proxy,
+            CancellationToken = apiRequest.CancellationToken,
+        }
+            .AddQuery("key", apiRequest.AuthToken!).AddQuery("steamids", sb.ToString());
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();
@@ -113,14 +109,7 @@ public static class ISteamUser
             return new();
         }
     }
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="Proxy"></param>
-    /// <param name="key"></param>
-    /// <param name="steamids">Comma-delimited list of SteamIDs</param>
-    /// <returns></returns>
-    public static PlayerBans GetPlayerBans(Proxy proxy, string key, params ulong[] steamids)
+    public static PlayerBans GetPlayerBans(ApiRequest apiRequest, params ulong[] steamids)
     {
         if (steamids.Length == 0)
             throw new ArgumentException(nameof(steamids));
@@ -132,7 +121,13 @@ public static class ISteamUser
             sb.Append(steamid.ToString()).Append(',');
         if (sb[^1] == ',')
             sb.Remove(sb.Length - 1, 1);
-        var request = new GetRequest(SteamPoweredUrls.ISteamUser_GetPlayerBans_v1, proxy).AddQuery("key", key).AddQuery("steamids", sb.ToString());
+
+        var request = new GetRequest(SteamPoweredUrls.ISteamUser_GetPlayerBans_v1)
+        {
+            Proxy = apiRequest.Proxy,
+            CancellationToken = apiRequest.CancellationToken,
+        }
+            .AddQuery("key", apiRequest.AuthToken!).AddQuery("steamids", sb.ToString());
         var response = Downloader.Get(request);
         if (!response.Success)
             return new();
@@ -148,9 +143,13 @@ public static class ISteamUser
         }
     }
 
-    public static async Task<ResponseFriends<PlayerFriend>> GetFriendList(Proxy proxy, string key, ulong steamid)
+    public static async Task<ResponseFriends<PlayerFriend>> GetFriendList(ApiRequest apiRequest, ulong steamid)
     {
-        var request = new GetRequest(SteamPoweredUrls.ISteamUser_GetFriendList_v1, proxy).AddQuery("key", key).AddQuery("steamid", steamid);
+        var request = new GetRequest(SteamPoweredUrls.ISteamUser_GetFriendList_v1)
+        {
+            Proxy = apiRequest.Proxy,
+            CancellationToken = apiRequest.CancellationToken,
+        }.AddQuery("key", apiRequest.AuthToken!).AddQuery("steamid", steamid);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();
@@ -169,15 +168,16 @@ public static class ISteamUser
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="Proxy"></param>
-    /// <param name="key"></param>
     /// <param name="vanityurl">The vanity URL to get a SteamID for</param>
     /// <param name="url_type">The type of vanity URL. 1 (default): Individual profile, 2: Group, 3: Official game group</param>
     /// <returns></returns>
-    public static async Task<Response<VanityUrl>> ResolveVanityURL(Proxy proxy, string key, string vanityurl, VANITY_TYPE url_type)
+    public static async Task<Response<VanityUrl>> ResolveVanityURL(ApiRequest apiRequest, string vanityurl, VANITY_TYPE url_type)
     {
-        var request = new GetRequest(SteamPoweredUrls.ISteamUser_ResolveVanityURL_v1, proxy)
-            .AddQuery("key", key).AddQuery("vanityurl", vanityurl).AddQuery("url_type", (int)url_type);
+        var request = new GetRequest(SteamPoweredUrls.ISteamUser_ResolveVanityURL_v1)
+        {
+            Proxy = apiRequest.Proxy,
+            CancellationToken = apiRequest.CancellationToken,
+        }.AddQuery("key", apiRequest.AuthToken!).AddQuery("vanityurl", vanityurl).AddQuery("url_type", (int)url_type);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();
