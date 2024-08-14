@@ -22,7 +22,7 @@ public static class IFriendMessagesService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<ActiveMessageSessions>>(response.Data);
+            var obj = JsonSerializer.Deserialize<Response<ActiveMessageSessions>>(response.Data!)!;
             obj.success = true;
             return obj;
         }
@@ -45,7 +45,7 @@ public static class IFriendMessagesService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<RecentMessages>>(response.Data);
+            var obj = JsonSerializer.Deserialize<Response<RecentMessages>>(response.Data!)!;
             obj.success = true;
             return obj;
         }

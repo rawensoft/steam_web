@@ -20,7 +20,7 @@ public static class ITwoFactorService
         if (!response.Success) return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<QueryStatus>>(response.Data!);
+            var obj = JsonSerializer.Deserialize<Response<QueryStatus>>(response.Data!)!;
             obj.success = true;
             return obj;
         }

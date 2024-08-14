@@ -22,13 +22,14 @@ public static class ICSGOServers_730
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Result<GameServerStatus>>(response.Data);
+            var obj = JsonSerializer.Deserialize<Result<GameServerStatus>>(response.Data!)!;
             obj.success = true;
             return obj;
         }
-        catch (Exception ex)
-        { }
-        return new();
+        catch (Exception)
+        {
+            return new();
+        }
     }
     /// <summary>
     /// offline, idle, low, normal, medium
@@ -46,12 +47,13 @@ public static class ICSGOServers_730
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Result<GameServerStatus>>(response.Data);
+            var obj = JsonSerializer.Deserialize<Result<GameServerStatus>>(response.Data!)!;
             obj.success = true;
             return obj;
         }
-        catch (Exception ex)
-        { }
-        return new();
+        catch (Exception)
+        {
+            return new();
+        }
     }
 }

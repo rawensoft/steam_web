@@ -42,17 +42,18 @@ public static class IEconService
         if (get_descriptions)
             request.AddQuery("get_descriptions", 1);
         if (!language.IsEmpty())
-            request.AddQuery("language", language);
+            request.AddQuery("language", language!);
         if (include_failed)
             request.AddQuery("include_failed", 1);
         if (include_total)
             request.AddQuery("include_total", 1);
 
         var response = await Downloader.GetAsync(request);
-        if (!response.Success) return new();
+        if (!response.Success)
+            return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<TradesHistory>>(response.Data);
+            var obj = JsonSerializer.Deserialize<Response<TradesHistory>>(response.Data!)!;
             obj.success = true;
             return obj;
         }
@@ -77,10 +78,11 @@ public static class IEconService
             CancellationToken = apiRequest.CancellationToken,
         }.AddQuery("key", apiRequest.AuthToken!).AddQuery("steamid_target", steamid_target).AddQuery("trade_offer_access_token", trade_offer_access_token);
         var response = await Downloader.GetAsync(request);
-        if (!response.Success) return new();
+        if (!response.Success) 
+            return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<TradeHoldDuration>>(response.Data);
+            var obj = JsonSerializer.Deserialize<Response<TradeHoldDuration>>(response.Data!)!;
             obj.success = true;
             return obj;
         }
@@ -105,11 +107,12 @@ public static class IEconService
             CancellationToken = apiRequest.CancellationToken,
         }.AddQuery("key", apiRequest.AuthToken!).AddQuery("steamid_target", steamid_target).AddQuery("trade_offer_access_token", trade_offer_access_token);
 		var response = Downloader.Get(request);
-		if (!response.Success) return new();
+		if (!response.Success)
+            return new();
 		try
 		{
-			var obj = JsonSerializer.Deserialize<Response<TradeHoldDuration>>(response.Data!);
-			obj!.success = true;
+			var obj = JsonSerializer.Deserialize<Response<TradeHoldDuration>>(response.Data!)!;
+			obj.success = true;
 			return obj;
 		}
 		catch (Exception)
@@ -138,10 +141,11 @@ public static class IEconService
         if (!string.IsNullOrEmpty(language))
             request.AddQuery("language", language);
         var response = Downloader.Get(request);
-        if (!response.Success) return new();
+        if (!response.Success)
+            return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<TradeOffer>>(response.Data);
+            var obj = JsonSerializer.Deserialize<Response<TradeOffer>>(response.Data!)!;
             obj.success = true;
             return obj;
         }
@@ -173,7 +177,7 @@ public static class IEconService
         if (!response.Success) return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<TradeOffer>>(response.Data);
+            var obj = JsonSerializer.Deserialize<Response<TradeOffer>>(response.Data!)!;
             obj.success = true;
             return obj;
         }
@@ -226,7 +230,7 @@ public static class IEconService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<Trades>>(response.Data);
+            var obj = JsonSerializer.Deserialize<Response<Trades>>(response.Data!)!;
             obj.success = true;
             return obj;
         }
@@ -250,7 +254,7 @@ public static class IEconService
     /// <returns></returns>
     public static Response<Trades> GetTradeOffers(ApiRequest apiRequest, bool get_sent_offers = false, bool get_received_offers = false,
         bool get_descriptions = false, bool active_only = false, bool historical_only = false, uint? time_historical_cutoff = null,
-        uint? cursor = null, string language = null)
+        uint? cursor = null, string? language = null)
     {
         var request = new GetRequest(SteamPoweredUrls.IEconService_GetTradeOffers_v1)
         {
@@ -278,7 +282,7 @@ public static class IEconService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<Trades>>(response.Data);
+            var obj = JsonSerializer.Deserialize<Response<Trades>>(response.Data!)!;
             obj.success = true;
             return obj;
         }
@@ -308,7 +312,7 @@ public static class IEconService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<TradeOffersSummary>>(response.Data);
+            var obj = JsonSerializer.Deserialize<Response<TradeOffersSummary>>(response.Data!)!;
             obj.success = true;
             return obj;
         }
@@ -342,7 +346,7 @@ public static class IEconService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<TradeStatus>>(response.Data);
+            var obj = JsonSerializer.Deserialize<Response<TradeStatus>>(response.Data!)!;
             obj.success = true;
             return obj;
         }
@@ -366,10 +370,11 @@ public static class IEconService
             CancellationToken = apiRequest.CancellationToken,
         }.AddQuery("key", apiRequest.AuthToken!).AddQuery("tradeofferid", tradeofferid);
         var response = await Downloader.GetAsync(request);
-        if (!response.Success) return new();
+        if (!response.Success)
+            return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<object>>(response.Data);
+            var obj = JsonSerializer.Deserialize<Response<object>>(response.Data!)!;
             obj.success = true;
             return obj;
         }
@@ -393,10 +398,11 @@ public static class IEconService
             CancellationToken = apiRequest.CancellationToken,
         }.AddQuery("key", apiRequest.AuthToken!).AddQuery("tradeofferid", tradeofferid);
         var response = await Downloader.GetAsync(request);
-        if (!response.Success) return new();
+        if (!response.Success)
+            return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<object>>(response.Data);
+            var obj = JsonSerializer.Deserialize<Response<object>>(response.Data!)!;
             obj.success = true;
             return obj;
         }

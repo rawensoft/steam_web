@@ -19,7 +19,7 @@ public static class IGameServersService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<AccountList>>(response.Data!);
+            var obj = JsonSerializer.Deserialize<Response<AccountList>>(response.Data!)!;
             obj.success = true;
             return obj;
         }

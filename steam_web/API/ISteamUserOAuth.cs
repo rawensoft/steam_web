@@ -23,7 +23,7 @@ public static class ISteamUserOAuth
         if (!response.Success) return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<FriendsList<PlayerFriend>>(response.Data);
+            var obj = JsonSerializer.Deserialize<FriendsList<PlayerFriend>>(response.Data!)!;
             return obj;
         }
         catch (Exception)
@@ -48,7 +48,7 @@ public static class ISteamUserOAuth
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<FriendsList<PlayerFriend>>(response.Data);
+            var obj = JsonSerializer.Deserialize<FriendsList<PlayerFriend>>(response.Data!)!;
             return obj;
         }
         catch (Exception)
@@ -70,7 +70,7 @@ public static class ISteamUserOAuth
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<ResponseGroups>(response.Data);
+            var obj = JsonSerializer.Deserialize<ResponseGroups>(response.Data!)!;
             obj.success = true;
             return obj;
         }
@@ -92,7 +92,7 @@ public static class ISteamUserOAuth
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<ResponseGroups>(response.Data);
+            var obj = JsonSerializer.Deserialize<ResponseGroups>(response.Data!)!;
             obj.success = true;
             return obj;
         }
@@ -115,7 +115,7 @@ public static class ISteamUserOAuth
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<TokenDetail>(response.Data);
+            var obj = JsonSerializer.Deserialize<TokenDetail>(response.Data!)!;
             return obj;
         }
         catch (Exception)

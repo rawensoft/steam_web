@@ -26,7 +26,7 @@ public static class ILoyaltyRewardsService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<RewardSummary>>(response.Data);
+            var obj = JsonSerializer.Deserialize<Response<RewardSummary>>(response.Data!)!;
             obj.success = true;
             return obj;
         }
@@ -55,7 +55,7 @@ public static class ILoyaltyRewardsService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<RewardSummary>>(response.Data);
+            var obj = JsonSerializer.Deserialize<Response<RewardSummary>>(response.Data!)!;
             obj.success = true;
             return obj;
         }

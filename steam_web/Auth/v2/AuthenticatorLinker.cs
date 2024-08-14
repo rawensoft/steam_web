@@ -22,7 +22,7 @@ public class AuthenticatorLinker
     /// <summary>
     /// After the initial link step, if successful, this will be the SteamGuard data for the account. PLEASE save this somewhere after generating it; it's vital data.
     /// </summary>
-    public SteamGuardAccount LinkedAccount { get; private set; }
+    public SteamGuardAccount? LinkedAccount { get; private set; }
     /// <summary>
     /// True if the authenticator has been fully finalized.
     /// </summary>

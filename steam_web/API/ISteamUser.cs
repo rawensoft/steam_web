@@ -20,9 +20,10 @@ public static class ISteamUser
     public static async Task<Response<Players<PlayerSummary>>> GetPlayerSummariesAsync(Proxy proxy, string key, ulong[] steamids)
     {
         if (steamids.Length == 0)
-            throw new ArgumentException("steamids");
+            throw new ArgumentException(nameof(steamids));
         if (steamids.Length > 100)
-            throw new ArgumentOutOfRangeException("steamids");
+            throw new ArgumentOutOfRangeException(nameof(steamids));
+
         var sb = new StringBuilder();
         foreach (var steamid in steamids)
             sb.Append(steamid.ToString()).Append(',');
@@ -34,7 +35,7 @@ public static class ISteamUser
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<Players<PlayerSummary>>>(response.Data);
+            var obj = JsonSerializer.Deserialize<Response<Players<PlayerSummary>>>(response.Data!)!;
             obj.success = true;
             return obj;
         }
@@ -53,9 +54,10 @@ public static class ISteamUser
     public static Response<Players<PlayerSummary>> GetPlayerSummaries(Proxy proxy, string key, ulong[] steamids)
     {
         if (steamids.Length == 0)
-            throw new ArgumentException("steamids");
+            throw new ArgumentException(nameof(steamids));
         if (steamids.Length > 100)
-            throw new ArgumentOutOfRangeException("steamids");
+            throw new ArgumentOutOfRangeException(nameof(steamids));
+
         var sb = new StringBuilder();
         foreach (var steamid in steamids)
             sb.Append(steamid.ToString()).Append(',');
@@ -67,7 +69,7 @@ public static class ISteamUser
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<Players<PlayerSummary>>>(response.Data);
+            var obj = JsonSerializer.Deserialize<Response<Players<PlayerSummary>>>(response.Data!)!;
             obj.success = true;
             return obj;
         }
@@ -87,10 +89,11 @@ public static class ISteamUser
     public static async Task<PlayerBans> GetPlayerBansAsync(Proxy proxy, string key, ulong[] steamids)
     {
         if (steamids.Length == 0)
-            throw new ArgumentException("steamids");
+            throw new ArgumentException(nameof(steamids));
         if (steamids.Length > 100)
-            throw new ArgumentOutOfRangeException("steamids");
+            throw new ArgumentOutOfRangeException(nameof(steamids));
         var sb = new StringBuilder();
+
         foreach (var steamid in steamids)
             sb.Append(steamid.ToString()).Append(',');
         if (sb[^1] == ',')
@@ -101,7 +104,7 @@ public static class ISteamUser
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<PlayerBans>(response.Data);
+            var obj = JsonSerializer.Deserialize<PlayerBans>(response.Data!)!;
             obj.success = true;
             return obj;
         }
@@ -120,9 +123,10 @@ public static class ISteamUser
     public static PlayerBans GetPlayerBans(Proxy proxy, string key, params ulong[] steamids)
     {
         if (steamids.Length == 0)
-            throw new ArgumentException("steamids");
+            throw new ArgumentException(nameof(steamids));
         if (steamids.Length > 100)
-            throw new ArgumentOutOfRangeException("steamids");
+            throw new ArgumentOutOfRangeException(nameof(steamids));
+
         var sb = new StringBuilder();
         foreach (var steamid in steamids)
             sb.Append(steamid.ToString()).Append(',');
@@ -134,7 +138,7 @@ public static class ISteamUser
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<PlayerBans>(response.Data);
+            var obj = JsonSerializer.Deserialize<PlayerBans>(response.Data!)!;
             obj.success = true;
             return obj;
         }
@@ -152,7 +156,7 @@ public static class ISteamUser
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<ResponseFriends<PlayerFriend>>(response.Data);
+            var obj = JsonSerializer.Deserialize<ResponseFriends<PlayerFriend>>(response.Data!)!;
             obj.success = true;
             return obj;
         }
@@ -179,7 +183,7 @@ public static class ISteamUser
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<VanityUrl>>(response.Data);
+            var obj = JsonSerializer.Deserialize<Response<VanityUrl>>(response.Data!)!;
             obj.success = true;
             return obj;
         }

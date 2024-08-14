@@ -25,7 +25,7 @@ public class UserLogin
     /// <summary>
     /// Как нужно подтвердить вход в аккаунт
     /// </summary>
-    public EAuthSessionGuardType[] Approve { get; private set; } = new EAuthSessionGuardType[0];
+    public EAuthSessionGuardType[] Approve { get; private set; } = Array.Empty<EAuthSessionGuardType>();
     public SessionData? Session { get; private set; }
     /// <summary>
     /// Полностью ли пройдена авторизация
@@ -309,7 +309,7 @@ public class UserLogin
         Serializer.Serialize(memStream2, new AuthGuardRequest()
         {
             client_id = _client_id,
-            code = fa2Code,
+            code = fa2Code!,
             code_type = IsNeedEmailCode ? EAuthSessionGuardType.EmailCode : EAuthSessionGuardType.DeviceCode,
             steamid = Session!.SteamID
         });
@@ -594,7 +594,7 @@ public class UserLogin
 		Serializer.Serialize(memStream2, new AuthGuardRequest()
 		{
 			client_id = _client_id,
-			code = fa2Code,
+			code = fa2Code!,
 			code_type = IsNeedEmailCode ? EAuthSessionGuardType.EmailCode : EAuthSessionGuardType.DeviceCode,
 			steamid = Session!.SteamID
 		});

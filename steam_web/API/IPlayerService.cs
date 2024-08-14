@@ -23,7 +23,7 @@ public static class IPlayerService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<ProfileCustomization>>(response.Data);
+            var obj = JsonSerializer.Deserialize<Response<ProfileCustomization>>(response.Data!)!;
             obj.success = true;
             return obj;
         }
@@ -61,7 +61,7 @@ public static class IPlayerService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<PlayerBadges>>(response.Data);
+            var obj = JsonSerializer.Deserialize<Response<PlayerBadges>>(response.Data!)!;
             obj.success = true;
             return obj;
         }
@@ -91,7 +91,7 @@ public static class IPlayerService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<PlayerQuests>>(response.Data);
+            var obj = JsonSerializer.Deserialize<Response<PlayerQuests>>(response.Data!)!;
             obj.success = true;
             return obj;
         }
@@ -113,7 +113,7 @@ public static class IPlayerService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<FavoriteBadge>>(response.Data);
+            var obj = JsonSerializer.Deserialize<Response<FavoriteBadge>>(response.Data!)!;
             obj.success = true;
             return obj;
         }
@@ -156,7 +156,7 @@ public static class IPlayerService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<PlayerOwnedGames>>(response.Data);
+            var obj = JsonSerializer.Deserialize<Response<PlayerOwnedGames>>(response.Data!)!;
             obj.success = true;
             return obj;
         }
@@ -183,7 +183,7 @@ public static class IPlayerService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<PlayerSteamLevel>>(response.Data);
+            var obj = JsonSerializer.Deserialize<Response<PlayerSteamLevel>>(response.Data!)!;
             obj.success = true;
             return obj;
         }

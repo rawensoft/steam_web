@@ -16,16 +16,16 @@ public class SessionData : ISessionProvider
 	private Cookie? _steamCountryCookie = null;
 	private Cookie? _steamLanguageCookie = null;
 
-	private string _sessionID;
-	private string _accessToken;
-	private string _browserId;
-	private string _steamCountry;
+	private string? _sessionID;
+	private string? _accessToken;
+	private string? _browserId;
+	private string? _steamCountry;
 	private string _steamLanguage = "english";
 	private ulong _steamID;
 	#endregion
 	#region public fields
 	internal ConcurrentDictionary<string, Cookie> _cookies { get; init; } = new(2, 24);
-	[JsonPropertyName("session_id")] public string SessionID
+	[JsonPropertyName("session_id")] public string? SessionID
 	{
 		get => _sessionID;
 		set
@@ -39,7 +39,7 @@ public class SessionData : ISessionProvider
 				_sessionidCookie.Value = value;
 		}
 	}
-	[JsonPropertyName("access_token")] public string AccessToken
+	[JsonPropertyName("access_token")] public string? AccessToken
 	{
 		get => _accessToken;
 		set
@@ -53,8 +53,8 @@ public class SessionData : ISessionProvider
 				_steamLoginSecureCookie.Value = SteamID + "%7C%7C" + value;
 		}
 	}
-	[JsonPropertyName("refresh_token")] public string RefreshToken { get; set; }
-	[JsonPropertyName("browser_id")] public string BrowserId
+	[JsonPropertyName("refresh_token")] public string? RefreshToken { get; set; }
+	[JsonPropertyName("browser_id")] public string? BrowserId
 	{
 		get => _browserId;
 		set
@@ -68,7 +68,7 @@ public class SessionData : ISessionProvider
 				_browseridCookie.Value = value;
 		}
 	}
-	[JsonPropertyName("steam_country")] public string SteamCountry
+	[JsonPropertyName("steam_country")] public string? SteamCountry
 	{
 		get => _steamCountry;
 		set
