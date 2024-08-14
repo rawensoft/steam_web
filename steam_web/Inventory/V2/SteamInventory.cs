@@ -115,18 +115,20 @@ public class SteamInventory
         }
         return new() { error = $"Файла '{path}' не существует" };
     }
-    public bool Save(string steamid64, string appid, string? dir = null)
+    public bool Save(ulong steamid64, uint appid, string? dir = null)
     {
         if (dir == null)
-            dir = Path.Join(Environment.CurrentDirectory, $"{appid}");
+            dir = Path.Join(Environment.CurrentDirectory, appid.ToString());
+
         if (!Directory.Exists(dir))
             Directory.CreateDirectory(dir);
-        string path = Path.Join(dir, $"{steamid64}.json");
+
+        string path = Path.Join(dir, steamid64 + ".json");
         var options = new JsonSerializerOptions()
         {
             WriteIndented = true,
             PropertyNameCaseInsensitive = true,
-            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
         };
         var data = JsonSerializer.Serialize(this, options);
         try
@@ -204,12 +206,13 @@ public class SteamInventory
     /// <param name="appId"></param>
     /// <param name="context">Обычный context 753=6, но также может быть и другой, например 7</param>
     /// <returns>2 - если приложение не найдено (вдруг заработает)</returns>
-    public string GetContext(uint appId, string context = "6")
+    public byte GetContext(uint appId, byte context = 6)
     {
-        if (appId == 753) return context;
-        return "2";
+        if (appId == 753)
+            return context;
+        return 2;
     }
-    public string GetContext(string appId, string context = "6")
+
     {
         var digit = appId.GetOnlyDigit();
         if (digit == "") return GetContext(0, context);
