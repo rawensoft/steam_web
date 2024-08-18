@@ -1397,6 +1397,189 @@ public static partial class Steam
         return mm;
     }
 
+    public static SteamOfferResponse GetIncomingOffers(DefaultRequest ajaxRequest)
+    {
+        string url = "https://steamcommunity.com/profiles/" + ajaxRequest.Session!.SteamID + "/tradeoffers/";
+        var response = Downloader.Get(new(url, ajaxRequest.Proxy, ajaxRequest.Session)
+        {
+            CancellationToken = ajaxRequest.CancellationToken,
+        });
+        if (!response.Success)
+            return new() { Error = "Ошибка при запросе" };
+        else if (response.Data == "<!DOCTYPE html>")
+            return new() { Error = "Бан на запросы" };
+
+        HtmlParser html = new HtmlParser();
+        var parser = html.ParseDocument(response.Data!);
+        var tradeoffers = parser.GetElementsByClassName("tradeoffer");
+        var list = new List<SteamOffer>(tradeoffers.Length + 1);
+        foreach (var tradeoffer in tradeoffers)
+        {
+            var tradeofferid = tradeoffer.Id?.Replace("tradeofferid_", string.Empty).ParseUInt64() ?? 0;
+            uint partner_steamid32 = 0u;
+            var partner_online = false;
+            var partnerItems = Array.Empty<SteamOfferItem>();
+            var ourItems = Array.Empty<SteamOfferItem>();
+
+            var partnerProfile = tradeoffer.GetElementsByClassName("tradeoffer_partner").FirstOrDefault();
+            if (partnerProfile != default)
+            {
+                var profile = partnerProfile.GetElementsByClassName("playerAvatar").FirstOrDefault();
+                if (profile != default)
+                {
+                    partner_steamid32 = profile.GetAttribute("data-miniprofile").ParseUInt32();
+                    partner_online = profile.ClassList.Contains("online");
+                }
+            }
+
+            var tradeofferItems = tradeoffer.GetElementsByClassName("tradeoffer_items");
+            foreach (var items in tradeofferItems)
+            {
+                bool isPrimary = items.ClassList.Contains("primary");
+                if (!isPrimary && !items.ClassList.Contains("secondary"))
+                {
+                    continue;
+                }
+
+                var trade_items = items.GetElementsByClassName("trade_item");
+                var tradeItemsList = new List<SteamOfferItem>(trade_items.Length + 1);
+                foreach (var trade_item in trade_items)
+                {
+                    var economyItem = trade_item.GetAttribute("data-economy-item");
+                    var (success, appId, classId) = SteamOfferItem.ParseEconomyData(economyItem);
+                    if (!success)
+                    {
+                        return new() { Error = "Не удалось спарсить data-economy-item=" + economyItem };
+                    }
+
+                    var steamOfferItem = new SteamOfferItem
+                    {
+                        AppId = appId,
+                        ClassId = classId,
+                    };
+                    tradeItemsList.Add(steamOfferItem);
+                }
+                if (isPrimary)
+                    partnerItems = tradeItemsList.ToArray();
+                else
+                    ourItems = tradeItemsList.ToArray();
+            }
+
+            if (tradeofferid == 0)
+            {
+                return new() { Error = "Не удалось узнать tradeofferid" };
+            }
+            if (partner_steamid32 == 0)
+            {
+                return new() { Error = "Не удалось узнать partner_steamid32 у " + tradeofferid };
+            }
+            list.Add(new()
+            {
+                OurItems = ourItems,
+                PartnerId = partner_steamid32,
+                PartnerItems = partnerItems,
+                TradeOfferId = tradeofferid,
+                PartnerOnline = partner_online,
+            });
+        }
+        return new()
+        {
+            Success = true,
+            Trades = list.ToArray(),
+        };
+    }
+    public static async Task<SteamOfferResponse> GetIncomingOffersAsync(DefaultRequest ajaxRequest)
+    {
+        string url = "https://steamcommunity.com/profiles/" + ajaxRequest.Session!.SteamID + "/tradeoffers/";
+        var response = await Downloader.GetAsync(new(url, ajaxRequest.Proxy, ajaxRequest.Session)
+        {
+            CancellationToken = ajaxRequest.CancellationToken,
+        });
+        if (!response.Success)
+            return new() { Error = "Ошибка при запросе" };
+        else if (response.Data == "<!DOCTYPE html>")
+            return new() { Error = "Бан на запросы" };
+
+        HtmlParser html = new HtmlParser();
+        var parser = await html.ParseDocumentAsync(response.Data!);
+        var tradeoffers = parser.GetElementsByClassName("tradeoffer");
+        var list = new List<SteamOffer>(tradeoffers.Length + 1);
+        foreach (var tradeoffer in tradeoffers)
+        {
+            var tradeofferid = tradeoffer.Id?.Replace("tradeofferid_", string.Empty).ParseUInt64() ?? 0;
+            uint partner_steamid32 = 0u;
+            var partner_online = false;
+            var partnerItems = Array.Empty<SteamOfferItem>();
+            var ourItems = Array.Empty<SteamOfferItem>();
+
+            var partnerProfile = tradeoffer.GetElementsByClassName("tradeoffer_partner").FirstOrDefault();
+            if (partnerProfile != default)
+            {
+                var profile = partnerProfile.GetElementsByClassName("playerAvatar").FirstOrDefault();
+                if (profile != default)
+                {
+                    partner_steamid32 = profile.GetAttribute("data-miniprofile").ParseUInt32();
+                    partner_online = profile.ClassList.Contains("online");
+                }
+            }
+
+            var tradeofferItems = tradeoffer.GetElementsByClassName("tradeoffer_items");
+            foreach (var items in tradeofferItems)
+            {
+                bool isPrimary = items.ClassList.Contains("primary");
+                if (!isPrimary && !items.ClassList.Contains("secondary"))
+                {
+                    continue;
+                }
+
+                var trade_items = items.GetElementsByClassName("trade_item");
+                var tradeItemsList = new List<SteamOfferItem>(trade_items.Length + 1);
+                foreach (var trade_item in trade_items)
+                {
+                    var economyItem = trade_item.GetAttribute("data-economy-item");
+                    var (success, appId, classId) = SteamOfferItem.ParseEconomyData(economyItem);
+                    if (!success)
+                    {
+                        return new() { Error = "Не удалось спарсить data-economy-item=" + economyItem };
+                    }
+
+                    var steamOfferItem = new SteamOfferItem
+                    {
+                        AppId = appId,
+                        ClassId = classId,
+                    };
+                    tradeItemsList.Add(steamOfferItem);
+                }
+                if (isPrimary)
+                    partnerItems = tradeItemsList.ToArray();
+                else
+                    ourItems = tradeItemsList.ToArray();
+            }
+
+            if (tradeofferid == 0)
+            {
+                return new() { Error = "Не удалось узнать tradeofferid" };
+            }
+            if (partner_steamid32 == 0)
+            {
+                return new() { Error = "Не удалось узнать partner_steamid32 у " + tradeofferid };
+            }
+            list.Add(new()
+            {
+                OurItems = ourItems,
+                PartnerId = partner_steamid32,
+                PartnerItems = partnerItems,
+                TradeOfferId = tradeofferid,
+                PartnerOnline = partner_online,
+            });
+        }
+        return new()
+        {
+            Success = true,
+            Trades = list.ToArray(),
+        };
+    }
+
     public static ulong Steam32ToSteam64(uint input) => SteamIDConverter + input;
     public static uint Steam64ToSteam32(ulong input) => (uint)(input - SteamIDConverter);
     /// <summary>
