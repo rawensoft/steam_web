@@ -85,8 +85,8 @@ public class TradeOfferData
         var sid64 = steamId64.ParseUInt64();
         if (sid64 > 0)
         {
-            YouSteamId64 = sid64;
-            YouSteamId32 = Steam.Steam64ToSteam32(sid64);
+            PartnerSteamId64 = sid64;
+            PartnerSteamId32 = Steam.Steam64ToSteam32(sid64);
         }
     }
     internal void SetYou(string? name, string? sessionId, string marketAllowed, string? steamId64)
