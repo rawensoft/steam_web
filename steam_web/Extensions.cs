@@ -1,4 +1,5 @@
 ﻿using SteamWeb.Auth.v2.Models;
+using SteamWeb.Models;
 using SteamWeb.Script.Enums;
 using SteamWeb.Script.Models;
 using SteamWeb.Web;
@@ -255,7 +256,7 @@ public static class ExtensionMethods
 	};
 	public static byte ToDigitLost(this TypeLost lost) => (byte)lost;
 
-    public static AjaxWizardRequest CreateWizard(this AjaxDefaultRequest request, string s, string? referer)
+    public static AjaxWizardRequest CreateWizard(this DefaultRequest request, string s, string? referer)
     {
         var wizard = new AjaxWizardRequest
         {

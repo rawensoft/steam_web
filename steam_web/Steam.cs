@@ -15,7 +15,6 @@ using UserLoginv2 = SteamWeb.Auth.v2.UserLogin;
 using SteamGuardAccuntv2 = SteamWeb.Auth.v2.SteamGuardAccount;
 using SteamWeb.API.Models.IEconService;
 using System.Net;
-using SteamWeb.Script.Models;
 
 namespace SteamWeb;
 public static partial class Steam
@@ -26,7 +25,7 @@ public static partial class Steam
     public const ulong SteamIDConverter = 76561197960265728;
     private static Regex _rgxTradeurl1 = new(@"^https://steamcommunity.com/tradeoffer/new/[?]partner=(\d{1,12})&token=(\S{4,10})$", RegexOptions.Compiled | RegexOptions.Singleline, TimeSpan.FromSeconds(1));
     
-    public static async Task<bool> SwitchToMailCodeAsync(AjaxDefaultRequest ajaxRequest, SteamGuardAccuntv2? SDA)
+    public static async Task<bool> SwitchToMailCodeAsync(DefaultRequest ajaxRequest, SteamGuardAccuntv2? SDA)
     {
         var att_phone = await Script.AjaxHelp.PhoneAjaxAsync(ajaxRequest);
         if (att_phone.has_phone == null)
@@ -48,7 +47,7 @@ public static partial class Steam
         var response = await Downloader.PostAsync(request);
         return response.Success;
     }
-    public static bool SwitchToMailCode(AjaxDefaultRequest ajaxRequest, SteamGuardAccuntv2 SDA)
+    public static bool SwitchToMailCode(DefaultRequest ajaxRequest, SteamGuardAccuntv2 SDA)
     {
         var att_phone = Script.AjaxHelp.PhoneAjax(ajaxRequest);
         if (att_phone.has_phone == null)

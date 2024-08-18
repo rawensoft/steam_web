@@ -4,6 +4,7 @@ using System.Text.Json;
 using SteamWeb.Script.Enums;
 using SteamWeb.Extensions;
 using System.Web;
+using SteamWeb.Models;
 
 namespace SteamWeb.Script;
 public static class AjaxHelp
@@ -13,7 +14,7 @@ public static class AjaxHelp
 	/// </summary>
 	/// <param name="number">Номер как +7 9991112233</param>
 	/// <returns></returns>
-	public static async Task<AjaxValidPhone> AjaxValidNumberAsync(AjaxDefaultRequest ajaxRequest, string number)
+	public static async Task<AjaxValidPhone> AjaxValidNumberAsync(DefaultRequest ajaxRequest, string number)
     {
         var request = new PostRequest(SteamPoweredUrls.Phone_Validate, Downloader.AppFormUrlEncoded)
         {
@@ -44,7 +45,7 @@ public static class AjaxHelp
     /// <param name="input">только вписать при отправке кода из смс</param>
     /// <param name="op">get_phone_number - отправка кода на почту, email_verification - отправка смс на телефон, get_sms_code - отправка кода из смс</param>
     /// <returns></returns>
-    public static async Task<AjaxOp> AjaxAddjaxopAsync(AjaxDefaultRequest ajaxRequest, string input, OP_CODES op, bool confirmed = true)
+    public static async Task<AjaxOp> AjaxAddjaxopAsync(DefaultRequest ajaxRequest, string input, OP_CODES op, bool confirmed = true)
     {
         var request = new PostRequest(SteamPoweredUrls.Phone_AddAjaxOp, Downloader.AppFormUrlEncoded)
         {
@@ -302,7 +303,7 @@ public static class AjaxHelp
 	/// </summary>
 	/// <param name="password">пароль</param>
 	/// <returns></returns>
-	public static async Task<AjaxPasswordAvailable> AjaxCheckPasswordAvailableAsync(AjaxDefaultRequest ajaxRequest, string password, string referer)
+	public static async Task<AjaxPasswordAvailable> AjaxCheckPasswordAvailableAsync(DefaultRequest ajaxRequest, string password, string referer)
     {
         var request = new PostRequest(SteamPoweredUrls.Wizard_AjaxCheckPasswordAvailable, Downloader.AppFormUrlEncoded)
         {
@@ -385,7 +386,7 @@ public static class AjaxHelp
     /// <param name="login">Логин аккаунта</param>
     /// <param name="referer">Текущий url страницы</param>
     /// <returns>Класс содержащий данные RSA</returns>
-    public static async Task<SteamRSA> GetRSAKeyAsync(AjaxDefaultRequest ajaxRequest, string login, string referer)
+    public static async Task<SteamRSA> GetRSAKeyAsync(DefaultRequest ajaxRequest, string login, string referer)
     {
         var request = new PostRequest(SteamCommunityUrls.Login_GetRSAKey, Downloader.AppFormUrlEncoded)
         {
@@ -443,7 +444,7 @@ public static class AjaxHelp
         }
     }
     
-    public static async Task<AjaxLicense> AjaxRegisterKey(AjaxDefaultRequest ajaxRequest, string product_key)
+    public static async Task<AjaxLicense> AjaxRegisterKey(DefaultRequest ajaxRequest, string product_key)
     {
         var request = new PostRequest(SteamPoweredUrls.Account_AjaxRegisterKey, Downloader.AppFormUrlEncoded)
         {
@@ -468,7 +469,7 @@ public static class AjaxHelp
         }
     }
 
-    public static async Task<PhoneAjax> PhoneAjaxAsync(AjaxDefaultRequest ajaxRequest)
+    public static async Task<PhoneAjax> PhoneAjaxAsync(DefaultRequest ajaxRequest)
     {
         var request = new PostRequest(SteamCommunityUrls.SteamGuard_PhoneAjax, Downloader.AppFormUrlEncoded)
         {
@@ -491,7 +492,7 @@ public static class AjaxHelp
             return new();
         }
     }
-    public static PhoneAjax PhoneAjax(AjaxDefaultRequest ajaxRequest)
+    public static PhoneAjax PhoneAjax(DefaultRequest ajaxRequest)
     {
         var request = new PostRequest(SteamCommunityUrls.SteamGuard_PhoneAjax, Downloader.AppFormUrlEncoded)
         {
