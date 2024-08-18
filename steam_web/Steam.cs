@@ -602,10 +602,10 @@ public static partial class Steam
             return new() { TradeOfferId = tradeofferid, Error = "Необходимо войти в аккаунт" };
 
         var isMarketAllowed = response.Data!.GetBetween("var g_bMarketAllowed = ", ";")!;
-        var partnerSID64 = response.Data!.GetBetween("var g_ulTradePartnerSteamID = '", "';");
+        var partnerSID64 = response.Data!.GetBetween("UserThem.SetSteamId( '", "'");
         var partnerProbation = response.Data!.GetBetween("var g_bTradePartnerProbation = ", ";")!;
         var partnerName = response.Data!.GetBetween("var g_strTradePartnerPersonaName = \"", "\";");
-        var youSID64 = response.Data!.GetBetween("UserYou.SetSteamId( '", "' );");
+        var youSID64 = response.Data!.GetBetween("UserYou.SetSteamId( '", "'");
         var youName = response.Data!.GetBetween("var g_strYourPersonaName = \"", "\";");
         var sessionId = response.Data!.GetBetween("var g_sessionID = \"", "\";");
         var tradeStatus = response.Data!.GetBetween("var g_rgCurrentTradeStatus = ", ";");
@@ -643,16 +643,16 @@ public static partial class Steam
 		if (linkForgotten.Any())
 			return new() { TradeOfferId = tradeofferid, Error = "Необходимо войти в аккаунт" };
 
-		var isMarketAllowed = response.Data!.GetBetween("var g_bMarketAllowed = ", ";")!;
-		var partnerSID64 = response.Data!.GetBetween("var g_ulTradePartnerSteamID = '", "';");
-		var partnerProbation = response.Data!.GetBetween("var g_bTradePartnerProbation = ", ";")!;
-		var partnerName = response.Data!.GetBetween("var g_strTradePartnerPersonaName = \"", "\";");
-		var youSID64 = response.Data!.GetBetween("UserYou.SetSteamId( '", "' );");
-		var youName = response.Data!.GetBetween("var g_strYourPersonaName = \"", "\";");
-		var sessionId = response.Data!.GetBetween("var g_sessionID = \"", "\";");
-		var tradeStatus = response.Data!.GetBetween("var g_rgCurrentTradeStatus = ", ";");
+        var isMarketAllowed = response.Data!.GetBetween("var g_bMarketAllowed = ", ";")!;
+        var partnerSID64 = response.Data!.GetBetween("UserThem.SetSteamId( '", "'");
+        var partnerProbation = response.Data!.GetBetween("var g_bTradePartnerProbation = ", ";")!;
+        var partnerName = response.Data!.GetBetween("var g_strTradePartnerPersonaName = \"", "\";");
+        var youSID64 = response.Data!.GetBetween("UserYou.SetSteamId( '", "'");
+        var youName = response.Data!.GetBetween("var g_strYourPersonaName = \"", "\";");
+        var sessionId = response.Data!.GetBetween("var g_sessionID = \"", "\";");
+        var tradeStatus = response.Data!.GetBetween("var g_rgCurrentTradeStatus = ", ";");
 
-		var tradeData = new TradeOfferData
+        var tradeData = new TradeOfferData
 		{
 			IsSuccess = true,
 			TradeOfferId = tradeofferid,
