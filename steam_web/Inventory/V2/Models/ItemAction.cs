@@ -1,8 +1,8 @@
-﻿namespace SteamWeb.Inventory.V2.Models
+﻿using System.Text.Json.Serialization;
+
+namespace SteamWeb.Inventory.V2.Models;
+public class ItemAction
 {
-    public sealed class ItemAction
-    {
-        public string name { get; init; }
-        public string link { get; init; }
-    }
+    [JsonPropertyName("name")] public string Name { get; init; }
+    [JsonPropertyName("link")] public string Link { get; init; }
 }

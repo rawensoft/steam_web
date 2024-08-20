@@ -1,10 +1,10 @@
-﻿namespace SteamWeb.Inventory.V2.Models
+﻿using System.Text.Json.Serialization;
+
+namespace SteamWeb.Inventory.V2.Models;
+public sealed class ItemDescription
 {
-    public sealed class ItemDescription
-    {
-        public string type { get; init; }
-        public string value { get; init; }
-        public string color { get; init; }
-        public ItemAppData app_data { get; init; }
-    }
+    [JsonPropertyName("type")]public string? Type { get; init; }
+    [JsonPropertyName("value")]public string Value { get; init; }
+    [JsonPropertyName("color")]public string? Color { get; init; }
+    [JsonPropertyName("app_data")] public ItemAppData? AppData { get; init; }
 }

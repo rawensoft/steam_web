@@ -3,23 +3,30 @@ using SteamWeb.Inventory.V2.Models;
 using SteamWeb.Web;
 using System.Text;
 using SteamWeb.Models;
+using System.Text.Json.Serialization;
 
 namespace SteamWeb.Inventory.V2;
 public class SteamInventory
 {
-    public bool success { get; init; } = false;
+    private static readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions()
+    {
+        PropertyNameCaseInsensitive = false,
+        NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString,
+    };
+
+    [JsonPropertyName("success")] public bool Success { get; init; } = false;
     /// <summary>
     /// Key = classid_instanceid
     /// </summary>
-    public Dictionary<string, Asset> rgInventory { get; init; } = new(1);
+    [JsonPropertyName("rgInventory")] public Dictionary<string, Asset> RgInventory { get; init; } = new(1);
     /// <summary>
     /// Key = id
     /// </summary>
-    public Dictionary<string, Description> rgDescriptions { get; init; } = new(1);
-    public bool more { get; init; } = false;
-    public byte context { get; set; } = 2;
-    public string? error { get; init; }
-    public bool is_too_many_requests { get; init; } = false;
+    [JsonPropertyName("rgDescriptions")] public Dictionary<string, Description> RgDescriptions { get; init; } = new(1);
+    [JsonPropertyName("more")] public bool More { get; init; } = false;
+    [JsonPropertyName("context")] public byte Context { get; set; } = 2;
+    [JsonPropertyName("error")] public string? Error { get; init; }
+    [JsonPropertyName("is_too_many_requests")] public bool IsTooManyRequests { get; init; } = false;
 
     public static SteamInventory Load(DefaultRequest defaultRequest, ulong steamid64, uint appid, byte context = 2, bool trading = false)
     {
@@ -33,23 +40,23 @@ public class SteamInventory
         };
         var response = Downloader.Get(getRequest);
         if (response.StatusCode == 429)
-            return new() { is_too_many_requests = true, error = "Слишком много запросов. Попробуйте через 10-15 минут, но не пытайтесь обойти эту блокировку, иначе она будет автоматически продлеваться." };
+            return new() { IsTooManyRequests = true, Error = "Слишком много запросов. Попробуйте через 10-15 минут, но не пытайтесь обойти эту блокировку, иначе она будет автоматически продлеваться." };
         else if (!response.Success)
-            return new() { error = response.Data ?? response.ErrorMessage ?? "Нет возвратных данных и данных об ошибке" };
+            return new() { Error = response.Data ?? response.ErrorMessage ?? "Нет возвратных данных и данных об ошибке" };
         else if (string.IsNullOrEmpty(response.Data))
-            return new() { error = $"Пустая data. Статус код: {response.StatusCode} ({response.EResult})" };
+            return new() { Error = $"Пустая data. Статус код: {response.StatusCode} ({response.EResult})" };
 
         try
         {
-            var inv = JsonSerializer.Deserialize<SteamInventory>(GetDataReplaced(response.Data))!;
-            inv.context = context;
+            var inv = JsonSerializer.Deserialize<SteamInventory>(GetDataReplaced(response.Data), _jsonOptions)!;
+            inv.Context = context;
             return inv;
         }
         catch (Exception e)
         {
             return new()
             {
-                error = e.Message
+                Error = e.Message
             };
         }
     }
@@ -65,24 +72,24 @@ public class SteamInventory
         };
         var response = await Downloader.GetAsync(getRequest);
         if (response.StatusCode == 429)
-            return new() { is_too_many_requests = true, error = "Слишком много запросов. Попробуйте через 10-15 минут, но не пытайтесь обойти эту блокировку, иначе она будет автоматически продлеваться." };
+            return new() { IsTooManyRequests = true, Error = "Слишком много запросов. Попробуйте через 10-15 минут, но не пытайтесь обойти эту блокировку, иначе она будет автоматически продлеваться." };
         else if (!response.Success)
-            return new() { error = response.Data ?? response.ErrorMessage ?? response.ErrorException?.Message ?? "Нет возвратных данных и данных об ошибке" };
+            return new() { Error = response.Data ?? response.ErrorMessage ?? response.ErrorException?.Message ?? "Нет возвратных данных и данных об ошибке" };
         else if (string.IsNullOrEmpty(response.Data))
-            return new() { error = $"Пустая data. Статус код: {response.StatusCode} ({response.EResult})" };
+            return new() { Error = $"Пустая data. Статус код: {response.StatusCode} ({response.EResult})" };
 
         try
         {
             using var stream = new MemoryStream(Encoding.UTF8.GetBytes(GetDataReplaced(response.Data)));
-            var inv = await JsonSerializer.DeserializeAsync<SteamInventory>(stream)!;
-            inv!.context = context;
+            var inv = await JsonSerializer.DeserializeAsync<SteamInventory>(stream, _jsonOptions)!;
+            inv!.Context = context;
             return inv;
         }
         catch (Exception e)
         {
             return new()
             {
-                error = e.Message
+                Error = e.Message
             };
         }
     }
@@ -106,7 +113,7 @@ public class SteamInventory
                     WriteIndented = true,
                     PropertyNameCaseInsensitive = true,
                     Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-                    NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString,
+                    NumberHandling = JsonNumberHandling.AllowReadingFromString,
                 };
                 var obj = JsonSerializer.Deserialize<SteamInventory>(data, options)!;
                 return obj;
@@ -115,11 +122,11 @@ public class SteamInventory
             {
                 return new()
                 {
-                    error = e.Message
+                    Error = e.Message
                 };
             }
         }
-        return new() { error = $"Файла '{path}' не существует" };
+        return new() { Error = $"Файла '{path}' не существует" };
     }
     public bool Save(ulong steamid64, uint appid, string? dir = null)
     {
@@ -151,34 +158,34 @@ public class SteamInventory
     public Description? GetDescription(string classid, string instanceid)
     {
         var key = classid + "_" + instanceid;
-        if (rgDescriptions.TryGetValue(key, out var value))
+        if (RgDescriptions.TryGetValue(key, out var value))
             return value;
         return null;
     }
     public Asset? GetAsset(string classid, string instanceid)
     {
-        foreach (var (_, asset) in rgInventory)
+        foreach (var (_, asset) in RgInventory)
         {
-            if (asset.classid == classid &&
-                asset.instanceid == instanceid)
+            if (asset.ClassId == classid &&
+                asset.InstanceId == instanceid)
                 return asset;
         }
         return null;
     }
     public Asset? GetAsset(string id)
     {
-        if (rgInventory.TryGetValue(id, out var value))
+        if (RgInventory.TryGetValue(id, out var value))
             return value;
         return null;
     }
     public Asset[] GetAssets()
     {
-        var array = rgInventory.Values.ToArray();
+        var array = RgInventory.Values.ToArray();
         return array;
     }
     public Description[] GetDescriptions()
     {
-        var array = rgDescriptions.Values.ToArray();
+        var array = RgDescriptions.Values.ToArray();
         return array;
     }
 

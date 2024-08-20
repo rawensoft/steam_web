@@ -1,78 +1,48 @@
-﻿using System;
-using System.Text.Json.Serialization;
-
-namespace SteamWeb.Inventory.V2.Models
+﻿using System.Text.Json.Serialization;
+namespace SteamWeb.Inventory.V2.Models;
+public class Description
 {
-    public sealed class Description
-    {
-        public string appid { get; init; }
-        public string classid { get; init; }
-        public string instanceid { get; init; }
-        public string icon_url { get; init; }
-        public string icon_url_large { get; init; }
-        public string icon_drag_url { get; init; }
-        public string name { get; init; }
-        public string market_hash_name { get; init; }
-        public string market_name { get; init; }
-        public string name_color { get; init; }
-        public string background_color { get; init; }
-        public string type { get; init; }
-        public int tradable { get; init; }
-        public int marketable { get; init; }
-        public int commodity { get; init; }
-        public string market_tradable_restriction { get; init; }
-        public string market_marketable_restriction { get; init; }
-        /// <summary>
-        /// Время истечения ограничений
-        /// </summary>
-        public string cache_expiration { get; init; }
-        [JsonIgnore]
-        public DateTime get_tradable_expiration
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(cache_expiration)) return DateTime.Now;
-                return DateTime.Parse(cache_expiration);
-            }
-        }
-        [JsonIgnore]
-        public bool is_tradable
-        {
-            get
-            {
-                //if (string.IsNullOrEmpty(cache_expiration) && tradable > 0) return true;
-                if (tradable > 0) return true;
-                return false;
-            }
-        }
-        [JsonIgnore]
-        public bool is_marketable
-        {
-            get
-            {
-                if (marketable > 0) return true;
-                return false;
-            }
-        }
-        public ItemDescription[] descriptions { get; init; } = new ItemDescription[] { };
-        public ItemDescription[] owner_descriptions { get; init; } = new ItemDescription[] { };
-        public ItemAction[] actions { get; init; } = new ItemAction[] { };
-        public ItemAction[] market_actions { get; init; } = new ItemAction[] { };
-        public ItemTag[] tags { get; init; } = new ItemTag[] { };
-        /// <summary>
-        /// Только TF2/440
-        /// </summary>
-        public ItemAppData app_data { get; init; }
+    [JsonPropertyName("appid")] public uint AppId { get; init; }
+    [JsonPropertyName("classid")] public string classId { get; init; }
+    [JsonPropertyName("instanceid")] public string InstanceId { get; init; }
+    [JsonPropertyName("icon_url")] public string IconUrl { get; init; }
+    [JsonPropertyName("icon_url_large")] public string IconUrlLarge { get; init; }
+    [JsonPropertyName("icon_drag_url")] public string IconFragUrl { get; init; }
+    [JsonPropertyName("name")] public string Name { get; init; }
+    [JsonPropertyName("market_hash_name")] public string MarketHashName { get; init; }
+    [JsonPropertyName("market_name")] public string MarketName { get; init; }
+    [JsonPropertyName("name_color")] public string NameColor { get; init; }
+    [JsonPropertyName("background_color")] public string BackgroundColor { get; init; }
+    [JsonPropertyName("type")] public string Type { get; init; }
+    [JsonPropertyName("tradable")] public byte Tradable { get; init; }
+    [JsonPropertyName("marketable")] public byte Marketable { get; init; }
+    [JsonPropertyName("commodity")] public byte Commodity { get; init; }
+    [JsonPropertyName("market_tradable_restriction")] public byte MarketTradableRestriction { get; init; }
+    [JsonPropertyName("market_marketable_restriction")] public byte MarketMarketableRestriction { get; init; }
+    /// <summary>
+    /// Время истечения ограничений на трейдинг
+    /// </summary>
+    [JsonPropertyName("cache_expiration")] public DateTime? CacheExpiration { get; init; }
+    [JsonPropertyName("descriptions")] public ItemDescription[] Descriptions { get; init; } = Array.Empty<ItemDescription>();
+    [JsonPropertyName("owner_descriptions")] public ItemDescription[] OwnerDescriptions { get; init; } = Array.Empty<ItemDescription>();
+    [JsonPropertyName("actions")] public ItemAction[] Actions { get; init; } = Array.Empty<ItemAction>();
+    [JsonPropertyName("market_actions")] public ItemAction[] MarketActions { get; init; } = Array.Empty<ItemAction>();
+    [JsonPropertyName("tags")] public ItemTag[] Tags { get; init; } = Array.Empty<ItemTag>();
+    /// <summary>
+    /// Только TF2/440
+    /// </summary>
+    [JsonPropertyName("app_data")] public ItemAppData? AppData { get; init; }
 
-        public ItemTag GetTagByCategory(string category)
-        {
-            category = category.ToLower();
-            for (int i = 0; i < tags.Length; i++)
-            {
-                var tag = tags[i];
-                if (tag.category.ToLower() == category) return tag;
-            }
-            return null;
-        }
+    [JsonIgnore]
+    public bool IsTradable => Tradable != 0;
+    [JsonIgnore]
+    public bool IsMarketable => Marketable != 0;
+
+    public ItemTag? GetTagByCategory(string category)
+    {
+        foreach (var tag in Tags)
+            if (tag.Category == category)
+                return tag;
+        return null;
     }
 }

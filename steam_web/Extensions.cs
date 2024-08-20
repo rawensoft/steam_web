@@ -180,11 +180,11 @@ public static class ExtensionMethods
     }
     public static bool RemoveAsset(this Inventory.V2.SteamInventory inventory, Inventory.V2.Models.Asset asset)
     {
-        return inventory.rgInventory.Remove(asset.classid + '_' + asset.instanceid);
+        return inventory.RgInventory.Remove(asset.ClassId + '_' + asset.InstanceId);
     }
     public static bool RemoveAsset(this Inventory.V2.SteamInventory inventory, string classid, string instanceid)
 	{
-		return inventory.rgInventory.Remove(classid + '_' + instanceid);
+		return inventory.RgInventory.Remove(classid + '_' + instanceid);
     }
 	public static string GetRandomString(this int length)
 	{

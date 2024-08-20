@@ -1,8 +1,11 @@
-﻿namespace SteamWeb.Inventory.V2.Models;
-public sealed class ItemTag
+﻿using System.Text.Json.Serialization;
+
+namespace SteamWeb.Inventory.V2.Models;
+public class ItemTag
 {
-    public string internal_name { get; init; }
-    public string name { get; init; }
-    public string category { get; init; }
-    public string category_name { get; init; }
+    [JsonPropertyName("internal_name")] public string InternalName { get; init; }
+    [JsonPropertyName("name")] public string Name { get; init; }
+    [JsonPropertyName("color")] public string? Color { get; init; }
+    [JsonPropertyName("category")] public string Category { get; init; }
+    [JsonPropertyName("category_name")] public string CategoryName { get; init; }
 }

@@ -1,8 +1,10 @@
-﻿namespace SteamWeb.Inventory.V2.Models
+﻿using System.Text.Json.Serialization;
+namespace SteamWeb.Inventory.V2.Models;
+public sealed class ItemAppData
 {
-    public sealed class ItemAppData
-    {
-        public string def_index { get; init; }
-        public int? is_itemset_name { get; init; }
-    }
+    [JsonPropertyName("quantity")] public byte? Quantity { get; init; }
+    [JsonPropertyName("quality")] public byte? Quality { get; init; }
+    [JsonPropertyName("def_index")] public ushort? DefIndex { get; init; }
+    [JsonPropertyName("is_itemset_name")] public int? IsItemsetName { get; init; }
+    [JsonPropertyName("limited")] public byte? limited { get; init; }
 }
