@@ -155,6 +155,13 @@ public class SteamInventory
         }
     }
 
+    public Description? GetDescription(Asset asset)
+    {
+        var key = asset.ClassId + "_" + asset.InstanceId;
+        if (RgDescriptions.TryGetValue(key, out var value))
+            return value;
+        return null;
+    }
     public Description? GetDescription(string classid, string instanceid)
     {
         var key = classid + "_" + instanceid;
