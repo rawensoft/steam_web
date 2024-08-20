@@ -1,8 +1,11 @@
-﻿namespace SteamWeb.Models.Trade;
-public sealed class Token
-{
-    public string trade_offer_access_token { get; init; }
+﻿using System.Text.Json.Serialization;
 
+namespace SteamWeb.Models.Trade;
+public class Token
+{
+    [JsonPropertyName("trade_offer_access_token")] public string? TradeOfferAccessToken { get; init; }
+
+    [JsonConstructor]
     public Token() { }
-    public Token(string trade_offer_access_token) => this.trade_offer_access_token = trade_offer_access_token;
+    public Token(string trade_offer_access_token) => TradeOfferAccessToken = trade_offer_access_token;
 }

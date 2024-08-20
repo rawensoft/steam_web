@@ -1,33 +1,44 @@
-﻿using System.Collections.Generic;
+﻿using System.Text.Json.Serialization;
+
 namespace SteamWeb.Models.Trade;
-public sealed class NewTradeOffer
+public class NewTradeOffer
 {
-    public bool newversion { get; init; } = true;
-    public int version { get; init; } = 4;
-    public New me { get; init; } = new();
-    public New them { get; init; } = new();
+    [JsonPropertyName("newversion")] public bool NewVersion { get; init; } = true;
+    [JsonPropertyName("version")] public int Version { get; init; } = 4;
+    [JsonPropertyName("me")] public New Me { get; init; } = new();
+    [JsonPropertyName("them")] public New Them { get; init; } = new();
+
     public class New
     {
-        public List<NewAssets> assets { get; init; } = new(10);
-        public List<NewCurrency> currency { get; init; } = new(10);
-        public bool ready { get; init; } = false;
+        [JsonPropertyName("assets")] public List<NewAssets> Assets { get; init; } = new(10);
+        [JsonPropertyName("currency")] public List<NewCurrency> Currency { get; init; } = new(2);
+        [JsonPropertyName("ready")] public bool Ready { get; init; } = false;
 
-        public class NewAssets
-        {
-            public uint appid { get; init; }
-            public string contextid { get; init; }
-            public int amount { get; init; }
-            public string assetid { get; init; }
-            public NewAssets(uint appid, string contextid, string assetid, int amount = 1)
-            {
-                this.appid = appid;
-                this.contextid = contextid;
-                this.amount = amount;
-                this.assetid = assetid;
-            }
-        }
-        public class NewCurrency { }
-
-        public void AddAssets(uint appid, string contextid, string assetid, int amount = 1) => assets.Add(new NewAssets(appid, contextid, assetid, amount));
+        public void AddAssets(uint appid, string contextid, string assetid, int amount = 1) => Assets.Add(new NewAssets(appid, contextid, assetid, amount));
+        public void AddAssets(uint appid, byte contextid, ulong assetid, int amount = 1) => Assets.Add(new NewAssets(appid, contextid, assetid, amount));
     }
+    public class NewAssets
+    {
+        [JsonPropertyName("appid")] public uint AppId { get; init; }
+        [JsonPropertyName("contextid")] public string ContextId { get; init; }
+        [JsonPropertyName("amount")] public int Amount { get; init; }
+        [JsonPropertyName("assetid")] public string AssetId { get; init; }
+
+        [JsonConstructor]
+        public NewAssets(uint AppId, string ContextId, string AssetId, int Amount = 1)
+        {
+            this.AppId = AppId;
+            this.ContextId = ContextId;
+            this.Amount = Amount;
+            this.AssetId = AssetId;
+        }
+        public NewAssets(uint AppId, byte ContextId, ulong AssetId, int Amount = 1)
+        {
+            this.AppId = AppId;
+            this.ContextId = ContextId.ToString();
+            this.Amount = Amount;
+            this.AssetId = AssetId.ToString();
+        }
+    }
+    public class NewCurrency { }
 }
