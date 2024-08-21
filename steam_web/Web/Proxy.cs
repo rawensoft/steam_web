@@ -170,6 +170,6 @@ public class Proxy : IWebProxy, INotifyPropertyChanged
     public bool IsBypassed(Uri host) => !UseProxy || string.IsNullOrEmpty(IP) || Port == 0;
     private void Property(string name) => PropertyChanged?.Invoke(this, new(name));
 
-    public static bool IsLocalIPv4(string ip) => new Regex(@"(^127\.\d{0,255})|(^10\.\d{0,255})|(^172\.16)|(^192\.168)|(^169\.254)\.\d{0,255}\.\d{0,255}$", RegexOptions.Compiled).IsMatch(ip);
+    public static bool IsLocalIPv4(string ip) => new Regex(@"(^127\.\d{0,255})|(^10\.\d{0,255})|(^172\.16)|(^192\.168)|(^169\.254)\.\d{0,255}\.\d{0,255}$", RegexOptions.Compiled, TimeSpan.FromSeconds(1)).IsMatch(ip);
     public static bool IsValidIPv4(string ip) => IPAddress.TryParse(ip, out var address) && address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork;
 }
