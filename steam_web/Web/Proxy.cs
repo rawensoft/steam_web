@@ -120,23 +120,23 @@ public class Proxy : IWebProxy, INotifyPropertyChanged
     public Proxy(string ip, string port) : this(ip, port.GetOnlyDigit().ParseInt32()) { }
     public Proxy(string ip, string port, ProxyType type) : this(ip, port.GetOnlyDigit().ParseInt32(), type) { }
 
-    public Proxy(string ip, int port, string username, string password) : this(ip, port)
+    public Proxy(string ip, int port, string? username, string? password) : this(ip, port)
     {
         _username = !string.IsNullOrEmpty(username) ? username : null;
         _password = !string.IsNullOrEmpty(password) ? password : null;
     }
-    public Proxy(string ip, string port, string username, string password) : this(ip, port)
+    public Proxy(string ip, string port, string? username, string? password) : this(ip, port)
     {
         _username = !string.IsNullOrEmpty(username) ? username : null;
         _password = !string.IsNullOrEmpty(password) ? password : null;
     }
 
-    public Proxy(string ip, int port, string username, string password, ProxyType type) : this(ip, port, type)
+    public Proxy(string ip, int port, string? username, string? password, ProxyType type) : this(ip, port, type)
     {
         _username = !string.IsNullOrEmpty(username) ? username : null;
         _password = !string.IsNullOrEmpty(password) ? password : null;
     }
-    public Proxy(string ip, string port, string username, string password, ProxyType type) : this(ip, port, type)
+    public Proxy(string ip, string port, string? username, string? password, ProxyType type) : this(ip, port, type)
     {
         _username = !string.IsNullOrEmpty(username) ? username : null;
         _password = !string.IsNullOrEmpty(password) ? password : null;
