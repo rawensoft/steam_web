@@ -1,8 +1,6 @@
 ﻿using ProtoBuf;
 using SteamWeb.API.Models;
 using SteamWeb.API.Protobufs;
-using SteamWeb.Auth.v2.Models;
-using SteamWeb.Models;
 using SteamWeb.Web;
 
 namespace SteamWeb.API;

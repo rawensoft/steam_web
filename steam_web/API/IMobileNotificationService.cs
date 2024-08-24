@@ -13,8 +13,8 @@ public static class IMobileNotificationService
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
             UserAgent = KnownUserAgents.OkHttp
-        }
-        .AddQuery("access_token", apiRequest.AuthToken!);
+        };
+        apiRequest.AddAuthToken(request);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();

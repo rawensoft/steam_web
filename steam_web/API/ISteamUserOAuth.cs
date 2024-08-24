@@ -15,12 +15,13 @@ public static class ISteamUserOAuth
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
-        }
-            .AddQuery("access_token", apiRequest.AuthToken!);
+        };
+        apiRequest.AddAuthToken(request);
         if (!string.IsNullOrEmpty(relationship))
             request.AddQuery("relationship", relationship);
         var response = await Downloader.GetAsync(request);
-        if (!response.Success) return new();
+        if (!response.Success)
+            return new();
         try
         {
             var obj = JsonSerializer.Deserialize<FriendsList<PlayerFriend>>(response.Data!)!;
@@ -39,8 +40,8 @@ public static class ISteamUserOAuth
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
-        }
-            .AddQuery("access_token", apiRequest.AuthToken!).AddQuery("steamid", steamid);
+        };
+        apiRequest.AddAuthToken(request).AddQuery("steamid", steamid);
         if (!string.IsNullOrEmpty(relationship))
             request.AddQuery("relationship", relationship);
         var response = await Downloader.GetAsync(request);
@@ -63,8 +64,8 @@ public static class ISteamUserOAuth
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
-        }
-            .AddQuery("access_token", apiRequest.AuthToken!).AddQuery("steamid", steamid);
+        };
+        apiRequest.AddAuthToken(request).AddQuery("steamid", steamid);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();
@@ -85,8 +86,8 @@ public static class ISteamUserOAuth
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
-        }
-            .AddQuery("access_token", apiRequest.AuthToken!);
+        };
+        apiRequest.AddAuthToken(request);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();
@@ -108,8 +109,8 @@ public static class ISteamUserOAuth
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
-        }
-            .AddQuery("access_token", apiRequest.AuthToken!);
+        };
+        apiRequest.AddAuthToken(request);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();

@@ -31,8 +31,7 @@ public static class IEconService
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
         };
-        request.AddQuery("key", apiRequest.AuthToken!).AddQuery("max_trades", max_trades);
-
+        apiRequest.AddAuthToken(request).AddQuery("max_trades", max_trades);
         if (start_after_time.HasValue)
             request.AddQuery("start_after_time", start_after_time.Value);
         if (start_after_tradeid.HasValue)
@@ -76,7 +75,8 @@ public static class IEconService
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
-        }.AddQuery("key", apiRequest.AuthToken!).AddQuery("steamid_target", steamid_target).AddQuery("trade_offer_access_token", trade_offer_access_token);
+        };
+        apiRequest.AddAuthToken(request).AddQuery("steamid_target", steamid_target).AddQuery("trade_offer_access_token", trade_offer_access_token);
         var response = await Downloader.GetAsync(request);
         if (!response.Success) 
             return new();
@@ -105,8 +105,9 @@ public static class IEconService
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
-        }.AddQuery("key", apiRequest.AuthToken!).AddQuery("steamid_target", steamid_target).AddQuery("trade_offer_access_token", trade_offer_access_token);
-		var response = Downloader.Get(request);
+        };
+        apiRequest.AddAuthToken(request).AddQuery("steamid_target", steamid_target).AddQuery("trade_offer_access_token", trade_offer_access_token);
+        var response = Downloader.Get(request);
 		if (!response.Success)
             return new();
 		try
@@ -135,7 +136,8 @@ public static class IEconService
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
-        }.AddQuery("key", apiRequest.AuthToken!).AddQuery("tradeofferid", tradeofferid);
+        };
+        apiRequest.AddAuthToken(request).AddQuery("tradeofferid", tradeofferid);
         if (get_descriptions)
             request.AddQuery("get_descriptions", 1);
         if (!string.IsNullOrEmpty(language))
@@ -168,7 +170,8 @@ public static class IEconService
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
-        }.AddQuery("key", apiRequest.AuthToken!).AddQuery("tradeofferid", tradeofferid);
+        };
+        apiRequest.AddAuthToken(request).AddQuery("tradeofferid", tradeofferid);
         if (get_descriptions)
             request.AddQuery("get_descriptions", 1);
         if (!string.IsNullOrEmpty(language))
@@ -208,7 +211,8 @@ public static class IEconService
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
-        }.AddQuery("key", apiRequest.AuthToken!);
+        };
+        apiRequest.AddAuthToken(request);
         if (time_historical_cutoff.HasValue)
             request.AddQuery("time_historical_cutoff", time_historical_cutoff.Value);
         if (cursor.HasValue)
@@ -260,7 +264,8 @@ public static class IEconService
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
-        }.AddQuery("key", apiRequest.AuthToken!);
+        };
+        apiRequest.AddAuthToken(request);
         if (time_historical_cutoff.HasValue)
             request.AddQuery("time_historical_cutoff", time_historical_cutoff.Value);
         if (cursor.HasValue)
@@ -304,7 +309,8 @@ public static class IEconService
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
-        }.AddQuery("key", apiRequest.AuthToken!);
+        };
+        apiRequest.AddAuthToken(request);
         if (time_last_visit.HasValue)
             request.AddQuery("time_last_visit", time_last_visit.Value);
         var response = await Downloader.GetAsync(request);
@@ -336,7 +342,8 @@ public static class IEconService
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
-        }.AddQuery("key", apiRequest.AuthToken!).AddQuery("tradeid", tradeid);
+        };
+        apiRequest.AddAuthToken(request).AddQuery("tradeid", tradeid);
         if (get_descriptions)
             request.AddQuery("get_descriptions", 1);
         if (!string.IsNullOrEmpty(language))
@@ -368,7 +375,8 @@ public static class IEconService
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
-        }.AddQuery("key", apiRequest.AuthToken!).AddQuery("tradeofferid", tradeofferid);
+        };
+        apiRequest.AddAuthToken(request).AddQuery("tradeofferid", tradeofferid);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();
@@ -396,7 +404,8 @@ public static class IEconService
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
-        }.AddQuery("key", apiRequest.AuthToken!).AddQuery("tradeofferid", tradeofferid);
+        };
+        apiRequest.AddAuthToken(request).AddQuery("tradeofferid", tradeofferid);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();

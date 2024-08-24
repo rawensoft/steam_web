@@ -16,7 +16,8 @@ public static class IFriendMessagesService
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
             UserAgent = KnownUserAgents.OkHttp,
-        }.AddQuery("access_token", apiRequest.AuthToken!);
+        };
+        apiRequest.AddAuthToken(request);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();
@@ -38,8 +39,9 @@ public static class IFriendMessagesService
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
             UserAgent = KnownUserAgents.OkHttp,
-        }.AddQuery("access_token", apiRequest.AuthToken!).AddQuery("steamid1", steamid1)
-        .AddQuery("steamid2", steamid2).AddQuery("rtime32_start_time", rtime32_start_time);
+        };
+        apiRequest.AddAuthToken(request).AddQuery("steamid1", steamid1)
+            .AddQuery("steamid2", steamid2).AddQuery("rtime32_start_time", rtime32_start_time);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();
@@ -62,7 +64,7 @@ public static class IFriendMessagesService
             CancellationToken = apiRequest.CancellationToken,
             UserAgent = KnownUserAgents.OkHttp,
         };
-        request.AddQuery("access_token", apiRequest.AuthToken!).AddQuery("steamid_friend", steamid_friend);
+        apiRequest.AddAuthToken(request).AddQuery("steamid_friend", steamid_friend);
         var response = await Downloader.PostAsync(request);
         return new() { success = response.Success };
     }

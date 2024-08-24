@@ -13,7 +13,8 @@ public static class IPlayerService
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
-        }.AddQuery("key", apiRequest.AuthToken!).AddQuery("steamid", steamid);
+        };
+        apiRequest.AddAuthToken(request).AddQuery("steamid", steamid);
         if (include_inactive_customizations)
             request.AddQuery("include_inactive_customizations", 1);
         if (include_purchased_customizations)
@@ -39,7 +40,8 @@ public static class IPlayerService
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
-        }.AddPostData("access_token", apiRequest.AuthToken!).AddPostData("theme_id", theme_id);
+        };
+        apiRequest.AddAuthToken(request).AddPostData("theme_id", theme_id);
         var response = await Downloader.PostAsync(request);
         return response.Success;
     }
@@ -55,7 +57,8 @@ public static class IPlayerService
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
-        }.AddQuery("key", apiRequest.AuthToken!).AddQuery("steamid", steamid);
+        };
+        apiRequest.AddAuthToken(request).AddQuery("steamid", steamid);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();
@@ -83,7 +86,8 @@ public static class IPlayerService
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
-        }.AddQuery("key", apiRequest.AuthToken!).AddQuery("steamid", steamid);
+        };
+        apiRequest.AddAuthToken(request).AddQuery("steamid", steamid);
         if (badgeid.HasValue)
             request.AddQuery("badgeid", badgeid.Value);
         var response = await Downloader.GetAsync(request);
@@ -107,7 +111,8 @@ public static class IPlayerService
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
-        }.AddQuery("key", apiRequest.AuthToken!).AddQuery("steamid", steamid);
+        };
+        apiRequest.AddAuthToken(request).AddQuery("steamid", steamid);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();
@@ -140,7 +145,8 @@ public static class IPlayerService
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
-        }.AddQuery("key", apiRequest.AuthToken!).AddQuery("steamid", steamid);
+        };
+        apiRequest.AddAuthToken(request).AddQuery("steamid", steamid);
         if (include_appinfo)
             request.AddQuery("include_appinfo", 1);
         if (include_played_free_games)
@@ -177,7 +183,8 @@ public static class IPlayerService
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
-        }.AddQuery("key", apiRequest.AuthToken!).AddQuery("steamid", steamid);
+        };
+        apiRequest.AddAuthToken(request).AddQuery("steamid", steamid);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();

@@ -15,9 +15,11 @@ public static class ITwoFactorService
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
             UserAgent = KnownUserAgents.OkHttp,
-		}.AddPostData("access_token", apiRequest.AuthToken!).AddPostData("steamid", steamid);
+        };
+        apiRequest.AddAuthToken(request).AddPostData("steamid", steamid);
         var response = await Downloader.PostAsync(request);
-        if (!response.Success) return new();
+        if (!response.Success)
+            return new();
         try
         {
             var obj = JsonSerializer.Deserialize<Response<QueryStatus>>(response.Data!)!;

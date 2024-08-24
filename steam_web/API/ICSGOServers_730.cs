@@ -16,7 +16,8 @@ public static class ICSGOServers_730
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
-        }.AddQuery("key", apiRequest.AuthToken!);
+        };
+        apiRequest.AddAuthToken(request);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();
@@ -41,7 +42,8 @@ public static class ICSGOServers_730
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
-        }.AddQuery("key", apiRequest.AuthToken!);
+        };
+        apiRequest.AddAuthToken(request);
         var response = Downloader.Get(request);
         if (!response.Success)
             return new();

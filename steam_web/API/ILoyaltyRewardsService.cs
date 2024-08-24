@@ -19,8 +19,8 @@ public static class ILoyaltyRewardsService
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
             UserAgent = KnownUserAgents.OkHttp
-		}
-        .AddQuery("access_token", apiRequest.AuthToken!).AddQuery("steamid", steamid);
+		};
+        apiRequest.AddAuthToken(request).AddQuery("steamid", steamid);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();
@@ -48,8 +48,8 @@ public static class ILoyaltyRewardsService
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
             UserAgent = KnownUserAgents.OkHttp
-		}
-        .AddQuery("access_token", apiRequest.AuthToken!).AddQuery("steamid", steamid);
+        };
+        apiRequest.AddAuthToken(request).AddQuery("steamid", steamid);
         var response = Downloader.Get(request);
         if (!response.Success)
             return new();

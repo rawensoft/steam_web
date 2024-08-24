@@ -13,7 +13,8 @@ public static class IGameServersService
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
             UserAgent = KnownUserAgents.OkHttp,
-        }.AddQuery("key", apiRequest.AuthToken!);
+        };
+        apiRequest.AddAuthToken(request);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();

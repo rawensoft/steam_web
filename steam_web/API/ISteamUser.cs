@@ -26,8 +26,8 @@ public static class ISteamUser
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
-        }
-            .AddQuery("key", apiRequest.AuthToken!).AddQuery("steamids", sb.ToString());
+        };
+        apiRequest.AddAuthToken(request).AddQuery("steamids", sb.ToString());
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();
@@ -59,8 +59,8 @@ public static class ISteamUser
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
-        }
-            .AddQuery("key", apiRequest.AuthToken!).AddQuery("steamids", sb.ToString());
+        };
+        apiRequest.AddAuthToken(request).AddQuery("steamids", sb.ToString());
         var response = Downloader.Get(request);
         if (!response.Success)
             return new();
@@ -93,8 +93,8 @@ public static class ISteamUser
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
-        }
-            .AddQuery("key", apiRequest.AuthToken!).AddQuery("steamids", sb.ToString());
+        };
+        apiRequest.AddAuthToken(request).AddQuery("steamids", sb.ToString());
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();
@@ -126,8 +126,8 @@ public static class ISteamUser
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
-        }
-            .AddQuery("key", apiRequest.AuthToken!).AddQuery("steamids", sb.ToString());
+        };
+        apiRequest.AddAuthToken(request).AddQuery("steamids", sb.ToString());
         var response = Downloader.Get(request);
         if (!response.Success)
             return new();
@@ -177,7 +177,8 @@ public static class ISteamUser
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
-        }.AddQuery("key", apiRequest.AuthToken!).AddQuery("vanityurl", vanityurl).AddQuery("url_type", (int)url_type);
+        };
+        apiRequest.AddAuthToken(request).AddQuery("vanityurl", vanityurl).AddQuery("url_type", (int)url_type);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();
