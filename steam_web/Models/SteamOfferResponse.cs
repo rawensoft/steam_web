@@ -1,7 +1,5 @@
 ﻿using SteamWeb.Extensions;
-
 namespace SteamWeb.Models;
-
 public class SteamOfferResponse
 {
     public bool Success { get; init; } = false;

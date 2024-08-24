@@ -1432,6 +1432,12 @@ public static partial class Steam
                 }
             }
 
+            var tradeoffer_items_ctn = tradeoffer.GetElementsByClassName("tradeoffer_items_ctn").FirstOrDefault();
+            bool is_active = tradeoffer_items_ctn != default && tradeoffer_items_ctn.ClassList.Contains("active");
+
+            var banner = tradeoffer_items_ctn?.GetElementsByClassName("tradeoffer_items_banner").FirstOrDefault();
+            var accepted = banner?.ClassList.Contains("accepted") == true;
+
             var tradeofferItems = tradeoffer.GetElementsByClassName("tradeoffer_items");
             foreach (var items in tradeofferItems)
             {
@@ -1473,6 +1479,8 @@ public static partial class Steam
             {
                 return new() { Error = "Не удалось узнать partner_steamid32 у " + tradeofferid };
             }
+            var (status, datetime) = SteamOffer.ParseBanner(banner?.TextContent.GetClearWebString());
+
             list.Add(new()
             {
                 OurItems = ourItems,
@@ -1480,6 +1488,10 @@ public static partial class Steam
                 PartnerItems = partnerItems,
                 TradeOfferId = tradeofferid,
                 PartnerOnline = partner_online,
+                ActiveOffer = is_active,
+                Status = status,
+                StatusTime = datetime,
+                AcceptedOffer = accepted,
             });
         }
         return new()
@@ -1523,6 +1535,12 @@ public static partial class Steam
                 }
             }
 
+            var tradeoffer_items_ctn = tradeoffer.GetElementsByClassName("tradeoffer_items_ctn").FirstOrDefault();
+            bool is_active = tradeoffer_items_ctn != default && tradeoffer_items_ctn.ClassList.Contains("active");
+
+            var banner = tradeoffer_items_ctn?.GetElementsByClassName("tradeoffer_items_banner").FirstOrDefault();
+            var accepted = banner?.ClassList.Contains("accepted") == true;
+
             var tradeofferItems = tradeoffer.GetElementsByClassName("tradeoffer_items");
             foreach (var items in tradeofferItems)
             {
@@ -1564,6 +1582,27 @@ public static partial class Steam
             {
                 return new() { Error = "Не удалось узнать partner_steamid32 у " + tradeofferid };
             }
+            var (status, datetime) = SteamOffer.ParseBanner(banner?.TextContent.GetClearWebString());
+
+            list.Add(new()
+            {
+                OurItems = ourItems,
+                PartnerId = partner_steamid32,
+                PartnerItems = partnerItems,
+                TradeOfferId = tradeofferid,
+                PartnerOnline = partner_online,
+                ActiveOffer = is_active,
+                Status = status,
+                StatusTime = datetime,
+                AcceptedOffer = accepted,
+            });
+        }
+        return new()
+        {
+            Success = true,
+            Trades = list.ToArray(),
+        };
+    }
             list.Add(new()
             {
                 OurItems = ourItems,
