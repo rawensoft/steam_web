@@ -1,4 +1,5 @@
-﻿using AngleSharp.Html.Parser;
+﻿using AngleSharp.Html.Dom;
+using AngleSharp.Html.Parser;
 using SteamWeb.Extensions;
 
 namespace SteamWeb.Models;
@@ -6,7 +7,7 @@ public sealed class AboutProfile
 {
     private const string SG_Good = "sg_good.png";
     private const string SG_Fair = "sg_fair.png";
-    private const string Icon_Mobile = "icon_mobile.png";
+    private const string SG_Poor = "sg_poor.png";
 
     /// <summary>
     /// Аутентификатор аккаунта
@@ -25,15 +26,21 @@ public sealed class AboutProfile
     /// </summary>
     public string? Username { get; internal set; } = null;
     /// <summary>
+    /// Логин аккаунта
+    /// </summary>
+    public string? Login { get; internal set; } = null;
+    /// <summary>
     /// Страна (регион) пользователя
     /// </summary>
     public string? Country { get; internal set; } = null;
     /// <summary>
-    /// </summary>
-    /// <summary>
     /// SteamID64 аккаунта
     /// </summary>
     public ulong SteamID { get; internal set; } = 0;
+    /// <summary>
+    /// Последние цифры телефона
+    /// </summary>
+    public string? LastPhoneDigit { get; internal set; } = null;
 
     internal static AboutProfile Deserialize(string html)
     {
@@ -43,60 +50,102 @@ public sealed class AboutProfile
             return about;
         }
 
-        if (html.Contains(SG_Good)) about.FA2 = Enums.FA2.SteamMobileApp;
-        else if (html.Contains(SG_Fair) && html.Contains(Icon_Mobile)) about.FA2 = Enums.FA2.EmailCodeWithPhone;
-        else if (html.Contains(SG_Fair) && !html.Contains(Icon_Mobile)) about.FA2 = Enums.FA2.EmailCode;
-        else if (html.Contains(Icon_Mobile)) about.FA2 = Enums.FA2.NonGuardWithPhone;
-        else if (html.Contains("store.steampowered.com/login/?redir=account")) about.FA2 = Enums.FA2.Deauth;
-        else about.FA2 = Enums.FA2.NonGuard;
-
-        if (about.FA2 != Enums.FA2.Deauth)
+        var parser = new HtmlParser();
+        var doc = parser.ParseDocument(html);
+        var global_action_links = doc.GetElementsByClassName("global_action_link");
+        foreach (var global_action_link in global_action_links)
         {
-            var parser = new HtmlParser();
-            var doc = parser.ParseDocument(html);
-
-            var el = doc.GetElementsByClassName("country_settings");
-            if (el.Length > 0)
+            var uri = global_action_link.GetAttribute("href");
+            if (uri != null && uri.StartsWith("https://store.steampowered.com/login/?redir="))
             {
-                el = el[0].GetElementsByClassName("account_data_field");
-                if (el.Length > 0)
-                {
-                    about.Country = el[0].TextContent;
-                    about.Country = about.Country.GetClearWebString();
-                }
-            } // Country
-            el = doc.GetElementsByClassName("persona_name_text_content");
-
-            if (el.Length > 0) // Username
-                about.Username = el[el.Length - 1].TextContent.GetClearWebString();
-
-            el = doc.GetElementsByClassName("account_data_field");
-            if (el.Length >= 2) // Email
-                about.Email = el[1].TextContent.GetClearWebString();
-
-            var element = doc.GetElementById("header_wallet_balance");
-            if (element != null) // Email
-                about.Balance = element.TextContent.GetClearWebString();
-
-            el = doc.GetElementsByClassName("youraccount_steamid");
-            if (el.Length > 0)
-            {
-                about.SteamID = el[0].TextContent.GetClearWebString()!.GetOnlyDigit().ParseUInt64(); // Через сплит делать только так: Split(new char['：',':']);
-            } // Email
-
-            //about.Country = data.GetBetween("\t\t\t\t\t\t\t\t<span class=\"account_data_field\">", "</span>");
-            //about.Username = data.GetBetween("ShowMenu( this, 'account_dropdown', 'right', 'bottom', true );\">\r\n\t\t\t\t\t\t", "\t\t\t\t\t</span>");
-            //if (about.Username != null && about.Username.Length > 60) about.Username = data.GetBetween("data-tooltip-type=\"selector\" data-tooltip-content=\".submenu_username\">", "</a>", null, 2)?.Replace("\n", "").Replace("\t", "").Replace("\r", "");
-            //about.Email = data.GetBetween(":</span> <span class=\"account_data_field\">", "</span></div>");
-            //about.Balance = data.GetBetween("Wallet <b>(", ")</b>");
-            //if (about.Balance == null) about.Balance = data.GetBetween("https://store.steampowered.com/account/store_transactions/\">", "</a>");
-            //if (about.Balance == null) about.Balance = data.GetBetween("<div class=\"accountData price\">", "</div>");
-            //about.SteamID = data.GetBetween("Steam ID: ", "</div>");
+                // Deauth
+                return about;
+            }    
         }
 
-        if ((about.FA2 == Enums.FA2.NonGuard || about.FA2 == Enums.FA2.NonGuardWithPhone) &&
-            about.SteamID == 0 && about.Email == null)
-            about.FA2 = Enums.FA2.Deauth;
+        var settings_sub_blocks = doc.GetElementsByClassName("account_setting_sub_block");
+        foreach (var settings_sub_block in settings_sub_blocks)
+        {
+            var account_data = settings_sub_block.GetElementsByClassName("accountData");
+            if (account_data.Any())
+            {
+                var account = account_data.First();
+                about.Balance = account.TextContent.GetClearWebString();
+                continue;
+            }
+
+            var country_settings = settings_sub_block.GetElementsByClassName("country_settings");
+            if (country_settings.Any())
+            {
+                var country = country_settings.First().GetElementsByClassName("account_data_field").First();
+                about.Country = country.TextContent.GetClearWebString();
+                continue;
+            }
+
+            var phone_header_description = settings_sub_block.GetElementsByClassName("phone_header_description");
+            if (phone_header_description.Any())
+            {
+                var phone = phone_header_description.First().GetElementsByClassName("account_data_field").First();
+                about.LastPhoneDigit = phone.TextContent.GetClearWebString();
+                continue;
+            }
+
+            var securityBlock = settings_sub_block.GetElementsByClassName("account_security_block");
+            if (securityBlock.Any())
+            {
+                var images = securityBlock.First().GetElementsByTagName("img");
+                if (images.Any())
+                {
+                    var img = images.First() as IHtmlImageElement;
+                    switch (img!.Source!.Split('/')[^1])
+                    {
+                        case SG_Good:
+                            about.FA2 = Enums.FA2.SteamMobileApp;
+                            break;
+
+                        case SG_Fair:
+                            about.FA2 = about.LastPhoneDigit != null ? Enums.FA2.EmailCodeWithPhone : Enums.FA2.EmailCode;
+                            break;
+
+                        case SG_Poor:
+                            about.FA2 = about.LastPhoneDigit != null ? Enums.FA2.NonGuardWithPhone : Enums.FA2.NonGuard;
+                            break;
+                    }
+                    continue;
+                }
+            }
+
+            // есть проблема что под это могут подходить все блоки
+            var contacts = settings_sub_block.GetElementsByClassName("account_data_field");
+            if (contacts.Any())
+            {
+                var country = contacts.First();
+                about.Email = country.TextContent.GetClearWebString();
+                continue;
+            }
+        }
+
+        var youraccount_steamid = doc.GetElementsByClassName("youraccount_steamid");
+        if (youraccount_steamid.Any())
+        {
+            var steamid64 = youraccount_steamid.First();
+            about.SteamID = steamid64.TextContent.GetClearWebString()?.Split(": ")[1].ParseUInt64() ?? 0;
+        }
+
+        var account_name = doc.GetElementsByClassName("account_name");
+        if (account_name.Any())
+        {
+            var login = account_name.First();
+            about.Login = login.TextContent.GetClearWebString();
+        }
+
+        var persona_name_text_content = doc.GetElementsByClassName("persona_name_text_content");
+        if (persona_name_text_content.Any())
+        {
+            var username = persona_name_text_content.First();
+            about.Username = username.TextContent.GetClearWebString();
+        }
+
         return about;
     }
 }

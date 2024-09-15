@@ -1,11 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SteamWeb.Enums;
-public enum FA2: byte { NonGuard, EmailCode, SteamMobileApp, NonGuardWithPhone, EmailCodeWithPhone, Deauth }
+﻿namespace SteamWeb.Enums;
+public enum FA2: byte
+{
+    NonGuard,
+    EmailCode,
+    SteamMobileApp,
+    NonGuardWithPhone,
+    EmailCodeWithPhone,
+    Deauth
+}
 public enum ETradeOfferState : byte
 {
     NotFind = 0,
