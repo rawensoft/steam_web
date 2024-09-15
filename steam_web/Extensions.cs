@@ -284,6 +284,20 @@ public static class ExtensionMethods
         };
         return wizard;
     }
+    public static string FromBase64UrlToBase64(this string base64Url)
+    {
+        base64Url = base64Url.Replace('_', '/').Replace('-', '+');
+        switch (base64Url.Length % 4)
+        {
+            case 2:
+                base64Url += "==";
+                break;
+            case 3:
+                base64Url += "=";
+                break;
+        }
+        return base64Url;
+    }
 
     /// <summary>
     /// Проверяем браузерную сессию на активность
