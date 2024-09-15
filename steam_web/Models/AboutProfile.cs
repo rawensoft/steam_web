@@ -29,9 +29,7 @@ public sealed class AboutProfile
     /// </summary>
     public string? Country { get; internal set; } = null;
     /// <summary>
-    /// Имеется ли красная табличка (КТ) на аккаунте
     /// </summary>
-    public bool Red_Table { get; internal set; } = false;
     /// <summary>
     /// SteamID64 аккаунта
     /// </summary>
@@ -42,7 +40,6 @@ public sealed class AboutProfile
         var about = new AboutProfile();
         if (html == "<!DOCTYPE html>")
         {
-            about.Red_Table = true;
             return about;
         }
 
@@ -96,8 +93,6 @@ public sealed class AboutProfile
             //if (about.Balance == null) about.Balance = data.GetBetween("<div class=\"accountData price\">", "</div>");
             //about.SteamID = data.GetBetween("Steam ID: ", "</div>");
         }
-        if (html.Contains("global_header_toggle_button red global_header_account_alert tooltip"))
-            about.Red_Table = true;
 
         if ((about.FA2 == Enums.FA2.NonGuard || about.FA2 == Enums.FA2.NonGuardWithPhone) &&
             about.SteamID == 0 && about.Email == null)
