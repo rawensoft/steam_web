@@ -7,19 +7,20 @@ namespace SteamWeb.Models;
 public class TradeOfferData
 {
     private const string _stringTrue = "true";
-	public const string ErrorTradeNoLongerValid = "This trade offer is no longer valid.";
-	public const string ErrorTradeDoesntExist = "The trade offer does not exist, or the trade offer belongs to another user.";
+	public const string ErrorTradeNoLongerValidEN = "This trade offer is no longer valid.";
+    public const string ErrorTradeNoLongerValidRU = "Это предложение обмена больше не действительно.";
+    public const string ErrorTradeDoesntExistEN = "The trade offer does not exist, or the trade offer belongs to another user.";
 
     public bool IsSuccess { get; internal set; } = false;
     public string? Error { get; internal set; }
     /// <summary>
     /// Трейд был принят, либо отменён
     /// </summary>
-    public bool IsNoLongerValid => Error == ErrorTradeNoLongerValid;
+    public bool IsNoLongerValid => Error == ErrorTradeNoLongerValidEN || Error == ErrorTradeNoLongerValidRU;
     /// <summary>
     /// The trade offer does not exist, or the trade offer belongs to another user.
     /// </summary>
-    public bool TradeDoesntExists => Error == ErrorTradeDoesntExist;
+    public bool TradeDoesntExists => Error == ErrorTradeDoesntExistEN;
 
     /// <summary>
     /// Id трейда
