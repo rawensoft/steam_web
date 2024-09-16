@@ -52,7 +52,27 @@ public class PostRequest : GetRequest
         PostData.Add(new(name, encode ? Regex.Escape(value) : value));
         return this;
     }
+    public PostRequest AddPostData(string name, byte value)
+    {
+        PostData.Add(new(name, value.ToString()));
+        return this;
+    }
+    public PostRequest AddPostData(string name, short value)
+    {
+        PostData.Add(new(name, value.ToString()));
+        return this;
+    }
+    public PostRequest AddPostData(string name, ushort value)
+    {
+        PostData.Add(new(name, value.ToString()));
+        return this;
+    }
     public PostRequest AddPostData(string name, int value)
+    {
+        PostData.Add(new(name, value.ToString()));
+        return this;
+    }
+    public PostRequest AddPostData(string name, uint value)
     {
         PostData.Add(new(name, value.ToString()));
         return this;
@@ -73,6 +93,16 @@ public class PostRequest : GetRequest
         return this;
     }
     public PostRequest AddPostData(string name, double value)
+    {
+        PostData.Add(new(name, value.ToString()));
+        return this;
+    }
+    public PostRequest AddPostData(string name, decimal value)
+    {
+        PostData.Add(new(name, value.ToString()));
+        return this;
+    }
+    public PostRequest AddPostData(string name, bool value)
     {
         PostData.Add(new(name, value.ToString()));
         return this;
