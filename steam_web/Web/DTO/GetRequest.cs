@@ -4,7 +4,6 @@ using System.Web;
 using SteamWeb.Auth.Interfaces;
 
 namespace SteamWeb.Web.DTO;
-
 public class GetRequest
 {
     public string? Accept { get; set; } = null;
@@ -49,12 +48,17 @@ public class GetRequest
         QueryParametrs.Add(new(name, encode ? HttpUtility.UrlEncode(value) : value));
         return this;
     }
-    public GetRequest AddQuery(string name, int value)
+    public GetRequest AddQuery(string name, byte value)
     {
         QueryParametrs.Add(new(name, value.ToString()));
         return this;
     }
-    public GetRequest AddQuery(string name, uint value)
+    public GetRequest AddQuery(string name, short value)
+    {
+        QueryParametrs.Add(new(name, value.ToString()));
+        return this;
+    }
+    public GetRequest AddQuery(string name, ushort value)
     {
         QueryParametrs.Add(new(name, value.ToString()));
         return this;
@@ -65,6 +69,36 @@ public class GetRequest
         return this;
     }
     public GetRequest AddQuery(string name, ulong value)
+    {
+        QueryParametrs.Add(new(name, value.ToString()));
+        return this;
+    }
+    public GetRequest AddQuery(string name, int value)
+    {
+        QueryParametrs.Add(new(name, value.ToString()));
+        return this;
+    }
+    public GetRequest AddQuery(string name, uint value)
+    {
+        QueryParametrs.Add(new(name, value.ToString()));
+        return this;
+    }
+    public GetRequest AddQuery(string name, float value)
+    {
+        QueryParametrs.Add(new(name, value.ToString()));
+        return this;
+    }
+    public GetRequest AddQuery(string name, double value)
+    {
+        QueryParametrs.Add(new(name, value.ToString()));
+        return this;
+    }
+    public GetRequest AddQuery(string name, decimal value)
+    {
+        QueryParametrs.Add(new(name, value.ToString()));
+        return this;
+    }
+    public GetRequest AddQuery(string name, bool value)
     {
         QueryParametrs.Add(new(name, value.ToString()));
         return this;
