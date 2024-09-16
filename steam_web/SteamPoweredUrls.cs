@@ -44,6 +44,7 @@ internal static class SteamPoweredUrls
     public const string IPlayerService_GetFavoriteBadge_v1 = "https://api.steampowered.com/IPlayerService/GetFavoriteBadge/v1";
     public const string IPlayerService_GetOwnedGames_v1 = "https://api.steampowered.com/IPlayerService/GetOwnedGames/v1";
     public const string IPlayerService_GetSteamLevel_v1 = "https://api.steampowered.com/IPlayerService/GetSteamLevel/v1";
+    public const string IPlayerService_GetNicknameList_v1 = "https://api.steampowered.com/IPlayerService/GetNicknameList/v1";
     public const string ITwoFactorService_RemoveAuthenticator_v1 = "https://api.steampowered.com/ITwoFactorService/RemoveAuthenticator/v1";
     public const string IUserAccountService_GetClientWalletDetails_v1 = "https://api.steampowered.com/IUserAccountService/GetClientWalletDetails/v1";
     public const string IAuthenticationService_GetAuthSessionInfo_v1 = "https://api.steampowered.com/IAuthenticationService/GetAuthSessionInfo/v1";
@@ -66,4 +67,10 @@ internal static class SteamPoweredUrls
 	public const string SaleVote = "https://store.steampowered.com/salevote";
 	public const string SteamAwards = "https://store.steampowered.com/steamawards";
     public const string ISteamNotificationService_GetSteamNotifications_v1 = "https://api.steampowered.com/ISteamNotificationService/GetSteamNotifications/v1";
+    public const string IFriendsListService_GetFavorites_v1 = "https://api.steampowered.com/IFriendsListService/GetFavorites/v1";
+    public const string IFriendsListService_GetFriendsList_v1 = "https://api.steampowered.com/IFriendsListService/GetFriendsList/v1";
+    public const string ISteamApps_UpToDateCheck_v1 = "https://api.steampowered.com/ISteamApps/UpToDateCheck/v1";
+    public const string ISteamEconomy_GetAssetClassInfo_v1 = "https://api.steampowered.com/ISteamEconomy/GetAssetClassInfo/v1";
+    public const string ISteamEconomy_GetAssetPrices_v1 = "https://api.steampowered.com/ISteamEconomy/GetAssetPrices/v1";
+    public const string ICSGOPlayers_730_GetNextMatchSharingCode_v1 = "https://api.steampowered.com/ICSGOPlayers_730/GetNextMatchSharingCode/v1";
 }
