@@ -26,6 +26,9 @@ public static class SteamIDs
                 mSteamIDs.Clear();
         }
     }
+    /// <summary>
+    /// По умолчание текущая директория <see cref="Environment.CurrentDirectory"/>
+    /// </summary>
     public static string PathToSteamIDsFile { get; private set; } = Path.Join(Environment.CurrentDirectory, "steam_ids");
 
     /// <summary>
@@ -36,39 +39,42 @@ public static class SteamIDs
     {
         PathToSteamIDsFile = Path.Join(folder, "steam_ids");
     }
-    public static void LoadSteamIDs()
+    /// <summary>
+    /// Загружает данные из файла steam_ids, указанного в <see cref="PathToSteamIDsFile"/>
+    /// </summary>
+    /// <returns>true данные загружены, в других случаях false (проверьте существует ли файл)</returns>
+    public static bool LoadSteamIDs()
     {
         if (IsKeepInRAM)
         {
             if (!File.Exists(PathToSteamIDsFile))
-                return;
-            try
+                return false;
+            lock (_locker)
             {
-                lock (_locker)
+                mSteamIDs.Clear();
+                try
                 {
-                    var data = File.ReadAllLines(PathToSteamIDsFile);
-                    mSteamIDs.Clear();
-                    var length = data.Length;
-                    for (int i = 0; i < length; i++)
+                    using var fs = new FileStream(PathToSteamIDsFile, FileMode.Open, FileAccess.Read);
+                    var sr = new StreamReader(fs);
+                    string? str = sr.ReadLine();
+                    while (!str.IsEmpty())
                     {
-                        var item = data[i];
-                        if (string.IsNullOrEmpty(item))
-                            continue;
-
-                        var splitted = item.Split('=');
-                        if (splitted.Length != 2)
-                            continue;
-
+                        var splitted = str!.Split('=');
                         var name = splitted[0];
                         var item_nameid = splitted[1].ParseUInt32();
                         mSteamIDs.TryAdd(name, item_nameid);
+
+                        str = sr.ReadLine();
                     }
                 }
+                catch (Exception)
+                {
+                    return false;
+                }
             }
-            catch (Exception e)
-            { }
         }
         else mSteamIDs.Clear();
+        return true;
     }
     /// <summary>
     /// Сохраняет текущие id предметов из памяти в файл
@@ -199,22 +205,28 @@ public static class SteamIDs
             {
                 using var fs = new FileStream(PathToSteamIDsFile, FileMode.Open, FileAccess.Read);
                 var sr = new StreamReader(fs);
-                string? str = null;
                 if (cancellationToken.HasValue && cancellationToken.Value.IsCancellationRequested)
                     return 0;
-                while (!(str = sr.ReadLine()).IsEmpty())
+                string? str = sr.ReadLine();
+                while (!str.IsEmpty())
                 {
                     if (cancellationToken.HasValue && cancellationToken.Value.IsCancellationRequested)
                         return 0;
 
                     string[] splitted = str!.Split('=');
+                    str = sr.ReadLine(); // нужно читать след. строку именно здесь, после разделения текущей и до проверки hash_name
                     if (splitted[0] != market_hash_name)
                         continue;
 
                     return splitted[1].ParseUInt32();
                 }
             }
-            catch (Exception) { }
+            catch (Exception)
+            {
+                // пробуем открыть файл на чтение и прочитать строки
+                // у нас главная задача прочитать, а остальное не важно
+                // проблем, если добавится повтор item_nameid, не будет
+            }
         }
         return 0;
     }
