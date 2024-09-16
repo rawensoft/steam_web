@@ -8,27 +8,29 @@ public enum FA2: byte
     EmailCodeWithPhone,
     Deauth
 }
+/// <summary>
+/// Информация взята из <see href="https://pub.dev/documentation/steamworks/latest/steamworks/EMarketNotAllowedReasonFlags.html"/>
+/// </summary>
 [Flags]
 public enum EligibilityStates
 {
     None,
-    Unknown1 = 1,
-    Unknown2 = 2,
-    IsLocked = 4,
-    IsLimited = 8,
+    TemporaryFailure = 1,
+    AccountDisabled = 2,
+    AccountLockedDown = 4,
+    AccountLimited = 8,
     TradeBanned = 16,
-    Unknown3 = 32,
-    SteamGuardEnabledFor15Days = 64,
-    Unknown4 = 128,
-    PasswordReset = 256,
-    Unknown5 = 512,
-    CoockieProblem = 1024,
-    SteamGuard7Days = 2048,
-    Unknown6 = 4096,
-    Unknown7 = 8192,
-    SteamPurchase = 16384,
-    Unknown8 = 32768,
-    Unknown9 = 65536,
+    AccountNotTrusted = 32,
+    SteamGuardNotEnabled = 64,
+    SteamGuardOnlyRecentlyEnabled = 128,
+    RecentPasswordReset = 256,
+    NewPaymentMethod = 512,
+    InvalidCookie = 1024,
+    UsingNewDevice = 2048,
+    RecentSelfRefund = 4096,
+    NewPaymentMethodCannotBeVerified = 8192,
+    NoRecentPurchases = 16384,
+    AcceptedWalletGift = 32768,
 }
 public enum ETradeOfferState : byte
 {

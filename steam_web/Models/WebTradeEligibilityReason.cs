@@ -19,7 +19,7 @@ public class WebTradeEligibilityReason
     /// <summary>
     /// Your account must be protected by Steam Guard for at least 15 days
     /// </summary>
-    public bool SteamGuard15Days { get; }
+    public bool SteamGuardRecentEnabled { get; }
     /// <summary>
     /// Your account is limited
     /// </summary>
@@ -48,20 +48,55 @@ public class WebTradeEligibilityReason
     /// Можно ли продавать на маркете
     /// </summary>
     public bool CanMarket { get; }
+    /// <summary>
+    /// Аккаунт отключён, возможно в него не получится войти
+    /// </summary>
+    public bool AccountDisabled { get; }
+    /// <summary>
+    /// Временная ошибка
+    /// </summary>
+    public bool TemporaryFailure { get; }
+    /// <summary>
+    /// Добавлен новый метод оплаты; пример привязана карта VISA к аккаунту
+    /// </summary>
+    public bool NewPaymentMethod { get; }
+    /// <summary>
+    /// Недавно был refund чего-то (игры? предмета?)
+    /// </summary>
+    public bool RecentSelfRefund { get; }
+    /// <summary>
+    /// После привязки метода оплаты произошла ошибка; пример банк отклонил привязку(?)
+    /// </summary>
+    public bool NewPaymentMethodCannotBeVerified { get; }
+    /// <summary>
+    /// К аккаунту мало доверия; пример отменён трейд на удержании
+    /// </summary>
+    public bool NotTrusted { get; }
+    /// <summary>
+    /// Был принят гифт на баланс
+    /// </summary>
+    public bool AcceptedWalletGift { get; }
 
     public WebTradeEligibilityReason(WebTradeEligibility web)
     {
         State = (EligibilityStates)web.Reason;
-        SteamPurchase = State.HasFlag(EligibilityStates.SteamPurchase);
-        PasswordReset = State.HasFlag(EligibilityStates.PasswordReset);
-        SteamGuardEnabled = SteamGuard15Days = State.HasFlag(EligibilityStates.SteamGuardEnabledFor15Days);
-        IsLimited = State.HasFlag(EligibilityStates.IsLimited);
-        IsLocked = State.HasFlag(EligibilityStates.IsLocked);
-        SteamGuard7Days = State.HasFlag(EligibilityStates.SteamGuard7Days);
+        TemporaryFailure = State.HasFlag(EligibilityStates.TemporaryFailure);
+        AccountDisabled = State.HasFlag(EligibilityStates.AccountDisabled);
+        IsLocked = State.HasFlag(EligibilityStates.AccountLockedDown);
+        IsLimited = State.HasFlag(EligibilityStates.AccountLimited);
         TradeBanned = State.HasFlag(EligibilityStates.TradeBanned);
-        CoockieProblem = State.HasFlag(EligibilityStates.CoockieProblem);
+        NotTrusted = State.HasFlag(EligibilityStates.AccountNotTrusted);
+        SteamGuardEnabled = State.HasFlag(EligibilityStates.SteamGuardNotEnabled);
+        SteamGuardRecentEnabled = State.HasFlag(EligibilityStates.SteamGuardOnlyRecentlyEnabled);
+        PasswordReset = State.HasFlag(EligibilityStates.RecentPasswordReset);
+        CoockieProblem = State.HasFlag(EligibilityStates.InvalidCookie);
+        SteamGuard7Days = State.HasFlag(EligibilityStates.UsingNewDevice);
+        RecentSelfRefund = State.HasFlag(EligibilityStates.RecentSelfRefund);
+        NewPaymentMethodCannotBeVerified = State.HasFlag(EligibilityStates.NewPaymentMethodCannotBeVerified);
+        SteamPurchase = State.HasFlag(EligibilityStates.NoRecentPurchases);
+        AcceptedWalletGift = State.HasFlag(EligibilityStates.AcceptedWalletGift);
 
-        CanTrade = !(PasswordReset && SteamGuardEnabled && SteamGuard15Days && IsLocked && TradeBanned && SteamGuard7Days && CoockieProblem);
-        CanMarket = !(SteamPurchase && PasswordReset && SteamGuardEnabled && SteamGuard15Days && IsLimited && IsLocked && SteamGuard7Days && TradeBanned && CoockieProblem);
+        CanMarket = web.Reason == 0 || web.Reason == (uint)EligibilityStates.TradeBanned;
+        CanTrade = !(AccountDisabled || IsLocked || IsLimited || TradeBanned || NotTrusted || SteamGuardEnabled || SteamGuardRecentEnabled || PasswordReset || CoockieProblem || SteamGuard7Days || SteamPurchase);
     }
 }
