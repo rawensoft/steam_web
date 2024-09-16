@@ -34,10 +34,7 @@ public static class SteamIDs
     /// <param name="folder"></param>
     public static void SetFolder(string folder)
     {
-        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-            PathToSteamIDsFile = !folder.EndsWith('\\') ? folder + "\\steam_ids" : folder + "steam_ids";
-        else if (Environment.OSVersion.Platform == PlatformID.Unix)
-            PathToSteamIDsFile = !folder.EndsWith('/') ? folder + "/steam_ids" : folder + "steam_ids";
+        PathToSteamIDsFile = Path.Join(folder, "steam_ids");
     }
     public static void LoadSteamIDs()
     {
