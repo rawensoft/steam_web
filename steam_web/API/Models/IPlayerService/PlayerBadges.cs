@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
-namespace SteamWeb.API.Models.IPlayerService
+namespace SteamWeb.API.Models.IPlayerService;
+public class PlayerBadges
 {
-    public class PlayerBadges
-    {
-        public List<Badge> badges { get; set; } = new();
-        public int player_xp { get; set; }
-        public int player_level { get; set; }
-        public int player_xp_needed_to_level_up { get; set; }
-        public int player_xp_needed_current_level { get; set; }
-    }
+    [JsonPropertyName("badges")] public Badge[] Badges { get; init; } = Array.Empty<Badge>();
+    [JsonPropertyName("player_xp")] public uint PlayerXp { get; init; }
+    [JsonPropertyName("player_level")] public ushort PlayerLevel { get; init; }
+    [JsonPropertyName("player_xp_needed_to_level_up")] public uint PlayerXpNeededToLevelUp { get; init; }
+    [JsonPropertyName("player_xp_needed_current_level")] public uint PlayerXpNeededCurrentLevel { get; init; }
 }

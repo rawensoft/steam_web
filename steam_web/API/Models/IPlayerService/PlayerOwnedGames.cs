@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
-namespace SteamWeb.API.Models.IPlayerService
+namespace SteamWeb.API.Models.IPlayerService;
+public class PlayerOwnedGames
 {
-    public class PlayerOwnedGames
-    {
-        public uint game_count { get; set; }
-        public List<OwnedGame> games { get; set; } = new();
-}
+    [JsonPropertyName("game_count")] public uint GameCount { get; init; }
+    [JsonPropertyName("games")] public OwnedGame[] Games { get; init; } = Array.Empty<OwnedGame>();
 }

@@ -1,20 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
-namespace SteamWeb.API.Models.IPlayerService
+namespace SteamWeb.API.Models.IPlayerService;
+public class Badge
 {
-    public record Badge
-    {
-        public int badgeid { get; set; }
-        public int level { get; set; }
-        public int completion_time { get; set; }
-        public int xp { get; set; }
-        public int scarcity { get; set; }
-        public int? appid { get; set; }
-        public string communityitemid { get; set; }
-        public int? border_color { get; set; }
-    }
+    [JsonPropertyName("badgeid")] public ushort BadgeId { get; init; }
+    [JsonPropertyName("level")] public uint Level { get; init; }
+    [JsonPropertyName("completion_time")] public int CompletionTime { get; init; }
+    [JsonPropertyName("xp")] public uint Xp { get; init; }
+    [JsonPropertyName("scarcity")] public uint Scarcity { get; init; }
+    [JsonPropertyName("appid")] public uint? AppId { get; init; }
+    [JsonPropertyName("communityitemid")] public ulong? CommunityItemId { get; init; }
+    [JsonPropertyName("border_color")] public ushort? BorderColor { get; init; }
 }

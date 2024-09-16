@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
-namespace SteamWeb.API.Models.IPlayerService
+namespace SteamWeb.API.Models.IPlayerService;
+public class Quest
 {
-    public record Quest
-    {
-        public ushort questid { get; set; }
-        public bool completed { get; set; } = false;
-    }
+    [JsonPropertyName("questid")] public ushort QuestId { get; init; }
+    [JsonPropertyName("completed")] public bool Completed { get; init; } = false;
 }

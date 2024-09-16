@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
-namespace SteamWeb.API.Models.IPlayerService
+namespace SteamWeb.API.Models.IPlayerService;
+public class PlayerQuests
 {
-    public class PlayerQuests
-    {
-        public List<Quest> quests { get; set; } = new();
-    }
+    [JsonPropertyName("quests")] public Quest[] Quests { get; init; } = Array.Empty<Quest>();
 }

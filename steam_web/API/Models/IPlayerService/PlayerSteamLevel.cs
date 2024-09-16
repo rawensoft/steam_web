@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
-namespace SteamWeb.API.Models.IPlayerService
+namespace SteamWeb.API.Models.IPlayerService;
+public class PlayerSteamLevel
 {
-    public record PlayerSteamLevel
-    {
-        public uint player_level { get; set; }
-    }
+    [JsonPropertyName("player_level")] public ushort PlayerLevel { get; set; }
 }

@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
-namespace SteamWeb.API.Models.IPlayerService
+namespace SteamWeb.API.Models.IPlayerService;
+public class ProfileCustomization
 {
-    public class ProfileCustomization
-    {
-        /// <summary>
-        /// Доступно если (include_inactive_customizations || include_purchased_customizations)
-        /// </summary>
-        public Customization customizations { get; set; } = new();
-        public ushort slots_available { get; set; }
-        public ProfileTheme profile_theme { get; set; } = new();
-        public ProfilePreferences profile_preferences { get; set; } = new();
-    }
+    /// <summary>
+    /// Доступно если (include_inactive_customizations || include_purchased_customizations)
+    /// </summary>
+    [JsonPropertyName("customizations")] public Customization[] Customizations { get; init; } = Array.Empty<Customization>();
+    [JsonPropertyName("slots_available")] public ushort SlotsAvailable { get; init; }
+    [JsonPropertyName("profile_theme")] public ProfileTheme ProfileTheme { get; init; } = new();
+    [JsonPropertyName("purchased_customizations")] public PurchasedCustomization[] PurchasedCustomizations { get; init; } = Array.Empty<PurchasedCustomization>();
+    [JsonPropertyName("profile_preferences")] public ProfilePreferences ProfilePreferences { get; init; } = new();
 }

@@ -1,7 +1,7 @@
-﻿namespace SteamWeb.API.Models.IPlayerService
+﻿using System.Text.Json.Serialization;
+
+namespace SteamWeb.API.Models.IPlayerService;
+public class ProfilePreferences
 {
-    public class ProfilePreferences
-    {
-        public bool hide_profile_awards { get; set; } = false;
-    }
+    [JsonPropertyName("hide_profile_awards")] public bool HideProfileAwards { get; init; } = false;
 }
