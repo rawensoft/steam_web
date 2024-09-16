@@ -1,19 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
-namespace SteamWeb.API.Models.IFriendMessagesService
+namespace SteamWeb.API.Models.IFriendMessagesService;
+public class MessageSession
 {
-    public class MessageSession
-    {
-        /// <summary>
-        /// SteamID32
-        /// </summary>
-        public uint accountid_friend {  get; set; }
-        public int last_message { get; set; }
-        public int last_view { get; set; }
-        public uint unread_message_count { get; set; }
-    }
+    /// <summary>
+    /// SteamId32 друга
+    /// </summary>
+    [JsonPropertyName("accountid_friend")] public uint AccountIdFriend {  get; init; }
+    /// <summary>
+    /// Время прихода сообщения
+    /// </summary>
+    [JsonPropertyName("last_message")] public int LastMessage { get; init; }
+    /// <summary>
+    /// Последнее время просмотра диалога
+    /// </summary>
+    [JsonPropertyName("last_view")] public int LastView { get; init; }
+    /// <summary>
+    /// Количество не прочитанных сообщений
+    /// </summary>
+    [JsonPropertyName("unread_message_count")] public uint UnreadMessageCount { get; init; }
 }

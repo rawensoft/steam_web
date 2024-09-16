@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
-namespace SteamWeb.API.Models.IFriendMessagesService
+namespace SteamWeb.API.Models.IFriendMessagesService;
+public class RecentMessages
 {
-    public class RecentMessages
-    {
-        public Message[] messages { get; set; } = new Message[0];
-        public bool more_available { get; set; } = false;
-    }
+    [JsonPropertyName("messages")] public MessageModel[] Messages { get; init; } = Array.Empty<MessageModel>();
+    [JsonPropertyName("more_available")] public bool MoreAvailable { get; init; } = false;
 }

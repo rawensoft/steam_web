@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
-namespace SteamWeb.API.Models.IFriendMessagesService
+namespace SteamWeb.API.Models.IFriendMessagesService;
+public class ActiveMessageSessions
 {
-    public class ActiveMessageSessions
-    {
-        public MessageSession[] message_sessions { get; set; } = new MessageSession[0];
-        public int timestamp { get; set; }
-    }
+    [JsonPropertyName("message_sessions")] public MessageSession[] MessageSessions { get; init; } = Array.Empty<MessageSession>();
+    [JsonPropertyName("timestamp")] public int Timestamp { get; init; }
 }
