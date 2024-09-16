@@ -34,8 +34,8 @@ public static class IAuthenticationService
         if (!response.Success)
             return default;
 
-        var sessionInfo = JsonSerializer.Deserialize<Response<AuthSessionForAccount>>(response.Data!)!;
-        sessionInfo.success = true;
+        var sessionInfo = JsonSerializer.Deserialize<ResponseData<AuthSessionForAccount>>(response.Data!, Steam.JsonOptions)!;
+        sessionInfo.Success = true;
         return sessionInfo;
     }
     /// <summary>
@@ -64,8 +64,8 @@ public static class IAuthenticationService
         if (!response.Success)
             return default;
 
-        var sessionInfo = JsonSerializer.Deserialize<Response<AuthSessionForAccount>>(response.Data!)!;
-        sessionInfo.success = true;
+        var sessionInfo = JsonSerializer.Deserialize<ResponseData<AuthSessionForAccount>>(response.Data!, Steam.JsonOptions)!;
+        sessionInfo.Success = true;
         return sessionInfo;
     }
 

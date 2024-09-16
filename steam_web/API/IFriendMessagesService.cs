@@ -23,8 +23,8 @@ public static class IFriendMessagesService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<ActiveMessageSessions>>(response.Data!)!;
-            obj.success = true;
+            var obj = JsonSerializer.Deserialize<ResponseData<ActiveMessageSessions>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
             return obj;
         }
         catch (Exception)
@@ -47,8 +47,8 @@ public static class IFriendMessagesService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<RecentMessages>>(response.Data!)!;
-            obj.success = true;
+            var obj = JsonSerializer.Deserialize<ResponseData<RecentMessages>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
             return obj;
         }
         catch (Exception)

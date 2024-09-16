@@ -26,8 +26,8 @@ public static class ILoyaltyRewardsService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<RewardSummary>>(response.Data!)!;
-            obj.success = true;
+            var obj = JsonSerializer.Deserialize<ResponseData<RewardSummary>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
             return obj;
         }
         catch (Exception)
@@ -55,8 +55,8 @@ public static class ILoyaltyRewardsService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<RewardSummary>>(response.Data!)!;
-            obj.success = true;
+            var obj = JsonSerializer.Deserialize<ResponseData<RewardSummary>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
             return obj;
         }
         catch (Exception)

@@ -20,8 +20,8 @@ public static class IMobileNotificationService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<UserNotificationCounts>>(response.Data!)!;
-            obj.success = true;
+            var obj = JsonSerializer.Deserialize<ResponseData<UserNotificationCounts>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
             return obj;
         }
         catch (Exception)

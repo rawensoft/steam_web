@@ -15,6 +15,7 @@ using UserLoginv2 = SteamWeb.Auth.v2.UserLogin;
 using SteamGuardAccuntv2 = SteamWeb.Auth.v2.SteamGuardAccount;
 using SteamWeb.API.Models.IEconService;
 using System.Net;
+using System.Text.Json.Serialization;
 
 namespace SteamWeb;
 public static partial class Steam
@@ -24,7 +25,21 @@ public static partial class Steam
     /// </summary>
     public const ulong SteamIDConverter = 76561197960265728;
     private static Regex _rgxTradeurl1 = new(@"^https://steamcommunity.com/tradeoffer/new/[?]partner=(\d{1,12})&token=(\S{4,10})$", RegexOptions.Compiled | RegexOptions.Singleline, TimeSpan.FromSeconds(1));
-    
+    internal static JsonSerializerOptions JsonOptions { get; } = new()
+    {
+        Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+        IgnoreReadOnlyFields = true,
+        IgnoreReadOnlyProperties = true,
+        IncludeFields = false,
+        NumberHandling = JsonNumberHandling.AllowReadingFromString,
+        PropertyNameCaseInsensitive = false,
+#if DEBUG
+        WriteIndented = true,
+#elif RELEASE
+        WriteIndented = false,
+#endif
+    };
+
     public static async Task<bool> SwitchToMailCodeAsync(DefaultRequest ajaxRequest, SteamGuardAccuntv2? SDA)
     {
         var att_phone = await Script.AjaxHelp.PhoneAjaxAsync(ajaxRequest);

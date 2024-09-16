@@ -22,8 +22,8 @@ public static class ITwoFactorService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<QueryStatus>>(response.Data!)!;
-            obj.success = true;
+            var obj = JsonSerializer.Deserialize<ResponseData<QueryStatus>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
             return obj;
         }
         catch (Exception)

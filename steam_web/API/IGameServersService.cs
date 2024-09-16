@@ -20,8 +20,8 @@ public static class IGameServersService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<AccountList>>(response.Data!)!;
-            obj.success = true;
+            var obj = JsonSerializer.Deserialize<ResponseData<AccountList>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
             return obj;
         }
         catch (Exception)

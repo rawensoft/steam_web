@@ -23,8 +23,8 @@ public static class ICSGOServers_730
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Result<GameServerStatus>>(response.Data!)!;
-            obj.success = true;
+            var obj = JsonSerializer.Deserialize<ResultData<GameServerStatus>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
             return obj;
         }
         catch (Exception)
@@ -49,8 +49,8 @@ public static class ICSGOServers_730
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Result<GameServerStatus>>(response.Data!)!;
-            obj.success = true;
+            var obj = JsonSerializer.Deserialize<ResultData<GameServerStatus>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
             return obj;
         }
         catch (Exception)

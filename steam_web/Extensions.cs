@@ -311,7 +311,7 @@ public static class ExtensionMethods
             return false;
 
 		var check_session = API.IAuthenticationService.GetAuthSessionsForAccount(session, proxy, cancellationToken);
-		if (check_session?.response.client_ids == null)
+		if (check_session?.Response.client_ids == null)
             return false;
         return true;
 	}
@@ -347,7 +347,7 @@ public static class ExtensionMethods
 			return false;
 
 		var check_session = await API.IAuthenticationService.GetAuthSessionsForAccountAsync(session, proxy, cancellationToken);
-		if (check_session?.response.client_ids == null)
+		if (check_session?.Response.client_ids == null)
             return false;
         return true;
 	}

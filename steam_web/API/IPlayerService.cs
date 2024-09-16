@@ -24,8 +24,8 @@ public static class IPlayerService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<ProfileCustomization>>(response.Data!)!;
-            obj.success = true;
+            var obj = JsonSerializer.Deserialize<ResponseData<ProfileCustomization>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
             return obj;
         }
         catch (Exception)
@@ -64,8 +64,8 @@ public static class IPlayerService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<PlayerBadges>>(response.Data!)!;
-            obj.success = true;
+            var obj = JsonSerializer.Deserialize<ResponseData<PlayerBadges>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
             return obj;
         }
         catch (Exception)
@@ -95,8 +95,8 @@ public static class IPlayerService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<PlayerQuests>>(response.Data!)!;
-            obj.success = true;
+            var obj = JsonSerializer.Deserialize<ResponseData<PlayerQuests>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
             return obj;
         }
         catch (Exception)
@@ -118,8 +118,8 @@ public static class IPlayerService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<FavoriteBadge>>(response.Data!)!;
-            obj.success = true;
+            var obj = JsonSerializer.Deserialize<ResponseData<FavoriteBadge>>(response.Data!)!;
+            obj.Success = true;
             return obj;
         }
         catch (Exception)
@@ -162,8 +162,8 @@ public static class IPlayerService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<PlayerOwnedGames>>(response.Data!)!;
-            obj.success = true;
+            var obj = JsonSerializer.Deserialize<ResponseData<PlayerOwnedGames>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
             return obj;
         }
         catch (Exception)
@@ -190,8 +190,8 @@ public static class IPlayerService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<PlayerSteamLevel>>(response.Data!)!;
-            obj.success = true;
+            var obj = JsonSerializer.Deserialize<ResponseData<PlayerSteamLevel>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
             return obj;
         }
         catch (Exception)

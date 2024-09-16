@@ -33,8 +33,8 @@ public static class ISteamUser
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<Players<PlayerSummary>>>(response.Data!)!;
-            obj.success = true;
+            var obj = JsonSerializer.Deserialize<ResponseData<PlayersArrayData<PlayerSummary>>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
             return obj;
         }
         catch (Exception)
@@ -66,8 +66,8 @@ public static class ISteamUser
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<Players<PlayerSummary>>>(response.Data!)!;
-            obj.success = true;
+            var obj = JsonSerializer.Deserialize<ResponseData<PlayersArrayData<PlayerSummary>>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
             return obj;
         }
         catch (Exception)
@@ -100,8 +100,8 @@ public static class ISteamUser
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<PlayerBans>(response.Data!)!;
-            obj.success = true;
+            var obj = JsonSerializer.Deserialize<PlayerBans>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
             return obj;
         }
         catch (Exception)
@@ -133,8 +133,8 @@ public static class ISteamUser
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<PlayerBans>(response.Data!)!;
-            obj.success = true;
+            var obj = JsonSerializer.Deserialize<PlayerBans>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
             return obj;
         }
         catch (Exception)
@@ -155,8 +155,9 @@ public static class ISteamUser
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<ResponseFriends<PlayerFriend>>(response.Data!)!;
-            obj.success = true;
+            var obj = JsonSerializer.Deserialize<ResponseFriends<PlayerFriend>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
+            return obj;
             return obj;
         }
         catch (Exception)
@@ -184,8 +185,8 @@ public static class ISteamUser
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<VanityUrl>>(response.Data!)!;
-            obj.success = true;
+            var obj = JsonSerializer.Deserialize<ResponseData<VanityUrl>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
             return obj;
         }
         catch (Exception)

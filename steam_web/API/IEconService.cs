@@ -52,8 +52,8 @@ public static class IEconService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<TradesHistory>>(response.Data!)!;
-            obj.success = true;
+            var obj = JsonSerializer.Deserialize<ResponseData<TradesHistory>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
             return obj;
         }
         catch (Exception)
@@ -82,8 +82,8 @@ public static class IEconService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<TradeHoldDuration>>(response.Data!)!;
-            obj.success = true;
+            var obj = JsonSerializer.Deserialize<ResponseData<TradeHoldDuration>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
             return obj;
         }
         catch (Exception)
@@ -112,8 +112,8 @@ public static class IEconService
             return new();
 		try
 		{
-			var obj = JsonSerializer.Deserialize<Response<TradeHoldDuration>>(response.Data!)!;
-			obj.success = true;
+			var obj = JsonSerializer.Deserialize<ResponseData<TradeHoldDuration>>(response.Data!, Steam.JsonOptions)!;
+			obj.Success = true;
 			return obj;
 		}
 		catch (Exception)
@@ -147,8 +147,8 @@ public static class IEconService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<TradeOffer>>(response.Data!)!;
-            obj.success = true;
+            var obj = JsonSerializer.Deserialize<ResponseData<TradeOffer>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
             return obj;
         }
         catch (Exception)
@@ -180,8 +180,8 @@ public static class IEconService
         if (!response.Success) return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<TradeOffer>>(response.Data!)!;
-            obj.success = true;
+            var obj = JsonSerializer.Deserialize<ResponseData<TradeOffer>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
             return obj;
         }
         catch (Exception)
@@ -234,8 +234,8 @@ public static class IEconService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<Trades>>(response.Data!)!;
-            obj.success = true;
+            var obj = JsonSerializer.Deserialize<ResponseData<Trades>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
             return obj;
         }
         catch (Exception)
@@ -287,8 +287,8 @@ public static class IEconService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<Trades>>(response.Data!)!;
-            obj.success = true;
+            var obj = JsonSerializer.Deserialize<ResponseData<Trades>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
             return obj;
         }
         catch (Exception)
@@ -318,8 +318,8 @@ public static class IEconService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<TradeOffersSummary>>(response.Data!)!;
-            obj.success = true;
+            var obj = JsonSerializer.Deserialize<ResponseData<TradeOffersSummary>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
             return obj;
         }
         catch (Exception)
@@ -353,8 +353,8 @@ public static class IEconService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<TradeStatus>>(response.Data!)!;
-            obj.success = true;
+            var obj = JsonSerializer.Deserialize<ResponseData<TradeStatus>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
             return obj;
         }
         catch (Exception)
@@ -382,8 +382,8 @@ public static class IEconService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<object>>(response.Data!)!;
-            obj.success = true;
+            var obj = JsonSerializer.Deserialize<ResponseData<object>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
             return obj;
         }
         catch (Exception)
@@ -411,8 +411,8 @@ public static class IEconService
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Response<object>>(response.Data!)!;
-            obj.success = true;
+            var obj = JsonSerializer.Deserialize<ResponseData<object>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
             return obj;
         }
         catch (Exception)
