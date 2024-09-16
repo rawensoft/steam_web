@@ -34,9 +34,9 @@ internal static class SteamPoweredUrls
     public const string ISteamUser_GetPlayerBans_v1 = "https://api.steampowered.com/ISteamUser/GetPlayerBans/v1";
     public const string ISteamUser_GetFriendList_v1 = "https://api.steampowered.com/ISteamUser/GetFriendList/v1";
     public const string ISteamUser_ResolveVanityURL_v1 = "https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1";
-    public const string IFriendMessagesService_GetActiveMessageSessions_v1 = "https://api.steampowered.com/IFriendMessagesService/GetActiveMessageSessions/v0001";
+    public const string IFriendMessagesService_GetActiveMessageSessions_v1 = "https://api.steampowered.com/IFriendMessagesService/GetActiveMessageSessions/v1";
     public const string IFriendMessagesService_GetRecentMessages_v1 = "https://api.steampowered.com/IFriendMessagesService/GetRecentMessages/v0001";
-    public const string IFriendMessagesService_MarkOfflineMessagesRead_v1 = "https://api.steampowered.com/IFriendMessagesService/MarkOfflineMessagesRead/v0001";
+    public const string IFriendMessagesService_MarkOfflineMessagesRead_v1 = "https://api.steampowered.com/IFriendMessagesService/MarkOfflineMessagesRead/v1";
     public const string IPlayerService_GetProfileCustomization_v1 = "https://api.steampowered.com/IPlayerService/GetProfileCustomization/v1";
     public const string IPlayerService_SetProfileTheme_v1 = "https://api.steampowered.com/IPlayerService/SetProfileTheme/v1";
     public const string IPlayerService_GetBadges_v1 = "https://api.steampowered.com/IPlayerService/GetBadges/v1";
