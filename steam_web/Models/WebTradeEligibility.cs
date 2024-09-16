@@ -1,11 +1,11 @@
 ﻿using System.Text.Json.Serialization;
 namespace SteamWeb.Models;
-public sealed class WebTradeEligibility
+public class WebTradeEligibility
 {
     /// <summary>
     /// 1 - разрешён
     /// </summary>
-    public int allowed { get; init; }
+    [JsonPropertyName("allowed")] public byte Allowed { get; init; }
     /// <summary>
     /// 8 - limit
     /// 16 - trade ban
@@ -14,14 +14,15 @@ public sealed class WebTradeEligibility
     /// 16800 - необходимо совершить покупку в стим, пароль был изменён, гуард был выключе
     /// 18720 - долго не входил в аккаунт и нужно совершить покупку в стим и пароль недавно изменён
     /// </summary>
-    public int reason { get; init; }
-    [JsonIgnore] public WebTradeEligibilityReason reason_advanced => new(this);
-    public int allowed_at_time { get; init; }
-    public int steamguard_required_days { get; init; }
-    public int new_device_cooldown_days { get; init; }
-    public long time_checked { get; init; }
-    public long expiration { get; init; }
-    public bool is_limited => new WebTradeEligibilityReason(this).IsLimited;
-    public bool is_can_market => !new WebTradeEligibilityReason(this).CanMarket;
-    public bool is_can_trade => new WebTradeEligibilityReason(this).CanTrade;
+    [JsonPropertyName("reason")] public uint Reason { get; init; }
+    [JsonPropertyName("allowed_at_time")] public int AllowedAtTime { get; init; }
+    [JsonPropertyName("steamguard_required_days")] public int SteamguardRequiredDays { get; init; }
+    [JsonPropertyName("new_device_cooldown_days")] public int NewDeviceCooldownDays { get; init; }
+    [JsonPropertyName("time_checked")] public long TimeChecked { get; init; }
+    [JsonPropertyName("expiration")] public long Expiration { get; init; }
+
+    [JsonIgnore] public WebTradeEligibilityReason ReasonAdvanced => new(this);
+    [JsonIgnore] public bool IsLimited => new WebTradeEligibilityReason(this).IsLimited;
+    [JsonIgnore] public bool IsCanMarket => !new WebTradeEligibilityReason(this).CanMarket;
+    [JsonIgnore] public bool IsCanTrade => new WebTradeEligibilityReason(this).CanTrade;
 }
