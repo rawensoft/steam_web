@@ -8,7 +8,7 @@ public static class IFriendsListService
 {
     public static ResponseData<FavoritesModel> GetFavorites(ApiRequest apiRequest)
     {
-        var request = new GetRequest(SteamPoweredUrls.IFriendMessagesService_GetActiveMessageSessions_v1)
+        var request = new GetRequest(SteamPoweredUrls.IFriendsListService_GetFavorites_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -31,7 +31,7 @@ public static class IFriendsListService
     }
     public static async Task<ResponseData<FavoritesModel>> GetFavoritesAsync(ApiRequest apiRequest)
     {
-        var request = new GetRequest(SteamPoweredUrls.IFriendMessagesService_GetActiveMessageSessions_v1)
+        var request = new GetRequest(SteamPoweredUrls.IFriendsListService_GetFavorites_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -55,7 +55,7 @@ public static class IFriendsListService
 
     public static ResponseData<FriendsList> GetFriendsList(ApiRequest apiRequest)
     {
-        var request = new GetRequest(SteamPoweredUrls.IFriendMessagesService_GetActiveMessageSessions_v1)
+        var request = new GetRequest(SteamPoweredUrls.IFriendsListService_GetFriendsList_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -78,7 +78,7 @@ public static class IFriendsListService
     }
     public static async Task<ResponseData<FriendsList>> GetFriendsListAsync(ApiRequest apiRequest)
     {
-        var request = new GetRequest(SteamPoweredUrls.IFriendMessagesService_GetActiveMessageSessions_v1)
+        var request = new GetRequest(SteamPoweredUrls.IFriendsListService_GetFriendsList_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,

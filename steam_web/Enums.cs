@@ -78,3 +78,45 @@ public enum ETradeOfferState : byte
     /// </summary>
     k_ETradeOfferStateInEscrow = 11
 }
+/// <summary>
+/// Определяет набор отношений, которые могут быть между пользователями Steam.
+/// </summary>
+public enum EFriendRelationship: byte
+{
+    /// <summary>
+    /// У пользователей нет отношений.
+    /// </summary>
+    k_EFriendRelationshipNone = 0,
+    /// <summary>
+    /// Пользователь только что нажал «Игнорировать» в ответ на полученное приглашение. Не сохраняется.
+    /// </summary>
+    k_EFriendRelationshipBlocked = 1,
+    /// <summary>
+    /// Пользователь отправил запрос на дружбу с текущим пользователем.
+    /// </summary>
+    k_EFriendRelationshipRequestRecipient = 2,
+    /// <summary>
+    /// «Обычный» друг.
+    /// </summary>
+    k_EFriendRelationshipFriend = 3,
+    /// <summary>
+    /// Текущий игрок отправил приглашение в друзья.
+    /// </summary>
+    k_EFriendRelationshipRequestInitiator = 4,
+    /// <summary>
+    /// Текущий пользователь заблокировал другого пользователя в комментариях, чате и т. п. Это значение сохраняется.
+    /// </summary>
+    k_EFriendRelationshipIgnored = 5,
+    /// <summary>
+    /// Пользователь проигнорировал текущего пользователя.
+    /// </summary>
+    k_EFriendRelationshipIgnoredFriend = 6,
+    /// <summary>
+    /// Устаревший параметр, не используется.
+    /// </summary>
+    k_EFriendRelationshipSuggested_DEPRECATED = 7,
+    /// <summary>
+    /// Общее число отношений, используется в циклах и для проверок.
+    /// </summary>
+    k_EFriendRelationshipMax = 8,
+}
