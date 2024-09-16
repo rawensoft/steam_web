@@ -1,32 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
-namespace SteamWeb.API.Models.ISteamUser
+namespace SteamWeb.API.Models.ISteamUser;
+public class VanityUrl
 {
-    public class VanityUrl
-    {
-        [JsonIgnore] public bool b_response
-        {
-            get
-            {
-                if (response > 1) return false;
-                if (response == 0) return false;
-                return true;
-            }
-        }
-        public ushort response { get; set; } = 0;
-        /// <summary>
-        /// Есть значение если response > 1 && response == 0
-        /// </summary>
-        public string message { get; set; }
+    [JsonIgnore] public bool Succesul => Response == 1;
+    [JsonPropertyName("response")] public ushort Response { get; init; } = 0;
 
-        /// <summary>
-        /// Есть значение если b_response == true
-        /// </summary>
-        public string steamid { get; set; }
-    }
+    /// <summary>
+    /// Есть значение если b_response == false
+    /// </summary>
+    [JsonPropertyName("message")] public string? Message { get; init; }
+
+    /// <summary>
+    /// Есть значение если b_response == true
+    /// </summary>
+    [JsonPropertyName("steamid")] public ulong SteamId { get; init; }
 }

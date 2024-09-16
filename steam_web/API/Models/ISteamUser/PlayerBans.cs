@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
-namespace SteamWeb.API.Models.ISteamUser
+namespace SteamWeb.API.Models.ISteamUser;
+public class PlayerBans
 {
-    public class PlayerBans
-    {
-        public List<PlayerBan> players { get; set; } = new();
-        public bool success { get; set; } = false;
-    }
+    [JsonPropertyName("players")] public List<PlayerBan> Players { get; init; } = new(2);
+    [JsonPropertyName("success")] public bool Success { get; set; } = false;
 }

@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
-namespace SteamWeb.API.Models.ISteamUser
+namespace SteamWeb.API.Models.ISteamUser;
+public class ResponseFriends<T>
 {
-    public class ResponseFriends<T>
-    {
-        public bool success { get; set; } = false;
-        public FriendsList<T> friendslist { get; set; } = new();
-    }
+    [JsonPropertyName("success")] public bool Success { get; set; } = false;
+    [JsonPropertyName("friendslist")] public FriendsList<T> FriendsList { get; init; } = new();
 }

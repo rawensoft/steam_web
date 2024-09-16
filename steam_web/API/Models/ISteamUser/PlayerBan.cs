@@ -1,19 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SteamWeb.API.Models.ISteamUser
+﻿namespace SteamWeb.API.Models.ISteamUser;
+public class PlayerBan
 {
-    public record PlayerBan
-    {
-        public string SteamId { get; set; }
-        public bool CommunityBanned { get; set; }
-        public bool VACBanned { get; set; }
-        public int NumberOfVACBans { get; set; }
-        public int DaysSinceLastBan { get; set; }
-        public int NumberOfGameBans { get; set; }
-        public string EconomyBan { get; set; }
-    }
+    public ulong SteamId { get; init; }
+    public bool CommunityBanned { get; init; }
+    public bool VACBanned { get; init; }
+    public int NumberOfVACBans { get; init; }
+    public int DaysSinceLastBan { get; init; }
+    public int NumberOfGameBans { get; init; }
+    public string EconomyBan { get; init; }
 }

@@ -1,20 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
-namespace SteamWeb.API.Models.ISteamUser
+namespace SteamWeb.API.Models.ISteamUser;
+public class PlayerFriend
 {
-    public record PlayerFriend
-    {
-        public string steamid { get; set; }
-        /// <summary>
-        /// friend
-        /// requestrecipient
-        /// ignored
-        /// </summary>
-        public string relationship { get; set; }
-        public int friend_since { get; set; }
-    }
+    [JsonPropertyName("steamid")] public ulong SteamId { get; init; }
+    /// <summary>
+    /// friend
+    /// requestrecipient
+    /// ignored
+    /// </summary>
+    [JsonPropertyName("relationship")] public string Relationship { get; init; }
+    [JsonPropertyName("friend_since")] public int FriendSince { get; init; }
 }

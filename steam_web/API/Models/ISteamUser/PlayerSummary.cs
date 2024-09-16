@@ -1,31 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
-namespace SteamWeb.API.Models.ISteamUser
+namespace SteamWeb.API.Models.ISteamUser;
+public class PlayerSummary
 {
-    public record PlayerSummary
-    {
-        public string steamid { get; set; }
-        public int communityvisibilitystate { get; set; }
-        public int profilestate { get; set; }
-        public string personaname { get; set; }
-        public int commentpermission { get; set; }
-        public string profileurl { get; set; }
-        public string avatar { get; set; }
-        public string avatarmedium { get; set; }
-        public string avatarfull { get; set; }
-        public string avatarhash { get; set; }
-        public int lastlogoff { get; set; }
-        public int personastate { get; set; }
-        public string realname { get; set; }
-        public string primaryclanid { get; set; }
-        public int timecreated { get; set; }
-        public int personastateflags { get; set; }
-        public string loccountrycode { get; set; }
-        public string locstatecode { get; set; }
-        public int loccityid { get; set; }
-    }
+    [JsonPropertyName("steamid")] public ulong SteamId { get; init; }
+    [JsonPropertyName("communityvisibilitystate")] public int CommunityVisibilityState { get; init; }
+    [JsonPropertyName("profilestate")] public int ProfileState { get; init; }
+    [JsonPropertyName("personaname")] public string PersonaName { get; init; } = string.Empty;
+    [JsonPropertyName("commentpermission")] public int CommentPermission { get; init; }
+    [JsonPropertyName("profileurl")] public string? ProfileUrl { get; init; }
+    [JsonPropertyName("avatar")] public string? Avatar { get; init; }
+    [JsonPropertyName("avatarmedium")] public string? AvatarMedium { get; init; }
+    [JsonPropertyName("avatarfull")] public string? AvatarFull { get; init; }
+    [JsonPropertyName("avatarhash")] public string? AvatarHash { get; init; }
+    [JsonPropertyName("lastlogoff")] public int LastLogoff { get; init; }
+    [JsonPropertyName("personastate")] public int PersonaState { get; init; }
+    [JsonPropertyName("realname")] public string? RealName { get; init; }
+    [JsonPropertyName("primaryclanid")] public string? PrimaryClanId { get; init; }
+    [JsonPropertyName("timecreated")] public int TimeCreated { get; init; }
+    [JsonPropertyName("personastateflags")] public int PersonaStateFlags { get; init; }
+    [JsonPropertyName("loccountrycode")] public string? LocationCountryCode { get; init; }
+    [JsonPropertyName("locstatecode")] public string? LocationStateCode { get; init; }
+    [JsonPropertyName("loccityid")] public int LocationCityId { get; init; }
 }
