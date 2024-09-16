@@ -386,4 +386,49 @@ public static class IPlayerService
             return new();
         }
     }
+
+    public static ResponseData<NicknamesModel> GetNicknameList(ApiRequest apiRequest)
+    {
+        var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetNicknameList_v1)
+        {
+            Proxy = apiRequest.Proxy,
+            CancellationToken = apiRequest.CancellationToken,
+        };
+        apiRequest.AddAuthToken(request);
+        var response = Downloader.Get(request);
+        if (!response.Success)
+            return new();
+        try
+        {
+            var obj = JsonSerializer.Deserialize<ResponseData<NicknamesModel>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
+            return obj;
+        }
+        catch (Exception)
+        {
+            return new();
+        }
+    }
+    public static async Task<ResponseData<NicknamesModel>> GetNicknameListAsync(ApiRequest apiRequest)
+    {
+        var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetNicknameList_v1)
+        {
+            Proxy = apiRequest.Proxy,
+            CancellationToken = apiRequest.CancellationToken,
+        };
+        apiRequest.AddAuthToken(request);
+        var response = await Downloader.GetAsync(request);
+        if (!response.Success)
+            return new();
+        try
+        {
+            var obj = JsonSerializer.Deserialize<ResponseData<NicknamesModel>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
+            return obj;
+        }
+        catch (Exception)
+        {
+            return new();
+        }
+    }
 }
