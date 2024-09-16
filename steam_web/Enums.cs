@@ -8,6 +8,28 @@ public enum FA2: byte
     EmailCodeWithPhone,
     Deauth
 }
+[Flags]
+public enum EligibilityStates
+{
+    None,
+    Unknown1 = 1,
+    Unknown2 = 2,
+    IsLocked = 4,
+    IsLimited = 8,
+    TradeBanned = 16,
+    Unknown3 = 32,
+    SteamGuardEnabledFor15Days = 64,
+    Unknown4 = 128,
+    PasswordReset = 256,
+    Unknown5 = 512,
+    CoockieProblem = 1024,
+    SteamGuard7Days = 2048,
+    Unknown6 = 4096,
+    Unknown7 = 8192,
+    SteamPurchase = 16384,
+    Unknown8 = 32768,
+    Unknown9 = 65536,
+}
 public enum ETradeOfferState : byte
 {
     NotFind = 0,
