@@ -6,7 +6,7 @@ using SteamWeb.API.Models;
 namespace SteamWeb.API;
 public static class IPlayerService
 {
-    public static async Task<Response<ProfileCustomization>> GetProfileCustomizationAsync(ApiRequest apiRequest, ulong steamid,
+    public static async Task<ResponseData<ProfileCustomization>> GetProfileCustomizationAsync(ApiRequest apiRequest, ulong steamid,
         bool include_inactive_customizations = false, bool include_purchased_customizations = false)
     {
         var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetProfileCustomization_v1)
@@ -51,7 +51,7 @@ public static class IPlayerService
     /// </summary>
     /// <param name="steamid">The player we're asking about</param>
     /// <returns></returns>
-    public static async Task<Response<PlayerBadges>> GetBadgesAsync(ApiRequest apiRequest, ulong steamid)
+    public static async Task<ResponseData<PlayerBadges>> GetBadgesAsync(ApiRequest apiRequest, ulong steamid)
     {
         var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetBadges_v1)
         {
@@ -80,7 +80,7 @@ public static class IPlayerService
     /// <param name="steamid">The player we're asking about</param>
     /// <param name="badgeid">The badge we're asking about</param>
     /// <returns></returns>
-    public static async Task<Response<PlayerQuests>> GetCommunityBadgeProgressAsync(ApiRequest apiRequest, ulong steamid, int? badgeid = null)
+    public static async Task<ResponseData<PlayerQuests>> GetCommunityBadgeProgressAsync(ApiRequest apiRequest, ulong steamid, int? badgeid = null)
     {
         var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetCommunityBadgeProgress_v1)
         {
@@ -105,7 +105,7 @@ public static class IPlayerService
         }
     }
 
-    public static async Task<Response<FavoriteBadge>> GetFavoriteBadgeAsync(ApiRequest apiRequest, ulong steamid)
+    public static async Task<ResponseData<FavoriteBadge>> GetFavoriteBadgeAsync(ApiRequest apiRequest, ulong steamid)
     {
         var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetFavoriteBadge_v1)
         {
@@ -138,7 +138,7 @@ public static class IPlayerService
     /// <param name="skip_unvetted_apps">if set, skip unvetted store apps</param>
     /// <param name="appids_filter">if set, restricts result set to the passed in apps</param>
     /// <returns></returns>
-    public static async Task<Response<PlayerOwnedGames>> GetOwnedGamesAsync(ApiRequest apiRequest, ulong steamid, bool include_appinfo = false,
+    public static async Task<ResponseData<PlayerOwnedGames>> GetOwnedGamesAsync(ApiRequest apiRequest, ulong steamid, bool include_appinfo = false,
         bool include_played_free_games = false, bool include_free_sub = false, bool skip_unvetted_apps = false, uint? appids_filter = null)
     {
         var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetOwnedGames_v1)
@@ -177,7 +177,7 @@ public static class IPlayerService
     /// </summary>
     /// <param name="steamid">The player we're asking about</param>
     /// <returns></returns>
-    public static async Task<Response<PlayerSteamLevel>> GetSteamLevelAsync(ApiRequest apiRequest, ulong steamid)
+    public static async Task<ResponseData<PlayerSteamLevel>> GetSteamLevelAsync(ApiRequest apiRequest, ulong steamid)
     {
         var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetSteamLevel_v1)
         {

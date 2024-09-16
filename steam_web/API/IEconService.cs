@@ -20,7 +20,7 @@ public static class IEconService
     /// <param name="include_total">If set, the total number of trades the account has participated in will be included in the response</param>
     /// <exception cref="ArgumentException"/>
     /// <returns></returns>
-    public static async Task<Response<TradesHistory>> GetTradeHistoryAsync(ApiRequest apiRequest, uint max_trades, uint? start_after_time = null, ulong? start_after_tradeid = null,
+    public static async Task<ResponseData<TradesHistory>> GetTradeHistoryAsync(ApiRequest apiRequest, uint max_trades, uint? start_after_time = null, ulong? start_after_tradeid = null,
         bool navigating_back = false, bool get_descriptions = false, string? language = null, bool include_failed = false, bool include_total = false)
     {
         if (max_trades == 0)
@@ -69,7 +69,7 @@ public static class IEconService
     /// <param name="steamid_target">User you are trading with (SteamID64)</param>
     /// <param name="trade_offer_access_token">A special token that allows for trade offers from non-friends.</param>
     /// <returns></returns>
-    public static async Task<Response<TradeHoldDuration>> GetTradeHoldDurationsAsync(ApiRequest apiRequest, ulong steamid_target, string trade_offer_access_token)
+    public static async Task<ResponseData<TradeHoldDuration>> GetTradeHoldDurationsAsync(ApiRequest apiRequest, ulong steamid_target, string trade_offer_access_token)
     {
         var request = new GetRequest(SteamPoweredUrls.IEconService_GetTradeHoldDurations_v1)
         {
@@ -99,7 +99,7 @@ public static class IEconService
 	/// <param name="steamid_target">User you are trading with (SteamID64)</param>
 	/// <param name="trade_offer_access_token">A special token that allows for trade offers from non-friends.</param>
 	/// <returns></returns>
-	public static Response<TradeHoldDuration> GetTradeHoldDurations(ApiRequest apiRequest, ulong steamid_target, string trade_offer_access_token)
+	public static ResponseData<TradeHoldDuration> GetTradeHoldDurations(ApiRequest apiRequest, ulong steamid_target, string trade_offer_access_token)
 	{
 		var request = new GetRequest(SteamPoweredUrls.IEconService_GetTradeHoldDurations_v1)
         {
@@ -130,7 +130,7 @@ public static class IEconService
 	/// <param name="get_descriptions">If set, the item display data for the items included in the returned trade offers will also be returned. If one or more descriptions can't be retrieved, then your request will fail.</param>
 	/// <param name="language"></param>
 	/// <returns></returns>
-	public static Response<TradeOffer> GetTradeOffer(ApiRequest apiRequest, ulong tradeofferid, bool get_descriptions = false, string? language = null)
+	public static ResponseData<TradeOffer> GetTradeOffer(ApiRequest apiRequest, ulong tradeofferid, bool get_descriptions = false, string? language = null)
     {
         var request = new GetRequest(SteamPoweredUrls.IEconService_GetTradeOffer_v1)
         {
@@ -164,7 +164,7 @@ public static class IEconService
     /// <param name="get_descriptions">If set, the item display data for the items included in the returned trade offers will also be returned. If one or more descriptions can't be retrieved, then your request will fail.</param>
     /// <param name="language"></param>
     /// <returns></returns>
-    public static async Task<Response<TradeOffer>> GetTradeOfferAsync(ApiRequest apiRequest, ulong tradeofferid, bool get_descriptions = false, string language = null)
+    public static async Task<ResponseData<TradeOffer>> GetTradeOfferAsync(ApiRequest apiRequest, ulong tradeofferid, bool get_descriptions = false, string language = null)
     {
         var request = new GetRequest(SteamPoweredUrls.IEconService_GetTradeOffer_v1)
         {
@@ -203,7 +203,7 @@ public static class IEconService
     /// <param name="cursor">Cursor aka start index</param>
     /// <param name="language">The language to use when loading item display data.</param>
     /// <returns></returns>
-    public static async Task<Response<Trades>> GetTradeOffersAsync(ApiRequest apiRequest, bool get_sent_offers = false, bool get_received_offers = false,
+    public static async Task<ResponseData<Trades>> GetTradeOffersAsync(ApiRequest apiRequest, bool get_sent_offers = false, bool get_received_offers = false,
         bool get_descriptions = false, bool active_only = false, bool historical_only = false, uint? time_historical_cutoff = null,
         uint? cursor = null, string? language = null)
     {
@@ -256,7 +256,7 @@ public static class IEconService
     /// <param name="cursor">Cursor aka start index</param>
     /// <param name="language">The language to use when loading item display data.</param>
     /// <returns></returns>
-    public static Response<Trades> GetTradeOffers(ApiRequest apiRequest, bool get_sent_offers = false, bool get_received_offers = false,
+    public static ResponseData<Trades> GetTradeOffers(ApiRequest apiRequest, bool get_sent_offers = false, bool get_received_offers = false,
         bool get_descriptions = false, bool active_only = false, bool historical_only = false, uint? time_historical_cutoff = null,
         uint? cursor = null, string? language = null)
     {
@@ -303,7 +303,7 @@ public static class IEconService
     /// <param name="key"></param>
     /// <param name="time_last_visit">The time the user last visited. If not passed, will use the time the user last visited the trade offer page.</param>
     /// <returns></returns>
-    public static async Task<Response<TradeOffersSummary>> GetTradeOffersSummaryAsync(ApiRequest apiRequest, uint? time_last_visit = null)
+    public static async Task<ResponseData<TradeOffersSummary>> GetTradeOffersSummaryAsync(ApiRequest apiRequest, uint? time_last_visit = null)
     {
         var request = new GetRequest(SteamPoweredUrls.IEconService_GetTradeOffersSummary_v1)
         {
@@ -336,7 +336,7 @@ public static class IEconService
     /// <param name="get_descriptions">If set, the item display data for the items included in the returned trades will also be returned</param>
     /// <param name="language">The language to use when loading item display data</param>
     /// <returns></returns>
-    public static async Task<Response<TradeStatus>> GetTradeStatusAsync(ApiRequest apiRequest, ulong tradeid, bool get_descriptions = false, string language = null)
+    public static async Task<ResponseData<TradeStatus>> GetTradeStatusAsync(ApiRequest apiRequest, ulong tradeid, bool get_descriptions = false, string language = null)
     {
         var request = new GetRequest(SteamPoweredUrls.IEconService_GetTradeStatus_v1)
         {
@@ -369,7 +369,7 @@ public static class IEconService
     /// <param name="key"></param>
     /// <param name="tradeid"></param>
     /// <returns></returns>
-    public static async Task<Response<object>> CancelTradeOfferAsync(ApiRequest apiRequest, ulong tradeofferid)
+    public static async Task<ResponseData<object>> CancelTradeOfferAsync(ApiRequest apiRequest, ulong tradeofferid)
     {
         var request = new GetRequest(SteamPoweredUrls.IEconService_CancelTradeOffer_v1)
         {
@@ -398,7 +398,7 @@ public static class IEconService
     /// <param name="key"></param>
     /// <param name="tradeid"></param>
     /// <returns></returns>
-    public static async Task<Response<object>> DeclineTradeOfferAsync(ApiRequest apiRequest, ulong tradeofferid)
+    public static async Task<ResponseData<object>> DeclineTradeOfferAsync(ApiRequest apiRequest, ulong tradeofferid)
     {
         var request = new GetRequest(SteamPoweredUrls.IEconService_DeclineTradeOffer_v1)
         {

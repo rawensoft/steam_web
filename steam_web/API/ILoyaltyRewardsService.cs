@@ -12,7 +12,7 @@ public static class ILoyaltyRewardsService
     /// <param name="apiRequest">AccessToken можно получить через <code>(await Ajax.pointssummary_ajaxgetasyncconfig(Session, Proxy)).Item2.WebAPI_Token;</code></param>
     /// <param name="steamid">Обязательно тот, к которому относится access_token</param>
     /// <returns></returns>
-    public static async Task<Response<RewardSummary>> GetSummaryAsync(ApiRequest apiRequest, ulong steamid)
+    public static async Task<ResponseData<RewardSummary>> GetSummaryAsync(ApiRequest apiRequest, ulong steamid)
     {
         var request = new GetRequest(SteamPoweredUrls.ILoyaltyRewardsService_GetSummary_v1)
         {
@@ -41,7 +41,7 @@ public static class ILoyaltyRewardsService
     /// <param name="apiRequest">AccessToken можно получить через <code>(await Ajax.pointssummary_ajaxgetasyncconfig(Session, Proxy)).Item2.WebAPI_Token;</code></param>
     /// <param name="steamid">Обязательно тот, к которому относится access_token</param>
     /// <returns></returns>
-    public static Response<RewardSummary> GetSummary(ApiRequest apiRequest, ulong steamid)
+    public static ResponseData<RewardSummary> GetSummary(ApiRequest apiRequest, ulong steamid)
     {
         var request = new GetRequest(SteamPoweredUrls.ILoyaltyRewardsService_GetSummary_v1)
         {

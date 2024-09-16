@@ -6,7 +6,7 @@ using SteamWeb.Web;
 namespace SteamWeb.API;
 public static class IGameServersService
 {
-    public static async Task<Response<AccountList>> GetAccountList(ApiRequest apiRequest)
+    public static async Task<ResponseData<AccountList>> GetAccountList(ApiRequest apiRequest)
     {
         var request = new GetRequest(SteamPoweredUrls.IGameServersService_GetAccountList_v1)
         {

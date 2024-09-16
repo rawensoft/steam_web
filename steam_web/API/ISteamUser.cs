@@ -8,7 +8,7 @@ using System.Text;
 namespace SteamWeb.API;
 public static class ISteamUser
 {
-    public static async Task<Response<Players<PlayerSummary>>> GetPlayerSummariesAsync(ApiRequest apiRequest, ulong[] steamids)
+    public static async Task<ResponseData<PlayersArrayData<PlayerSummary>>> GetPlayerSummariesAsync(ApiRequest apiRequest, ulong[] steamids)
     {
         if (steamids.Length == 0)
             throw new ArgumentException(nameof(steamids));
@@ -42,7 +42,7 @@ public static class ISteamUser
             return new();
         }
     }
-    public static Response<Players<PlayerSummary>> GetPlayerSummaries(ApiRequest apiRequest, ulong[] steamids)
+    public static ResponseData<PlayersArrayData<PlayerSummary>> GetPlayerSummaries(ApiRequest apiRequest, ulong[] steamids)
     {
         if (steamids.Length == 0)
             throw new ArgumentException(nameof(steamids));
@@ -172,7 +172,7 @@ public static class ISteamUser
     /// <param name="vanityurl">The vanity URL to get a SteamID for</param>
     /// <param name="url_type">The type of vanity URL. 1 (default): Individual profile, 2: Group, 3: Official game group</param>
     /// <returns></returns>
-    public static async Task<Response<VanityUrl>> ResolveVanityURL(ApiRequest apiRequest, string vanityurl, VANITY_TYPE url_type)
+    public static async Task<ResponseData<VanityUrl>> ResolveVanityURLAsync(ApiRequest apiRequest, string vanityurl, VANITY_TYPE url_type)
     {
         var request = new GetRequest(SteamPoweredUrls.ISteamUser_ResolveVanityURL_v1)
         {

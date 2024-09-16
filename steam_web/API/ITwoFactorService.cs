@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace SteamWeb.API;
 public static class ITwoFactorService
 {
-    public static async Task<Response<QueryStatus>> QueryStatus(ApiRequest apiRequest, ulong steamid)
+    public static async Task<ResponseData<QueryStatus>> QueryStatus(ApiRequest apiRequest, ulong steamid)
     {
         var request = new PostRequest(SteamPoweredUrls.ITwoFactorService_QueryStatus_v1, Downloader.AppFormUrlEncoded)
         {

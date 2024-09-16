@@ -10,7 +10,7 @@ public static class ICSGOServers_730
     /// offline, idle, low, normal, medium
     /// </summary>
     /// <returns></returns>
-    public static async Task<Result<GameServerStatus>> GetGameServersStatusAsync(ApiRequest apiRequest)
+    public static async Task<ResultData<GameServerStatus>> GetGameServersStatusAsync(ApiRequest apiRequest)
     {
         var request = new GetRequest(SteamPoweredUrls.ICSGOServers_730_GetGameServersStatus_v1)
         {
@@ -36,7 +36,7 @@ public static class ICSGOServers_730
     /// offline, idle, low, normal, medium
     /// </summary>
     /// <returns></returns>
-    public static Result<GameServerStatus> GetGameServersStatus(ApiRequest apiRequest)
+    public static ResultData<GameServerStatus> GetGameServersStatus(ApiRequest apiRequest)
     {
         var request = new GetRequest(SteamPoweredUrls.ICSGOServers_730_GetGameServersStatus_v1)
         {

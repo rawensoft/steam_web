@@ -18,7 +18,7 @@ public static class IAuthenticationService
     /// <param name="proxy"></param>
     /// <param name="session"></param>
     /// <returns>default если ошибка в запросе или нет сессии</returns>
-    public static async Task<Response<AuthSessionForAccount>?> GetAuthSessionsForAccountAsync(SessionData session, Proxy? proxy, CancellationToken? ct = null)
+    public static async Task<ResponseData<AuthSessionForAccount>?> GetAuthSessionsForAccountAsync(SessionData session, Proxy? proxy, CancellationToken? ct = null)
     {
         if (session == null)
             return default;
@@ -47,7 +47,7 @@ public static class IAuthenticationService
     /// <param name="proxy"></param>
     /// <param name="session"></param>
     /// <returns>default если ошибка в запросе или нет сессии</returns>
-    public static Response<AuthSessionForAccount>? GetAuthSessionsForAccount(SessionData session, Proxy? proxy, CancellationToken? ct = null)
+    public static ResponseData<AuthSessionForAccount>? GetAuthSessionsForAccount(SessionData session, Proxy? proxy, CancellationToken? ct = null)
     {
         if (session == null)
             return default;

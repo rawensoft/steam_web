@@ -1,10 +1,8 @@
 ﻿using SteamWeb.API.Models;
 using SteamWeb.Web;
-using System;
-using System.Threading.Tasks;
 using System.Text.Json;
 using SteamWeb.API.Models.IFriendMessagesService;
-using Response = SteamWeb.API.Models.Response;
+using ResponseData = SteamWeb.API.Models.ResponseData;
 
 namespace SteamWeb.API;
 public static class IFriendMessagesService
