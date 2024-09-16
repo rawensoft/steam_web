@@ -6,7 +6,7 @@ using SteamWeb.API.Models.IMobileNotificationService;
 namespace SteamWeb.API;
 public static class IMobileNotificationService
 {
-    public static async Task<Response<UserNotificationCounts>> GetUserNotificationCounts(ApiRequest apiRequest)
+    public static async Task<ResponseData<UserNotificationCounts>> GetUserNotificationCounts(ApiRequest apiRequest)
     {
         var request = new GetRequest(SteamPoweredUrls.IMobileNotificationService_GetUserNotificationCounts_v1)
         {

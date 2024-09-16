@@ -143,7 +143,7 @@ public static class ISteamUser
         }
     }
 
-    public static async Task<ResponseFriends<PlayerFriend>> GetFriendList(ApiRequest apiRequest, ulong steamid)
+    public static async Task<ResponseFriends<PlayerFriend>> GetFriendListAsync(ApiRequest apiRequest, ulong steamid)
     {
         var request = new GetRequest(SteamPoweredUrls.ISteamUser_GetFriendList_v1)
         {
@@ -158,6 +158,26 @@ public static class ISteamUser
             var obj = JsonSerializer.Deserialize<ResponseFriends<PlayerFriend>>(response.Data!, Steam.JsonOptions)!;
             obj.Success = true;
             return obj;
+        }
+        catch (Exception)
+        {
+            return new();
+        }
+    }
+    public static ResponseFriends<PlayerFriend> GetFriendList(ApiRequest apiRequest, ulong steamid)
+    {
+        var request = new GetRequest(SteamPoweredUrls.ISteamUser_GetFriendList_v1)
+        {
+            Proxy = apiRequest.Proxy,
+            CancellationToken = apiRequest.CancellationToken,
+        }.AddQuery("key", apiRequest.AuthToken!).AddQuery("steamid", steamid);
+        var response = Downloader.Get(request);
+        if (!response.Success)
+            return new();
+        try
+        {
+            var obj = JsonSerializer.Deserialize<ResponseFriends<PlayerFriend>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
             return obj;
         }
         catch (Exception)
@@ -181,6 +201,28 @@ public static class ISteamUser
         };
         apiRequest.AddAuthToken(request).AddQuery("vanityurl", vanityurl).AddQuery("url_type", (int)url_type);
         var response = await Downloader.GetAsync(request);
+        if (!response.Success)
+            return new();
+        try
+        {
+            var obj = JsonSerializer.Deserialize<ResponseData<VanityUrl>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
+            return obj;
+        }
+        catch (Exception)
+        {
+            return new();
+        }
+    }
+    public static ResponseData<VanityUrl> ResolveVanityURL(ApiRequest apiRequest, string vanityurl, VANITY_TYPE url_type)
+    {
+        var request = new GetRequest(SteamPoweredUrls.ISteamUser_ResolveVanityURL_v1)
+        {
+            Proxy = apiRequest.Proxy,
+            CancellationToken = apiRequest.CancellationToken,
+        };
+        apiRequest.AddAuthToken(request).AddQuery("vanityurl", vanityurl).AddQuery("url_type", (int)url_type);
+        var response = Downloader.Get(request);
         if (!response.Success)
             return new();
         try
