@@ -16,6 +16,7 @@ using SteamGuardAccuntv2 = SteamWeb.Auth.v2.SteamGuardAccount;
 using SteamWeb.API.Models.IEconService;
 using System.Net;
 using System.Text.Json.Serialization;
+using System.Collections.Immutable;
 
 namespace SteamWeb;
 public static partial class Steam
@@ -1826,6 +1827,41 @@ public static partial class Steam
             Success = true,
             Trades = list.ToArray(),
         };
+    }
+
+    /// <summary>
+    /// Собирает информацию об игровых блокировках и vac банах на аккаунте
+    /// </summary>
+    /// <exception cref="InvalidOperationException"/>
+    /// <returns>Данные о блокировка на этом аккаунте</returns>
+    public static VacGameBansData GetVacAndGameBans(DefaultRequest ajaxRequest)
+    {
+        var response = Downloader.Get(new(SteamPoweredUrls.Help_VacBans, ajaxRequest.Proxy, ajaxRequest.Session)
+        {
+            CancellationToken = ajaxRequest.CancellationToken,
+        });
+        if (!response.Success)
+            return new("Ошибка при запросе") { Apps = new List<VacGameBanModel>(1).ToImmutableList() };
+        else if (response.Data == "<!DOCTYPE html>")
+            return new("Бан на запросы") { Apps = new List<VacGameBanModel>(1).ToImmutableList() };
+        return VacGameBansData.Deserialize(response.Data!);
+    }
+    /// <summary>
+    /// Собирает информацию об игровых блокировках и vac банах на аккаунте
+    /// </summary>
+    /// <exception cref="InvalidOperationException"/>
+    /// <returns>Данные о блокировка на этом аккаунте</returns>
+    public static async Task<VacGameBansData> GetVacAndGameBansAsync(DefaultRequest ajaxRequest)
+    {
+        var response = await Downloader.GetAsync(new(SteamPoweredUrls.Help_VacBans, ajaxRequest.Proxy, ajaxRequest.Session)
+        {
+            CancellationToken = ajaxRequest.CancellationToken,
+        });
+        if (!response.Success)
+            return new("Ошибка при запросе") { Apps = new List<VacGameBanModel>(1).ToImmutableList() };
+        else if (response.Data == "<!DOCTYPE html>")
+            return new("Бан на запросы") { Apps = new List<VacGameBanModel>(1).ToImmutableList() };
+        return VacGameBansData.Deserialize(response.Data!);
     }
 
     public static ulong Steam32ToSteam64(uint input) => SteamIDConverter + input;

@@ -1,6 +1,7 @@
 ﻿namespace SteamWeb;
 internal static class SteamPoweredUrls
 {
+    public const string Help_VacBans = "https://help.steampowered.com/en/wizard/VacBans";
     public const string TwoFactor_ManageAction = "https://store.steampowered.com/twofactor/manage_action";
     public const string Account = "https://store.steampowered.com/account";
     public const string Account_AjaxLoadMoreHistory = "https://store.steampowered.com/account/AjaxLoadMoreHistory/";
