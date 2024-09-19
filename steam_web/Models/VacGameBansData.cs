@@ -4,13 +4,12 @@ using System.Web;
 using System.Collections.Immutable;
 
 namespace SteamWeb.Models;
-
 public class VacGameBansData
 {
-    public bool Success { get; init; }
-    public string? Error { get; init; }
+    public bool Success { get; init; } = false;
+    public string? Error { get; init; } = null;
     public required ImmutableList<VacGameBanModel> Apps { get; init; }
-    public bool IsAnyBans => Apps.Count != 0;
+    public bool HasAnyBans { get; init; } = false;
 
     public VacGameBansData() { }
     public VacGameBansData(string error) => Error = error;
@@ -23,7 +22,7 @@ public class VacGameBansData
         HtmlParser parser = new HtmlParser();
         var doc = parser.ParseDocument(html);
         if (doc.GetElementsByClassName("no_vac_bans_header").Any())
-            return new() { Success = true, Apps = new List<VacGameBanModel>(1).ToImmutableList() };
+            return new() { Success = true, Apps = new List<VacGameBanModel>(1).ToImmutableList(), HasAnyBans = false };
 
         var help_issue_details = doc.GetElementsByClassName("help_issue_details");
         var list = new Dictionary<uint, VacGameBanModel>(help_issue_details.Length * 2);
@@ -65,6 +64,7 @@ public class VacGameBansData
         {
             Success = true,
             Apps = list.Values.ToImmutableList(),
+            HasAnyBans = list.Count != 0,
         };
     }
 }
