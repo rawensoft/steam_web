@@ -8,6 +8,41 @@ public enum FA2: byte
     EmailCodeWithPhone,
     Deauth
 }
+public enum PURCHASE_TYPE : byte
+{
+    /// <summary>
+    /// Неизвестный тип покупки
+    /// </summary>
+    Unknown,
+    /// <summary>
+    /// Покупка игры или программы
+    /// </summary>
+    Purchase,
+    /// <summary>
+    /// Покупка подарка
+    /// </summary>
+    GiftPurchase,
+    /// <summary>
+    /// Внутриигровая покупка
+    /// </summary>
+    InGamePurchase,
+    /// <summary>
+    /// Одна транзакция на маркете
+    /// </summary>
+    MarketTransaction,
+    /// <summary>
+    /// Более одной транзакции на маркете
+    /// </summary>
+    MarketTransactions,
+    /// <summary>
+    /// Возврат средств по запросу отмены покупки
+    /// </summary>
+    Refund,
+    /// <summary>
+    /// Конверсия одной валюты в другую
+    /// </summary>
+    Conversion,
+}
 /// <summary>
 /// Информация взята из <see href="https://pub.dev/documentation/steamworks/latest/steamworks/EMarketNotAllowedReasonFlags.html"/>
 /// </summary>

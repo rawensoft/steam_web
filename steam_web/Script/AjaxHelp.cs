@@ -400,7 +400,7 @@ public static class AjaxHelp
         if (ajaxRequest.Session != null)
         {
             request.AddPostData("sessionid", ajaxRequest.Session.SessionID);
-            request.Url = SteamPoweredUrls.Login_GetRSAKey;
+            request.Url = SteamPoweredUrls.Wizard_Login_GetRSAKey;
         }
         var response = await Downloader.PostAsync(request);
         if (!response.Success)

@@ -8,15 +8,16 @@ using SteamWeb.Models.Trade;
 using System.Text.RegularExpressions;
 using System.Web;
 using SteamWeb.Auth.v2.Enums;
+using SteamWeb.API.Models.IEconService;
+using System.Net;
+using System.Text.Json.Serialization;
+using System.Collections.Immutable;
 
 using LoginResultv2 = SteamWeb.Auth.v2.Enums.LoginResult;
 using SessionDatav2 = SteamWeb.Auth.v2.Models.SessionData;
 using UserLoginv2 = SteamWeb.Auth.v2.UserLogin;
 using SteamGuardAccuntv2 = SteamWeb.Auth.v2.SteamGuardAccount;
-using SteamWeb.API.Models.IEconService;
-using System.Net;
-using System.Text.Json.Serialization;
-using System.Collections.Immutable;
+using SteamWeb.Models.PurchaseHistory;
 
 namespace SteamWeb;
 public static partial class Steam
@@ -1836,14 +1837,14 @@ public static partial class Steam
     /// <returns>Данные о блокировка на этом аккаунте</returns>
     public static VacGameBansData GetVacAndGameBans(DefaultRequest ajaxRequest)
     {
-        var response = Downloader.Get(new(SteamPoweredUrls.Help_VacBans, ajaxRequest.Proxy, ajaxRequest.Session)
+        var response = Downloader.Get(new(SteamPoweredUrls.Wizard_VacBans, ajaxRequest.Proxy, ajaxRequest.Session)
         {
             CancellationToken = ajaxRequest.CancellationToken,
         });
         if (!response.Success)
-            return new("Ошибка при запросе") { Apps = new List<VacGameBanModel>(1).ToImmutableList() };
+            return new("Ошибка при запросе") { Apps = ImmutableList<VacGameBanModel>.Empty };
         else if (response.Data == "<!DOCTYPE html>")
-            return new("Бан на запросы") { Apps = new List<VacGameBanModel>(1).ToImmutableList() };
+            return new("Бан на запросы") { Apps = ImmutableList<VacGameBanModel>.Empty };
         return VacGameBansData.Deserialize(response.Data!);
     }
     /// <summary>
@@ -1853,15 +1854,76 @@ public static partial class Steam
     /// <returns>Данные о блокировка на этом аккаунте</returns>
     public static async Task<VacGameBansData> GetVacAndGameBansAsync(DefaultRequest ajaxRequest)
     {
-        var response = await Downloader.GetAsync(new(SteamPoweredUrls.Help_VacBans, ajaxRequest.Proxy, ajaxRequest.Session)
+        var response = await Downloader.GetAsync(new(SteamPoweredUrls.Wizard_VacBans, ajaxRequest.Proxy, ajaxRequest.Session)
         {
             CancellationToken = ajaxRequest.CancellationToken,
         });
         if (!response.Success)
-            return new("Ошибка при запросе") { Apps = new List<VacGameBanModel>(1).ToImmutableList() };
+            return new("Ошибка при запросе") { Apps = ImmutableList<VacGameBanModel>.Empty };
         else if (response.Data == "<!DOCTYPE html>")
-            return new("Бан на запросы") { Apps = new List<VacGameBanModel>(1).ToImmutableList() };
+            return new("Бан на запросы") { Apps = ImmutableList<VacGameBanModel>.Empty };
         return VacGameBansData.Deserialize(response.Data!);
+    }
+
+    /// <summary>
+    /// Загружает начальную историю покупок аккаунта.
+    /// <para/>
+    /// Для дальнейшей загрузки нужно использовать встроенный метод <see cref="PurchaseHistoryData.LoadMoreHistory(DefaultRequest)"/>.
+    /// 
+    /// <para/>
+    /// Пример полной загрузки истории покупок:
+    /// <code>
+    /// var history = Steam.GetPurchaseHistory(new(session));
+    /// while(history.Success AND history.Cursor != null)
+    /// {
+    ///     history = history.LoadMoreHistory(new(session));
+    /// }
+    /// </code>
+    /// 
+    /// </summary>
+    /// <returns>Класс с историей покупок, либо ошибки</returns>
+    public static PurchaseHistoryData GetPurchaseHistory(DefaultRequest ajaxRequest)
+    {
+        var response = Downloader.Get(new(SteamPoweredUrls.Account_History, ajaxRequest.Proxy, ajaxRequest.Session)
+        {
+            CancellationToken = ajaxRequest.CancellationToken,
+            Referer = SteamPoweredUrls.Account,
+        });
+        if (!response.Success)
+            return new("Ошибка при запросе") { History = ImmutableList<PurchaseHistoryModel>.Empty };
+        else if (response.Data == "<!DOCTYPE html>")
+            return new("Бан на запросы") { History = ImmutableList<PurchaseHistoryModel>.Empty };
+        return PurchaseHistoryData.Deserialize(response.Data!);
+    }
+    /// <summary>
+    /// Загружает начальную историю покупок аккаунта.
+    /// <para/>
+    /// Для дальнейшей загрузки нужно использовать встроенный метод <see cref="PurchaseHistoryData.LoadMoreHistory(DefaultRequest)"/>.
+    /// 
+    /// <para/>
+    /// Пример полной загрузки истории покупок:
+    /// <code>
+    /// var history = Steam.GetPurchaseHistory(new(session));
+    /// while(history.Success AND history.Cursor != null)
+    /// {
+    ///     history = history.LoadMoreHistory(new(session));
+    /// }
+    /// </code>
+    /// 
+    /// </summary>
+    /// <returns>Класс с историей покупок, либо ошибки</returns>
+    public static async Task<PurchaseHistoryData> GetPurchaseHistoryAsync(DefaultRequest ajaxRequest)
+    {
+        var response = await Downloader.GetAsync(new(SteamPoweredUrls.Account_History, ajaxRequest.Proxy, ajaxRequest.Session)
+        {
+            CancellationToken = ajaxRequest.CancellationToken,
+            Referer = SteamPoweredUrls.Account,
+        });
+        if (!response.Success)
+            return new("Ошибка при запросе") { History = ImmutableList<PurchaseHistoryModel>.Empty };
+        else if (response.Data == "<!DOCTYPE html>")
+            return new("Бан на запросы") { History = ImmutableList<PurchaseHistoryModel>.Empty };
+        return PurchaseHistoryData.Deserialize(response.Data!);
     }
 
     public static ulong Steam32ToSteam64(uint input) => SteamIDConverter + input;

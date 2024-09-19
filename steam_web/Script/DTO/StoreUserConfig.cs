@@ -1,6 +1,7 @@
-﻿namespace SteamWeb.Script.DTO;
+﻿using System.Text.Json.Serialization;
 
+namespace SteamWeb.Script.DTO;
 public class StoreUserConfig
 {
-    public string? webapi_token { get; init; }
+    [JsonPropertyName("webapi_token")] public string? WebApiToken { get; init; }
 }

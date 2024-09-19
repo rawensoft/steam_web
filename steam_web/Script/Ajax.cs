@@ -13,6 +13,7 @@ using ProtoBuf;
 using System.Text.Json.Serialization;
 using SteamWeb.Script.Models;
 using SteamWeb.Models;
+using SteamWeb.Models.PurchaseHistory;
 
 namespace SteamWeb.Script;
 public static class Ajax
@@ -993,7 +994,6 @@ public static class Ajax
             var time = DateOnly.ParseExact(time_el.TextContent.GetClearWebString(), "h:mmtt");
         }
     }
-
     [Obsolete]
 	public static bool salevote(DefaultRequest defaultRequest, int voteId, int appId)
 	{
@@ -1139,4 +1139,41 @@ public static class Ajax
 	/// <returns>Ответ на запрос</returns>
 	public static RequestKeyResponse dev_requestkey(DefaultRequest defaultRequest, string domain, RequestKeyResponse request)
         => dev_requestkey(defaultRequest, domain, request.RequestId!.Value);
+
+    public static MoreHistoryModel? account_loadmorehistory(DefaultRequest defaultRequest, PurchaseHistoryCursorModel cursor)
+    {
+        var request = new PostRequest(SteamPoweredUrls.Account_AjaxLoadMoreHistory, Downloader.AppFormUrlEncoded)
+        {
+            UseVersion2 = true,
+            Session = defaultRequest.Session,
+            Proxy = defaultRequest.Proxy,
+            CancellationToken = defaultRequest.CancellationToken,
+            Referer = SteamPoweredUrls.Account_History,
+        };
+        request.AddPostData("cursor[wallet_txnid]", cursor.WalletTxnId).AddPostData("cursor[timestamp_newest]", cursor.TimestampNewest)
+            .AddPostData("cursor[balance]", cursor.Balance).AddPostData("cursor[currency]", cursor.Currency).AddPostData("sessionid", request.Session!.SessionID);
+        var response = Downloader.Post(request);
+        if (!response.Success)
+            return null;
+        var obj = JsonSerializer.Deserialize<MoreHistoryModel>(response.Data!, Steam.JsonOptions)!;
+        return obj;
+    }
+    public static async Task<MoreHistoryModel?> account_loadmorehistory_async(DefaultRequest defaultRequest, PurchaseHistoryCursorModel cursor)
+    {
+        var request = new PostRequest(SteamPoweredUrls.Account_AjaxLoadMoreHistory, Downloader.AppFormUrlEncoded)
+        {
+            UseVersion2 = true,
+            Session = defaultRequest.Session,
+            Proxy = defaultRequest.Proxy,
+            CancellationToken = defaultRequest.CancellationToken,
+            Referer = SteamPoweredUrls.Account_History,
+        };
+        request.AddPostData("cursor[wallet_txnid]", cursor.WalletTxnId).AddPostData("cursor[timestamp_newest]", cursor.TimestampNewest)
+            .AddPostData("cursor[balance]", cursor.Balance).AddPostData("cursor[currency]", cursor.Currency).AddPostData("sessionid", request.Session!.SessionID);
+        var response = await Downloader.PostAsync(request);
+        if (!response.Success)
+            return null;
+        var obj = JsonSerializer.Deserialize<MoreHistoryModel>(response.Data!, Steam.JsonOptions)!;
+        return obj;
+    }
 }

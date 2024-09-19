@@ -1,15 +1,19 @@
-﻿using SteamWeb.Auth.v2.Models;
+﻿using AngleSharp.Text;
+using SteamWeb.Auth.v2.Models;
+using SteamWeb.Enums;
 using SteamWeb.Models;
 using SteamWeb.Script.Enums;
 using SteamWeb.Script.Models;
 using SteamWeb.Web;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace SteamWeb.Extensions;
 public static class ExtensionMethods
 {
     private const string _chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 	private const string _dtFormat = "dd.MM.yyyy HH:mm:ss";
+    private static readonly Regex _rgxMarketTrans = new(@"^(\d{1,7}) Market Transactions$", RegexOptions.Compiled, TimeSpan.FromMilliseconds(100));
 
 	public static Dictionary<T1, T2> SubDict<T1, T2>(this Dictionary<T1, T2> data, int index, int length)
     {
@@ -255,6 +259,42 @@ public static class ExtensionMethods
 		_ => -1
 	};
 	public static byte ToDigitLost(this TypeLost lost) => (byte)lost;
+    public static PURCHASE_TYPE ToEnumPurchaseType(this string stringValue)
+    {
+        if (stringValue[0].IsDigit())
+        {
+            try
+            {
+                var math = _rgxMarketTrans.Match(stringValue);
+                if (math.Success)
+                    return PURCHASE_TYPE.MarketTransactions;
+            }
+            catch (RegexMatchTimeoutException)
+            {
+                // если всё таки не получилось, тогда идём дальше
+            }
+        }
+
+        if (stringValue == "Gift Purchase")
+            return PURCHASE_TYPE.GiftPurchase;
+
+        if (stringValue == "In-Game Purchase")
+            return PURCHASE_TYPE.InGamePurchase;
+
+        if (stringValue == "Purchase")
+            return PURCHASE_TYPE.Purchase;
+
+        if (stringValue == "Conversion")
+            return PURCHASE_TYPE.Conversion;
+
+        if (stringValue == "Refund")
+            return PURCHASE_TYPE.Refund;
+
+        if (stringValue == "Market Transaction")
+            return PURCHASE_TYPE.MarketTransaction;
+
+        return PURCHASE_TYPE.Unknown;
+    }
 
     public static AjaxWizardRequest CreateWizard(this DefaultRequest request, string s, string? referer)
     {
