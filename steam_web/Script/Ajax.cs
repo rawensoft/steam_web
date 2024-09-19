@@ -797,28 +797,6 @@ public static class Ajax
             return new();
         }
     }
-    public static async Task<SteamPurchases> account_history_async(DefaultRequest defaultRequest, SteamPurchaseCursor? cursor = null)
-    {
-        if (defaultRequest.Session == null)
-            return new();
-        var request = new PostRequest(SteamPoweredUrls.Account_AjaxLoadMoreHistory, Downloader.AppFormUrlEncoded)
-        {
-            Session = defaultRequest.Session,
-            Proxy = defaultRequest.Proxy,
-            IsAjax = true,
-            CancellationToken = defaultRequest.CancellationToken,
-        };
-        request.AddPostData("sessionid", defaultRequest.Session!.SessionID);
-        if (cursor != null)
-        {
-            request.AddPostData("cursor[wallet_txnid]", cursor.wallet_txnid).AddPostData("cursor[timestamp_newest]", cursor.timestamp_newest)
-                .AddPostData("cursor[balance]", cursor.balance).AddPostData("cursor[currency]", cursor.currency);
-        }
-        var response = await Downloader.PostAsync(request);
-        if (!response.Success || response.Data.IsEmpty() || response.Data == "<!DOCTYPE html>" ||
-            response.Data!.Contains("btn_blue_steamui btn_medium login_btn")) return new();
-        return SteamPurchases.Deserialize(response.Data);
-    }
     public static async Task<Success> account_ajaxsetcookiepreferences_async(DefaultRequest defaultRequest, CookiePreferences cookiepreferences)
     {
         if (defaultRequest.Session == null)
@@ -970,6 +948,8 @@ public static class Ajax
             return new();
         }
     }
+
+    [Obsolete]
     public static async Task<InventoryHistory> inventory_history_async(DefaultRequest defaultRequest, InventoryHistoryCursor cursor, uint[] appid)
     {
         if (defaultRequest.Session == null)
