@@ -15,8 +15,11 @@ public static class ExtensionMethods
     private const string _chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 	private const string _dtFormat = "dd.MM.yyyy HH:mm:ss";
     private static readonly Regex _rgxMarketTrans = new(@"^(\d{1,7}) Market Transactions$", RegexOptions.Compiled, TimeSpan.FromMilliseconds(100));
+    private static readonly Regex _rgxSteamId = new(@"^7656119([0-9]{10})$", RegexOptions.Compiled | RegexOptions.Singleline, TimeSpan.FromMilliseconds(100));
+    private static readonly Regex _rgxSteamId2 = new(@"^STEAM_0:[0-1]:([0-9]{1,10})$", RegexOptions.Compiled | RegexOptions.Singleline, TimeSpan.FromMilliseconds(100));
+    private static readonly Regex _rgxSteamId3 = new(@"^U:[0-1]:([0-9]{1,10})$", RegexOptions.Compiled | RegexOptions.Singleline, TimeSpan.FromMilliseconds(100));
 
-	public static Dictionary<T1, T2> SubDict<T1, T2>(this Dictionary<T1, T2> data, int index, int length)
+    public static Dictionary<T1, T2> SubDict<T1, T2>(this Dictionary<T1, T2> data, int index, int length)
     {
         var result = new Dictionary<T1, T2>(length + 1);
 
@@ -301,32 +304,34 @@ public static class ExtensionMethods
     /// <summary>
     /// </summary>
     /// <param name="communityId">SteamID64(76561197960265728)</param>
+    /// <exception cref="RegexMatchTimeoutException"/>
     /// <returns>String.empty if error, else the string SteamID2(STEAM_0:1:000000)</returns>
     public static string ToSteamId2(this ulong communityId)
     {
-        if (communityId < 76561197960265729L || !Regex.IsMatch(communityId.ToString(CultureInfo.InvariantCulture), @"^7656119([0-9]{10})$", RegexOptions.Compiled | RegexOptions.Singleline))
+        if (communityId < 76561197960265729L || !_rgxSteamId.IsMatch(communityId.ToString(CultureInfo.InvariantCulture)))
             return string.Empty;
-        communityId -= 76561197960265728L;
+        communityId -= Steam.SteamIDConverter;
         ulong num = communityId % 2L;
         communityId -= num;
         string input = string.Format("STEAM_0:{0}:{1}", num, (communityId / 2L));
-        if (!Regex.IsMatch(input, @"^STEAM_0:[0-1]:([0-9]{1,10})$", RegexOptions.Compiled | RegexOptions.Singleline))
+        if (!_rgxSteamId2.IsMatch(input))
             return string.Empty;
         return input;
     }
     /// <summary>
     /// </summary>
     /// <param name="communityId">SteamID64(76561197960265728)</param>
+    /// <exception cref="RegexMatchTimeoutException"/>
     /// <returns>String.empty if error, else the string SteamID3(U:1:000000)</returns>
     public static string ToSteamId3(this ulong communityId)
     {
-        if (communityId < 76561197960265729L || !Regex.IsMatch(communityId.ToString(CultureInfo.InvariantCulture), @"^7656119([0-9]{10})$", RegexOptions.Compiled | RegexOptions.Singleline))
+        if (communityId < 76561197960265729L || !_rgxSteamId.IsMatch(communityId.ToString(CultureInfo.InvariantCulture)))
             return string.Empty;
         communityId -= Steam.SteamIDConverter;
         ulong num = communityId % 2L;
         communityId -= num;
         string input = string.Format("U:{0}:{1}", num, (uint)communityId);
-        if (!Regex.IsMatch(input, @"^U:[0-1]:([0-9]{1,10})$", RegexOptions.Compiled | RegexOptions.Singleline))
+        if (!_rgxSteamId3.IsMatch(input))
             return string.Empty;
         return input;
     }
