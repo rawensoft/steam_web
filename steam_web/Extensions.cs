@@ -5,6 +5,7 @@ using SteamWeb.Models;
 using SteamWeb.Script.Enums;
 using SteamWeb.Script.Models;
 using SteamWeb.Web;
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -294,6 +295,40 @@ public static class ExtensionMethods
             return PURCHASE_TYPE.MarketTransaction;
 
         return PURCHASE_TYPE.Unknown;
+    }
+    public static ulong ToSteamId64(this uint input) => Steam.SteamIDConverter + input;
+    public static uint ToSteamId32(this ulong input) => (uint)(input - Steam.SteamIDConverter);
+    /// <summary>
+    /// </summary>
+    /// <param name="communityId">SteamID64(76561197960265728)</param>
+    /// <returns>String.empty if error, else the string SteamID2(STEAM_0:1:000000)</returns>
+    public static string ToSteamId2(this ulong communityId)
+    {
+        if (communityId < 76561197960265729L || !Regex.IsMatch(communityId.ToString(CultureInfo.InvariantCulture), @"^7656119([0-9]{10})$", RegexOptions.Compiled | RegexOptions.Singleline))
+            return string.Empty;
+        communityId -= 76561197960265728L;
+        ulong num = communityId % 2L;
+        communityId -= num;
+        string input = string.Format("STEAM_0:{0}:{1}", num, (communityId / 2L));
+        if (!Regex.IsMatch(input, @"^STEAM_0:[0-1]:([0-9]{1,10})$", RegexOptions.Compiled | RegexOptions.Singleline))
+            return string.Empty;
+        return input;
+    }
+    /// <summary>
+    /// </summary>
+    /// <param name="communityId">SteamID64(76561197960265728)</param>
+    /// <returns>String.empty if error, else the string SteamID3(U:1:000000)</returns>
+    public static string ToSteamId3(this ulong communityId)
+    {
+        if (communityId < 76561197960265729L || !Regex.IsMatch(communityId.ToString(CultureInfo.InvariantCulture), @"^7656119([0-9]{10})$", RegexOptions.Compiled | RegexOptions.Singleline))
+            return string.Empty;
+        communityId -= Steam.SteamIDConverter;
+        ulong num = communityId % 2L;
+        communityId -= num;
+        string input = string.Format("U:{0}:{1}", num, (uint)communityId);
+        if (!Regex.IsMatch(input, @"^U:[0-1]:([0-9]{1,10})$", RegexOptions.Compiled | RegexOptions.Singleline))
+            return string.Empty;
+        return input;
     }
 
     public static AjaxWizardRequest CreateWizard(this DefaultRequest request, string s, string? referer)
