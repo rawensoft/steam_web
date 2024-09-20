@@ -11,7 +11,7 @@ public static class ISteamUserOAuth
         => await GetFriendListAsync(apiRequest, string.Empty);
     public static async Task<FriendsList<PlayerFriend>> GetFriendListAsync(ApiRequest apiRequest, string relationship)
     {
-        var request = new GetRequest(SteamPoweredUrls.ISteamUserOAuth_GetFriendList_v1)
+        var request = new GetRequest(SteamApiUrls.ISteamUserOAuth_GetFriendList_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -36,7 +36,7 @@ public static class ISteamUserOAuth
         => await GetFriendListAsync(apiRequest, steamid, string.Empty);
     public static async Task<FriendsList<PlayerFriend>> GetFriendListAsync(ApiRequest apiRequest, ulong steamid, string relationship)
     {
-        var request = new GetRequest(SteamPoweredUrls.ISteamUserOAuth_GetFriendList_v1)
+        var request = new GetRequest(SteamApiUrls.ISteamUserOAuth_GetFriendList_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -60,7 +60,7 @@ public static class ISteamUserOAuth
 
     public static async Task<ResponseGroups> GetGroupListAsync(ApiRequest apiRequest, ulong steamid)
     {
-        var request = new GetRequest(SteamPoweredUrls.ISteamUserOAuth_GetGroupList_v1)
+        var request = new GetRequest(SteamApiUrls.ISteamUserOAuth_GetGroupList_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -82,7 +82,7 @@ public static class ISteamUserOAuth
     }
     public static async Task<ResponseGroups> GetGroupListAsync(ApiRequest apiRequest)
     {
-        var request = new GetRequest(SteamPoweredUrls.ISteamUserOAuth_GetGroupList_v1)
+        var request = new GetRequest(SteamApiUrls.ISteamUserOAuth_GetGroupList_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -105,7 +105,7 @@ public static class ISteamUserOAuth
 
     public static async Task<TokenDetail> GetTokenDetailsAsync(ApiRequest apiRequest)
     {
-        var request = new GetRequest(SteamPoweredUrls.ISteamUserOAuth_GetTokenDetails)
+        var request = new GetRequest(SteamApiUrls.ISteamUserOAuth_GetTokenDetails)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,

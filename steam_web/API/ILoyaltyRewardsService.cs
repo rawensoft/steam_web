@@ -8,7 +8,7 @@ public static class ILoyaltyRewardsService
 {
     public static ResponseData<RewardSummary> GetSummary(ApiRequest apiRequest, ulong steamid)
     {
-        var request = new GetRequest(SteamPoweredUrls.ILoyaltyRewardsService_GetSummary_v1)
+        var request = new GetRequest(SteamApiUrls.ILoyaltyRewardsService_GetSummary_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -31,7 +31,7 @@ public static class ILoyaltyRewardsService
     }
     public static async Task<ResponseData<RewardSummary>> GetSummaryAsync(ApiRequest apiRequest, ulong steamid)
     {
-        var request = new GetRequest(SteamPoweredUrls.ILoyaltyRewardsService_GetSummary_v1)
+        var request = new GetRequest(SteamApiUrls.ILoyaltyRewardsService_GetSummary_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,

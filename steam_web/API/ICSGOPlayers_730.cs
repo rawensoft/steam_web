@@ -19,7 +19,7 @@ public static class ICSGOPlayers_730
     {
         if (knowncode.StartsWith("steam://"))
             knowncode = knowncode.Split("%20")[1];
-        var request = new GetRequest(SteamPoweredUrls.ICSGOPlayers_730_GetNextMatchSharingCode_v1)
+        var request = new GetRequest(SteamApiUrls.ICSGOPlayers_730_GetNextMatchSharingCode_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -51,7 +51,7 @@ public static class ICSGOPlayers_730
     {
         if (knowncode.StartsWith("steam://"))
             knowncode = knowncode.Split("%20")[1];
-        var request = new GetRequest(SteamPoweredUrls.ICSGOPlayers_730_GetNextMatchSharingCode_v1)
+        var request = new GetRequest(SteamApiUrls.ICSGOPlayers_730_GetNextMatchSharingCode_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,

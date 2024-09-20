@@ -17,7 +17,7 @@ public static class ISteamEconomy
     /// <returns>Информация о предмете</returns>
     public static ResultData<Dictionary<string, AssetClassInfo>> GetAssetClassInfo(ApiRequest apiRequest, uint appid, uint classid0, byte class_count = 1, uint? instanceid0 = null)
     {
-        var request = new PostRequest(SteamPoweredUrls.ISteamEconomy_GetAssetClassInfo_v1, Downloader.AppFormUrlEncoded)
+        var request = new PostRequest(SteamApiUrls.ISteamEconomy_GetAssetClassInfo_v1, Downloader.AppFormUrlEncoded)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -81,7 +81,7 @@ public static class ISteamEconomy
     /// <returns>Информация о предмете</returns>
     public static async Task<ResultData<Dictionary<string, AssetClassInfo>>> GetAssetClassInfoAsync(ApiRequest apiRequest, uint appid, uint classid0, byte class_count = 1, uint? instanceid0 = null)
     {
-        var request = new PostRequest(SteamPoweredUrls.ISteamEconomy_GetAssetClassInfo_v1, Downloader.AppFormUrlEncoded)
+        var request = new PostRequest(SteamApiUrls.ISteamEconomy_GetAssetClassInfo_v1, Downloader.AppFormUrlEncoded)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -137,7 +137,7 @@ public static class ISteamEconomy
 
     public static ResultData<AssetPrices> GetAssetPrices(ApiRequest apiRequest, uint appid, string currency = "")
     {
-        var request = new PostRequest(SteamPoweredUrls.ISteamEconomy_GetAssetPrices_v1, Downloader.AppFormUrlEncoded)
+        var request = new PostRequest(SteamApiUrls.ISteamEconomy_GetAssetPrices_v1, Downloader.AppFormUrlEncoded)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -161,7 +161,7 @@ public static class ISteamEconomy
     }
     public static async Task<ResultData<AssetPrices>> GetAssetPricesAsync(ApiRequest apiRequest, uint appid, string currency = "")
     {
-        var request = new PostRequest(SteamPoweredUrls.ISteamEconomy_GetAssetPrices_v1, Downloader.AppFormUrlEncoded)
+        var request = new PostRequest(SteamApiUrls.ISteamEconomy_GetAssetPrices_v1, Downloader.AppFormUrlEncoded)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,

@@ -9,7 +9,7 @@ public static class IPlayerService
     public static ResponseData<ProfileCustomization> GetProfileCustomization(ApiRequest apiRequest, ulong steamid,
         bool include_inactive_customizations = false, bool include_purchased_customizations = false)
     {
-        var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetProfileCustomization_v1)
+        var request = new GetRequest(SteamApiUrls.IPlayerService_GetProfileCustomization_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -36,7 +36,7 @@ public static class IPlayerService
     public static async Task<ResponseData<ProfileCustomization>> GetProfileCustomizationAsync(ApiRequest apiRequest, ulong steamid,
         bool include_inactive_customizations = false, bool include_purchased_customizations = false)
     {
-        var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetProfileCustomization_v1)
+        var request = new GetRequest(SteamApiUrls.IPlayerService_GetProfileCustomization_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -63,7 +63,7 @@ public static class IPlayerService
 
     public static bool SetProfileTheme(ApiRequest apiRequest, string theme_id)
     {
-        var request = new PostRequest(SteamPoweredUrls.IPlayerService_SetProfileTheme_v1, Downloader.AppFormUrlEncoded)
+        var request = new PostRequest(SteamApiUrls.IPlayerService_SetProfileTheme_v1, Downloader.AppFormUrlEncoded)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -74,7 +74,7 @@ public static class IPlayerService
     }
     public static async Task<bool> SetProfileThemeAsync(ApiRequest apiRequest, string theme_id)
     {
-        var request = new PostRequest(SteamPoweredUrls.IPlayerService_SetProfileTheme_v1, Downloader.AppFormUrlEncoded)
+        var request = new PostRequest(SteamApiUrls.IPlayerService_SetProfileTheme_v1, Downloader.AppFormUrlEncoded)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -91,7 +91,7 @@ public static class IPlayerService
     /// <returns></returns>
     public static ResponseData<PlayerBadges> GetBadges(ApiRequest apiRequest, ulong steamid)
     {
-        var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetBadges_v1)
+        var request = new GetRequest(SteamApiUrls.IPlayerService_GetBadges_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -118,7 +118,7 @@ public static class IPlayerService
     /// <returns></returns>
     public static async Task<ResponseData<PlayerBadges>> GetBadgesAsync(ApiRequest apiRequest, ulong steamid)
     {
-        var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetBadges_v1)
+        var request = new GetRequest(SteamApiUrls.IPlayerService_GetBadges_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -147,7 +147,7 @@ public static class IPlayerService
     /// <returns></returns>
     public static ResponseData<PlayerQuests> GetCommunityBadgeProgress(ApiRequest apiRequest, ulong steamid, int? badgeid = null)
     {
-        var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetCommunityBadgeProgress_v1)
+        var request = new GetRequest(SteamApiUrls.IPlayerService_GetCommunityBadgeProgress_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -177,7 +177,7 @@ public static class IPlayerService
     /// <returns></returns>
     public static async Task<ResponseData<PlayerQuests>> GetCommunityBadgeProgressAsync(ApiRequest apiRequest, ulong steamid, int? badgeid = null)
     {
-        var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetCommunityBadgeProgress_v1)
+        var request = new GetRequest(SteamApiUrls.IPlayerService_GetCommunityBadgeProgress_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -202,7 +202,7 @@ public static class IPlayerService
 
     public static ResponseData<FavoriteBadge> GetFavoriteBadge(ApiRequest apiRequest, ulong steamid)
     {
-        var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetFavoriteBadge_v1)
+        var request = new GetRequest(SteamApiUrls.IPlayerService_GetFavoriteBadge_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -224,7 +224,7 @@ public static class IPlayerService
     }
     public static async Task<ResponseData<FavoriteBadge>> GetFavoriteBadgeAsync(ApiRequest apiRequest, ulong steamid)
     {
-        var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetFavoriteBadge_v1)
+        var request = new GetRequest(SteamApiUrls.IPlayerService_GetFavoriteBadge_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -258,7 +258,7 @@ public static class IPlayerService
     public static ResponseData<PlayerOwnedGames> GetOwnedGames(ApiRequest apiRequest, ulong steamid, bool include_appinfo = false,
         bool include_played_free_games = false, bool include_free_sub = false, bool skip_unvetted_apps = false, uint? appids_filter = null)
     {
-        var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetOwnedGames_v1)
+        var request = new GetRequest(SteamApiUrls.IPlayerService_GetOwnedGames_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -301,7 +301,7 @@ public static class IPlayerService
     public static async Task<ResponseData<PlayerOwnedGames>> GetOwnedGamesAsync(ApiRequest apiRequest, ulong steamid, bool include_appinfo = false,
         bool include_played_free_games = false, bool include_free_sub = false, bool skip_unvetted_apps = false, uint? appids_filter = null)
     {
-        var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetOwnedGames_v1)
+        var request = new GetRequest(SteamApiUrls.IPlayerService_GetOwnedGames_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -339,7 +339,7 @@ public static class IPlayerService
     /// <returns></returns>
     public static ResponseData<PlayerSteamLevel> GetSteamLevel(ApiRequest apiRequest, ulong steamid)
     {
-        var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetSteamLevel_v1)
+        var request = new GetRequest(SteamApiUrls.IPlayerService_GetSteamLevel_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -366,7 +366,7 @@ public static class IPlayerService
     /// <returns></returns>
     public static async Task<ResponseData<PlayerSteamLevel>> GetSteamLevelAsync(ApiRequest apiRequest, ulong steamid)
     {
-        var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetSteamLevel_v1)
+        var request = new GetRequest(SteamApiUrls.IPlayerService_GetSteamLevel_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -389,7 +389,7 @@ public static class IPlayerService
 
     public static ResponseData<NicknamesModel> GetNicknameList(ApiRequest apiRequest)
     {
-        var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetNicknameList_v1)
+        var request = new GetRequest(SteamApiUrls.IPlayerService_GetNicknameList_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -411,7 +411,7 @@ public static class IPlayerService
     }
     public static async Task<ResponseData<NicknamesModel>> GetNicknameListAsync(ApiRequest apiRequest)
     {
-        var request = new GetRequest(SteamPoweredUrls.IPlayerService_GetNicknameList_v1)
+        var request = new GetRequest(SteamApiUrls.IPlayerService_GetNicknameList_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,

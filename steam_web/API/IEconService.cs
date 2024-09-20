@@ -26,7 +26,7 @@ public static class IEconService
         if (max_trades == 0)
             throw new ArgumentException("max_trades can't be zero");
 
-        var request = new GetRequest(SteamPoweredUrls.IEconService_GetTradeHistory_v1)
+        var request = new GetRequest(SteamApiUrls.IEconService_GetTradeHistory_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -71,7 +71,7 @@ public static class IEconService
     /// <returns></returns>
     public static async Task<ResponseData<TradeHoldDuration>> GetTradeHoldDurationsAsync(ApiRequest apiRequest, ulong steamid_target, string trade_offer_access_token)
     {
-        var request = new GetRequest(SteamPoweredUrls.IEconService_GetTradeHoldDurations_v1)
+        var request = new GetRequest(SteamApiUrls.IEconService_GetTradeHoldDurations_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -101,7 +101,7 @@ public static class IEconService
 	/// <returns></returns>
 	public static ResponseData<TradeHoldDuration> GetTradeHoldDurations(ApiRequest apiRequest, ulong steamid_target, string trade_offer_access_token)
 	{
-		var request = new GetRequest(SteamPoweredUrls.IEconService_GetTradeHoldDurations_v1)
+		var request = new GetRequest(SteamApiUrls.IEconService_GetTradeHoldDurations_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -132,7 +132,7 @@ public static class IEconService
 	/// <returns></returns>
 	public static ResponseData<TradeOffer> GetTradeOffer(ApiRequest apiRequest, ulong tradeofferid, bool get_descriptions = false, string? language = null)
     {
-        var request = new GetRequest(SteamPoweredUrls.IEconService_GetTradeOffer_v1)
+        var request = new GetRequest(SteamApiUrls.IEconService_GetTradeOffer_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -166,7 +166,7 @@ public static class IEconService
     /// <returns></returns>
     public static async Task<ResponseData<TradeOffer>> GetTradeOfferAsync(ApiRequest apiRequest, ulong tradeofferid, bool get_descriptions = false, string language = null)
     {
-        var request = new GetRequest(SteamPoweredUrls.IEconService_GetTradeOffer_v1)
+        var request = new GetRequest(SteamApiUrls.IEconService_GetTradeOffer_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -207,7 +207,7 @@ public static class IEconService
         bool get_descriptions = false, bool active_only = false, bool historical_only = false, uint? time_historical_cutoff = null,
         uint? cursor = null, string? language = null)
     {
-        var request = new GetRequest(SteamPoweredUrls.IEconService_GetTradeOffers_v1)
+        var request = new GetRequest(SteamApiUrls.IEconService_GetTradeOffers_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -260,7 +260,7 @@ public static class IEconService
         bool get_descriptions = false, bool active_only = false, bool historical_only = false, uint? time_historical_cutoff = null,
         uint? cursor = null, string? language = null)
     {
-        var request = new GetRequest(SteamPoweredUrls.IEconService_GetTradeOffers_v1)
+        var request = new GetRequest(SteamApiUrls.IEconService_GetTradeOffers_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -305,7 +305,7 @@ public static class IEconService
     /// <returns></returns>
     public static async Task<ResponseData<TradeOffersSummary>> GetTradeOffersSummaryAsync(ApiRequest apiRequest, uint? time_last_visit = null)
     {
-        var request = new GetRequest(SteamPoweredUrls.IEconService_GetTradeOffersSummary_v1)
+        var request = new GetRequest(SteamApiUrls.IEconService_GetTradeOffersSummary_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -338,7 +338,7 @@ public static class IEconService
     /// <returns></returns>
     public static async Task<ResponseData<TradeStatus>> GetTradeStatusAsync(ApiRequest apiRequest, ulong tradeid, bool get_descriptions = false, string language = null)
     {
-        var request = new GetRequest(SteamPoweredUrls.IEconService_GetTradeStatus_v1)
+        var request = new GetRequest(SteamApiUrls.IEconService_GetTradeStatus_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -371,7 +371,7 @@ public static class IEconService
     /// <returns></returns>
     public static async Task<ResponseData<object>> CancelTradeOfferAsync(ApiRequest apiRequest, ulong tradeofferid)
     {
-        var request = new GetRequest(SteamPoweredUrls.IEconService_CancelTradeOffer_v1)
+        var request = new GetRequest(SteamApiUrls.IEconService_CancelTradeOffer_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -400,7 +400,7 @@ public static class IEconService
     /// <returns></returns>
     public static async Task<ResponseData<object>> DeclineTradeOfferAsync(ApiRequest apiRequest, ulong tradeofferid)
     {
-        var request = new GetRequest(SteamPoweredUrls.IEconService_DeclineTradeOffer_v1)
+        var request = new GetRequest(SteamApiUrls.IEconService_DeclineTradeOffer_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,

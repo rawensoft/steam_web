@@ -22,7 +22,7 @@ public static class ISteamUser
         if (sb[^1] == ',')
             sb.Remove(sb.Length - 1, 1);
 
-        var request = new GetRequest(SteamPoweredUrls.ISteamUser_GetPlayerSummaries_v2)
+        var request = new GetRequest(SteamApiUrls.ISteamUser_GetPlayerSummaries_v2)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -55,7 +55,7 @@ public static class ISteamUser
         if (sb[^1] == ',')
             sb.Remove(sb.Length - 1, 1);
 
-        var request = new GetRequest(SteamPoweredUrls.ISteamUser_GetPlayerSummaries_v2)
+        var request = new GetRequest(SteamApiUrls.ISteamUser_GetPlayerSummaries_v2)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -89,7 +89,7 @@ public static class ISteamUser
         if (sb[^1] == ',')
             sb.Remove(sb.Length - 1, 1);
 
-        var request = new GetRequest(SteamPoweredUrls.ISteamUser_GetPlayerBans_v1)
+        var request = new GetRequest(SteamApiUrls.ISteamUser_GetPlayerBans_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -122,7 +122,7 @@ public static class ISteamUser
         if (sb[^1] == ',')
             sb.Remove(sb.Length - 1, 1);
 
-        var request = new GetRequest(SteamPoweredUrls.ISteamUser_GetPlayerBans_v1)
+        var request = new GetRequest(SteamApiUrls.ISteamUser_GetPlayerBans_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -145,7 +145,7 @@ public static class ISteamUser
 
     public static async Task<ResponseFriends<PlayerFriend>> GetFriendListAsync(ApiRequest apiRequest, ulong steamid)
     {
-        var request = new GetRequest(SteamPoweredUrls.ISteamUser_GetFriendList_v1)
+        var request = new GetRequest(SteamApiUrls.ISteamUser_GetFriendList_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -166,7 +166,7 @@ public static class ISteamUser
     }
     public static ResponseFriends<PlayerFriend> GetFriendList(ApiRequest apiRequest, ulong steamid)
     {
-        var request = new GetRequest(SteamPoweredUrls.ISteamUser_GetFriendList_v1)
+        var request = new GetRequest(SteamApiUrls.ISteamUser_GetFriendList_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -194,7 +194,7 @@ public static class ISteamUser
     /// <returns></returns>
     public static async Task<ResponseData<VanityUrl>> ResolveVanityURLAsync(ApiRequest apiRequest, string vanityurl, VANITY_TYPE url_type)
     {
-        var request = new GetRequest(SteamPoweredUrls.ISteamUser_ResolveVanityURL_v1)
+        var request = new GetRequest(SteamApiUrls.ISteamUser_ResolveVanityURL_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -216,7 +216,7 @@ public static class ISteamUser
     }
     public static ResponseData<VanityUrl> ResolveVanityURL(ApiRequest apiRequest, string vanityurl, VANITY_TYPE url_type)
     {
-        var request = new GetRequest(SteamPoweredUrls.ISteamUser_ResolveVanityURL_v1)
+        var request = new GetRequest(SteamApiUrls.ISteamUser_ResolveVanityURL_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,

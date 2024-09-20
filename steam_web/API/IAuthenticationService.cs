@@ -22,14 +22,14 @@ public static class IAuthenticationService
     {
         if (session == null)
             return default;
-        var request = new GetRequest(SteamPoweredUrls.IAuthenticationService_GetAuthSessionsForAccount_v1)
+        var request = new GetRequest(SteamApiUrls.IAuthenticationService_GetAuthSessionsForAccount_v1)
         {
             Session = session,
             Proxy = proxy,
             UserAgent = KnownUserAgents.SteamMobileBrowser,
             UseVersion2 = true,
 			CancellationToken = ct
-		}.AddQuery("access_token", session.AccessToken);
+		}.AddQuery("access_token", session.AccessToken!);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return default;
@@ -52,14 +52,14 @@ public static class IAuthenticationService
         if (session == null)
             return default;
 
-        var request = new GetRequest(SteamPoweredUrls.IAuthenticationService_GetAuthSessionsForAccount_v1)
+        var request = new GetRequest(SteamApiUrls.IAuthenticationService_GetAuthSessionsForAccount_v1)
         {
             Session = session,
             Proxy = proxy,
             UserAgent = KnownUserAgents.SteamMobileBrowser,
             UseVersion2 = true,
 			CancellationToken = ct
-		}.AddQuery("access_token", session.AccessToken);
+		}.AddQuery("access_token", session.AccessToken!);
         var response = Downloader.Get(request);
         if (!response.Success)
             return default;
@@ -92,7 +92,7 @@ public static class IAuthenticationService
             refresh_token = session.RefreshToken!,
             steamid = session.SteamID
         });
-        var request = new ProtobufRequest(SteamPoweredUrls.IAuthenticationService_GenerateAccessTokenForApp_v1, Convert.ToBase64String(memStream1.ToArray()))
+        var request = new ProtobufRequest(SteamApiUrls.IAuthenticationService_GenerateAccessTokenForApp_v1, Convert.ToBase64String(memStream1.ToArray()))
         {
             Session = session,
             Proxy = proxy,
@@ -135,7 +135,7 @@ public static class IAuthenticationService
             refresh_token = session.RefreshToken!,
             steamid = session.SteamID
         });
-        var request = new ProtobufRequest(SteamPoweredUrls.IAuthenticationService_GenerateAccessTokenForApp_v1, Convert.ToBase64String(memStream1.ToArray()))
+        var request = new ProtobufRequest(SteamApiUrls.IAuthenticationService_GenerateAccessTokenForApp_v1, Convert.ToBase64String(memStream1.ToArray()))
         {
             Session = session,
             Proxy = proxy,

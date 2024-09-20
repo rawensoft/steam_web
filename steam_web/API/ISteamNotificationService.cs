@@ -18,7 +18,7 @@ public static class ISteamNotificationService
 		using var memStream1 = new MemoryStream();
 		Serializer.Serialize(memStream1, request);
 		var base64 = Convert.ToBase64String(memStream1.ToArray());
-		var protobufRequest = new ProtobufRequest(SteamPoweredUrls.ISteamNotificationService_GetSteamNotifications_v1, base64)
+		var protobufRequest = new ProtobufRequest(SteamApiUrls.ISteamNotificationService_GetSteamNotifications_v1, base64)
 		{
 			UserAgent = KnownUserAgents.OkHttp,
 			AccessToken = apiRequest.AuthToken,
@@ -44,7 +44,7 @@ public static class ISteamNotificationService
 		using var memStream1 = new MemoryStream();
 		Serializer.Serialize(memStream1, request);
 		var base64 = Convert.ToBase64String(memStream1.ToArray());
-		var protobufRequest = new ProtobufRequest(SteamPoweredUrls.ISteamNotificationService_GetSteamNotifications_v1, base64)
+		var protobufRequest = new ProtobufRequest(SteamApiUrls.ISteamNotificationService_GetSteamNotifications_v1, base64)
 		{
 			UserAgent = KnownUserAgents.OkHttp,
             AccessToken = apiRequest.AuthToken,

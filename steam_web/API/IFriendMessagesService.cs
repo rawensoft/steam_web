@@ -9,7 +9,7 @@ public static class IFriendMessagesService
 {
     public static ResponseData<ActiveMessageSessions> GetActiveMessageSessions(ApiRequest apiRequest, int? lastmessage_since = null, bool? only_sessions_with_messages = null)
     {
-        var request = new GetRequest(SteamPoweredUrls.IFriendMessagesService_GetActiveMessageSessions_v1)
+        var request = new GetRequest(SteamApiUrls.IFriendMessagesService_GetActiveMessageSessions_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -36,7 +36,7 @@ public static class IFriendMessagesService
     }
     public static async Task<ResponseData<ActiveMessageSessions>> GetActiveMessageSessionsAsync(ApiRequest apiRequest, int? lastmessage_since = null, bool? only_sessions_with_messages = null)
     {
-        var request = new GetRequest(SteamPoweredUrls.IFriendMessagesService_GetActiveMessageSessions_v1)
+        var request = new GetRequest(SteamApiUrls.IFriendMessagesService_GetActiveMessageSessions_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -64,7 +64,7 @@ public static class IFriendMessagesService
 
     public static ResponseData<RecentMessages> GetRecentMessages(ApiRequest apiRequest, RecentMessageRequest recentMessageRequest)
     {
-        var request = new GetRequest(SteamPoweredUrls.IFriendMessagesService_GetRecentMessages_v1)
+        var request = new GetRequest(SteamApiUrls.IFriendMessagesService_GetRecentMessages_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -110,7 +110,7 @@ public static class IFriendMessagesService
     }
     public static async Task<ResponseData<RecentMessages>> GetRecentMessagesAsync(ApiRequest apiRequest, RecentMessageRequest recentMessageRequest)
     {
-        var request = new GetRequest(SteamPoweredUrls.IFriendMessagesService_GetRecentMessages_v1)
+        var request = new GetRequest(SteamApiUrls.IFriendMessagesService_GetRecentMessages_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -157,7 +157,7 @@ public static class IFriendMessagesService
 
     public static ResponseData MarkOfflineMessagesRead(ApiRequest apiRequest, ulong steamid_friend)
     {
-        var request = new PostRequest(SteamPoweredUrls.IFriendMessagesService_MarkOfflineMessagesRead_v1, Downloader.AppFormUrlEncoded)
+        var request = new PostRequest(SteamApiUrls.IFriendMessagesService_MarkOfflineMessagesRead_v1, Downloader.AppFormUrlEncoded)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -169,7 +169,7 @@ public static class IFriendMessagesService
     }
     public static async Task<ResponseData> MarkOfflineMessagesReadAsync(ApiRequest apiRequest, ulong steamid_friend)
     {
-        var request = new PostRequest(SteamPoweredUrls.IFriendMessagesService_MarkOfflineMessagesRead_v1, Downloader.AppFormUrlEncoded)
+        var request = new PostRequest(SteamApiUrls.IFriendMessagesService_MarkOfflineMessagesRead_v1, Downloader.AppFormUrlEncoded)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,

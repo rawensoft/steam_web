@@ -8,7 +8,7 @@ public static class IGameServersService
 {
     public static async Task<ResponseData<AccountList>> GetAccountList(ApiRequest apiRequest)
     {
-        var request = new GetRequest(SteamPoweredUrls.IGameServersService_GetAccountList_v1)
+        var request = new GetRequest(SteamApiUrls.IGameServersService_GetAccountList_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,

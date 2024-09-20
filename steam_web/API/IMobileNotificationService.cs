@@ -8,7 +8,7 @@ public static class IMobileNotificationService
 {
     public static async Task<ResponseData<UserNotificationCounts>> GetUserNotificationCounts(ApiRequest apiRequest)
     {
-        var request = new GetRequest(SteamPoweredUrls.IMobileNotificationService_GetUserNotificationCounts_v1)
+        var request = new GetRequest(SteamApiUrls.IMobileNotificationService_GetUserNotificationCounts_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,

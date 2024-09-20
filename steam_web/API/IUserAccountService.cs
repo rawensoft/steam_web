@@ -9,7 +9,7 @@ public static class IUserAccountService
     public static ResponseData<ClientWalletDetails> GetClientWalletDetails(ApiRequest apiRequest,
         bool? include_balance_in_usd = null, int? wallet_region = null, bool? include_formatted_balance = null)
     {
-        var request = new PostRequest(SteamPoweredUrls.IUserAccountService_GetClientWalletDetails_v1, Downloader.AppFormUrlEncoded)
+        var request = new PostRequest(SteamApiUrls.IUserAccountService_GetClientWalletDetails_v1, Downloader.AppFormUrlEncoded)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -40,7 +40,7 @@ public static class IUserAccountService
     public static async Task<ResponseData<ClientWalletDetails>> GetClientWalletDetailsAsync(ApiRequest apiRequest,
         bool? include_balance_in_usd = null, int? wallet_region = null, bool? include_formatted_balance = null)
     {
-        var request = new PostRequest(SteamPoweredUrls.IUserAccountService_GetClientWalletDetails_v1, Downloader.AppFormUrlEncoded)
+        var request = new PostRequest(SteamApiUrls.IUserAccountService_GetClientWalletDetails_v1, Downloader.AppFormUrlEncoded)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,

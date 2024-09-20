@@ -56,7 +56,7 @@ public class SteamGuardAccount
             revocation_reason = 1,
             steamguard_scheme = 1,
         });
-        var request = new ProtobufRequest(SteamPoweredUrls.ITwoFactorService_RemoveAuthenticator_v1, Convert.ToBase64String(memStream1.ToArray()))
+        var request = new ProtobufRequest(SteamApiUrls.ITwoFactorService_RemoveAuthenticator_v1, Convert.ToBase64String(memStream1.ToArray()))
         {
             AccessToken = Session.AccessToken,
             Proxy = Proxy,
@@ -81,7 +81,7 @@ public class SteamGuardAccount
 			revocation_reason = 1,
 			steamguard_scheme = 1,
 		});
-		var request = new ProtobufRequest(SteamPoweredUrls.ITwoFactorService_RemoveAuthenticator_v1, Convert.ToBase64String(memStream1.ToArray()))
+		var request = new ProtobufRequest(SteamApiUrls.ITwoFactorService_RemoveAuthenticator_v1, Convert.ToBase64String(memStream1.ToArray()))
 		{
 			AccessToken = Session.AccessToken,
 			Proxy = Proxy,
@@ -158,7 +158,7 @@ public class SteamGuardAccount
             refresh_token = Session.RefreshToken,
             steamid = Session.SteamID
         }); 
-        var request = new ProtobufRequest(SteamPoweredUrls.IAuthenticationService_GenerateAccessTokenForApp_v1, Convert.ToBase64String(memStream1.ToArray()))
+        var request = new ProtobufRequest(SteamApiUrls.IAuthenticationService_GenerateAccessTokenForApp_v1, Convert.ToBase64String(memStream1.ToArray()))
         {
             AccessToken = Session.AccessToken,
             Proxy = Proxy,
@@ -193,7 +193,7 @@ public class SteamGuardAccount
             refresh_token = Session.RefreshToken,
             steamid = Session.SteamID
         });
-        var request = new ProtobufRequest(SteamPoweredUrls.IAuthenticationService_GenerateAccessTokenForApp_v1, Convert.ToBase64String(memStream1.ToArray()))
+        var request = new ProtobufRequest(SteamApiUrls.IAuthenticationService_GenerateAccessTokenForApp_v1, Convert.ToBase64String(memStream1.ToArray()))
         {
             AccessToken = Session.AccessToken,
             Proxy = Proxy,
@@ -213,7 +213,7 @@ public class SteamGuardAccount
     {
         if (Session == null || Session.AccessToken.IsEmpty())
             return false;
-        var request = new ProtobufRequest(SteamPoweredUrls.IAuthenticationService_GetAuthSessionsForAccount_v1, string.Empty)
+        var request = new ProtobufRequest(SteamApiUrls.IAuthenticationService_GetAuthSessionsForAccount_v1, string.Empty)
         {
             UserAgent = KnownUserAgents.OkHttp,
             AccessToken = Session.AccessToken,
@@ -236,7 +236,7 @@ public class SteamGuardAccount
 	{
 		if (Session == null || Session.AccessToken.IsEmpty())
 			return false;
-		var request = new ProtobufRequest(SteamPoweredUrls.IAuthenticationService_GetAuthSessionsForAccount_v1, string.Empty)
+		var request = new ProtobufRequest(SteamApiUrls.IAuthenticationService_GetAuthSessionsForAccount_v1, string.Empty)
 		{
 			UserAgent = KnownUserAgents.OkHttp,
 			AccessToken = Session.AccessToken,
@@ -267,7 +267,7 @@ public class SteamGuardAccount
             return null;
         using var memStream1 = new MemoryStream();
         Serializer.Serialize(memStream1, requestDetails);
-        var request = new ProtobufRequest(SteamPoweredUrls.IUserAccountService_GetClientWalletDetails_v1, Convert.ToBase64String(memStream1.ToArray()))
+        var request = new ProtobufRequest(SteamApiUrls.IUserAccountService_GetClientWalletDetails_v1, Convert.ToBase64String(memStream1.ToArray()))
         {
             UserAgent = KnownUserAgents.OkHttp,
             Proxy = Proxy,
@@ -292,7 +292,7 @@ public class SteamGuardAccount
             return null;
         using var memStream1 = new MemoryStream();
         Serializer.Serialize(memStream1, requestDetails);
-        var request = new ProtobufRequest(SteamPoweredUrls.IUserAccountService_GetClientWalletDetails_v1, Convert.ToBase64String(memStream1.ToArray()))
+        var request = new ProtobufRequest(SteamApiUrls.IUserAccountService_GetClientWalletDetails_v1, Convert.ToBase64String(memStream1.ToArray()))
         {
             UserAgent = KnownUserAgents.OkHttp,
             Proxy = Proxy,
@@ -599,7 +599,7 @@ public class SteamGuardAccount
     {
         if (Session == null)
             return null;
-        var request = new ProtobufRequest(SteamPoweredUrls.IAuthenticationService_GetAuthSessionsForAccount_v1, string.Empty)
+        var request = new ProtobufRequest(SteamApiUrls.IAuthenticationService_GetAuthSessionsForAccount_v1, string.Empty)
         {
             UserAgent = KnownUserAgents.OkHttp,
             Proxy = Proxy,
@@ -619,7 +619,7 @@ public class SteamGuardAccount
 	{
 		if (Session == null)
 			return null;
-		var request = new ProtobufRequest(SteamPoweredUrls.IAuthenticationService_GetAuthSessionsForAccount_v1, string.Empty)
+		var request = new ProtobufRequest(SteamApiUrls.IAuthenticationService_GetAuthSessionsForAccount_v1, string.Empty)
 		{
 			UserAgent = KnownUserAgents.OkHttp,
 			Proxy = Proxy,
@@ -642,7 +642,7 @@ public class SteamGuardAccount
 			return null;
 		using var memStream1 = new MemoryStream();
 		Serializer.Serialize(memStream1, requestDetails);
-		var request = new ProtobufRequest(SteamPoweredUrls.IAuthenticationService_GetAuthSessionInfo_v1, Convert.ToBase64String(memStream1.ToArray()))
+		var request = new ProtobufRequest(SteamApiUrls.IAuthenticationService_GetAuthSessionInfo_v1, Convert.ToBase64String(memStream1.ToArray()))
 		{
 			UserAgent = KnownUserAgents.OkHttp,
 			Proxy = Proxy,
@@ -661,7 +661,7 @@ public class SteamGuardAccount
 			return null;
 		using var memStream1 = new MemoryStream();
 		Serializer.Serialize(memStream1, requestDetails);
-		var request = new ProtobufRequest(SteamPoweredUrls.IAuthenticationService_GetAuthSessionInfo_v1, Convert.ToBase64String(memStream1.ToArray()))
+		var request = new ProtobufRequest(SteamApiUrls.IAuthenticationService_GetAuthSessionInfo_v1, Convert.ToBase64String(memStream1.ToArray()))
 		{
 			UserAgent = KnownUserAgents.OkHttp,
 			Proxy = Proxy,

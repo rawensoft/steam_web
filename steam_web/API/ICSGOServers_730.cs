@@ -12,7 +12,7 @@ public static class ICSGOServers_730
     /// <returns></returns>
     public static async Task<ResultData<GameServerStatus>> GetGameServersStatusAsync(ApiRequest apiRequest)
     {
-        var request = new GetRequest(SteamPoweredUrls.ICSGOServers_730_GetGameServersStatus_v1)
+        var request = new GetRequest(SteamApiUrls.ICSGOServers_730_GetGameServersStatus_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -38,7 +38,7 @@ public static class ICSGOServers_730
     /// <returns></returns>
     public static ResultData<GameServerStatus> GetGameServersStatus(ApiRequest apiRequest)
     {
-        var request = new GetRequest(SteamPoweredUrls.ICSGOServers_730_GetGameServersStatus_v1)
+        var request = new GetRequest(SteamApiUrls.ICSGOServers_730_GetGameServersStatus_v1)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,

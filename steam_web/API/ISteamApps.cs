@@ -8,7 +8,7 @@ public static class ISteamApps
 {
     public static ResponseData<UpToDateModel> UpToDateCheck(ApiRequest apiRequest, uint appid, uint version)
     {
-        var request = new PostRequest(SteamPoweredUrls.ISteamApps_UpToDateCheck_v1, Downloader.AppFormUrlEncoded)
+        var request = new PostRequest(SteamApiUrls.ISteamApps_UpToDateCheck_v1, Downloader.AppFormUrlEncoded)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
@@ -30,7 +30,7 @@ public static class ISteamApps
     }
     public static async Task<ResponseData<UpToDateModel>> UpToDateCheckAsync(ApiRequest apiRequest, uint appid, uint version)
     {
-        var request = new PostRequest(SteamPoweredUrls.ISteamApps_UpToDateCheck_v1, Downloader.AppFormUrlEncoded)
+        var request = new PostRequest(SteamApiUrls.ISteamApps_UpToDateCheck_v1, Downloader.AppFormUrlEncoded)
         {
             Proxy = apiRequest.Proxy,
             CancellationToken = apiRequest.CancellationToken,
