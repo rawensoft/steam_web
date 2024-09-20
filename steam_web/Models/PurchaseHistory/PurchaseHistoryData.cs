@@ -220,7 +220,7 @@ public class PurchaseHistoryData
         var wht_items = tr.GetElementsByClassName(wht_items_str).First();
         // проверяем маркет транзакция или нет
         if (uri != null && uri.Host == "steamcommunity.com")
-            objItems = [new(wht_items.TextContent.GetClearWebString()!)];
+            objItems = new PurchasePaymentGameModel[] { new(wht_items.TextContent.GetClearWebString()!) };
         else
         {
             /// здесь у нас сохраняется название игры и
@@ -290,7 +290,7 @@ public class PurchaseHistoryData
                     objPaymentMethods = payments.ToArray();
                 }
                 else // либо метод был один
-                    objPaymentMethods = [PurchasePaymentMethodModel.Parse(wht_type_div.TextContent)];
+                    objPaymentMethods = new PurchasePaymentMethodModel[] { PurchasePaymentMethodModel.Parse(wht_type_div.TextContent) };
             }
             else
                 objType = wht_type_div.TextContent.GetClearWebString()!.ToEnumPurchaseType();
