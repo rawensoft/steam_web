@@ -20,6 +20,10 @@ using SteamGuardAccuntv2 = SteamWeb.Auth.v2.SteamGuardAccount;
 using SteamWeb.Models.PurchaseHistory;
 
 namespace SteamWeb;
+
+/// <summary>
+/// Здесь собраны все методы, которые не вызывают голый http метод внутреннего api, а используют парсинг, либо свою реализацию
+/// </summary>
 public static partial class Steam
 {
     /// <summary>
@@ -576,9 +580,10 @@ public static partial class Steam
 
         string? trade_url = null;
         HtmlParser html = new HtmlParser();
-        var doc = html.ParseDocument(response.Data);
+        var doc = await html.ParseDocumentAsync(response.Data);
         var el = doc.GetElementById("trade_offer_access_url");
-        if (el != null) trade_url = ((AngleSharp.Html.Dom.IHtmlInputElement)el).DefaultValue.GetClearWebString();
+        if (el != null)
+            trade_url = ((AngleSharp.Html.Dom.IHtmlInputElement)el).DefaultValue.GetClearWebString();
 
 		WebTradeEligibility? webState = null;
 		var cookies = response.CookieContainer?.GetAllCookies();

@@ -7,6 +7,9 @@ using System.Web;
 using SteamWeb.Models;
 
 namespace SteamWeb.Script;
+/// <summary>
+/// Здесь собраны все методы для выполнения запросов на поддомене help. С их помощью можно изменить номер телефона, снять guard, поменять почту или пароль.
+/// </summary>
 public static class AjaxHelp
 {
 	/// <summary>

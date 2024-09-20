@@ -189,6 +189,8 @@ public static class Ajax
         => tradeoffer_cancel(defaultRequest, trade.u_tradeofferid);
     #endregion
 
+    #region market
+    public static Success market_cancelbuyorder(DefaultRequest defaultRequest, ulong buy_orderid)
 	{
 		var request = new PostRequest(SteamCommunityUrls.Market_CancelBuyOrder, Downloader.AppFormUrlEncoded)
         {
@@ -313,53 +315,6 @@ public static class Ajax
 			return new();
 		}
 	}
-
-	public static async Task<PriceOverview> market_priceoverview_async(DefaultRequest defaultRequest, uint appid, string country, ushort currency, string market_hash_name)
-    {
-        var request = new GetRequest(SteamCommunityUrls.Market_PriceOverview)
-        {
-            Session = defaultRequest.Session,
-            Proxy = defaultRequest.Proxy,
-            IsAjax = true,
-            CancellationToken = defaultRequest.CancellationToken,
-        };
-        request.AddQuery("market_hash_name", market_hash_name).AddQuery("appid", appid).AddQuery("country", country).AddQuery("currency", currency);
-        var response = await Downloader.GetAsync(request);
-        if (!response.Success)
-            return new();
-        try
-        {
-            var obj = JsonSerializer.Deserialize<PriceOverview>(response.Data!)!;
-            return obj;
-        }
-        catch (Exception)
-        {
-            return new();
-        }
-    }
-    public static PriceOverview market_priceoverview(DefaultRequest defaultRequest, uint appid, string country, ushort currency, string market_hash_name)
-    {
-        var request = new GetRequest(SteamCommunityUrls.Market_PriceOverview)
-        {
-            Session = defaultRequest.Session,
-            Proxy = defaultRequest.Proxy,
-            IsAjax = true,
-            CancellationToken = defaultRequest.CancellationToken,
-        };
-        request.AddQuery("market_hash_name", market_hash_name).AddQuery("appid", appid).AddQuery("country", country).AddQuery("currency", currency);
-        var response = Downloader.Get(request);
-        if (!response.Success)
-            return new();
-        try
-        {
-            var obj = JsonSerializer.Deserialize<PriceOverview>(response.Data!)!;
-            return obj;
-        }
-        catch (Exception)
-        {
-            return new();
-        }
-    }
 
     public static async Task<MarketSearchResponse> market_search_render_async(DefaultRequest defaultRequest, MarketSearchRequest request)
     {
@@ -672,6 +627,55 @@ public static class Ajax
         return PriceHistory.Deserialize(response.Data!);
     }
 
+    public static async Task<PriceOverview> market_priceoverview_async(DefaultRequest defaultRequest, uint appid, string country, ushort currency, string market_hash_name)
+    {
+        var request = new GetRequest(SteamCommunityUrls.Market_PriceOverview)
+        {
+            Session = defaultRequest.Session,
+            Proxy = defaultRequest.Proxy,
+            IsAjax = true,
+            CancellationToken = defaultRequest.CancellationToken,
+        };
+        request.AddQuery("market_hash_name", market_hash_name).AddQuery("appid", appid).AddQuery("country", country).AddQuery("currency", currency);
+        var response = await Downloader.GetAsync(request);
+        if (!response.Success)
+            return new();
+        try
+        {
+            var obj = JsonSerializer.Deserialize<PriceOverview>(response.Data!)!;
+            return obj;
+        }
+        catch (Exception)
+        {
+            return new();
+        }
+    }
+    public static PriceOverview market_priceoverview(DefaultRequest defaultRequest, uint appid, string country, ushort currency, string market_hash_name)
+    {
+        var request = new GetRequest(SteamCommunityUrls.Market_PriceOverview)
+        {
+            Session = defaultRequest.Session,
+            Proxy = defaultRequest.Proxy,
+            IsAjax = true,
+            CancellationToken = defaultRequest.CancellationToken,
+        };
+        request.AddQuery("market_hash_name", market_hash_name).AddQuery("appid", appid).AddQuery("country", country).AddQuery("currency", currency);
+        var response = Downloader.Get(request);
+        if (!response.Success)
+            return new();
+        try
+        {
+            var obj = JsonSerializer.Deserialize<PriceOverview>(response.Data!)!;
+            return obj;
+        }
+        catch (Exception)
+        {
+            return new();
+        }
+    }
+    #endregion
+
+    #region actions
     public static async Task<ItemQueryLocations[]> action_QueryLocations_async(DefaultRequest defaultRequest)
     {
         string referer = $"https://steamcommunity.com/profiles/{defaultRequest.Session!.SteamID}/edit/info";
@@ -776,6 +780,24 @@ public static class Ajax
         var obj = JsonSerializer.Deserialize<ItemGroup[]>(response.Data!)!;
         return obj;
     }
+    public static ItemGroup[] profiles_ajaxgroupinvite(DefaultRequest defaultRequest)
+    {
+        string url = $"https://steamcommunity.com/profiles/{defaultRequest.Session!.SteamID}/ajaxgroupinvite?select_primary=1&json=1";
+        string referer = $"https://steamcommunity.com/profiles/{defaultRequest.Session!.SteamID}/edit/theme";
+        var request = new GetRequest(url)
+        {
+            Session = defaultRequest.Session,
+            Proxy = defaultRequest.Proxy,
+            IsAjax = true,
+            CancellationToken = defaultRequest.CancellationToken,
+            Referer = referer,
+        };
+        var response = Downloader.Get(request);
+        if (!response.Success)
+            return Array.Empty<ItemGroup>();
+        var obj = JsonSerializer.Deserialize<ItemGroup[]>(response.Data!)!;
+        return obj;
+    }
 
     /// <summary>
     /// Оставить комментарий в профиле
@@ -819,6 +841,97 @@ public static class Ajax
         {
             return new CommentResponse() { success = false };
         }
+    }
+    #endregion
+
+    #region account
+    public static async Task<Success> account_ajaxsetcookiepreferences_async(DefaultRequest defaultRequest, CookiePreferences cookiepreferences)
+    {
+        if (defaultRequest.Session == null)
+            return new();
+        var request = new PostRequest(SteamPoweredUrls.Account_AjaxSetCookiePreferences, Downloader.AppFormUrlEncoded)
+        {
+            Session = defaultRequest.Session,
+            Proxy = defaultRequest.Proxy,
+            IsAjax = true,
+            CancellationToken = defaultRequest.CancellationToken,
+        };
+        request.AddPostData("sessionid", defaultRequest.Session!.SessionID).AddPostData("cookiepreferences", JsonSerializer.Serialize(cookiepreferences));
+        var response = await Downloader.PostAsync(request);
+        if (!response.Success || response.Data.IsEmpty() || response.Data == "<!DOCTYPE html>" ||
+            response.Data!.Contains("btn_blue_steamui btn_medium login_btn")) return new();
+        try
+        {
+            var obj = JsonSerializer.Deserialize<Success>(HttpUtility.HtmlDecode(response.Data))!;
+            return obj;
+        }
+        catch (Exception)
+        {
+            return new();
+        }
+    }
+    public static Success account_ajaxsetcookiepreferences(DefaultRequest defaultRequest, CookiePreferences cookiepreferences)
+    {
+        if (defaultRequest.Session == null)
+            return new();
+        var request = new PostRequest(SteamPoweredUrls.Account_AjaxSetCookiePreferences, Downloader.AppFormUrlEncoded)
+        {
+            Session = defaultRequest.Session,
+            Proxy = defaultRequest.Proxy,
+            IsAjax = true,
+            CancellationToken = defaultRequest.CancellationToken,
+        };
+        request.AddPostData("sessionid", defaultRequest.Session!.SessionID).AddPostData("cookiepreferences", JsonSerializer.Serialize(cookiepreferences));
+        var response = Downloader.Post(request);
+        if (!response.Success || response.Data.IsEmpty() || response.Data == "<!DOCTYPE html>" ||
+            response.Data!.Contains("btn_blue_steamui btn_medium login_btn"))
+            return new();
+        try
+        {
+            var obj = JsonSerializer.Deserialize<Success>(HttpUtility.HtmlDecode(response.Data))!;
+            return obj;
+        }
+        catch (Exception)
+        {
+            return new();
+        }
+    }
+
+    public static MoreHistoryModel? account_loadmorehistory(DefaultRequest defaultRequest, PurchaseHistoryCursorModel cursor)
+    {
+        var request = new PostRequest(SteamPoweredUrls.Account_AjaxLoadMoreHistory, Downloader.AppFormUrlEncoded)
+        {
+            UseVersion2 = true,
+            Session = defaultRequest.Session,
+            Proxy = defaultRequest.Proxy,
+            CancellationToken = defaultRequest.CancellationToken,
+            Referer = SteamPoweredUrls.Account_History,
+        };
+        request.AddPostData("cursor[wallet_txnid]", cursor.WalletTxnId).AddPostData("cursor[timestamp_newest]", cursor.TimestampNewest)
+            .AddPostData("cursor[balance]", cursor.Balance).AddPostData("cursor[currency]", cursor.Currency).AddPostData("sessionid", request.Session!.SessionID);
+        var response = Downloader.Post(request);
+        if (!response.Success)
+            return null;
+        var obj = JsonSerializer.Deserialize<MoreHistoryModel>(response.Data!, Steam.JsonOptions)!;
+        return obj;
+    }
+    public static async Task<MoreHistoryModel?> account_loadmorehistory_async(DefaultRequest defaultRequest, PurchaseHistoryCursorModel cursor)
+    {
+        var request = new PostRequest(SteamPoweredUrls.Account_AjaxLoadMoreHistory, Downloader.AppFormUrlEncoded)
+        {
+            UseVersion2 = true,
+            Session = defaultRequest.Session,
+            Proxy = defaultRequest.Proxy,
+            CancellationToken = defaultRequest.CancellationToken,
+            Referer = SteamPoweredUrls.Account_History,
+        };
+        request.AddPostData("cursor[wallet_txnid]", cursor.WalletTxnId).AddPostData("cursor[timestamp_newest]", cursor.TimestampNewest)
+            .AddPostData("cursor[balance]", cursor.Balance).AddPostData("cursor[currency]", cursor.Currency).AddPostData("sessionid", request.Session!.SessionID);
+        var response = await Downloader.PostAsync(request);
+        if (!response.Success)
+            return null;
+        var obj = JsonSerializer.Deserialize<MoreHistoryModel>(response.Data!, Steam.JsonOptions)!;
+        return obj;
     }
 
     /// <summary>
@@ -879,6 +992,8 @@ public static class Ajax
             return new();
         }
     }
+    #endregion
+
     [Obsolete("Этот метод работает не так хорошо, как мог бы. Рекомендуется использовать API.ILoyaltyRewardsService.GetSummaryAsync().")]
     public static async Task<SteamLoyaltyStore> store_loyalty_store_async(DefaultRequest defaultRequest)
     {
@@ -907,7 +1022,6 @@ public static class Ajax
             return new();
         }
     }
-    public static async Task<Success> account_ajaxsetcookiepreferences_async(DefaultRequest defaultRequest, CookiePreferences cookiepreferences)
 
     /// <summary>
     /// Выполняет отписку от всех файлов в мастерской
@@ -1012,34 +1126,11 @@ public static class Ajax
             return new();
         }
     }
-    {
-        if (defaultRequest.Session == null)
-            return new();
-        var request = new PostRequest(SteamPoweredUrls.Account_AjaxSetCookiePreferences, Downloader.AppFormUrlEncoded)
-        {
-            Session = defaultRequest.Session,
-            Proxy = defaultRequest.Proxy,
-            IsAjax = true,
-            CancellationToken = defaultRequest.CancellationToken,
-        };
-        request.AddPostData("sessionid", defaultRequest.Session!.SessionID).AddPostData("cookiepreferences", JsonSerializer.Serialize(cookiepreferences));
-        var response = await Downloader.PostAsync(request);
-        if (!response.Success || response.Data.IsEmpty() || response.Data == "<!DOCTYPE html>" ||
-            response.Data!.Contains("btn_blue_steamui btn_medium login_btn")) return new();
-        try
-        {
-            var obj = JsonSerializer.Deserialize<Success>(HttpUtility.HtmlDecode(response.Data))!;
-            return obj;
-        }
-        catch (Exception)
-        {
-            return new();
-        }
-    }
+
     /// <summary>
-    /// 
+    /// Выполняет указанное действие с указанным список друзей
     /// </summary>
-    /// <param name="steamid">SteamID аккаунта, у которого производят действия</param>
+    /// <param name="steamid">SteamId аккаунта, у которого производят действия</param>
     /// <param name="action">Тип действия</param>
     /// <param name="steamids">С кем производим действия (не более 100)</param>
     /// <exception cref="ArgumentException">steamids не может быть пустым</exception>
@@ -1097,7 +1188,81 @@ public static class Ajax
             request.AddPostData("steamids%5B%5D", steamids[i]);
         var response = await Downloader.PostAsync(request);
         if (!response.Success || response.Data.IsEmpty() || response.Data == "<!DOCTYPE html>" ||
-            response.Data!.Contains("btn_blue_steamui btn_medium login_btn")) return new();
+            response.Data!.Contains("btn_blue_steamui btn_medium login_btn"))
+            return new();
+        try
+        {
+            var obj = JsonSerializer.Deserialize<SuccessRgCounts>(HttpUtility.HtmlDecode(response.Data))!;
+            return obj;
+        }
+        catch (Exception)
+        {
+            return new();
+        }
+    }
+    /// <summary>
+    /// Выполняет указанное действие с указанным список друзей
+    /// </summary>
+    /// <param name="steamid">SteamId аккаунта, у которого производят действия</param>
+    /// <param name="action">Тип действия</param>
+    /// <param name="steamids">С кем производим действия (не более 100)</param>
+    /// <exception cref="ArgumentException">steamids не может быть пустым</exception>
+    /// <exception cref="ArgumentOutOfRangeException">steamids не может превышать 100 элементов</exception>
+    /// <returns></returns>
+    public static SuccessRgCounts friends_action(DefaultRequest defaultRequest, ulong steamid, FriendsAction action, string[] steamids)
+    {
+        if (defaultRequest.Session == null)
+            return new();
+        if (steamids.Length == 0)
+            throw new ArgumentException("steamids не должен быть пустой");
+        if (steamids.Length > 100)
+            throw new ArgumentOutOfRangeException(nameof(steamids), "steamids не может превышать 100 элементов");
+
+        string url = $"https://steamcommunity.com/profiles/{steamid}/friends/action";
+        var request = new PostRequest(url, Downloader.AppFormUrlEncoded)
+        {
+            Session = defaultRequest.Session,
+            Proxy = defaultRequest.Proxy,
+            IsAjax = true,
+            CancellationToken = defaultRequest.CancellationToken,
+        };
+        request.AddPostData("sessionid", defaultRequest.Session!.SessionID).AddPostData("steamid", steamid).AddPostData("ajax", 1);
+        switch (action)
+        {
+            case FriendsAction.Block:
+                request.AddPostData("action", "block");
+                break;
+            case FriendsAction.UnBlock:
+                request.AddPostData("action", "unblock");
+                break;
+            case FriendsAction.UnFriend:
+                request.AddPostData("action", "remove");
+                break;
+            case FriendsAction.LeaveFromGroup:
+                request.AddPostData("action", "leave_group");
+                break;
+            case FriendsAction.IgnoreFriendInvite:
+                request.AddPostData("action", "ignore_invite");
+                break;
+            case FriendsAction.AcceptFriend:
+                request.AddPostData("action", "accept");
+                break;
+            case FriendsAction.UnFollow:
+                request.AddPostData("action", "unfollow");
+                break;
+            case FriendsAction.AcceptGroup:
+                request.AddPostData("action", "group_accept");
+                break;
+            case FriendsAction.IgnoreGroup:
+                request.AddPostData("action", "group_ignore");
+                break;
+        }
+        for (int i = 0; i < steamids.Length; i++)
+            request.AddPostData("steamids%5B%5D", steamids[i]);
+        var response = Downloader.Post(request);
+        if (!response.Success || response.Data.IsEmpty() || response.Data == "<!DOCTYPE html>" ||
+            response.Data!.Contains("btn_blue_steamui btn_medium login_btn"))
+            return new();
         try
         {
             var obj = JsonSerializer.Deserialize<SuccessRgCounts>(HttpUtility.HtmlDecode(response.Data))!;
@@ -1355,41 +1520,4 @@ public static class Ajax
 	/// <returns>Ответ на запрос</returns>
 	public static RequestKeyResponse dev_requestkey(DefaultRequest defaultRequest, string domain, RequestKeyResponse request)
         => dev_requestkey(defaultRequest, domain, request.RequestId!.Value);
-
-    public static MoreHistoryModel? account_loadmorehistory(DefaultRequest defaultRequest, PurchaseHistoryCursorModel cursor)
-    {
-        var request = new PostRequest(SteamPoweredUrls.Account_AjaxLoadMoreHistory, Downloader.AppFormUrlEncoded)
-        {
-            UseVersion2 = true,
-            Session = defaultRequest.Session,
-            Proxy = defaultRequest.Proxy,
-            CancellationToken = defaultRequest.CancellationToken,
-            Referer = SteamPoweredUrls.Account_History,
-        };
-        request.AddPostData("cursor[wallet_txnid]", cursor.WalletTxnId).AddPostData("cursor[timestamp_newest]", cursor.TimestampNewest)
-            .AddPostData("cursor[balance]", cursor.Balance).AddPostData("cursor[currency]", cursor.Currency).AddPostData("sessionid", request.Session!.SessionID);
-        var response = Downloader.Post(request);
-        if (!response.Success)
-            return null;
-        var obj = JsonSerializer.Deserialize<MoreHistoryModel>(response.Data!, Steam.JsonOptions)!;
-        return obj;
-    }
-    public static async Task<MoreHistoryModel?> account_loadmorehistory_async(DefaultRequest defaultRequest, PurchaseHistoryCursorModel cursor)
-    {
-        var request = new PostRequest(SteamPoweredUrls.Account_AjaxLoadMoreHistory, Downloader.AppFormUrlEncoded)
-        {
-            UseVersion2 = true,
-            Session = defaultRequest.Session,
-            Proxy = defaultRequest.Proxy,
-            CancellationToken = defaultRequest.CancellationToken,
-            Referer = SteamPoweredUrls.Account_History,
-        };
-        request.AddPostData("cursor[wallet_txnid]", cursor.WalletTxnId).AddPostData("cursor[timestamp_newest]", cursor.TimestampNewest)
-            .AddPostData("cursor[balance]", cursor.Balance).AddPostData("cursor[currency]", cursor.Currency).AddPostData("sessionid", request.Session!.SessionID);
-        var response = await Downloader.PostAsync(request);
-        if (!response.Success)
-            return null;
-        var obj = JsonSerializer.Deserialize<MoreHistoryModel>(response.Data!, Steam.JsonOptions)!;
-        return obj;
-    }
 }
