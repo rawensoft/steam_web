@@ -1,6 +1,5 @@
 ﻿namespace SteamWeb.Script.DTO;
-
-public record Response
+public class Response
 {
-    public bool success { get; init; } = false;
+    public bool Success { get; init; } = false;
 }

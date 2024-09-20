@@ -908,6 +908,66 @@ public static class Ajax
         }
     }
     public static async Task<Success> account_ajaxsetcookiepreferences_async(DefaultRequest defaultRequest, CookiePreferences cookiepreferences)
+
+    /// <summary>
+    /// Выполняет отписку от всех файлов в мастерской
+    /// </summary>
+    /// <returns>Класс содержащий информацию о выполнении запроса</returns>
+    public static async Task<DTO.Response> sharedfiles_unsubscribeall_async(DefaultRequest defaultRequest)
+    {
+        var request = new PostRequest(SteamCommunityUrls.SharedFiles_UnsubscribeAll, Downloader.AppFormUrlEncoded)
+        {
+            Session = defaultRequest.Session,
+            Proxy = defaultRequest.Proxy,
+            IsAjax = true,
+            CancellationToken = defaultRequest.CancellationToken,
+        };
+        request.AddPostData("sessionid", defaultRequest.Session!.SessionID).AddPostData("appid", 0).AddPostData("filetype", 18);
+        var response = await Downloader.PostAsync(request);
+        if (!response.Success)
+            return new();
+        try
+        {
+            // выполняем десерилизацию потому что присылают пустой объект
+            // так мы понимаем что запрос точно прошёл
+            _ = JsonSerializer.Deserialize<Success>(response.Data!)!;
+            return new() { Success = true };
+        }
+        catch (Exception)
+        {
+            return new();
+        }
+    }
+    /// <summary>
+    /// Выполняет отписку от всех файлов в мастерской
+    /// </summary>
+    /// <returns>Класс содержащий информацию о выполнении запроса</returns>
+    public static DTO.Response sharedfiles_unsubscribeall(DefaultRequest defaultRequest)
+    {
+        var request = new PostRequest(SteamCommunityUrls.SharedFiles_UnsubscribeAll, Downloader.AppFormUrlEncoded)
+        {
+            Session = defaultRequest.Session,
+            Proxy = defaultRequest.Proxy,
+            IsAjax = true,
+            CancellationToken = defaultRequest.CancellationToken,
+        };
+        request.AddPostData("sessionid", defaultRequest.Session!.SessionID).AddPostData("appid", 0).AddPostData("filetype", 18);
+        var response = Downloader.Post(request);
+        if (!response.Success)
+            return new();
+        try
+        {
+            // выполняем десерилизацию потому что присылают пустой объект
+            // так мы понимаем что запрос точно прошёл
+            _ = JsonSerializer.Deserialize<Success>(response.Data!)!;
+            return new() { Success = true };
+        }
+        catch (Exception)
+        {
+            return new();
+        }
+    }
+
     public static async Task<Data<StoreUserConfig>> pointssummary_ajaxgetasyncconfig_async(DefaultRequest defaultRequest)
     {
         var request = new GetRequest(SteamCommunityUrls.PointsSummary_AjaxGetAsyncConfig)
