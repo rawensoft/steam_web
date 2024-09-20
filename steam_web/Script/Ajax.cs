@@ -14,57 +14,115 @@ using System.Text.Json.Serialization;
 using SteamWeb.Script.Models;
 using SteamWeb.Models;
 using SteamWeb.Models.PurchaseHistory;
+using SteamWeb.API.Models.IEconService;
+using SteamWeb.Models.Trade;
 
 namespace SteamWeb.Script;
+/// <summary>
+/// Здесь собраны все http методы внутреннего api, кроме методов со поддомена help. - их реализация в классе <see cref="AjaxHelp"/>.
+/// </summary>
 public static class Ajax
 {
-    public static async Task<Success> sharedfiles_unsubscribeall_async(DefaultRequest defaultRequest)
+    #region trade offer
+    /// <summary>
+    /// Принимает трейд
+    /// </summary>
+    /// <param name="tradeofferid">id трейда для принятия</param>
+    /// <param name="steamid_other">steamid32 аккаунта, который отослал трейд</param>
+    /// <returns>False трейд не принят, но иногда может быть принят, для точности используйте API</returns>
+    public static (ConfTradeOffer?, SteamTradeError?) tradeoffer_accept(DefaultRequest ajaxRequest, ulong tradeofferid, uint steamid_other)
+        => tradeoffer_accept(ajaxRequest, tradeofferid, steamid_other.ToSteamId64());
+    /// <summary>
+    /// Принимает трейд
+    /// </summary>
+    /// <param name="tradeofferid">id трейда для принятия</param>
+    /// <param name="steamid_other">steamid32 аккаунта, который отослал трейд</param>
+    /// <returns>False трейд не принят, но иногда может быть принят, для точности используйте API</returns>
+    public static (ConfTradeOffer?, SteamTradeError?) tradeoffer_accept(DefaultRequest ajaxRequest, ulong tradeofferid, ulong steamid64)
     {
-        var request = new PostRequest(SteamCommunityUrls.SharedFiles_UnsubscribeAll, Downloader.AppFormUrlEncoded)
+        var request = new PostRequest("https://steamcommunity.com/tradeoffer/" + tradeofferid + "/accept", Downloader.AppFormUrlEncoded)
         {
-            Session = defaultRequest.Session,
-            Proxy = defaultRequest.Proxy,
+            Session = ajaxRequest.Session,
+            Proxy = ajaxRequest.Proxy,
+            CancellationToken = ajaxRequest.CancellationToken,
             IsAjax = true,
-			CancellationToken = defaultRequest.CancellationToken,
-        };
-        request.AddPostData("sessionid", defaultRequest.Session!.SessionID).AddPostData("appid", 0).AddPostData("filetype", 18);
-        var response = await Downloader.PostAsync(request);
-        if (!response.Success)
-            return new();
-        try
-        {
-            var obj = JsonSerializer.Deserialize<Success>(response.Data!)!;
-            obj.success = 1;
-            return obj;
+            Referer = "https://steamcommunity.com/tradeoffer/" + tradeofferid + "/"
         }
-        catch (Exception)
-		{
-			return new();
-		}
-    }
-    public static Success sharedfiles_unsubscribeall(DefaultRequest defaultRequest)
-    {
-        var request = new PostRequest(SteamCommunityUrls.SharedFiles_UnsubscribeAll, Downloader.AppFormUrlEncoded)
-        {
-            Session = defaultRequest.Session,
-            Proxy = defaultRequest.Proxy,
-            IsAjax = true,
-            CancellationToken = defaultRequest.CancellationToken,
-        };
-        request.AddPostData("sessionid", defaultRequest.Session!.SessionID).AddPostData("appid", 0).AddPostData("filetype", 18);
+        .AddPostData("sessionid", ajaxRequest.Session!.SessionID).AddPostData("serverid", 1).AddPostData("tradeofferid", tradeofferid)
+        .AddPostData("partner", steamid64).AddPostData("captcha", string.Empty);
         var response = Downloader.Post(request);
-        if (!response.Success)
-            return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Success>(response.Data!)!;
-            obj.success = 1;
-            return obj;
+            if (!response.Success)
+            {
+                var steamerror = SteamTradeError.Deserialize(response.Data!);
+                return (null, steamerror);
+            }
+            try
+            {
+                var conf = JsonSerializer.Deserialize<ConfTradeOffer>(response.Data!, Steam.JsonOptions);
+                return (conf, null);
+            }
+            catch (Exception ex)
+            {
+                return (null, new() { strError = ex.Message });
+            }
         }
-        catch (Exception)
-		{
-			return new();
-		}
+        catch (Exception ex)
+        {
+            return (null, new() { strError = ex.Message });
+        }
+    }
+    public static (ConfTradeOffer?, SteamTradeError?) tradeoffer_accept(DefaultRequest ajaxRequest, Trade trade) =>
+        tradeoffer_accept(ajaxRequest, trade.u_tradeofferid, trade.accountid_other);
+    /// <summary>
+    /// Принимает трейд
+    /// </summary>
+    /// <param name="tradeofferid">id трейда для принятия</param>
+    /// <param name="steamid_other">steamid32 аккаунта, который отослал трейд</param>
+    /// <returns>False трейд не принят, но иногда может быть принят, для точности используйте API</returns>
+    public static async Task<(ConfTradeOffer?, SteamTradeError?)> tradeoffer_accept_async(DefaultRequest ajaxRequest, ulong tradeofferid, uint steamid_other)
+        => await tradeoffer_accept_async(ajaxRequest, tradeofferid, steamid_other.ToSteamId64());
+    /// <summary>
+    /// Принимает трейд
+    /// </summary>
+    /// <param name="tradeofferid">id трейда для принятия</param>
+    /// <param name="steamid64">steamid64 аккаунта, который отослал трейд</param>
+    /// <returns>False трейд не принят, но иногда может быть принят, для точности используйте API</returns>
+    public static async Task<(ConfTradeOffer?, SteamTradeError?)> tradeoffer_accept_async(DefaultRequest ajaxRequest, ulong tradeofferid, ulong steamid64)
+    {
+        var request = new PostRequest("https://steamcommunity.com/tradeoffer/" + tradeofferid + "/accept", Downloader.AppFormUrlEncoded)
+        {
+            Session = ajaxRequest.Session,
+            Proxy = ajaxRequest.Proxy,
+            CancellationToken = ajaxRequest.CancellationToken,
+            IsAjax = true,
+            Referer = "https://steamcommunity.com/tradeoffer/" + tradeofferid + "/"
+        }
+        .AddPostData("sessionid", ajaxRequest.Session!.SessionID).AddPostData("serverid", 1).AddPostData("tradeofferid", tradeofferid)
+        .AddPostData("partner", steamid64).AddPostData("captcha", string.Empty);
+        var response = await Downloader.PostAsync(request);
+        try
+        {
+            if (!response.Success)
+            {
+                var steamerror = SteamTradeError.Deserialize(response.Data!);
+                return (null, steamerror);
+            }
+            try
+            {
+                var conf = JsonSerializer.Deserialize<ConfTradeOffer>(response.Data!, Steam.JsonOptions);
+                return (conf, null);
+            }
+            catch (Exception ex)
+            {
+                return (null, new() { strError = ex.Message });
+            }
+        }
+        catch (Exception ex)
+        {
+            return (null, new() { strError = ex.Message });
+        }
     }
 
     public static async Task<CancelTrade> tradeoffer_cancel_async(DefaultRequest defaultRequest, ulong tradeofferid)
@@ -82,21 +140,21 @@ public static class Ajax
         if (!response.Success)
             return new();
         try
-		{
-			var options = new JsonSerializerOptions
-			{
-				NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
-			};
-			var obj = JsonSerializer.Deserialize<CancelTrade>(response.Data!, options)!;
+        {
+            var options = new JsonSerializerOptions
+            {
+                NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
+            };
+            var obj = JsonSerializer.Deserialize<CancelTrade>(response.Data!, options)!;
             obj.success = true;
             return obj;
         }
         catch (Exception)
-		{
-			return new();
-		}
+        {
+            return new();
+        }
     }
-    public static async Task<CancelTrade> tradeoffer_cancel_async(DefaultRequest defaultRequest, API.Models.IEconService.Trade trade)
+    public static async Task<CancelTrade> tradeoffer_cancel_async(DefaultRequest defaultRequest, Trade trade)
         => await tradeoffer_cancel_async(defaultRequest, trade.u_tradeofferid);
     public static CancelTrade tradeoffer_cancel(DefaultRequest defaultRequest, ulong tradeofferid)
     {
@@ -113,24 +171,24 @@ public static class Ajax
         if (!response.Success)
             return new();
         try
-		{
-			var options = new JsonSerializerOptions
-			{
-				NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
-			};
-			var obj = JsonSerializer.Deserialize<CancelTrade>(response.Data!, options)!;
+        {
+            var options = new JsonSerializerOptions
+            {
+                NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
+            };
+            var obj = JsonSerializer.Deserialize<CancelTrade>(response.Data!, options)!;
             obj.success = true;
             return obj;
         }
         catch (Exception)
-		{
-			return new();
-		}
+        {
+            return new();
+        }
     }
-    public static CancelTrade tradeoffer_cancel(DefaultRequest defaultRequest, API.Models.IEconService.Trade trade)
+    public static CancelTrade tradeoffer_cancel(DefaultRequest defaultRequest, Trade trade)
         => tradeoffer_cancel(defaultRequest, trade.u_tradeofferid);
+    #endregion
 
-	public static Success market_cancelbuyorder(DefaultRequest defaultRequest, ulong buy_orderid)
 	{
 		var request = new PostRequest(SteamCommunityUrls.Market_CancelBuyOrder, Downloader.AppFormUrlEncoded)
         {

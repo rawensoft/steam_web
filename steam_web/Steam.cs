@@ -870,6 +870,7 @@ public static partial class Steam
     /// <param name="tradeofferid">id трейда для принятия</param>
     /// <param name="steamid_other">steamid32 аккаунта, который отослал трейд</param>
     /// <returns>False трейд не принят, но иногда может быть принят, для точности используйте API</returns>
+    [Obsolete("Данный метод переехал в Script.Ajax.tradeoffer_accept")]
     public static (ConfTradeOffer?, SteamTradeError?) AcceptTrade(DefaultRequest ajaxRequest, ulong tradeofferid, uint steamid_other)
         => AcceptTrade(ajaxRequest, tradeofferid, Steam32ToSteam64(steamid_other));
     /// <summary>
@@ -878,6 +879,7 @@ public static partial class Steam
     /// <param name="tradeofferid">id трейда для принятия</param>
     /// <param name="steamid_other">steamid32 аккаунта, который отослал трейд</param>
     /// <returns>False трейд не принят, но иногда может быть принят, для точности используйте API</returns>
+    [Obsolete("Данный метод переехал в Script.Ajax.tradeoffer_accept")]
     public static (ConfTradeOffer?, SteamTradeError?) AcceptTrade(DefaultRequest ajaxRequest, ulong tradeofferid, ulong steamid64)
     {
         var request = new PostRequest("https://steamcommunity.com/tradeoffer/" + tradeofferid + "/accept", Downloader.AppFormUrlEncoded)
@@ -917,6 +919,7 @@ public static partial class Steam
             return (null, new() { strError = ex.Message });
         }
     }
+    [Obsolete("Данный метод переехал в Script.Ajax.tradeoffer_accept")]
     public static (ConfTradeOffer?, SteamTradeError?) AcceptTrade(DefaultRequest ajaxRequest, Trade trade) =>
         AcceptTrade(ajaxRequest, trade.u_tradeofferid, trade.accountid_other);
     /// <summary>
@@ -925,6 +928,7 @@ public static partial class Steam
     /// <param name="tradeofferid">id трейда для принятия</param>
     /// <param name="steamid_other">steamid32 аккаунта, который отослал трейд</param>
     /// <returns>False трейд не принят, но иногда может быть принят, для точности используйте API</returns>
+    [Obsolete("Данный метод переехал в Script.Ajax.tradeoffer_accept_async")]
     public static async Task<(ConfTradeOffer?, SteamTradeError?)> AcceptTradeAsync(DefaultRequest ajaxRequest, ulong tradeofferid, uint steamid_other)
         => await AcceptTradeAsync(ajaxRequest, tradeofferid, Steam32ToSteam64(steamid_other));
     /// <summary>
@@ -933,6 +937,7 @@ public static partial class Steam
     /// <param name="tradeofferid">id трейда для принятия</param>
     /// <param name="steamid_other">steamid32 аккаунта, который отослал трейд</param>
     /// <returns>False трейд не принят, но иногда может быть принят, для точности используйте API</returns>
+    [Obsolete("Данный метод переехал в Script.Ajax.tradeoffer_accept_async")]
     public static async Task<(ConfTradeOffer?, SteamTradeError?)> AcceptTradeAsync(DefaultRequest ajaxRequest, ulong tradeofferid, ulong steamid64)
     {
         var request = new PostRequest("https://steamcommunity.com/tradeoffer/" + tradeofferid + "/accept", Downloader.AppFormUrlEncoded)
