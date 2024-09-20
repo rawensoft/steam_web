@@ -1108,6 +1108,7 @@ public static class Ajax
             return new();
         }
     }
+
     public static async Task<QueueApps> explore_generatenewdiscoveryqueue_async(DefaultRequest defaultRequest, ushort queuetype = 0)
     {
         if (defaultRequest.Session == null)
@@ -1240,6 +1241,7 @@ public static class Ajax
 		return response.Success;
 	}
 
+    [Obsolete("Этот метод работает не так хорошо, как мог бы. Рекомендуется использовать pointssummary_ajaxgetasyncconfig().")]
     public static StoreUserConfig? get_web_token(DefaultRequest defaultRequest)
     {
         var request = new GetRequest(SteamPoweredUrls.SteamAwards)
@@ -1259,6 +1261,7 @@ public static class Ajax
         var obj = JsonSerializer.Deserialize<StoreUserConfig>(data!);
 		return obj;
     }
+
 	public static CStoreSalesService_SetVote_Response? set_vote(string web_token, Proxy? proxy, int voteid, int appid, int sale_appid, CancellationToken? token = null)
 	{
         var requestDetails = new CStoreSalesService_SetVote_Request
