@@ -708,6 +708,43 @@ public static class Ajax
         return obj;
     }
 
+    /// <summary>
+    /// Изменяет язык на steam аккаунте
+    /// </summary>
+    /// <param name="language">язык для смены, пример: russian, english</param>
+    /// <returns>true язык изменён</returns>
+    public static async Task<bool> actions_setlanguage_async(DefaultRequest ajaxRequest, string language)
+    {
+        var request = new PostRequest(SteamCommunityUrls.Actions_SetLanguage, Downloader.AppFormUrlEncoded)
+        {
+            Session = ajaxRequest.Session,
+            Proxy = ajaxRequest.Proxy,
+            CancellationToken = ajaxRequest.CancellationToken,
+        }
+        .AddPostData("language", language).AddPostData("sessionid", ajaxRequest.Session!.SessionID);
+        var response = await Downloader.PostAsync(request);
+        return response.Success;
+    }
+    /// <summary>
+    /// Изменяет язык на steam аккаунте
+    /// </summary>
+    /// <param name="language">язык для смены, пример: russian, english</param>
+    /// <returns>true язык изменён</returns>
+    public static bool actions_setlanguage(DefaultRequest ajaxRequest, string language)
+    {
+        var request = new PostRequest(SteamCommunityUrls.Actions_SetLanguage, Downloader.AppFormUrlEncoded)
+        {
+            Session = ajaxRequest.Session,
+            Proxy = ajaxRequest.Proxy,
+            CancellationToken = ajaxRequest.CancellationToken,
+        }
+        .AddPostData("language", language).AddPostData("sessionid", ajaxRequest.Session!.SessionID);
+        var response = Downloader.Post(request);
+        return response.Success;
+    }
+    #endregion
+
+    #region profile
     public static async Task<ItemGroup[]> profiles_ajaxgroupinvite_async(DefaultRequest defaultRequest)
     {
         string url = $"https://steamcommunity.com/profiles/{defaultRequest.Session!.SteamID}/ajaxgroupinvite?select_primary=1&json=1";

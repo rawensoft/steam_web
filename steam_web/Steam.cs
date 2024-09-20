@@ -288,6 +288,7 @@ public static partial class Steam
     /// </summary>
     /// <param name="language">язык для смены, пример: russian, english</param>
     /// <returns>True язык изменён</returns>
+    [Obsolete("Данный метод переехал в Script.Ajax.actions_setlanguage_async")]
     public static async Task<bool> ChangeLanguageAsync(DefaultRequest ajaxRequest, string language)
     {
         var request = new PostRequest(SteamCommunityUrls.Actions_SetLanguage, Downloader.AppFormUrlEncoded)
@@ -305,6 +306,7 @@ public static partial class Steam
     /// </summary>
     /// <param name="language">язык для смены, пример: russian, english</param>
     /// <returns>True язык изменён</returns>
+    [Obsolete("Данный метод переехал в Script.Ajax.actions_setlanguage")]
     public static bool ChangeLanguage(DefaultRequest ajaxRequest, string language)
     {
         var request = new PostRequest(SteamCommunityUrls.Actions_SetLanguage, Downloader.AppFormUrlEncoded)
