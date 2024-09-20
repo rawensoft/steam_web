@@ -1,7 +1,8 @@
-﻿using Response = SteamWeb.Script.DTO.Response;
-namespace SteamWeb.Script.Models;
+﻿using System.Text.Json.Serialization;
+using Response = SteamWeb.Script.DTO.Response;
 
-public record RecoveryConfirmation : Response
+namespace SteamWeb.Script.Models;
+public class RecoveryConfirmation : Response
 {
-    public bool @continue { get; init; } = false;
+    [JsonPropertyName("continue")] public bool Continue { get; init; } = false;
 }
