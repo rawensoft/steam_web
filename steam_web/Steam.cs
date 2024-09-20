@@ -1031,6 +1031,7 @@ public static partial class Steam
             return new UploadImageResponse() { success = false, message = $"Ошибка при десерилизации данных '{response.Data}'" };
         }
     }
+    [Obsolete("Данный метод более не может нормально парсить страницу CS2: operationquests")]
     public static async Task<OperationProgress> CSGO_OperationProgressAsync(DefaultRequest ajaxRequest)
     {
         string url = $"https://steamcommunity.com/profiles/{ajaxRequest.Session!.SteamID}/gcpd/730/?tab=operationquests";
@@ -1111,6 +1112,7 @@ public static partial class Steam
         }
         return op_progress;
     }
+    [Obsolete("Данный метод более не может нормально парсить страницу CS2: accountmain")]
     public static async Task<AccountMain> CSGO_AccountMainAsync(DefaultRequest ajaxRequest)
     {
         string url = $"https://steamcommunity.com/profiles/{ajaxRequest.Session!.SteamID}/gcpd/730/?tab=accountmain";
@@ -1246,6 +1248,7 @@ public static partial class Steam
         }
         return accountMain;
     }
+    [Obsolete("Данный метод более не может нормально парсить страницу CS2: matchmaking")]
     public static async Task<Matchmaking> CSGO_MatchmakingAsync(DefaultRequest ajaxRequest)
     {
         string url = $"https://steamcommunity.com/profiles/{ajaxRequest.Session!.SteamID}/gcpd/730/?tab=matchmaking";

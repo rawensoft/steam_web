@@ -924,6 +924,7 @@ public static class Ajax
             return new();
         }
     }
+    [Obsolete("Этот метод работает не так хорошо, как мог бы. Рекомендуется использовать API.ILoyaltyRewardsService.GetSummaryAsync().")]
     public static async Task<SteamLoyaltyStore> store_loyalty_store_async(DefaultRequest defaultRequest)
     {
         var request = new GetRequest(SteamPoweredUrls.Points_Shop)
