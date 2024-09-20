@@ -866,6 +866,64 @@ public static class Ajax
         }
     }
 
+    /// <summary>
+    /// Производит регистрацию ключа на аккаунте
+    /// </summary>
+    /// <param name="product_key">Ключ для регистрации</param>
+    /// <returns>Информация о статусе регистрации ключа</returns>
+    public static async Task<AjaxLicense> account_registerkey_async(DefaultRequest ajaxRequest, string product_key)
+    {
+        var request = new PostRequest(SteamPoweredUrls.Account_AjaxRegisterKey, Downloader.AppFormUrlEncoded)
+        {
+            Session = ajaxRequest.Session,
+            Proxy = ajaxRequest.Proxy,
+            Referer = SteamPoweredUrls.Account_RegisterKey,
+            IsAjax = true,
+            CancellationToken = ajaxRequest.CancellationToken,
+        };
+        request.AddPostData("product_key", product_key).AddPostData("sessionid", ajaxRequest.Session!.SessionID);
+        var response = await Downloader.PostAsync(request);
+        if (!response.Success)
+            return new();
+        try
+        {
+            var obj = JsonSerializer.Deserialize<AjaxLicense>(response.Data!)!;
+            return obj;
+        }
+        catch (Exception)
+        {
+            return new();
+        }
+    }
+    /// <summary>
+    /// Производит регистрацию ключа на аккаунте
+    /// </summary>
+    /// <param name="product_key">Ключ для регистрации</param>
+    /// <returns>Информация о статусе регистрации ключа</returns>
+    public static AjaxLicense account_registerkey(DefaultRequest ajaxRequest, string product_key)
+    {
+        var request = new PostRequest(SteamPoweredUrls.Account_AjaxRegisterKey, Downloader.AppFormUrlEncoded)
+        {
+            Session = ajaxRequest.Session,
+            Proxy = ajaxRequest.Proxy,
+            Referer = SteamPoweredUrls.Account_RegisterKey,
+            IsAjax = true,
+            CancellationToken = ajaxRequest.CancellationToken,
+        };
+        request.AddPostData("product_key", product_key).AddPostData("sessionid", ajaxRequest.Session!.SessionID);
+        var response = Downloader.Post(request);
+        if (!response.Success)
+            return new();
+        try
+        {
+            var obj = JsonSerializer.Deserialize<AjaxLicense>(response.Data!)!;
+            return obj;
+        }
+        catch (Exception)
+        {
+            return new();
+        }
+    }
     public static async Task<SteamLoyaltyStore> store_loyalty_store_async(DefaultRequest defaultRequest)
     {
         var request = new GetRequest(SteamPoweredUrls.Points_Shop)

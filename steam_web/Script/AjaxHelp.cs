@@ -24,7 +24,7 @@ public static class AjaxHelp
             IsAjax = true,
             CancellationToken = ajaxRequest.CancellationToken,
         };
-        request.AddPostData("sessionID", ajaxRequest.Session.SessionID).AddPostData("phoneNumber", number);
+        request.AddPostData("sessionID", ajaxRequest.Session!.SessionID).AddPostData("phoneNumber", number);
         var response = await Downloader.PostAsync(request);
         if (!response.Success)
             return new();
@@ -443,8 +443,14 @@ public static class AjaxHelp
             return new();
         }
     }
-    
-    public static async Task<AjaxLicense> AjaxRegisterKey(DefaultRequest ajaxRequest, string product_key)
+
+    /// <summary>
+    /// Производит регистрацию ключа на аккаунте
+    /// </summary>
+    /// <param name="product_key">Ключ для регистрации</param>
+    /// <returns>Информация о статусе регистрации ключа</returns>
+    [Obsolete("Данный метод теперь находится в Ajax.account_registerkey_async")]
+    public static async Task<AjaxLicense> AjaxRegisterKeyAsync(DefaultRequest ajaxRequest, string product_key)
     {
         var request = new PostRequest(SteamPoweredUrls.Account_AjaxRegisterKey, Downloader.AppFormUrlEncoded)
         {
@@ -454,8 +460,38 @@ public static class AjaxHelp
             IsAjax = true,
             CancellationToken = ajaxRequest.CancellationToken,
         };
-        request.AddPostData("product_key", product_key).AddPostData("sessionid", ajaxRequest.Session.SessionID);
+        request.AddPostData("product_key", product_key).AddPostData("sessionid", ajaxRequest.Session!.SessionID);
         var response = await Downloader.PostAsync(request);
+        if (!response.Success)
+            return new();
+        try
+        {
+            var obj = JsonSerializer.Deserialize<AjaxLicense>(response.Data!)!;
+            return obj;
+        }
+        catch (Exception)
+        {
+            return new();
+        }
+    }
+    /// <summary>
+    /// Производит регистрацию ключа на аккаунте
+    /// </summary>
+    /// <param name="product_key">Ключ для регистрации</param>
+    /// <returns>Информация о статусе регистрации ключа</returns>
+    [Obsolete("Данный метод теперь находится в Ajax.account_registerkey")]
+    public static AjaxLicense AjaxRegisterKey(DefaultRequest ajaxRequest, string product_key)
+    {
+        var request = new PostRequest(SteamPoweredUrls.Account_AjaxRegisterKey, Downloader.AppFormUrlEncoded)
+        {
+            Session = ajaxRequest.Session,
+            Proxy = ajaxRequest.Proxy,
+            Referer = SteamPoweredUrls.Account_RegisterKey,
+            IsAjax = true,
+            CancellationToken = ajaxRequest.CancellationToken,
+        };
+        request.AddPostData("product_key", product_key).AddPostData("sessionid", ajaxRequest.Session!.SessionID);
+        var response = Downloader.Post(request);
         if (!response.Success)
             return new();
         try
