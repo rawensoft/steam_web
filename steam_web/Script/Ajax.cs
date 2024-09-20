@@ -442,51 +442,6 @@ public static class Ajax
         }
     }
 
-    public static async Task<Data<WebApiToken>> pointssummary_ajaxgetasyncconfig_async(DefaultRequest defaultRequest)
-    {
-        var request = new GetRequest(SteamCommunityUrls.PointsSummary_AjaxGetAsyncConfig)
-        {
-            Session = defaultRequest.Session,
-            Proxy = defaultRequest.Proxy,
-            CancellationToken = defaultRequest.CancellationToken,
-            Referer = $"https://steamcommunity.com/profiles/" + (defaultRequest.Session?.SteamID ?? 0)
-        };
-        var response = await Downloader.GetAsync(request);
-        if (!response.Success)
-            return new();
-        try
-        {
-            var obj = JsonSerializer.Deserialize<Data<WebApiToken>>(response.Data!)!;
-            return obj;
-        }
-        catch (Exception)
-        {
-            return new();
-        }
-    }
-    public static Data<WebApiToken> pointssummary_ajaxgetasyncconfig(DefaultRequest defaultRequest)
-    {
-        var request = new GetRequest(SteamCommunityUrls.PointsSummary_AjaxGetAsyncConfig)
-        {
-            Session = defaultRequest.Session,
-            Proxy = defaultRequest.Proxy,
-            CancellationToken = defaultRequest.CancellationToken,
-            Referer = $"https://steamcommunity.com/profiles/" + (defaultRequest.Session?.SteamID ?? 0)
-        };
-		var response = Downloader.Get(request);
-        if (!response.Success)
-            return new();
-        try
-        {
-            var obj = JsonSerializer.Deserialize<Data<WebApiToken>>(response.Data!)!;
-            return obj;
-        }
-        catch (Exception)
-        {
-            return new();
-        }
-    }
-
     public static async Task<Listing> market_mylistings_async(DefaultRequest defaultRequest, int count = 100, int start = 0)
     {
         var request = new GetRequest(SteamCommunityUrls.Market_MyListings)
@@ -953,6 +908,50 @@ public static class Ajax
         }
     }
     public static async Task<Success> account_ajaxsetcookiepreferences_async(DefaultRequest defaultRequest, CookiePreferences cookiepreferences)
+    public static async Task<Data<StoreUserConfig>> pointssummary_ajaxgetasyncconfig_async(DefaultRequest defaultRequest)
+    {
+        var request = new GetRequest(SteamCommunityUrls.PointsSummary_AjaxGetAsyncConfig)
+        {
+            Session = defaultRequest.Session,
+            Proxy = defaultRequest.Proxy,
+            CancellationToken = defaultRequest.CancellationToken,
+            Referer = $"https://steamcommunity.com/profiles/" + (defaultRequest.Session?.SteamID ?? 0)
+        };
+        var response = await Downloader.GetAsync(request);
+        if (!response.Success)
+            return new();
+        try
+        {
+            var obj = JsonSerializer.Deserialize<Data<StoreUserConfig>>(response.Data!)!;
+            return obj;
+        }
+        catch (Exception)
+        {
+            return new();
+        }
+    }
+    public static Data<StoreUserConfig> pointssummary_ajaxgetasyncconfig(DefaultRequest defaultRequest)
+    {
+        var request = new GetRequest(SteamCommunityUrls.PointsSummary_AjaxGetAsyncConfig)
+        {
+            Session = defaultRequest.Session,
+            Proxy = defaultRequest.Proxy,
+            CancellationToken = defaultRequest.CancellationToken,
+            Referer = $"https://steamcommunity.com/profiles/" + (defaultRequest.Session?.SteamID ?? 0)
+        };
+        var response = Downloader.Get(request);
+        if (!response.Success)
+            return new();
+        try
+        {
+            var obj = JsonSerializer.Deserialize<Data<StoreUserConfig>>(response.Data!)!;
+            return obj;
+        }
+        catch (Exception)
+        {
+            return new();
+        }
+    }
     {
         if (defaultRequest.Session == null)
             return new();
