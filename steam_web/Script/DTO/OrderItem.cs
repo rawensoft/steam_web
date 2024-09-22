@@ -1,33 +1,24 @@
 ﻿using SteamWeb.Extensions;
 
 namespace SteamWeb.Script.DTO;
-
-public record OrderItem
+public class OrderItem
 {
-    public string Name { get; internal set; }
-    public string Game { get; internal set; }
-    public int Count { get; internal set; }
-    public ulong ID { get; internal set; }
-    public string PriceFull { get; internal set; }
+    public string Name { get; init; }
+    public string Game { get; init; }
+    public ushort Count { get; init; }
+    public ulong Id { get; init; }
+    public string Price { get; init; }
+    public uint AppId { get; init; }
+    public string MarketHashName { get; init; }
+
     /// <summary>
-    /// Возвращает цену в Int32 или -1, если не получилось спарсить
+    /// Парсит строку цены, превращая её, в decimal число
     /// </summary>
-    public int Price
-    {
-        get
-        {
-            if (PriceFull.IsEmpty())
-                return -1;
-            var price = PriceFull.Split(' ')[0];
-            if (int.TryParse(price.Replace(",", "").Replace(".", ""), out int result))
-            {
-                if (!price.Contains(",") && !price.Contains("."))
-                    result *= 100;
-                if (price.Contains(",0 ") || price.Contains(".0 "))
-                    result *= 10;
-                return result;
-            }
-            return -1;
-        }
-    }
+    /// <returns>-1 в случае, если неудалось спарсить, либо цена в decimal формате</returns>
+    public decimal GetDecimalPrice() => Price.ToDecimalPrice();
+    /// <summary>
+    /// Парсит строку цены, превращая её, в uint32 число
+    /// </summary>
+    /// <returns>0 в случае, если неудалось спарсить, либо цена в decimal формате</returns>
+    public uint GetUInt32Price() => Price.ToUInt32Price();
 }

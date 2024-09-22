@@ -105,7 +105,7 @@ public static class SteamIDs
     /// </summary>
     /// <returns>True - взято из файла, Null если неудалось загрузить страницу с предметом</returns>
     public static async Task<(bool, uint)> GetItemIDAsync(ISessionProvider session, Proxy? proxy, ListingItem listing, CancellationToken? cancellationToken = null)
-    => await GetItemIDAsync(session, proxy, listing.AppID, listing.MarketHashName, cancellationToken);
+    => await GetItemIDAsync(session, proxy, listing.AppId, listing.MarketHashName, cancellationToken);
     /// <summary>
     /// Получает item_nameid из файла или извлекает из страницы предмета, если его не оказалось в файле
     /// </summary>
@@ -137,7 +137,7 @@ public static class SteamIDs
     /// </summary>
     /// <returns>True - взято из файла, Null если неудалось загрузить страницу с предметом</returns>
     public static (bool, uint) GetItemID(ISessionProvider session, Proxy? proxy, ListingItem listing, CancellationToken? cancellationToken = null) =>
-        GetItemID(session, proxy, listing.AppID, listing.MarketHashName, cancellationToken);
+        GetItemID(session, proxy, listing.AppId, listing.MarketHashName, cancellationToken);
     /// <summary>
     /// Получает item_nameid из файла или извлекает из страницы предмета, если его не оказалось в файле
     /// </summary>

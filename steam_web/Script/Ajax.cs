@@ -397,6 +397,11 @@ public static class Ajax
         }
     }
 
+    /// <summary>
+    /// Выполняет запрос на получение предметов в листинге и ордеров
+    /// </summary>
+    /// <exception cref="RegexMatchTimeoutException"/>
+    /// <exception cref="InvalidOperationException"/>
     public static async Task<Listing> market_mylistings_async(DefaultRequest defaultRequest, int count = 100, int start = 0)
     {
         var request = new GetRequest(SteamCommunityUrls.Market_MyListings)
@@ -415,6 +420,11 @@ public static class Ajax
             return new();
         return Listing.Deserialize(response.Data!);
     }
+    /// <summary>
+    /// Выполняет запрос на получение предметов в листинге и ордеров
+    /// </summary>
+    /// <exception cref="RegexMatchTimeoutException"/>
+    /// <exception cref="InvalidOperationException"/>
     public static Listing market_mylistings(DefaultRequest defaultRequest, int count = 100, int start = 0)
     {
         var request = new GetRequest(SteamCommunityUrls.Market_MyListings)

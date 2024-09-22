@@ -21,7 +21,7 @@ public class Historing
         data = data.Replace("\"assets\":[]", "\"assets\":{}");
         var obj = JsonSerializer.Deserialize<Listing>(data);
         var html = new HtmlParser();
-        var doc = html.ParseDocument(obj.results_html);
+        var doc = html.ParseDocument(obj.ResultsHtml);
         var el = doc.GetElementsByClassName("market_listing_row");
         var list = new List<HistoryItem>(201);
         for (int i = 0; i < el.Length; i++)
@@ -71,20 +71,20 @@ public class Historing
             {
                 return new Historing()
                 {
-                    pagesize = obj.pagesize,
-                    start = obj.start,
+                    pagesize = obj.PageSize,
+                    start = obj.Start,
                     success = false,
-                    total_count = obj.total_count,
+                    total_count = obj.TotalCount,
                     History = list.ToArray()
                 };
             }
         }
         return new Historing()
         {
-            pagesize = obj.pagesize,
-            start = obj.start,
-            success = obj.success,
-            total_count = obj.total_count,
+            pagesize = obj.PageSize,
+            start = obj.Start,
+            success = obj.Success,
+            total_count = obj.TotalCount,
             History = list.ToArray()
         };
     }

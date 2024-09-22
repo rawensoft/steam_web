@@ -174,3 +174,10 @@ public enum TypeReset : byte
     KTGuard,
     KTEmail
 }
+public enum LISTING_STATUS : byte
+{
+    WaitingConfirmation = 0,
+    InSale = 2,
+    Selled = 4,
+    CreatedOrRemoved = 8,
+}
