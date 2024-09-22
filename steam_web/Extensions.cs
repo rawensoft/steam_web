@@ -5,6 +5,7 @@ using SteamWeb.Models;
 using SteamWeb.Script.Enums;
 using SteamWeb.Script.Models;
 using SteamWeb.Web;
+using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -265,7 +266,7 @@ public static class ExtensionMethods
 	public static byte ToDigitLost(this TypeLost lost) => (byte)lost;
     public static PURCHASE_TYPE ToEnumPurchaseType(this string stringValue)
     {
-        if (stringValue[0].IsDigit())
+        if (char.IsDigit(stringValue[0]))
         {
             try
             {
@@ -334,6 +335,52 @@ public static class ExtensionMethods
         if (!_rgxSteamId3.IsMatch(input))
             return string.Empty;
         return input;
+    }
+    /// <summary>
+    /// Парсит строку цены в decimal число
+    /// </summary>
+    /// <param name="priceString">Любая строка цены, включающая символ валюты и сумму</param>
+    /// <returns>-1 если не удалось определить, либо число</returns>
+    public static decimal ToDecimalPrice(this string? priceString)
+    {
+        if (priceString.IsEmpty())
+            return -1m;
+
+        bool hadLastDigit = false;
+        var sb = new StringBuilder(priceString!.Length);
+        foreach (char ch in priceString)
+        {
+            if (char.IsDigit(ch))
+            {
+                sb.Append(ch);
+                hadLastDigit = true;
+            }
+            else if (hadLastDigit && char.IsPunctuation(ch))
+            {
+                sb.Append('.');
+                hadLastDigit = false;
+            }
+            else
+                hadLastDigit = false;
+        }
+        if (!decimal.TryParse(sb.ToString(), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var decimalValue))
+            return -1m;
+
+        return decimalValue;
+    }
+    /// <summary>
+    /// Парсит строку цены в uin32 число
+    /// </summary>
+    /// <param name="priceString">Любая строка цены, включающая символ валюты и сумму</param>
+    /// <returns>0 если не удалось определить, либо число</returns>
+    public static uint ToUInt32Price(this string? priceString)
+    {
+        decimal price = priceString.ToDecimalPrice();
+        if (price == -1)
+            return 0;
+
+        uint value = (uint)Math.Round(price * 100, 0);
+        return value;
     }
 
     public static AjaxWizardRequest CreateWizard(this DefaultRequest request, string s, string? referer)
