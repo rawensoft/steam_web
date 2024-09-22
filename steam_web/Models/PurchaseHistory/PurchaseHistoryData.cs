@@ -30,7 +30,7 @@ public class PurchaseHistoryData
     public PurchaseHistoryData() { }
     public PurchaseHistoryData(string error) => Error = error;
 
-    internal static PurchaseHistoryData Deserialize(string html)
+    public static PurchaseHistoryData Deserialize(string html)
     {
         HtmlParser parser = new HtmlParser();
         var doc = parser.ParseDocument(html);
@@ -166,7 +166,8 @@ public class PurchaseHistoryData
     }
     private static PurchaseHistoryModel? ParseHistoryModel(IElement tr, HtmlParser parser, CultureInfo cc)
     {
-        const string date_format = "d MMM, yyyy";
+        const string date_format_1 = "d MMM, yyyy";
+        const string date_format_2 = "MMM d, yyyy";
         const string more_history = "more_history";
         const string wht_date_str = "wht_date";
         const string wht_type_str = "wht_type";
@@ -190,7 +191,8 @@ public class PurchaseHistoryData
             return null;
 
         var wht_date = tr.GetElementsByClassName(wht_date_str).First();
-        var objDate = DateOnly.ParseExact(wht_date.TextContent.GetClearWebString()!, date_format, cc);
+        if (!DateOnly.TryParseExact(wht_date.TextContent.GetClearWebString()!, new string[] { date_format_1, date_format_2 }, cc, DateTimeStyles.None, out var objDate))
+            return null;
 
         uint? appId = null;
         ulong? transId = null;
