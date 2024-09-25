@@ -485,7 +485,7 @@ public static class Ajax
         return Historing.Deserialize(response.Data);
     }
 
-    public static async Task<SellItem> market_sellitem_async(DefaultRequest defaultRequest, uint appid, string contextid, string assetid, string amount, int price)
+    public static async Task<SellItem> market_sellitem_async(DefaultRequest defaultRequest, uint appid, byte contextid, ulong assetid, uint amount, uint price)
     {
         var request = new PostRequest(SteamCommunityUrls.Market_SellItem, Downloader.AppFormUrlEncoded)
         {
@@ -503,7 +503,7 @@ public static class Ajax
         var obj = JsonSerializer.Deserialize<SellItem>(response.Data!)!;
         return obj;
     }
-    public static SellItem market_sellitem(DefaultRequest defaultRequest, uint appid, string contextid, string assetid, string amount, int price)
+    public static SellItem market_sellitem(DefaultRequest defaultRequest, uint appid, byte contextid, ulong assetid, uint amount, uint price)
     {
         var request = new PostRequest(SteamCommunityUrls.Market_SellItem, Downloader.AppFormUrlEncoded)
         {
@@ -522,9 +522,9 @@ public static class Ajax
         return obj;
     }
 
-    public static async Task<bool> market_removelisting_async(DefaultRequest defaultRequest, string id, string market_hash_name, uint appid)
+    public static async Task<bool> market_removelisting_async(DefaultRequest defaultRequest, ulong id, string market_hash_name, uint appid)
     {
-        var request = new PostRequest($"https://steamcommunity.com/market/removelisting/" + id, Downloader.AppFormUrlEncoded)
+        var request = new PostRequest(SteamCommunityUrls.Market_RemoveListing + id, Downloader.AppFormUrlEncoded)
         {
             Session = defaultRequest.Session,
             Proxy = defaultRequest.Proxy,
@@ -540,9 +540,9 @@ public static class Ajax
             return true;
         return false;
     }
-    public static bool market_removelisting(DefaultRequest defaultRequest, string id, string market_hash_name, uint appid)
+    public static bool market_removelisting(DefaultRequest defaultRequest, ulong id, string market_hash_name, uint appid)
     {
-        var request = new PostRequest($"https://steamcommunity.com/market/removelisting/{id}", Downloader.AppFormUrlEncoded)
+        var request = new PostRequest(SteamCommunityUrls.Market_RemoveListing + id, Downloader.AppFormUrlEncoded)
         {
             Session = defaultRequest.Session,
             Proxy = defaultRequest.Proxy,
