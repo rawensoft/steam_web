@@ -1,18 +1,20 @@
-﻿namespace SteamWeb.Models;
-public sealed class WalletInfo
+﻿using System.Text.Json.Serialization;
+
+namespace SteamWeb.Models;
+public class WalletInfo
 {
-    public string wallet_country { get; init; }
-    public int wallet_currency { get; init; }
-    public string wallet_state { get; init; }
-    public int wallet_fee { get; init; }
-    public int wallet_fee_minimum { get; init; }
-    public double wallet_fee_percent { get; init; }
-    public double wallet_publisher_fee_percent_default { get; init; }
-    public double wallet_fee_base { get; init; }
-    public int wallet_balance { get; init; }
-    public int wallet_delayed_balance { get; init; }
-    public int wallet_max_balance { get; init; }
-    public int wallet_trade_max_balance { get; init; }
-    public int success { get; init; }
-    public int rwgrsn { get; init; }
+    [JsonPropertyName("wallet_country")] public string? WalletCountry { get; init; }
+    [JsonPropertyName("wallet_currency")] public uint WalletCurrency { get; init; }
+    [JsonPropertyName("wallet_state")] public string? WalletState { get; init; }
+    [JsonPropertyName("wallet_fee")] public uint WalletFee { get; init; }
+    [JsonPropertyName("wallet_fee_minimum")] public uint WalletFeeMinimum { get; init; }
+    [JsonPropertyName("wallet_fee_percent")] public decimal WalletFeePercent { get; init; }
+    [JsonPropertyName("wallet_publisher_fee_percent_default")] public decimal WalletPublisherFeePercentDefault { get; init; }
+    [JsonPropertyName("wallet_fee_base")] public decimal WalletFeeBase { get; init; }
+    [JsonPropertyName("wallet_balance")] public uint WalletBalance { get; init; }
+    [JsonPropertyName("wallet_delayed_balance")] public uint WalletDelayedBalance { get; init; }
+    [JsonPropertyName("wallet_max_balance")] public uint WalletMaxBalance { get; init; }
+    [JsonPropertyName("wallet_trade_max_balance")] public uint WalletTradeMaxBalance { get; init; }
+    [JsonPropertyName("success")] public byte Success { get; init; }
+    [JsonPropertyName("rwgrsn")] public byte Rwgrsn { get; init; }
 }

@@ -1,5 +1,5 @@
 ﻿namespace SteamWeb.Models;
-public record UploadImageResponse
+public class UploadImageResponse
 {
     public bool success { get; init; } = false;
     public ImageItem images { get; init; }

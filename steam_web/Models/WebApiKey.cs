@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 
 namespace SteamWeb.Models;
-public sealed class WebApiKey
+public class WebApiKey
 {
     /// <summary>
     /// Api ключа или заглушка в виде большого количества нулей

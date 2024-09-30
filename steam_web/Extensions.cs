@@ -1,11 +1,9 @@
-﻿using AngleSharp.Text;
-using SteamWeb.Auth.v2.Models;
+﻿using SteamWeb.Auth.v2.Models;
 using SteamWeb.Enums;
 using SteamWeb.Models;
 using SteamWeb.Script.Enums;
 using SteamWeb.Script.Models;
 using SteamWeb.Web;
-using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;

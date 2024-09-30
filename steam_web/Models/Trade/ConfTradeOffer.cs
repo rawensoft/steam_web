@@ -1,20 +1,22 @@
-﻿namespace SteamWeb.Models.Trade;
-public sealed class ConfTradeOffer
+﻿using System.Text.Json.Serialization;
+
+namespace SteamWeb.Models.Trade;
+public class ConfTradeOffer
 {
     /// <summary>
     /// Домен почты, где находиться письмо для подтверждения трейда
     /// </summary>
-    public string? email_domain { get; init; }
+    [JsonPropertyName("email_domain")] public string? EmailDomain { get; init; }
     /// <summary>
     /// Нужно ли подтвердить по почте
     /// </summary>
-    public bool needs_email_confirmation { get; init; }
+    [JsonPropertyName("needs_email_confirmation")] public bool NeedsEmailConfirmation { get; init; } = false;
     /// <summary>
     /// Нужно ли подтвердить на телефоне
     /// </summary>
-    public bool needs_mobile_confirmation { get; init; }
+    [JsonPropertyName("needs_mobile_confirmation")] public bool NeedsMobileConfirmation { get; init; } = false;
     /// <summary>
     /// tradeofferid созданного трейда
     /// </summary>
-    public ulong tradeofferid { get; init; }
+    [JsonPropertyName("tradeofferid")] public ulong TradeOfferId { get; init; }
 }

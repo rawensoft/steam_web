@@ -6,6 +6,7 @@ public class SteamTradeError
 {
     public string? strError { get; init; }
     public int codeError { get; private set; }
+
     internal static int GetCode(string strError)
     {
         var between = strError.GetBetween("(", ")");
@@ -21,7 +22,9 @@ public class SteamTradeError
             steamerror!.codeError = GetCode(steamerror.strError!);
             return steamerror;
         }
-        catch (Exception ex)
-        { return new() { strError = json }; }
+        catch (Exception)
+        {
+            return new() { strError = json };
+        }
     }
 }
