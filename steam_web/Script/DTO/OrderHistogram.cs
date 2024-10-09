@@ -39,7 +39,8 @@ public sealed record OrderHistogram
     public OrderHistogram() { }
     public OrderHistogram(string error)
     {
-        if (error.Contains("<div id=\"status\">E502 L3</div>")) E502L3 = true;
+        if (error.Contains("<div id=\"status\">E502 L3</div>"))
+            E502L3 = true;
         this.error = error;
     }
 
@@ -49,8 +50,9 @@ public sealed record OrderHistogram
     /// <returns>-1 если нет ордеров</returns>
     public float GetMinPriceOrder()
     {
-        if (lowest_sell_order == null) return -1;
-        return float.Parse(lowest_sell_order) / 100;
+        if (lowest_sell_order == null)
+            return -1;
+        return (float)Math.Round(float.Parse(lowest_sell_order) / 100f, 2);
     }
     /// <summary>
     /// Получить указанную цену по индексу
@@ -59,7 +61,8 @@ public sealed record OrderHistogram
     /// <returns>Возвращает 0, если по индекс вышел за пределы массива, иначе цену.</returns>
     public float GetSellPrice(int index = 0)
     {
-        if (Sell_Orders.Length < index + 1) return 0;
+        if (Sell_Orders.Length < index + 1)
+            return 0;
         ref var price = ref Sell_Orders[index][0];
         return (float)price.GetDouble();
     }
@@ -78,7 +81,8 @@ public sealed record OrderHistogram
     /// <returns>Возвращает -1, если по индекс вышел за пределы массива, иначе количество предметов на продаже.</returns>
     public int GetSellCount(int index = 0)
     {
-        if (Sell_Orders.Length < index + 1) return -1;
+        if (Sell_Orders.Length < index + 1)
+            return -1;
         ref var count = ref Sell_Orders[index][1];
         return count.GetInt32();
     }
@@ -89,34 +93,47 @@ public sealed record OrderHistogram
     /// <returns>Возвращает -1, если нет выставленных предметов по заданной цене или количество ордеров 0, иначе количество предметов на продаже.</returns>
     public int GetSellCount(double price)
     {
-        if (Sell_Orders.Length == 0) return -1;
+        if (Sell_Orders.Length == 0)
+            return -1;
         for (int i = 0; i < Sell_Orders.Length; i++)
         {
             ref var item = ref Sell_Orders[i];
             var item_price = item[0].GetDouble();
-            if (item_price == price) return item[1].GetInt32();
+            if (item_price == price)
+                return item[1].GetInt32();
         }
         return -1;
     }
     public int GetAllSellsCount()
     {
-        if (Sell_Orders.Length == 0) return 0;
+        if (Sell_Orders.Length == 0)
+            return 0;
         int count = 0;
-        for (int i = 0; i < Sell_Orders.Length; i++)
-        {
-            count += Sell_Orders[i][1].GetInt32();
-        }
-        return count;
-    }
+        foreach (var item in Sell_Orders)
+			count += item[1].GetInt32();
+		return count;
+	}
+	public Dictionary<float, uint> GetSellOrders()
+	{
+		var dict = new Dictionary<float, uint>(Sell_Orders.Length + 1);
+		foreach (var order in Sell_Orders)
+		{
+			var price = (float)order[0].GetDouble();
+			var count = order[1].GetUInt32();
+			dict.Add(price, count);
+		}
+		return dict;
+	}
 
-    /// <summary>
-    /// Выдаёт Максимальную цену ордера на покупку
-    /// </summary>
-    /// <returns>-1 если нет ордеров</returns>
-    public float GetMaxBuyOrder()
+	/// <summary>
+	/// Выдаёт Максимальную цену ордера на покупку
+	/// </summary>
+	/// <returns>-1 если нет ордеров</returns>
+	public float GetMaxBuyOrder()
     {
-        if (highest_buy_order == null) return -1;
-        return float.Parse(highest_buy_order) / 100;
+        if (highest_buy_order == null)
+            return -1;
+		return (float)Math.Round(float.Parse(highest_buy_order) / 100f, 2);
     }
     /// <summary>
     /// Получить указанную цену по индексу
@@ -125,7 +142,8 @@ public sealed record OrderHistogram
     /// <returns>Возвращает 0, если по индекс вышел за пределы массива, иначе цену.</returns>
     public float GetBuyPrice(int index = 0)
     {
-        if (Buy_Orders.Length < index + 1) return 0;
+        if (Buy_Orders.Length < index + 1)
+            return 0;
         var price = Buy_Orders[index][0];
         return (float)price.GetDouble();
     }
@@ -144,7 +162,8 @@ public sealed record OrderHistogram
     /// <returns>Возвращает -1, если по индекс вышел за пределы массива, иначе количество предметов на покупку.</returns>
     public int GetBuyCount(int index = 0)
     {
-        if (Buy_Orders.Length < index + 1) return -1;
+        if (Buy_Orders.Length < index + 1)
+            return -1;
         ref var count = ref Buy_Orders[index][1];
         return count.GetInt32();
     }
@@ -155,21 +174,35 @@ public sealed record OrderHistogram
     /// <returns>Возвращает -1, если нет запросов на покупку по заданной цене или количество ордеров 0, иначе количество предметов на покупку.</returns>
     public int GetBuyCount(float price)
     {
-        if (Buy_Orders.Length == 0) return -1;
+        if (Buy_Orders.Length == 0)
+            return -1;
         for (int i = 0; i < Buy_Orders.Length; i++)
         {
             ref var item = ref Buy_Orders[i];
             var item_price = item[0].GetDouble();
-            if (item_price == price) return item[1].GetInt32();
+            if (item_price == price)
+                return item[1].GetInt32();
         }
         return -1;
     }
     public int GetAllBuysCount()
     {
-        if (Buy_Orders.Length == 0) return 0;
+        if (Buy_Orders.Length == 0)
+            return 0;
         int count = 0;
         foreach (var item in Buy_Orders)
             count += item[1].GetInt32();
         return count;
+    }
+    public Dictionary<float, uint> GetBuyOrders()
+    {
+        var dict = new Dictionary<float, uint>(Buy_Orders.Length + 1);
+        foreach (var order in Buy_Orders)
+        {
+            var price = (float)order[0].GetDouble();
+			var count = order[1].GetUInt32();
+            dict.Add(price, count);
+		}
+        return dict;
     }
 }

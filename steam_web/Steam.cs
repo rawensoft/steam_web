@@ -2007,23 +2007,27 @@ public static partial class Steam
     /// <param name="receivedAmount"></param>
     /// <param name="publisherFee"></param>
     /// <returns>(steam_fee - стим комса, publisher_fee - комиссия издателя, fees - общая комиссия, amount - сколько в общем должен заплатить пользователь)</returns>
-    public static (int, int, int, int) CalculateAmountToSendForDesiredReceivedAmount(int receivedAmount, float publisherFee = 0.10f)
+    public static (uint, uint, uint, uint) CalculateAmountToSendForDesiredReceivedAmount(int receivedAmount, float publisherFee = 0.10f)
     {
         float wallet_fee_percent = 0.05f;
         float wallet_fee_minimum = 1f;
         int wallet_fee_base = 0;
-        int nSteamFee = (int)Math.Floor(Math.Max(receivedAmount * wallet_fee_percent, wallet_fee_minimum + wallet_fee_base));
-        int nPublisherFee = (int)Math.Floor((double)publisherFee > 0 ? Math.Max(receivedAmount * publisherFee, 1) : 0);
-        int nAmountToSend = receivedAmount + nSteamFee + nPublisherFee;
-        return (nSteamFee, nPublisherFee, nSteamFee + nPublisherFee, nAmountToSend);
+        uint nSteamFee = (uint)Math.Floor(Math.Max(receivedAmount * wallet_fee_percent, wallet_fee_minimum + wallet_fee_base));
+        uint nPublisherFee = (uint)Math.Floor((double)publisherFee > 0 ? Math.Max(receivedAmount * publisherFee, 1) : 0);
+        long nAmountToSend = receivedAmount + nSteamFee + nPublisherFee;
+        return (nSteamFee, nPublisherFee, nSteamFee + nPublisherFee, (uint)nAmountToSend);
     }
-    /// <summary>
-    /// Получить комиссии по указаной цене
-    /// </summary>
-    /// <param name="amount"></param>
-    /// <param name="publisherFee"></param>
-    /// <returns>(steam_fee - стим комса, publisher_fee - комиссия издателя, fees - общая комиссия, amount - сколько в общем должен заплатить пользователь)</returns>
-    public static (int, int, int, int) CalculateFeeAmount(int amount, float publisherFee = 0.10f)
+	/// <summary>
+	/// Получить комиссии по указаной цене
+	/// <code>
+	/// var (_, _, fee, amount) = Steam.CalculateFeeAmount(price_with_coms);
+	/// var price_to_sell_via_market_sellitem = amount - fee;
+	/// </code>
+	/// </summary>
+	/// <param name="amount"></param>
+	/// <param name="publisherFee"></param>
+	/// <returns>(steam_fee - стим комса, publisher_fee - комиссия издателя, fees - общая комиссия, amount - сколько в общем должен заплатить пользователь)</returns>
+	public static (uint, uint, uint, uint) CalculateFeeAmount(int amount, float publisherFee = 0.10f)
     {
         float wallet_fee_percent = 0.05f;
         int wallet_fee_base = 0;
@@ -2033,10 +2037,10 @@ public static partial class Steam
 
         var bEverUndershot = false;
         var fees = CalculateAmountToSendForDesiredReceivedAmount((int)nEstimatedAmountOfWalletFundsReceivedByOtherParty, publisherFee);
-        int fees_steam = fees.Item1;
-        int fees_publisher = fees.Item2;
-        int fees_fees = fees.Item3;
-        int fees_amount = fees.Item4;
+        long fees_steam = fees.Item1;
+		long fees_publisher = fees.Item2;
+		long fees_fees = fees.Item3;
+		long fees_amount = fees.Item4;
 
         while (fees_amount != amount && iterations < 10)
         {

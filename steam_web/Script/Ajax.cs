@@ -563,12 +563,12 @@ public static class Ajax
     {
         var getRequest = new GetRequest(SteamCommunityUrls.Market_ItemOrdersHistogram, request.Proxy, request.Session)
         {
-            Referer = $"https://steamcommunity.com/market/listings/{request.AppID}/{Uri.EscapeDataString(request.Market_Hash_Name)}",
+            Referer = $"https://steamcommunity.com/market/listings/{request.AppId}/{Uri.EscapeDataString(request.MarketHashName)}",
             IsAjax = true,
             CancellationToken = request.CancellationToken
 		};
         getRequest.AddQuery("country", request.Country).AddQuery("language", request.Language).AddQuery("currency", request.Currency)
-            .AddQuery("item_nameid", request.Item_Nameid).AddQuery("two_factor", request.Two_Factor);
+            .AddQuery("item_nameid", request.Item_NameId).AddQuery("two_factor", request.TwoFactor);
         if (request.Timeout > 0)
             getRequest.Timeout = request.Timeout;
         var response = await Downloader.GetAsync(getRequest);
@@ -581,12 +581,12 @@ public static class Ajax
     {
         var getRequest = new GetRequest(SteamCommunityUrls.Market_ItemOrdersHistogram, request.Proxy, request.Session)
         {
-            Referer = $"https://steamcommunity.com/market/listings/{request.AppID}/{Uri.EscapeDataString(request.Market_Hash_Name)}",
+            Referer = $"https://steamcommunity.com/market/listings/{request.AppId}/{Uri.EscapeDataString(request.MarketHashName)}",
             IsAjax = true,
 			CancellationToken = request.CancellationToken
 		};
         getRequest.AddQuery("country", request.Country).AddQuery("language", request.Language).AddQuery("currency", request.Currency)
-            .AddQuery("item_nameid", request.Item_Nameid).AddQuery("two_factor", request.Two_Factor);
+            .AddQuery("item_nameid", request.Item_NameId).AddQuery("two_factor", request.TwoFactor);
         if (request.Timeout > 0)
             getRequest.Timeout = request.Timeout;
         var response = Downloader.Get(getRequest);
