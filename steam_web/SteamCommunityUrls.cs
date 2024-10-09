@@ -16,7 +16,8 @@ internal static class SteamCommunityUrls
     public const string Dev_RequestKey = "https://steamcommunity.com/dev/requestkey";
     public const string Market_EligibilityCheck = "https://steamcommunity.com/market/eligibilitycheck/?goto=%2Fmy%2Ftradeoffers%2Fprivacy";
     public const string Market_Listings = "https://steamcommunity.com/market/listings";
-    public const string Market_PriceOverview = "https://steamcommunity.com/market/priceoverview";
+    public const string Market_BuyListing = "https://steamcommunity.com/market/buylisting/";
+	public const string Market_PriceOverview = "https://steamcommunity.com/market/priceoverview";
     public const string Market_Search_Render = "https://steamcommunity.com/market/search/render";
     public const string Market_MyListings = "https://steamcommunity.com/market/mylistings";
     public const string Market = "https://steamcommunity.com/market";

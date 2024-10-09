@@ -506,6 +506,56 @@ public static class Ajax
 		return obj;
 	}
 
+	/// <exception cref="JsonException"/>
+	/// <exception cref="NotSupportedException"/>
+	public static WalletInfo market_buylisting(DefaultRequest defaultRequest, ItemRenderListing renderRequest, ushort quantity = 1, string? billing_state = null, bool save_my_address = false)
+	{
+		var request = new PostRequest(SteamCommunityUrls.Market_BuyListing + renderRequest.ListingId, Downloader.AppFormUrlEncoded)
+		{
+			Session = defaultRequest.Session,
+			Proxy = defaultRequest.Proxy,
+			IsAjax = true,
+			CancellationToken = defaultRequest.CancellationToken,
+			Referer = SteamCommunityUrls.Market_Listings + "/" + renderRequest.PublisherFeeApp + "/",
+		};
+		request.AddPostData("sessionid", defaultRequest.Session!.SessionID, false).AddPostData("currency", renderRequest.CurrencyId - 2000)
+            .AddPostData("subtotal", renderRequest.Price).AddPostData("fee", renderRequest.Fee).AddPostData("total", renderRequest.TotalPrice)
+			.AddPostData("quantity", quantity).AddPostData("save_my_address", save_my_address ? 1 : 0);
+        if (!billing_state.IsEmpty())
+            request.AddPostData("billing_state", Uri.UnescapeDataString(billing_state!), false);
+
+		var response = Downloader.Post(request);
+		if (!response.Success)
+			return new();
+
+		var obj = JsonSerializer.Deserialize<WalletInfo>(response.Data!, Steam.JsonOptions)!;
+		return obj;
+	}
+	/// <exception cref="JsonException"/>
+	/// <exception cref="NotSupportedException"/>
+	public static async Task<WalletInfo> market_buylisting_async(DefaultRequest defaultRequest, ItemRenderListing renderRequest, ushort quantity = 1, string? billing_state = null, bool save_my_address = false)
+	{
+		var request = new PostRequest(SteamCommunityUrls.Market_BuyListing + renderRequest.ListingId, Downloader.AppFormUrlEncoded)
+		{
+			Session = defaultRequest.Session,
+			Proxy = defaultRequest.Proxy,
+			IsAjax = true,
+			CancellationToken = defaultRequest.CancellationToken,
+			Referer = SteamCommunityUrls.Market_Listings + "/" + renderRequest.PublisherFeeApp + "/",
+		};
+		request.AddPostData("sessionid", defaultRequest.Session!.SessionID, false).AddPostData("currency", renderRequest.CurrencyId - 2000)
+			.AddPostData("subtotal", renderRequest.Price).AddPostData("fee", renderRequest.Fee).AddPostData("total", renderRequest.TotalPrice)
+			.AddPostData("quantity", quantity).AddPostData("save_my_address", save_my_address ? 1 : 0);
+		if (!billing_state.IsEmpty())
+			request.AddPostData("billing_state", Uri.UnescapeDataString(billing_state!), false);
+
+		var response = await Downloader.PostAsync(request);
+		if (!response.Success)
+			return new();
+
+		var obj = JsonSerializer.Deserialize<WalletInfo>(response.Data!, Steam.JsonOptions)!;
+		return obj;
+	}
 
 	public static async Task<Historing> market_myhistory_async(DefaultRequest defaultRequest, int start = 0, int count = 200)
     {
