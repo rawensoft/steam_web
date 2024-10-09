@@ -11,7 +11,7 @@ public static class SteamIDs
     /// <summary>
     /// Key - Market Hash Name, Value - SteamID
     /// </summary>
-    private static Dictionary<string, uint> mSteamIDs = new(30000);
+    private static Dictionary<string, ulong> mSteamIDs = new(30000);
     private static bool _isKeepInRAM = false;
     /// <summary>
     /// Хранить и читать данные в оперативной памяти, а не в файле. При изменении значения очищает данные с item_nameid.
@@ -61,7 +61,7 @@ public static class SteamIDs
                     {
                         var splitted = str!.Split('=');
                         var name = splitted[0];
-                        var item_nameid = splitted[1].ParseUInt32();
+                        var item_nameid = splitted[1].ParseUInt64();
                         mSteamIDs.TryAdd(name, item_nameid);
 
                         str = sr.ReadLine();
@@ -104,7 +104,7 @@ public static class SteamIDs
     /// Получает item_nameid из файла или извлекает из страницы предмета, если его не оказалось в файле
     /// </summary>
     /// <returns>True - взято из файла, Null если неудалось загрузить страницу с предметом</returns>
-    public static async Task<(bool, uint)> GetItemIDAsync(ISessionProvider session, Proxy? proxy, ListingItem listing, CancellationToken? cancellationToken = null)
+    public static async Task<(bool, ulong)> GetItemIDAsync(ISessionProvider session, Proxy? proxy, ListingItem listing, CancellationToken? cancellationToken = null)
     => await GetItemIDAsync(session, proxy, listing.AppId, listing.MarketHashName, cancellationToken);
     /// <summary>
     /// Получает item_nameid из файла или извлекает из страницы предмета, если его не оказалось в файле
@@ -112,7 +112,7 @@ public static class SteamIDs
     /// <param name="appid">ID приложения\\игры</param>
     /// <param name="market_hash_name">Название предмета</param>
     /// <returns>True - взято из файла, Null если неудалось загрузить страницу с предметом</returns>
-    public static async Task<(bool, uint)> GetItemIDAsync(ISessionProvider session, Proxy? proxy, uint appid, string market_hash_name, CancellationToken? cancellationToken = null)
+    public static async Task<(bool, ulong)> GetItemIDAsync(ISessionProvider session, Proxy? proxy, uint appid, string market_hash_name, CancellationToken? cancellationToken = null)
     {
         var items = mSteamIDs;
         if (items.TryGetValue(market_hash_name, out var item_nameid))
@@ -127,7 +127,7 @@ public static class SteamIDs
         if (market_item.item_nameid != null)
         {
             AddItemID(market_hash_name, market_item.item_nameid);
-            return (false, market_item.item_nameid.ParseUInt32());
+            return (false, market_item.item_nameid.ParseUInt64());
         }
         return (false, 0);
     }
@@ -136,7 +136,7 @@ public static class SteamIDs
     /// Получает item_nameid из файла или извлекает из страницы предмета, если его не оказалось в файле
     /// </summary>
     /// <returns>True - взято из файла, Null если неудалось загрузить страницу с предметом</returns>
-    public static (bool, uint) GetItemID(ISessionProvider session, Proxy? proxy, ListingItem listing, CancellationToken? cancellationToken = null) =>
+    public static (bool, ulong) GetItemID(ISessionProvider session, Proxy? proxy, ListingItem listing, CancellationToken? cancellationToken = null) =>
         GetItemID(session, proxy, listing.AppId, listing.MarketHashName, cancellationToken);
     /// <summary>
     /// Получает item_nameid из файла или извлекает из страницы предмета, если его не оказалось в файле
@@ -144,7 +144,7 @@ public static class SteamIDs
     /// <param name="appid">ID приложения\\игры</param>
     /// <param name="market_hash_name">Название предмета</param>
     /// <returns>True - взято из файла, Null если не удалось загрузить страницу с предметом</returns>
-    public static (bool, uint) GetItemID(ISessionProvider session, Proxy? proxy, uint appid, string market_hash_name, CancellationToken? cancellationToken = null)
+    public static (bool, ulong) GetItemID(ISessionProvider session, Proxy? proxy, uint appid, string market_hash_name, CancellationToken? cancellationToken = null)
     {
         var items = mSteamIDs;
         if (items.TryGetValue(market_hash_name, out var item_nameid))
@@ -159,7 +159,7 @@ public static class SteamIDs
         if (market_item.item_nameid != null)
         {
             AddItemID(market_hash_name, market_item.item_nameid);
-            return (false, market_item.item_nameid?.ParseUInt32() ?? 0);
+            return (false, market_item.item_nameid?.ParseUInt64() ?? 0);
         }
         return (false, 0);
     }
@@ -169,7 +169,7 @@ public static class SteamIDs
     /// </summary>
     /// <param name="market_hash_name">Название предмета</param>
     /// <returns>Null если данных для этого предмета нет</returns>
-    public static uint GetItemIDLocal(string market_hash_name)
+    public static ulong GetItemIDLocal(string market_hash_name)
     {
         if (!IsKeepInRAM)
         {
@@ -180,7 +180,7 @@ public static class SteamIDs
             return item_nameid;
         return 0;
     }
-    public static bool TryAddItemID(string market_hash_name, uint item_nameid, bool afterSave)
+    public static bool TryAddItemID(string market_hash_name, ulong item_nameid, bool afterSave)
     {
         lock (_locker)
         {
@@ -197,7 +197,7 @@ public static class SteamIDs
         return true;
     }
 
-    private static uint GetItemID(string market_hash_name, CancellationToken? cancellationToken = null)
+    private static ulong GetItemID(string market_hash_name, CancellationToken? cancellationToken = null)
     {
         if (File.Exists(PathToSteamIDsFile))
         {
@@ -218,7 +218,7 @@ public static class SteamIDs
                     if (splitted[0] != market_hash_name)
                         continue;
 
-                    return splitted[1].ParseUInt32();
+                    return splitted[1].ParseUInt64();
                 }
             }
             catch (Exception)
