@@ -28,6 +28,7 @@ internal static class SteamCommunityUrls
     public const string Market_RemoveListing = "https://steamcommunity.com/market/removelisting/";
 	public const string Market_CancelBuyOrder = "https://steamcommunity.com/market/cancelbuyorder/";
 	public const string Market_CreateBuyOrder = "https://steamcommunity.com/market/createbuyorder/";
+	public const string Market_GetBuyOrderStatus = "https://steamcommunity.com/market/getbuyorderstatus/";
 	public const string PointsSummary_AjaxGetAsyncConfig = "https://steamcommunity.com/pointssummary/ajaxgetasyncconfig";
     public const string MobileConf_GetList = "https://steamcommunity.com/mobileconf/getlist";
     public const string SharedFiles_UnsubscribeAll = "https://steamcommunity.com/sharedfiles/unsubscribeall/";

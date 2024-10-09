@@ -1,7 +1,8 @@
-﻿namespace SteamWeb.Script.DTO;
+﻿using System.Text.Json.Serialization;
 
-public class DataOrder: Success
+namespace SteamWeb.Script.DTO;
+public class DataOrder: ResponseSuccess
 {
-	public ulong buy_orderid { get; init; }
-	public string message { get; init; }
+	[JsonPropertyName("buy_orderid")] public ulong BuyOrderId { get; init; }
+	[JsonPropertyName("message")] public string? Message { get; init; }
 }

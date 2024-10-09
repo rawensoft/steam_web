@@ -191,7 +191,7 @@ public static class Ajax
     #endregion
 
     #region market
-    public static Success market_cancelbuyorder(DefaultRequest defaultRequest, ulong buy_orderid)
+    public static ResponseSuccess market_cancelbuyorder(DefaultRequest defaultRequest, ulong buy_orderid)
 	{
 		var request = new PostRequest(SteamCommunityUrls.Market_CancelBuyOrder, Downloader.AppFormUrlEncoded)
         {
@@ -209,7 +209,7 @@ public static class Ajax
 			return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Success>(response.Data!)!;
+            var obj = JsonSerializer.Deserialize<ResponseSuccess>(response.Data!)!;
             return obj;
         }
         catch (Exception)
@@ -217,7 +217,7 @@ public static class Ajax
             return new();
         }
     }
-	public static async Task<Success> market_cancelbuyorder_async(DefaultRequest defaultRequest, ulong buy_orderid)
+	public static async Task<ResponseSuccess> market_cancelbuyorder_async(DefaultRequest defaultRequest, ulong buy_orderid)
 	{
 		var request = new PostRequest(SteamCommunityUrls.Market_CancelBuyOrder, Downloader.AppFormUrlEncoded)
         {
@@ -235,7 +235,7 @@ public static class Ajax
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Success>(response.Data!)!;
+            var obj = JsonSerializer.Deserialize<ResponseSuccess>(response.Data!)!;
             return obj;
         }
         catch (Exception)
@@ -244,7 +244,7 @@ public static class Ajax
         }
     }
 
-	public static DataOrder market_createbuyorder(DefaultRequest defaultRequest, int currency, uint appid, string market_hash_name, int price_total, ushort quantity)
+	public static DataOrder market_createbuyorder(DefaultRequest defaultRequest, byte currency, uint appid, string market_hash_name, int price_total, ushort quantity)
 	{
 		var request = new PostRequest(SteamCommunityUrls.Market_CreateBuyOrder, Downloader.AppFormUrlEncoded)
         {
@@ -252,27 +252,23 @@ public static class Ajax
             Proxy = defaultRequest.Proxy,
             IsAjax = true,
             CancellationToken = defaultRequest.CancellationToken,
-            Referer = SteamCommunityUrls.Market_Listings + $"/{appid}/" + Regex.Escape(market_hash_name),
+            Referer = SteamCommunityUrls.Market_Listings + "/" + appid + "/" + Uri.UnescapeDataString(market_hash_name),
             UseVersion2 = true
 		};
 		request.AddPostData("sessionid", defaultRequest.Session!.SessionID);
 		request.AddPostData("currency", currency);
 		request.AddPostData("appid", appid);
-		request.AddPostData("market_hash_name", HttpUtility.UrlEncode(market_hash_name), false);
+		request.AddPostData("market_hash_name", Uri.UnescapeDataString(market_hash_name), false);
 		request.AddPostData("price_total", price_total);
 		request.AddPostData("quantity", quantity);
-		request.AddPostData("billing_state", "");
+		request.AddPostData("billing_state", string.Empty);
 		request.AddPostData("save_my_address", 0);
 		var response = Downloader.Post(request);
 		if (!response.Success)
 			return new();
 		try
 		{
-			var options = new JsonSerializerOptions
-			{
-				NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
-			};
-			var obj = JsonSerializer.Deserialize<DataOrder>(response.Data!, options);
+			var obj = JsonSerializer.Deserialize<DataOrder>(response.Data!, Steam.JsonOptions);
 			return obj!;
 		}
 		catch (Exception)
@@ -283,21 +279,21 @@ public static class Ajax
 	public static async Task<DataOrder> market_createbuyorder_async(DefaultRequest defaultRequest, int currency, uint appid, string market_hash_name, int price_total, ushort quantity)
 	{
 		var request = new PostRequest(SteamCommunityUrls.Market_CreateBuyOrder, Downloader.AppFormUrlEncoded)
-        {
-            Session = defaultRequest.Session,
-            Proxy = defaultRequest.Proxy,
-            IsAjax = true,
-            CancellationToken = defaultRequest.CancellationToken,
-            Referer = SteamCommunityUrls.Market_Listings + $"/{appid}/" + Regex.Escape(market_hash_name),
-            UseVersion2 = true,
+		{
+			Session = defaultRequest.Session,
+			Proxy = defaultRequest.Proxy,
+			IsAjax = true,
+			CancellationToken = defaultRequest.CancellationToken,
+			Referer = SteamCommunityUrls.Market_Listings + "/" + appid + "/" + Uri.UnescapeDataString(market_hash_name),
+			UseVersion2 = true
 		};
 		request.AddPostData("sessionid", defaultRequest.Session!.SessionID);
 		request.AddPostData("currency", currency);
 		request.AddPostData("appid", appid);
-		request.AddPostData("market_hash_name", HttpUtility.UrlEncode(market_hash_name), false);
+		request.AddPostData("market_hash_name", Uri.UnescapeDataString(market_hash_name), false);
 		request.AddPostData("price_total", price_total);
 		request.AddPostData("quantity", quantity);
-		request.AddPostData("billing_state", "");
+		request.AddPostData("billing_state", string.Empty);
 		request.AddPostData("save_my_address", 0);
 		var response = await Downloader.PostAsync(request);
 		if (!response.Success)
@@ -554,6 +550,49 @@ public static class Ajax
 			return new();
 
 		var obj = JsonSerializer.Deserialize<WalletInfo>(response.Data!, Steam.JsonOptions)!;
+		return obj;
+	}
+
+	/// <exception cref="JsonException"/>
+	/// <exception cref="NotSupportedException"/>
+	public static BuyOrderStatusResponse market_getbuyorderstatus(DefaultRequest defaultRequest, ulong buy_orderid)
+	{
+		var request = new GetRequest(SteamCommunityUrls.Market_GetBuyOrderStatus)
+		{
+			Session = defaultRequest.Session,
+			Proxy = defaultRequest.Proxy,
+			IsAjax = true,
+			CancellationToken = defaultRequest.CancellationToken,
+			Referer = SteamCommunityUrls.Market_Listings,
+		};
+		request.AddQuery("sessionid", defaultRequest.Session!.SessionID, false).AddQuery("buy_orderid", buy_orderid);
+
+		var response = Downloader.Get(request);
+		if (!response.Success)
+			return new();
+
+		var obj = JsonSerializer.Deserialize<BuyOrderStatusResponse>(response.Data!, Steam.JsonOptions)!;
+		return obj;
+	}
+	/// <exception cref="JsonException"/>
+	/// <exception cref="NotSupportedException"/>
+	public static async Task<BuyOrderStatusResponse> market_getbuyorderstatus_async(DefaultRequest defaultRequest, ulong buy_orderid)
+	{
+		var request = new GetRequest(SteamCommunityUrls.Market_GetBuyOrderStatus)
+		{
+			Session = defaultRequest.Session,
+			Proxy = defaultRequest.Proxy,
+			IsAjax = true,
+			CancellationToken = defaultRequest.CancellationToken,
+			Referer = SteamCommunityUrls.Market_Listings,
+		};
+		request.AddQuery("sessionid", defaultRequest.Session!.SessionID, false).AddQuery("buy_orderid", buy_orderid);
+
+		var response = await Downloader.GetAsync(request);
+		if (!response.Success)
+			return new();
+
+		var obj = JsonSerializer.Deserialize<BuyOrderStatusResponse>(response.Data!, Steam.JsonOptions)!;
 		return obj;
 	}
 
@@ -968,7 +1007,7 @@ public static class Ajax
     #endregion
 
     #region account
-    public static async Task<Success> account_ajaxsetcookiepreferences_async(DefaultRequest defaultRequest, CookiePreferences cookiepreferences)
+    public static async Task<ResponseSuccess> account_ajaxsetcookiepreferences_async(DefaultRequest defaultRequest, CookiePreferences cookiepreferences)
     {
         if (defaultRequest.Session == null)
             return new();
@@ -985,7 +1024,7 @@ public static class Ajax
             response.Data!.Contains("btn_blue_steamui btn_medium login_btn")) return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Success>(HttpUtility.HtmlDecode(response.Data))!;
+            var obj = JsonSerializer.Deserialize<ResponseSuccess>(HttpUtility.HtmlDecode(response.Data))!;
             return obj;
         }
         catch (Exception)
@@ -993,7 +1032,7 @@ public static class Ajax
             return new();
         }
     }
-    public static Success account_ajaxsetcookiepreferences(DefaultRequest defaultRequest, CookiePreferences cookiepreferences)
+    public static ResponseSuccess account_ajaxsetcookiepreferences(DefaultRequest defaultRequest, CookiePreferences cookiepreferences)
     {
         if (defaultRequest.Session == null)
             return new();
@@ -1011,7 +1050,7 @@ public static class Ajax
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Success>(HttpUtility.HtmlDecode(response.Data))!;
+            var obj = JsonSerializer.Deserialize<ResponseSuccess>(HttpUtility.HtmlDecode(response.Data))!;
             return obj;
         }
         catch (Exception)
@@ -1167,7 +1206,7 @@ public static class Ajax
         {
             // выполняем десерилизацию потому что присылают пустой объект
             // так мы понимаем что запрос точно прошёл
-            _ = JsonSerializer.Deserialize<Success>(response.Data!)!;
+            _ = JsonSerializer.Deserialize<ResponseSuccess>(response.Data!)!;
             return new() { Success = true };
         }
         catch (Exception)
@@ -1196,7 +1235,7 @@ public static class Ajax
         {
             // выполняем десерилизацию потому что присылают пустой объект
             // так мы понимаем что запрос точно прошёл
-            _ = JsonSerializer.Deserialize<Success>(response.Data!)!;
+            _ = JsonSerializer.Deserialize<ResponseSuccess>(response.Data!)!;
             return new() { Success = true };
         }
         catch (Exception)
