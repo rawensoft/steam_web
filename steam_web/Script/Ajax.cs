@@ -16,6 +16,7 @@ using SteamWeb.Models;
 using SteamWeb.Models.PurchaseHistory;
 using SteamWeb.API.Models.IEconService;
 using SteamWeb.Models.Trade;
+using SteamWeb.Script.DTO.ItemRender;
 
 namespace SteamWeb.Script;
 /// <summary>
@@ -442,9 +443,71 @@ public static class Ajax
         if (!response.Success)
             return new();
         return Listing.Deserialize(response.Data!);
-    }
+	}
 
-    public static async Task<Historing> market_myhistory_async(DefaultRequest defaultRequest, int start = 0, int count = 200)
+	/// <exception cref="JsonException"/>
+	/// <exception cref="NotSupportedException"/>
+	public static ItemRenderResponse market_listings_render(ItemRenderRequest renderRequest)
+	{
+        var url = Path.Join(SteamCommunityUrls.Market_Listings, renderRequest.AppId.ToString(), Uri.UnescapeDataString(renderRequest.MarketHashName), "render");
+		var request = new GetRequest(url)
+		{
+			Session = renderRequest.DefaultRequest.Session,
+			Proxy = renderRequest.DefaultRequest.Proxy,
+			IsAjax = true,
+			CancellationToken = renderRequest.DefaultRequest.CancellationToken,
+			Referer = SteamCommunityUrls.Market,
+		};
+		if (!renderRequest.Query.IsEmpty())
+			request.AddQuery("query", Uri.EscapeDataString(renderRequest.Query!), false);
+		if (!renderRequest.Country.IsEmpty())
+			request.AddQuery("country", Uri.EscapeDataString(renderRequest.Country!), false);
+		if (!renderRequest.Language.IsEmpty())
+			request.AddQuery("language", Uri.EscapeDataString(renderRequest.Language!), false);
+		request.AddQuery("count", renderRequest.Count);
+		request.AddQuery("start", renderRequest.Start);
+		request.AddQuery("currency", renderRequest.Currency);
+
+		var response = Downloader.Get(request);
+		if (!response.Success)
+			return new();
+
+		var obj = JsonSerializer.Deserialize<ItemRenderResponse>(response.Data!, Steam.JsonOptions)!;
+		return obj;
+	}
+	/// <exception cref="JsonException"/>
+	/// <exception cref="NotSupportedException"/>
+	public static async Task<ItemRenderResponse> market_listings_render_async(ItemRenderRequest renderRequest)
+	{
+		var url = Path.Join(SteamCommunityUrls.Market_Listings, renderRequest.AppId.ToString(), Uri.UnescapeDataString(renderRequest.MarketHashName), "render");
+		var request = new GetRequest(url)
+		{
+			Session = renderRequest.DefaultRequest.Session,
+			Proxy = renderRequest.DefaultRequest.Proxy,
+			IsAjax = true,
+			CancellationToken = renderRequest.DefaultRequest.CancellationToken,
+			Referer = SteamCommunityUrls.Market,
+		};
+		if (!renderRequest.Query.IsEmpty())
+			request.AddQuery("query", Uri.EscapeDataString(renderRequest.Query!), false);
+		if (!renderRequest.Country.IsEmpty())
+			request.AddQuery("country", Uri.EscapeDataString(renderRequest.Country!), false);
+		if (!renderRequest.Language.IsEmpty())
+			request.AddQuery("language", Uri.EscapeDataString(renderRequest.Language!), false);
+		request.AddQuery("count", renderRequest.Count);
+		request.AddQuery("start", renderRequest.Start);
+		request.AddQuery("currency", renderRequest.Currency);
+
+		var response = await Downloader.GetAsync(request);
+		if (!response.Success)
+			return new();
+
+        var obj = JsonSerializer.Deserialize<ItemRenderResponse>(response.Data!, Steam.JsonOptions)!;
+		return obj;
+	}
+
+
+	public static async Task<Historing> market_myhistory_async(DefaultRequest defaultRequest, int start = 0, int count = 200)
     {
         // count - При любом значении, присылают не все данные
         var request = new GetRequest(SteamCommunityUrls.Market_MyHistory_Render)
