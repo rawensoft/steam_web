@@ -18,6 +18,7 @@ using SessionDatav2 = SteamWeb.Auth.v2.Models.SessionData;
 using UserLoginv2 = SteamWeb.Auth.v2.UserLogin;
 using SteamGuardAccuntv2 = SteamWeb.Auth.v2.SteamGuardAccount;
 using SteamWeb.Models.PurchaseHistory;
+using AngleSharp.Dom;
 
 namespace SteamWeb;
 
@@ -330,11 +331,14 @@ public static partial class Steam
     /// <returns>Полученные данные</returns>
     public static async Task<AboutProfile> Get2FAAsync(DefaultRequest ajaxRequest)
     {
-        var response = await Downloader.GetAsync(new(SteamPoweredUrls.Account, ajaxRequest.Proxy, ajaxRequest.Session)
+        var request = new GetRequest(SteamPoweredUrls.Account, ajaxRequest.Proxy, ajaxRequest.Session)
         {
             CancellationToken = ajaxRequest.CancellationToken,
-        });
-        if (!response.Success)
+        };
+        request.AddQuery("l", "english");
+		var response = await Downloader.GetAsync(request);
+
+		if (!response.Success)
             return new();
         return AboutProfile.Deserialize(response.Data!);
     }
@@ -343,12 +347,14 @@ public static partial class Steam
     /// </summary>
     /// <returns>Полученные данные</returns>
     public static AboutProfile Get2FA(DefaultRequest ajaxRequest)
-    {
-        var response = Downloader.Get(new(SteamPoweredUrls.Account, ajaxRequest.Proxy, ajaxRequest.Session)
-        {
-            CancellationToken = ajaxRequest.CancellationToken,
-        });
-        if (!response.Success)
+	{
+		var request = new GetRequest(SteamPoweredUrls.Account, ajaxRequest.Proxy, ajaxRequest.Session)
+		{
+			CancellationToken = ajaxRequest.CancellationToken,
+		};
+		request.AddQuery("l", "english");
+		var response = Downloader.Get(request);
+		if (!response.Success)
             return new();
         return AboutProfile.Deserialize(response.Data!);
     }
@@ -359,10 +365,12 @@ public static partial class Steam
     /// <returns>Спарсенные данные со страницы</returns>
     public static async Task<WebApiKey> GetWebAPIKeyAsync(DefaultRequest ajaxRequest)
     {
-		var response = await Downloader.GetAsync(new(SteamCommunityUrls.Dev_APIKey, ajaxRequest.Proxy, ajaxRequest.Session)
+        var request = new GetRequest(SteamCommunityUrls.Dev_APIKey, ajaxRequest.Proxy, ajaxRequest.Session)
         {
             CancellationToken = ajaxRequest.CancellationToken,
-        });
+        };
+        request.AddQuery("l", "english");
+		var response = await Downloader.GetAsync(request);
 		if (!response.Success)
 			return new WebApiKey(response.Data!);
 		else if (response.Data == "<!DOCTYPE html>")
@@ -415,12 +423,14 @@ public static partial class Steam
 	/// </summary>
 	/// <returns>Спарсенные данные со страницы</returns>
 	public static WebApiKey GetWebAPIKey(DefaultRequest ajaxRequest)
-    {
-        var response = Downloader.Get(new(SteamCommunityUrls.Dev_APIKey, ajaxRequest.Proxy, ajaxRequest.Session)
-        {
-            CancellationToken = ajaxRequest.CancellationToken,
-        });
-        if (!response.Success)
+	{
+		var request = new GetRequest(SteamCommunityUrls.Dev_APIKey, ajaxRequest.Proxy, ajaxRequest.Session)
+		{
+			CancellationToken = ajaxRequest.CancellationToken,
+		};
+		request.AddQuery("l", "english");
+		var response = Downloader.Get(request);
+		if (!response.Success)
             return new WebApiKey(response.Data!);
         else if (response.Data == "<!DOCTYPE html>")
         {
@@ -778,10 +788,12 @@ public static partial class Steam
 
         market_hash_name = Uri.EscapeDataString(market_hash_name).Replace("%27", "'").Replace("?", "%3F").Replace("%E2%98%85", "★").Replace("%E2%84%A2", "™");
         string url = Path.Combine(SteamCommunityUrls.Market_Listings, appId.ToString(), market_hash_name);
-        var response = await Downloader.GetAsync(new(url, ajaxRequest.Proxy, ajaxRequest.Session)
-        {
-            CancellationToken = ajaxRequest.CancellationToken
-        });
+        var request = new GetRequest(url, ajaxRequest.Proxy, ajaxRequest.Session)
+		{
+			CancellationToken = ajaxRequest.CancellationToken
+		};
+		request.AddQuery("l", "english");
+		var response = await Downloader.GetAsync(request);
 
         if (response.Data.IsEmpty())
             return new MarketItem() { IsError = true, Data = "data empty" };
@@ -809,12 +821,14 @@ public static partial class Steam
 
         market_hash_name = Uri.EscapeDataString(market_hash_name).Replace("%27", "'").Replace("?", "%3F").Replace("%E2%98%85", "★").Replace("%E2%84%A2", "™");
 		string url = Path.Combine(SteamCommunityUrls.Market_Listings, appId.ToString(), market_hash_name);
-		var response = Downloader.Get(new(url, ajaxRequest.Proxy, ajaxRequest.Session)
-        {
-            CancellationToken = ajaxRequest.CancellationToken
-        });
+		var request = new GetRequest(url, ajaxRequest.Proxy, ajaxRequest.Session)
+		{
+			CancellationToken = ajaxRequest.CancellationToken
+		};
+		request.AddQuery("l", "english");
+		var response = Downloader.Get(request);
 
-        if (response.Data.IsEmpty())
+		if (response.Data.IsEmpty())
             return new MarketItem() { IsError = true, Data = "data empty" };
         else if (response.StatusCode == 429)
             return new MarketItem() { IsError = true, IsTooManyRequests = true, Data = "TooManyRequests (429)" };
@@ -1432,10 +1446,12 @@ public static partial class Steam
     public static SteamOfferResponse GetIncomingOffers(DefaultRequest ajaxRequest)
     {
         string url = "https://steamcommunity.com/profiles/" + ajaxRequest.Session!.SteamID + "/tradeoffers/";
-        var response = Downloader.Get(new(url, ajaxRequest.Proxy, ajaxRequest.Session)
+        var request = new GetRequest(url, ajaxRequest.Proxy, ajaxRequest.Session)
         {
             CancellationToken = ajaxRequest.CancellationToken,
-        });
+        };
+		request.AddQuery("l", "english");
+		var response = Downloader.Get(request);
         if (!response.Success)
             return new() { Error = "Ошибка при запросе" };
         else if (response.Data == "<!DOCTYPE html>")
@@ -1541,11 +1557,13 @@ public static partial class Steam
     public static async Task<SteamOfferResponse> GetIncomingOffersAsync(DefaultRequest ajaxRequest)
     {
         string url = "https://steamcommunity.com/profiles/" + ajaxRequest.Session!.SteamID + "/tradeoffers/";
-        var response = await Downloader.GetAsync(new(url, ajaxRequest.Proxy, ajaxRequest.Session)
-        {
-            CancellationToken = ajaxRequest.CancellationToken,
-        });
-        if (!response.Success)
+		var request = new GetRequest(url, ajaxRequest.Proxy, ajaxRequest.Session)
+		{
+			CancellationToken = ajaxRequest.CancellationToken,
+		};
+		request.AddQuery("l", "english");
+		var response = await Downloader.GetAsync(request);
+		if (!response.Success)
             return new() { Error = "Ошибка при запросе" };
         else if (response.Data == "<!DOCTYPE html>")
             return new() { Error = "Бан на запросы" };
@@ -1650,11 +1668,13 @@ public static partial class Steam
     public static SteamOfferResponse GetSentOffers(DefaultRequest ajaxRequest)
     {
         string url = "https://steamcommunity.com/profiles/" + ajaxRequest.Session!.SteamID + "/tradeoffers/sent/";
-        var response = Downloader.Get(new(url, ajaxRequest.Proxy, ajaxRequest.Session)
-        {
-            CancellationToken = ajaxRequest.CancellationToken,
-        });
-        if (!response.Success)
+		var request = new GetRequest(url, ajaxRequest.Proxy, ajaxRequest.Session)
+		{
+			CancellationToken = ajaxRequest.CancellationToken,
+		};
+		request.AddQuery("l", "english");
+		var response = Downloader.Get(request);
+		if (!response.Success)
             return new() { Error = "Ошибка при запросе" };
         else if (response.Data == "<!DOCTYPE html>")
             return new() { Error = "Бан на запросы" };
@@ -1760,11 +1780,13 @@ public static partial class Steam
     public static async Task<SteamOfferResponse> GetSentOffersAsync(DefaultRequest ajaxRequest)
     {
         string url = "https://steamcommunity.com/profiles/" + ajaxRequest.Session!.SteamID + "/tradeoffers/sent/";
-        var response = await Downloader.GetAsync(new(url, ajaxRequest.Proxy, ajaxRequest.Session)
-        {
-            CancellationToken = ajaxRequest.CancellationToken,
-        });
-        if (!response.Success)
+		var request = new GetRequest(url, ajaxRequest.Proxy, ajaxRequest.Session)
+		{
+			CancellationToken = ajaxRequest.CancellationToken,
+		};
+		request.AddQuery("l", "english");
+		var response = await Downloader.GetAsync(request);
+		if (!response.Success)
             return new() { Error = "Ошибка при запросе" };
         else if (response.Data == "<!DOCTYPE html>")
             return new() { Error = "Бан на запросы" };
@@ -1874,11 +1896,13 @@ public static partial class Steam
     /// <exception cref="InvalidOperationException"/>
     /// <returns>Данные о блокировка на этом аккаунте</returns>
     public static VacGameBansData GetVacAndGameBans(DefaultRequest ajaxRequest)
-    {
-        var response = Downloader.Get(new(SteamPoweredUrls.Wizard_VacBans, ajaxRequest.Proxy, ajaxRequest.Session)
-        {
-            CancellationToken = ajaxRequest.CancellationToken,
-        });
+	{
+		var request = new GetRequest(SteamPoweredUrls.Wizard_VacBans, ajaxRequest.Proxy, ajaxRequest.Session)
+		{
+			CancellationToken = ajaxRequest.CancellationToken,
+		};
+		request.AddQuery("l", "english");
+		var response = Downloader.Get(request);
         if (!response.Success)
             return new("Ошибка при запросе") { Apps = ImmutableList<VacGameBanModel>.Empty };
         else if (response.Data == "<!DOCTYPE html>")
@@ -1891,12 +1915,14 @@ public static partial class Steam
     /// <exception cref="InvalidOperationException"/>
     /// <returns>Данные о блокировка на этом аккаунте</returns>
     public static async Task<VacGameBansData> GetVacAndGameBansAsync(DefaultRequest ajaxRequest)
-    {
-        var response = await Downloader.GetAsync(new(SteamPoweredUrls.Wizard_VacBans, ajaxRequest.Proxy, ajaxRequest.Session)
-        {
-            CancellationToken = ajaxRequest.CancellationToken,
-        });
-        if (!response.Success)
+	{
+		var request = new GetRequest(SteamPoweredUrls.Wizard_VacBans, ajaxRequest.Proxy, ajaxRequest.Session)
+		{
+			CancellationToken = ajaxRequest.CancellationToken,
+		};
+		request.AddQuery("l", "english");
+		var response = await Downloader.GetAsync(request);
+		if (!response.Success)
             return new("Ошибка при запросе") { Apps = ImmutableList<VacGameBanModel>.Empty };
         else if (response.Data == "<!DOCTYPE html>")
             return new("Бан на запросы") { Apps = ImmutableList<VacGameBanModel>.Empty };
@@ -1921,12 +1947,14 @@ public static partial class Steam
     /// </summary>
     /// <returns>Класс с историей покупок, либо ошибки</returns>
     public static PurchaseHistoryData GetPurchaseHistory(DefaultRequest ajaxRequest)
-    {
-        var response = Downloader.Get(new(SteamPoweredUrls.Account_History, ajaxRequest.Proxy, ajaxRequest.Session)
-        {
-            CancellationToken = ajaxRequest.CancellationToken,
-            Referer = SteamPoweredUrls.Account,
-        });
+	{
+		var request = new GetRequest(SteamPoweredUrls.Account_History, ajaxRequest.Proxy, ajaxRequest.Session)
+		{
+			CancellationToken = ajaxRequest.CancellationToken,
+			Referer = SteamPoweredUrls.Account,
+		};
+		request.AddQuery("l", "english");
+		var response = Downloader.Get(request);
         if (!response.Success)
             return new("Ошибка при запросе") { History = ImmutableList<PurchaseHistoryModel>.Empty };
         else if (response.Data == "<!DOCTYPE html>")
@@ -1951,13 +1979,15 @@ public static partial class Steam
     /// </summary>
     /// <returns>Класс с историей покупок, либо ошибки</returns>
     public static async Task<PurchaseHistoryData> GetPurchaseHistoryAsync(DefaultRequest ajaxRequest)
-    {
-        var response = await Downloader.GetAsync(new(SteamPoweredUrls.Account_History, ajaxRequest.Proxy, ajaxRequest.Session)
-        {
-            CancellationToken = ajaxRequest.CancellationToken,
-            Referer = SteamPoweredUrls.Account,
-        });
-        if (!response.Success)
+	{
+		var request = new GetRequest(SteamPoweredUrls.Account_History, ajaxRequest.Proxy, ajaxRequest.Session)
+		{
+			CancellationToken = ajaxRequest.CancellationToken,
+			Referer = SteamPoweredUrls.Account,
+		};
+		request.AddQuery("l", "english");
+		var response = await Downloader.GetAsync(request);
+		if (!response.Success)
             return new("Ошибка при запросе") { History = ImmutableList<PurchaseHistoryModel>.Empty };
         else if (response.Data == "<!DOCTYPE html>")
             return new("Бан на запросы") { History = ImmutableList<PurchaseHistoryModel>.Empty };
