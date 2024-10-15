@@ -62,7 +62,7 @@ public class SteamOffer
                 if (isDate && isTime)
                 {
                     var culture = CultureInfo.GetCultureInfo("en-US");
-                    dt = DateTime.ParseExact(date + " @ " + time, "dd MMM, yyyy @ hh:mmtt", culture);
+                    dt = DateTime.ParseExact(date + " @ " + time, "dd MMM, yyyy @ H:mtt", culture);
                 }
                 else if (isDate)
                 {
