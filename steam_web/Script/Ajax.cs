@@ -126,6 +126,10 @@ public static class Ajax
         }
     }
 
+    /// <summary>
+    /// Отменяет трейд, который этот аккаунт создал
+    /// </summary>
+    /// <param name="tradeofferid">trade offer id</param>
     public static async Task<CancelTrade> tradeoffer_cancel_async(DefaultRequest defaultRequest, ulong tradeofferid)
     {
         string url = $"https://steamcommunity.com/tradeoffer/{tradeofferid}/cancel";
@@ -138,26 +142,35 @@ public static class Ajax
         };
         request.AddPostData("sessionid", defaultRequest.Session!.SessionID);
         var response = await Downloader.PostAsync(request);
-        if (!response.Success)
-            return new();
-        try
-        {
-            var options = new JsonSerializerOptions
-            {
-                NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
-            };
-            var obj = JsonSerializer.Deserialize<CancelTrade>(response.Data!, options)!;
-            obj.success = true;
-            return obj;
-        }
-        catch (Exception)
-        {
-            return new();
-        }
-    }
-    public static async Task<CancelTrade> tradeoffer_cancel_async(DefaultRequest defaultRequest, Trade trade)
+		if (response.Data == null)
+			return new();
+		try
+		{
+			var options = new JsonSerializerOptions
+			{
+				NumberHandling = JsonNumberHandling.AllowReadingFromString
+			};
+			var obj = JsonSerializer.Deserialize<CancelTrade>(response.Data!, options)!;
+			if (obj.TradeOfferId != 0)
+				obj.Success = 1;
+			return obj;
+		}
+		catch (Exception)
+		{
+			return new();
+		}
+	}
+	/// <summary>
+	/// Отменяет трейд, который этот аккаунт создал
+	/// </summary>
+	/// <param name="trade">trade offer id</param>
+	public static async Task<CancelTrade> tradeoffer_cancel_async(DefaultRequest defaultRequest, Trade trade)
         => await tradeoffer_cancel_async(defaultRequest, trade.u_tradeofferid);
-    public static CancelTrade tradeoffer_cancel(DefaultRequest defaultRequest, ulong tradeofferid)
+	/// <summary>
+	/// Отменяет трейд, который этот аккаунт создал
+	/// </summary>
+	/// <param name="tradeofferid">trade offer id</param>
+	public static CancelTrade tradeoffer_cancel(DefaultRequest defaultRequest, ulong tradeofferid)
     {
         string url = $"https://steamcommunity.com/tradeoffer/{tradeofferid}/cancel";
         var request = new PostRequest(url, Downloader.AppFormUrlEncoded)
@@ -166,32 +179,118 @@ public static class Ajax
             Proxy = defaultRequest.Proxy,
             IsAjax = true,
             CancellationToken = defaultRequest.CancellationToken,
-        };
+		};
         request.AddPostData("sessionid", defaultRequest.Session!.SessionID);
         var response = Downloader.Post(request);
-        if (!response.Success)
-            return new();
-        try
-        {
-            var options = new JsonSerializerOptions
-            {
-                NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
-            };
-            var obj = JsonSerializer.Deserialize<CancelTrade>(response.Data!, options)!;
-            obj.success = true;
-            return obj;
-        }
-        catch (Exception)
-        {
-            return new();
-        }
-    }
-    public static CancelTrade tradeoffer_cancel(DefaultRequest defaultRequest, Trade trade)
+		if (response.Data == null)
+			return new();
+		try
+		{
+			var options = new JsonSerializerOptions
+			{
+				NumberHandling = JsonNumberHandling.AllowReadingFromString
+			};
+			var obj = JsonSerializer.Deserialize<CancelTrade>(response.Data!, options)!;
+			if (obj.TradeOfferId != 0)
+				obj.Success = 1;
+			return obj;
+		}
+		catch (Exception)
+		{
+			return new();
+		}
+	}
+	/// <summary>
+	/// Отменяет трейд, который этот аккаунт создал
+	/// </summary>
+	/// <param name="trade">trade offer id</param>
+	public static CancelTrade tradeoffer_cancel(DefaultRequest defaultRequest, Trade trade)
         => tradeoffer_cancel(defaultRequest, trade.u_tradeofferid);
-    #endregion
 
-    #region market
-    public static ResponseSuccess market_cancelbuyorder(DefaultRequest defaultRequest, ulong buy_orderid)
+	/// <summary>
+	/// Отклоняет трейд, который был отправлен на этот аккаунт
+	/// </summary>
+	/// <param name="tradeofferid">trade offer id</param>
+	public static async Task<CancelTrade> tradeoffer_decline_async(DefaultRequest defaultRequest, ulong tradeofferid)
+	{
+		string url = $"https://steamcommunity.com/tradeoffer/{tradeofferid}/decline";
+		var request = new PostRequest(url, Downloader.AppFormUrlEncoded)
+		{
+			Session = defaultRequest.Session,
+			Proxy = defaultRequest.Proxy,
+			IsAjax = true,
+			CancellationToken = defaultRequest.CancellationToken,
+		};
+		request.AddPostData("sessionid", defaultRequest.Session!.SessionID);
+		var response = await Downloader.PostAsync(request);
+		if (response.Data == null)
+			return new();
+		try
+		{
+			var options = new JsonSerializerOptions
+			{
+				NumberHandling = JsonNumberHandling.AllowReadingFromString
+			};
+			var obj = JsonSerializer.Deserialize<CancelTrade>(response.Data!, options)!;
+			if (obj.TradeOfferId != 0)
+				obj.Success = 1;
+			return obj;
+		}
+		catch (Exception)
+		{
+			return new();
+		}
+	}
+	/// <summary>
+	/// Отклоняет трейд, который был отправлен на этот аккаунт
+	/// </summary>
+	/// <param name="trade">trade offer id</param>
+	public static async Task<CancelTrade> tradeoffer_decline_async(DefaultRequest defaultRequest, Trade trade)
+		=> await tradeoffer_decline_async(defaultRequest, trade.u_tradeofferid);
+	/// <summary>
+	/// Отклоняет трейд, который был отправлен на этот аккаунт
+	/// </summary>
+	/// <param name="tradeofferid">trade offer id</param>
+	public static CancelTrade tradeoffer_decline(DefaultRequest defaultRequest, ulong tradeofferid)
+	{
+		string url = $"https://steamcommunity.com/tradeoffer/{tradeofferid}/decline";
+		var request = new PostRequest(url, Downloader.AppFormUrlEncoded)
+		{
+			Session = defaultRequest.Session,
+			Proxy = defaultRequest.Proxy,
+			IsAjax = true,
+			CancellationToken = defaultRequest.CancellationToken,
+		};
+		request.AddPostData("sessionid", defaultRequest.Session!.SessionID);
+		var response = Downloader.Post(request);
+		if (response.Data == null)
+			return new();
+		try
+		{
+			var options = new JsonSerializerOptions
+			{
+				NumberHandling = JsonNumberHandling.AllowReadingFromString
+			};
+			var obj = JsonSerializer.Deserialize<CancelTrade>(response.Data!, options)!;
+			if (obj.TradeOfferId != 0)
+				obj.Success = 1;
+			return obj;
+		}
+		catch (Exception)
+		{
+			return new();
+		}
+	}
+	/// <summary>
+	/// Отклоняет трейд, который был отправлен на этот аккаунт
+	/// </summary>
+	/// <param name="trade">trade offer id</param>
+	public static CancelTrade tradeoffer_decline(DefaultRequest defaultRequest, Trade trade)
+		=> tradeoffer_decline(defaultRequest, trade.u_tradeofferid);
+	#endregion
+
+	#region market
+	public static ResponseSuccess market_cancelbuyorder(DefaultRequest defaultRequest, ulong buy_orderid)
 	{
 		var request = new PostRequest(SteamCommunityUrls.Market_CancelBuyOrder, Downloader.AppFormUrlEncoded)
         {

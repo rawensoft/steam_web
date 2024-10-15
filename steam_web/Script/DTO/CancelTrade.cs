@@ -3,9 +3,9 @@
 namespace SteamWeb.Script.DTO;
 public class CancelTrade
 {
-    public bool success { get; internal set; } = false;
-    /// <summary>
-    /// a unique identifier for the trade offer
-    /// </summary>
-    public ulong tradeofferid { get; init; }
+	[JsonPropertyName("success")] public byte Success { get; set; }
+	/// <summary>
+	/// a unique identifier for the trade offer
+	/// </summary>
+	[JsonPropertyName("tradeofferid")] public ulong TradeOfferId { get; init; }
 }
