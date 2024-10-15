@@ -1484,7 +1484,7 @@ public static partial class Steam
                 foreach (var trade_item in trade_items)
                 {
                     var economyItem = trade_item.GetAttribute("data-economy-item");
-                    var (success, appId, classId) = SteamOfferItem.ParseEconomyData(economyItem);
+                    var (success, appId, classId, instanceId) = SteamOfferItem.ParseEconomyData(economyItem);
                     if (!success)
                     {
                         return new() { Error = "Не удалось спарсить data-economy-item=" + economyItem };
@@ -1494,6 +1494,7 @@ public static partial class Steam
                     {
                         AppId = appId,
                         ClassId = classId,
+                        InstanceId = instanceId,
                     };
                     tradeItemsList.Add(steamOfferItem);
                 }
@@ -1581,24 +1582,19 @@ public static partial class Steam
                 {
                     continue;
                 }
+					var steamOfferItem = new SteamOfferItem
+					{
+						AppId = appId,
+						ClassId = classId,
+						InstanceId = instanceId,
+					};
+					tradeItemsList.Add(steamOfferItem);
 
                 var trade_items = items.GetElementsByClassName("trade_item");
                 var tradeItemsList = new List<SteamOfferItem>(trade_items.Length + 1);
                 foreach (var trade_item in trade_items)
                 {
-                    var economyItem = trade_item.GetAttribute("data-economy-item");
-                    var (success, appId, classId) = SteamOfferItem.ParseEconomyData(economyItem);
-                    if (!success)
-                    {
-                        return new() { Error = "Не удалось спарсить data-economy-item=" + economyItem };
-                    }
 
-                    var steamOfferItem = new SteamOfferItem
-                    {
-                        AppId = appId,
-                        ClassId = classId,
-                    };
-                    tradeItemsList.Add(steamOfferItem);
                 }
                 if (isPrimary)
                     partnerItems = tradeItemsList.ToArray();
@@ -1687,12 +1683,11 @@ public static partial class Steam
 
                 var trade_items = items.GetElementsByClassName("trade_item");
 
-
                 var tradeItemsList = new List<SteamOfferItem>(trade_items.Length + 1);
                 foreach (var trade_item in trade_items)
                 {
                     var economyItem = trade_item.GetAttribute("data-economy-item");
-                    var (success, appId, classId) = SteamOfferItem.ParseEconomyData(economyItem);
+                    var (success, appId, classId, instanceId) = SteamOfferItem.ParseEconomyData(economyItem);
                     if (!success)
                     {
                         return new() { Error = "Не удалось спарсить data-economy-item=" + economyItem };
@@ -1791,6 +1786,13 @@ public static partial class Steam
 
                 var trade_items = items.GetElementsByClassName("trade_item");
 
+					var steamOfferItem = new SteamOfferItem
+					{
+						AppId = appId,
+						ClassId = classId,
+						InstanceId = instanceId,
+					};
+					tradeItemsList.Add(steamOfferItem);
 
                 var tradeItemsList = new List<SteamOfferItem>(trade_items.Length + 1);
                 foreach (var trade_item in trade_items)
@@ -1802,12 +1804,6 @@ public static partial class Steam
                         return new() { Error = "Не удалось спарсить data-economy-item=" + economyItem };
                     }
 
-                    var steamOfferItem = new SteamOfferItem
-                    {
-                        AppId = appId,
-                        ClassId = classId,
-                    };
-                    tradeItemsList.Add(steamOfferItem);
                 }
                 if (isPrimary)
                     ourItems = tradeItemsList.ToArray();
