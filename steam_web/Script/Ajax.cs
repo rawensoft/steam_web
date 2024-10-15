@@ -66,12 +66,12 @@ public static class Ajax
             }
             catch (Exception ex)
             {
-                return (null, new() { strError = ex.Message });
+                return (null, new() { StrError = ex.Message });
             }
         }
         catch (Exception ex)
         {
-            return (null, new() { strError = ex.Message });
+            return (null, new() { StrError = ex.Message });
         }
     }
     public static (ConfTradeOffer?, SteamTradeError?) tradeoffer_accept(DefaultRequest ajaxRequest, Trade trade) =>
@@ -117,12 +117,12 @@ public static class Ajax
             }
             catch (Exception ex)
             {
-                return (null, new() { strError = ex.Message });
+                return (null, new() { StrError = ex.Message });
             }
         }
         catch (Exception ex)
         {
-            return (null, new() { strError = ex.Message });
+            return (null, new() { StrError = ex.Message });
         }
     }
 
@@ -342,8 +342,8 @@ public static class Ajax
         }
         var response = await Downloader.GetAsync(getRequest);
         if (!response.Success)
-            return new();
-        try
+			return new() { IsTooManyRequests = response.StatusCode == 429 };
+		try
         {
             var obj = JsonSerializer.Deserialize<MarketSearchResponse>(response.Data!)!;
             return obj;
@@ -382,7 +382,7 @@ public static class Ajax
         }
         var response = Downloader.Get(getRequest);
         if (!response.Success)
-            return new();
+            return new() { IsTooManyRequests = response.StatusCode == 429 };
         try
         {
             var obj = JsonSerializer.Deserialize<MarketSearchResponse>(response.Data!)!;

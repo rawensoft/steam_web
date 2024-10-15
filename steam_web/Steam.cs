@@ -233,12 +233,12 @@ public static partial class Steam
             }
             catch (Exception ex)
             {
-                return (null, new() { strError = ex.Message });
+                return (null, new() { StrError = ex.Message });
             }
         }
         catch (Exception ex)
         {
-            return (null, new() { strError = ex.Message });
+            return (null, new() { StrError = ex.Message });
         }
     }
     /// <summary>
@@ -278,12 +278,12 @@ public static partial class Steam
             }
             catch (Exception ex)
             {
-                return (null, new() { strError = ex.Message });
+                return (null, new() { StrError = ex.Message });
             }
         }
         catch (Exception ex)
         {
-            return (null, new() { strError = ex.Message });
+            return (null, new() { StrError = ex.Message });
         }
     }
 
@@ -916,12 +916,12 @@ public static partial class Steam
             }
             catch (Exception ex)
             {
-                return (null, new() { strError = ex.Message });
+                return (null, new() { StrError = ex.Message });
             }
         }
         catch (Exception ex)
         {
-            return (null, new() { strError = ex.Message });
+            return (null, new() { StrError = ex.Message });
         }
     }
     [Obsolete("Данный метод переехал в Script.Ajax.tradeoffer_accept")]
@@ -974,12 +974,12 @@ public static partial class Steam
             }
             catch (Exception ex)
             {
-                return (null, new() { strError = ex.Message });
+                return (null, new() { StrError = ex.Message });
             }
         }
         catch (Exception ex)
         {
-            return (null, new() { strError = ex.Message });
+            return (null, new() { StrError = ex.Message });
         }
     }
 

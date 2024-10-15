@@ -1,11 +1,12 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 using SteamWeb.Extensions;
 
 namespace SteamWeb.Models;
 public class SteamTradeError
 {
-    public string? strError { get; init; }
-    public int codeError { get; private set; }
+    [JsonPropertyName("strError")] public string? StrError { get; init; }
+	[JsonPropertyName("codeError")] public int CodeError { get; private set; }
 
     internal static int GetCode(string strError)
     {
@@ -15,16 +16,16 @@ public class SteamTradeError
     public static SteamTradeError Deserialize(string json)
     {
         if (json.IsEmpty() || json == "null")
-            return new() { strError = "Пустые данные json." };
+            return new() { StrError = "Пустые данные json." };
         try
         {
             var steamerror = JsonSerializer.Deserialize<SteamTradeError>(json);
-            steamerror!.codeError = GetCode(steamerror.strError!);
+            steamerror!.CodeError = GetCode(steamerror.StrError!);
             return steamerror;
         }
         catch (Exception)
         {
-            return new() { strError = json };
+            return new() { StrError = json };
         }
     }
 }
