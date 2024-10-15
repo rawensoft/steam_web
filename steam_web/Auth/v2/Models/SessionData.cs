@@ -7,7 +7,7 @@ using System.Text;
 using SteamWeb.Web;
 
 namespace SteamWeb.Auth.v2.Models;
-public class SessionData : ISessionProvider
+public sealed class SessionData : ISessionProvider, IEquatable<SessionData>
 {
 	#region private fields
 	private Cookie? _sessionidCookie = null;
@@ -207,5 +207,27 @@ public class SessionData : ISessionProvider
 		sb.Append("; sessionid=");
 		sb.Append(SessionID);
         return sb.ToString();
+	}
+
+	public bool Equals(SessionData? other)
+	{
+		if (SessionID != other?.SessionID)
+			return false;
+		if (AccessToken != other?.AccessToken)
+			return false;
+		if (RefreshToken != other?.RefreshToken)
+			return false;
+		if (BrowserId != other?.BrowserId)
+			return false;
+		if (SteamCountry != other?.SteamCountry)
+			return false;
+		if (PlatformType != other?.PlatformType)
+			return false;
+		if (SteamLanguage != other?.SteamLanguage)
+			return false;
+		if (other != null && SteamID != other.SteamID)
+			return false;
+
+		return true;
 	}
 }

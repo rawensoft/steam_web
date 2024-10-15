@@ -14,7 +14,7 @@ using APIEndpoints = SteamWeb.Auth.v1.APIEndpoints;
 using SteamWeb.Auth.v2.Enums;
 
 namespace SteamWeb.Auth.v2;
-public class SteamGuardAccount
+public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
 {
 	private static byte[] _steamGuardCodeTranslations = new byte[] { 50, 51, 52, 53, 54, 55, 56, 57, 66, 67, 68, 70, 71, 72, 74, 75, 77, 78, 80, 81, 82, 84, 86, 87, 88, 89 };
 
@@ -809,4 +809,47 @@ public class SteamGuardAccount
             return null;
         }
     }
+
+	public bool Equals(SteamGuardAccount? other)
+    {
+        if (other == null)
+            return false;
+
+		if (AddedThrough != other.AddedThrough)
+			return false;
+		if (SerialNumber != other.SerialNumber)
+            return false;
+		if (RevocationCode != other.RevocationCode)
+			return false;
+		if (SharedSecret != other.SharedSecret)
+			return false;
+		if (URI != other.URI)
+			return false;
+		if (ServerTime != other.ServerTime)
+			return false;
+		if (AccountName != other.AccountName)
+			return false;
+		if (TokenGID != other.TokenGID)
+			return false;
+		if (IdentitySecret != other.IdentitySecret)
+			return false;
+		if (Secret1 != other.Secret1)
+			return false;
+		if (DeviceID != other.DeviceID)
+			return false;
+
+		if ((Proxy == null) != (other.Proxy != null))
+			return false;
+		if ((Proxy != null) != (other.Proxy == null))
+			return false;
+
+		if ((Session == null) != (other.Session != null))
+			return false;
+		if ((Session != null) != (other.Session == null))
+			return false;
+		if (Session != null && !Session.Equals(other.Session))
+			return false;
+
+		return true;
+	}
 }
