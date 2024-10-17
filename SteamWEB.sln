@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleSteamGuardEmail", "E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleSteamGuardAutoSingIn", "ExampleSteamGuardAutoSingIn\ExampleSteamGuardAutoSingIn.csproj", "{9903DA79-9317-4855-B9C0-DA55AB11DE45}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleMoveSteamGuard", "ExampleMoveSteamGuard\ExampleMoveSteamGuard.csproj", "{3FE3B4C4-0085-4148-B9CC-E900E20B967A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleMoveSteamGuard", "ExampleMoveSteamGuard\ExampleMoveSteamGuard.csproj", "{3FE3B4C4-0085-4148-B9CC-E900E20B967A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleRefreshJwt", "ExampleRefreshJwt\ExampleRefreshJwt.csproj", "{39FAAFA1-B042-4EF3-BAA2-FE468314A725}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,14 @@ Global
 		{3FE3B4C4-0085-4148-B9CC-E900E20B967A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3FE3B4C4-0085-4148-B9CC-E900E20B967A}.ReleaseFactory|Any CPU.ActiveCfg = Release|Any CPU
 		{3FE3B4C4-0085-4148-B9CC-E900E20B967A}.ReleaseFactory|Any CPU.Build.0 = Release|Any CPU
+		{39FAAFA1-B042-4EF3-BAA2-FE468314A725}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39FAAFA1-B042-4EF3-BAA2-FE468314A725}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39FAAFA1-B042-4EF3-BAA2-FE468314A725}.DebugFactory|Any CPU.ActiveCfg = Debug|Any CPU
+		{39FAAFA1-B042-4EF3-BAA2-FE468314A725}.DebugFactory|Any CPU.Build.0 = Debug|Any CPU
+		{39FAAFA1-B042-4EF3-BAA2-FE468314A725}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39FAAFA1-B042-4EF3-BAA2-FE468314A725}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39FAAFA1-B042-4EF3-BAA2-FE468314A725}.ReleaseFactory|Any CPU.ActiveCfg = Release|Any CPU
+		{39FAAFA1-B042-4EF3-BAA2-FE468314A725}.ReleaseFactory|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
