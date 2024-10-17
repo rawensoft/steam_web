@@ -344,7 +344,7 @@ public class UserLogin
     }
     public bool PollAuthSessionStatus()
     {
-        if (_nextStep != NEXT_STEP.Poll || FullyEnrolled)
+        if ((_nextStep != NEXT_STEP.Poll && _nextStep != NEXT_STEP.Update) || FullyEnrolled)
             return false;
         using var memStream3 = new MemoryStream();
         Serializer.Serialize(memStream3, new AuthPollRequest()
@@ -629,7 +629,7 @@ public class UserLogin
 	}
 	public async Task<bool> PollAuthSessionStatusAsync()
 	{
-		if (_nextStep != NEXT_STEP.Poll || FullyEnrolled)
+		if ((_nextStep != NEXT_STEP.Poll && _nextStep != NEXT_STEP.Update) || FullyEnrolled)
 			return false;
 		using var memStream3 = new MemoryStream();
 		Serializer.Serialize(memStream3, new AuthPollRequest()
