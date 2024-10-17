@@ -37,4 +37,7 @@ internal static class SteamPoweredUrls
     public const string Wizard_AjaxAccountRecoveryVerifyPassword = "https://help.steampowered.com/en/wizard/AjaxAccountRecoveryVerifyPassword";
     public const string Wizard_VacBans = "https://help.steampowered.com/en/wizard/VacBans";
     public const string Wizard_Login_GetRSAKey = "https://help.steampowered.com/en/login/getrsakey";
+
+    public const string Jwt_AjaxRefresh = "https://login.steampowered.com/jwt/ajaxrefresh";
+	public const string Jwt_Refresh = "https://login.steampowered.com/jwt/refresh";
 }

@@ -105,8 +105,14 @@ public static class Downloader
                 HttpOnly = true,
                 Secure = true
             });
+		if (!request.SteamRefresh_Steam.IsEmpty() && req.CookieContainer != null)
+			req.CookieContainer.Add(new Uri(KnownUri.BASE_LOGIN_POWERED), new Cookie("steamRefresh_steam", request.SteamRefresh_Steam)
+			{
+				HttpOnly = false,
+				Secure = true
+			});
 
-        return (client, req);
+		return (client, req);
 	}
 	private static (RestClient, RestRequest) GetRestClient(ProtobufRequest request, Method method)
 	{

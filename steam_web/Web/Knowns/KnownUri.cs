@@ -11,4 +11,5 @@ public static class KnownUri
     internal const string BuffLoginUrl = "https://buff.163.com/account/login/steam?back_url=/account/steam_bind/finish";
     public const string BASE_COMMUNITY = "https://steamcommunity.com";
     public const string BASE_POWERED = "https://store.steampowered.com";
+	public const string BASE_LOGIN_POWERED = "https://login.steampowered.com/";
 }

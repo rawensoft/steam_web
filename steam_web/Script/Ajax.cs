@@ -24,14 +24,175 @@ namespace SteamWeb.Script;
 /// </summary>
 public static class Ajax
 {
-    #region trade offer
-    /// <summary>
-    /// Принимает трейд
-    /// </summary>
-    /// <param name="tradeofferid">id трейда для принятия</param>
-    /// <param name="steamid_other">steamid32 аккаунта, который отослал трейд</param>
-    /// <returns>False трейд не принят, но иногда может быть принят, для точности используйте API</returns>
-    public static (ConfTradeOffer?, SteamTradeError?) tradeoffer_accept(DefaultRequest ajaxRequest, ulong tradeofferid, uint steamid_other)
+	#region jwt refresh
+	public static AjaxRefreshResponse jwt_ajaxrefresh(DefaultRequest defaultRequest, string steamRefresh_steam, string redir = "https://steamcommunity.com/market/")
+	{
+		var request = new PostRequest(SteamPoweredUrls.Jwt_AjaxRefresh, Downloader.AppFormUrlEncoded)
+		{
+			Proxy = defaultRequest.Proxy,
+			IsAjax = true,
+			CancellationToken = defaultRequest.CancellationToken,
+            SteamRefresh_Steam = steamRefresh_steam,
+		};
+		request.AddPostData("redir", Uri.UnescapeDataString(redir!), false);
+		var response = Downloader.Post(request);
+		if (!response.Success)
+			return new();
+		try
+		{
+			// выполняем десерилизацию потому что присылают пустой объект
+			// так мы понимаем что запрос точно прошёл
+	        var obj = JsonSerializer.Deserialize<AjaxRefreshResponse>(response.Data!, Steam.JsonOptions)!;
+			return obj;
+		}
+		catch (Exception)
+		{
+			return new();
+		}
+	}
+	public static async Task<AjaxRefreshResponse> jwt_ajaxrefresh_async(DefaultRequest defaultRequest, string steamRefresh_steam, string redir = "https://steamcommunity.com/market/")
+	{
+		var request = new PostRequest(SteamPoweredUrls.Jwt_AjaxRefresh, Downloader.AppFormUrlEncoded)
+		{
+			Proxy = defaultRequest.Proxy,
+			IsAjax = true,
+			CancellationToken = defaultRequest.CancellationToken,
+			SteamRefresh_Steam = steamRefresh_steam,
+		};
+		request.AddPostData("redir", Uri.UnescapeDataString(redir!), false);
+		var response = await Downloader.PostAsync(request);
+		if (!response.Success)
+			return new();
+		try
+		{
+			// выполняем десерилизацию потому что присылают пустой объект
+			// так мы понимаем что запрос точно прошёл
+			var obj = JsonSerializer.Deserialize<AjaxRefreshResponse>(response.Data!, Steam.JsonOptions)!;
+			return obj;
+		}
+		catch (Exception)
+		{
+			return new();
+		}
+	}
+
+	public static AjaxSetTokenResponse login_settoken(DefaultRequest defaultRequest, AjaxRefreshResponse jwtRefresh, string prior)
+	{
+        if (!jwtRefresh.Success)
+            return new() { Result = EResult.InvalidParam };
+
+		var request = new PostRequest(jwtRefresh.LoginUrl!, Downloader.AppFormUrlEncoded)
+		{
+			Proxy = defaultRequest.Proxy,
+			IsAjax = true,
+			CancellationToken = defaultRequest.CancellationToken,
+			Session = defaultRequest.Session,
+		};
+		request.AddPostData("success", true).AddPostData("login_url", Uri.EscapeDataString(jwtRefresh.LoginUrl!), false)
+            .AddPostData("steamID", jwtRefresh.SteamId).AddPostData("nonce", jwtRefresh.Nonce!, false)
+            .AddPostData("redir", Uri.EscapeDataString(jwtRefresh.Redir!), false).AddPostData("auth", jwtRefresh.Auth!, false)
+            .AddPostData("prior", prior, false);
+		var response = Downloader.Post(request);
+		if (!response.Success)
+			return new();
+		try
+		{
+			var obj = JsonSerializer.Deserialize<AjaxSetTokenResponse>(response.Data!, Steam.JsonOptions)!;
+			return obj;
+		}
+		catch (Exception)
+		{
+			return new();
+		}
+	}
+	public static async Task<AjaxSetTokenResponse> login_settoken_async(DefaultRequest defaultRequest, AjaxRefreshResponse jwtRefresh, string prior)
+	{
+		if (!jwtRefresh.Success)
+			return new() { Result = EResult.InvalidParam };
+
+		var request = new PostRequest(jwtRefresh.LoginUrl!, Downloader.AppFormUrlEncoded)
+		{
+			Proxy = defaultRequest.Proxy,
+			IsAjax = true,
+			CancellationToken = defaultRequest.CancellationToken,
+			Session = defaultRequest.Session,
+		};
+		request.AddPostData("success", true).AddPostData("login_url", Uri.EscapeDataString(jwtRefresh.LoginUrl!), false)
+			.AddPostData("steamID", jwtRefresh.SteamId).AddPostData("nonce", jwtRefresh.Nonce!, false)
+			.AddPostData("redir", Uri.EscapeDataString(jwtRefresh.Redir!), false).AddPostData("auth", jwtRefresh.Auth!, false)
+			.AddPostData("prior", prior, false);
+		var response = await Downloader.PostAsync(request);
+		if (!response.Success)
+			return new();
+		try
+		{
+			var obj = JsonSerializer.Deserialize<AjaxSetTokenResponse>(response.Data!, Steam.JsonOptions)!;
+			return obj;
+		}
+		catch (Exception)
+		{
+			return new();
+		}
+	}
+
+	public static AjaxSetTokenResponse store_jwtrefresh(DefaultRequest defaultRequest, string steamRefresh_steam, string redir = "https://store.steampowered.com/")
+	{
+		var request = new PostRequest(SteamPoweredUrls.Jwt_Refresh, Downloader.AppFormUrlEncoded)
+		{
+			Proxy = defaultRequest.Proxy,
+			IsAjax = false,
+			CancellationToken = defaultRequest.CancellationToken,
+			SteamRefresh_Steam = steamRefresh_steam,
+            Session = defaultRequest.Session,
+		};
+		request.AddPostData("redir", Uri.UnescapeDataString(redir!), false);
+		var response = Downloader.Post(request);
+		if (!response.Success)
+			return new();
+		try
+		{
+			var obj = JsonSerializer.Deserialize<AjaxSetTokenResponse>(response.Data!, Steam.JsonOptions)!;
+			return obj;
+		}
+		catch (Exception)
+		{
+			return new() { Result = EResult.BadResponse };
+		}
+	}
+	public static async Task<AjaxSetTokenResponse> store_jwtrefresh_async(DefaultRequest defaultRequest, string steamRefresh_steam, string redir = "https://store.steampowered.com/")
+	{
+		var request = new PostRequest(SteamPoweredUrls.Jwt_Refresh, Downloader.AppFormUrlEncoded)
+		{
+			Proxy = defaultRequest.Proxy,
+			IsAjax = false,
+			CancellationToken = defaultRequest.CancellationToken,
+			SteamRefresh_Steam = steamRefresh_steam,
+			Session = defaultRequest.Session,
+		};
+		request.AddPostData("redir", Uri.UnescapeDataString(redir!), false);
+		var response = await Downloader.PostAsync(request);
+		if (!response.Success)
+			return new();
+		try
+		{
+			var obj = JsonSerializer.Deserialize<AjaxSetTokenResponse>(response.Data!, Steam.JsonOptions)!;
+			return obj;
+		}
+		catch (Exception)
+		{
+			return new() { Result = EResult.BadResponse };
+		}
+	}
+	#endregion
+
+	#region trade offer
+	/// <summary>
+	/// Принимает трейд
+	/// </summary>
+	/// <param name="tradeofferid">id трейда для принятия</param>
+	/// <param name="steamid_other">steamid32 аккаунта, который отослал трейд</param>
+	/// <returns>False трейд не принят, но иногда может быть принят, для точности используйте API</returns>
+	public static (ConfTradeOffer?, SteamTradeError?) tradeoffer_accept(DefaultRequest ajaxRequest, ulong tradeofferid, uint steamid_other)
         => tradeoffer_accept(ajaxRequest, tradeofferid, steamid_other.ToSteamId64());
     /// <summary>
     /// Принимает трейд

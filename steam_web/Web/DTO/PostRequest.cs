@@ -5,7 +5,6 @@ using System.Text.RegularExpressions;
 using SteamWeb.Auth.Interfaces;
 
 namespace SteamWeb.Web.DTO;
-
 public class PostRequest : GetRequest
 {
     internal const char Ampersand = '&';
@@ -13,9 +12,16 @@ public class PostRequest : GetRequest
     public List<KeyValuePair<string, string>> PostData { get; private set; } = new(50);
     public string Content { get; set; } = string.Empty;
     public string ContentType { get; set; }
+    /// <summary>
+    /// Указывать куку при входе через steam oauth
+    /// </summary>
     public string? SecOpenIDNonce { get; set; }
+    /// <summary>
+    /// Указывать куку только при запросе <see cref="Script.Ajax.jwt_ajaxrefresh(Models.DefaultRequest, string?)"/>
+    /// </summary>
+	public string? SteamRefresh_Steam { get; set; }
 
-    public PostRequest(string url, string contentType) : base(url) => ContentType = contentType;
+	public PostRequest(string url, string contentType) : base(url) => ContentType = contentType;
     public PostRequest(string url, string content, string contentType) : this(url, contentType) => Content = content;
     public PostRequest(string url, string content, string contentType, IWebProxy? proxy) : this(url, content, contentType) => Proxy = proxy;
     public PostRequest(string url, string content, string contentType, ISessionProvider? session) : this(url, content, contentType) => Session = session;
