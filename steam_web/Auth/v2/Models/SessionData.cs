@@ -187,6 +187,12 @@ public sealed class SessionData : ISessionProvider, IEquatable<SessionData>
 				BrowserId = cookie.Value;
 			else if (cookie.Name == KnownCookies.COOKIE_NAME_STEAMLANGUAGE)
 				SteamLanguage = cookie.Value;
+			else if (cookie.Name == KnownCookies.COOKIE_NAME_STEAMLOGINSECURE)
+			{
+				var splitted = cookie.Value.Split("%7C%7C");
+                if (splitted.Length == 2)
+					AccessToken = splitted[1];
+			}
 			else
 				_cookies.AddOrUpdate(cookie.Name, cookie, (key, oldValue) => cookie);
 		}
