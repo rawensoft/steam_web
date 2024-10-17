@@ -135,7 +135,10 @@ public class Response
 				sb.Append('=');
 				sb.Append(cookie.Value);
 				sb.Append("; ");
-				container.Add(new Uri("https://" + cookie.Domain), cookie);
+				if (cookie.Domain.StartsWith('.'))
+					container.Add(cookie);
+				else
+					container.Add(new Uri("https://" + cookie.Domain), cookie);
 			}
 			Cookie = sb.ToString();
 			CookieContainer = container;
