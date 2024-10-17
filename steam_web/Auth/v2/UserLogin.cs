@@ -55,8 +55,8 @@ public class UserLogin
         }
     }
     public bool IsNeedTwoFactorCode => _isNeedTwoFactorCode;
-    public bool IsNeedEmailCode => _isNeedEmailCode;
-    public bool IsNeedConfirm => _isNeedConfirm;
+	public bool IsNeedEmailCode => _isNeedEmailCode;
+	public bool IsNeedConfirm => _isNeedConfirm;
 	internal string? WeakToken { get; private set; } = null;
 	internal IWebProxy? Proxy { get; init; } = null;
 	internal EAuthTokenPlatformType Platform { get; init; }
