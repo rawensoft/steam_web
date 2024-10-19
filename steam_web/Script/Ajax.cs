@@ -1413,10 +1413,59 @@ public static class Ajax
         {
             return new();
         }
-    }
-    #endregion
+	}
 
-    [Obsolete("Этот метод работает не так хорошо, как мог бы. Рекомендуется использовать API.ILoyaltyRewardsService.GetSummaryAsync().")]
+	public static AjaxWalletCode account_redeemwalletcode(DefaultRequest ajaxRequest, string walllet_code)
+	{
+		var request = new PostRequest(SteamPoweredUrls.Account_AjaxRedeemWalletCode, Downloader.AppFormUrlEncoded)
+		{
+			Session = ajaxRequest.Session,
+			Proxy = ajaxRequest.Proxy,
+			Referer = SteamPoweredUrls.Account_RedeemWalletCode,
+			IsAjax = true,
+			CancellationToken = ajaxRequest.CancellationToken,
+		};
+		request.AddPostData("walllet_code", walllet_code).AddPostData("sessionid", ajaxRequest.Session!.SessionID);
+		var response = Downloader.Post(request);
+		if (!response.Success)
+			return new();
+		try
+		{
+			var obj = JsonSerializer.Deserialize<AjaxWalletCode>(response.Data!)!;
+			return obj;
+		}
+		catch (Exception)
+		{
+			return new();
+		}
+	}
+	public static async Task<AjaxWalletCode> account_redeemwalletcode_async(DefaultRequest ajaxRequest, string walllet_code)
+	{
+		var request = new PostRequest(SteamPoweredUrls.Account_AjaxRedeemWalletCode, Downloader.AppFormUrlEncoded)
+		{
+			Session = ajaxRequest.Session,
+			Proxy = ajaxRequest.Proxy,
+			Referer = SteamPoweredUrls.Account_RedeemWalletCode,
+			IsAjax = true,
+			CancellationToken = ajaxRequest.CancellationToken,
+		};
+		request.AddPostData("walllet_code", walllet_code).AddPostData("sessionid", ajaxRequest.Session!.SessionID);
+		var response = await Downloader.PostAsync(request);
+		if (!response.Success)
+			return new();
+		try
+		{
+			var obj = JsonSerializer.Deserialize<AjaxWalletCode>(response.Data!)!;
+			return obj;
+		}
+		catch (Exception)
+		{
+			return new();
+		}
+	}
+	#endregion
+
+	[Obsolete("Этот метод работает не так хорошо, как мог бы. Рекомендуется использовать API.ILoyaltyRewardsService.GetSummaryAsync().")]
     public static async Task<SteamLoyaltyStore> store_loyalty_store_async(DefaultRequest defaultRequest)
     {
         var request = new GetRequest(SteamPoweredUrls.Points_Shop)
