@@ -345,28 +345,20 @@ public static class Downloader
         try
         {
             var response = (HttpWebResponse)req.GetResponse();
-            using var sr = new StreamReader(response.GetResponseStream());
-            string data = sr.ReadToEnd();
-            string cookie = null;
-            var cookies = cookie_container.GetCookies(new Uri(origin ?? "https://steampowered.com/"));
-            if (cookies.Count > 0) cookie = "";
-            foreach (Cookie item in cookies) cookie += $"{item.Name}={item.Value}; ";
-            return new(response);
+			return new(response);
         }
         catch (WebException ex)
         {
             if (ex.Message.Contains("302"))
             {
-                request.Url = ex.Response.Headers["Location"];
+                request.Url = ex.Response!.Headers["Location"]!;
                 return await UploadFilesToRemoteUrlAsync(request, filename);
             }
-            string data = null;
-            if (ex.Message.Contains("429")) data = "429";
-            return new((HttpWebResponse)ex.Response) { ErrorException = ex, ErrorMessage = ex.Message };
+            return new((HttpWebResponse)ex.Response!) { ErrorException = ex, ErrorMessage = ex.Message };
         }
         catch (Exception ex)
         {
-            return new((HttpWebResponse)null) { ErrorException = ex, ErrorMessage = ex.Message };
+            return new((HttpWebResponse)null!) { ErrorException = ex, ErrorMessage = ex.Message };
         }
     }
     public static async Task<(bool, byte[], string?)> GetCaptchaAsync(string captchagid, IWebProxy? proxy = null, ISessionProvider? session = null, CancellationToken? cts = null)
