@@ -1863,19 +1863,6 @@ public static class Ajax
         {
             return new();
         }
-
-        var html = new HtmlParser();
-        var doc = html.ParseDocument($"<!DOCTYPE html><html lang=\"ru\">{obj.html}</html>");
-        var els = doc.GetElementsByClassName("tradehistoryrow");
-        foreach (var item in els)
-        {
-            var data_el = item.GetElementsByClassName("tradehistory_items_group")[0].GetElementsByTagName("span")[0];
-            var date_el = item.GetElementsByClassName("tradehistory_date");
-            var time_el = date_el[0].GetElementsByClassName("tradehistory_timestamp")[0];
-
-            var date = DateOnly.ParseExact(date_el[0].TextContent.GetClearWebString(), "dd MMM yyyy");
-            var time = DateOnly.ParseExact(time_el.TextContent.GetClearWebString(), "h:mmtt");
-        }
     }
     [Obsolete]
 	public static bool salevote(DefaultRequest defaultRequest, int voteId, int appId)
