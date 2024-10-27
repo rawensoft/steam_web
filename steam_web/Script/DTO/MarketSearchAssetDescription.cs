@@ -9,7 +9,7 @@ public class MarketSearchAssetDescription
     [JsonPropertyName("name")] public string Name { get; init; } = string.Empty;
     [JsonPropertyName("market_name")] public string MarketName { get; init; } = string.Empty;
     [JsonPropertyName("market_hash_name")] public string MarketHashName { get; init; } = string.Empty;
-    [JsonPropertyName("market_tradable_restriction")] public uint MarketTradableRestriction { get; init; } = 0;
+    [JsonPropertyName("market_tradable_restriction")] public sbyte MarketTradableRestriction { get; init; } = 0;
     [JsonPropertyName("marketable")] public ushort Marketable { get; init; } = 0;
     [JsonPropertyName("tradable")] public ushort Tradable { get; init; } = 0;
     [JsonPropertyName("type")] public string Type { get; init; } = string.Empty;

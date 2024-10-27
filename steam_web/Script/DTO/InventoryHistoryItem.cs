@@ -4,7 +4,7 @@ namespace SteamWeb.Script.DTO;
 
 public class InventoryHistoryItem
 {
-    public int commodity { get; init; }
+    public sbyte commodity { get; init; }
     public string background_color { get; init; }
     public string classid { get; init; }
     public string icon_drag_url { get; init; }
@@ -16,10 +16,10 @@ public class InventoryHistoryItem
     public string market_marketable_restriction { get; init; }
     public string market_name { get; init; }
     public string market_tradable_restriction { get; init; }
-    public int marketable { get; init; }
+    public sbyte marketable { get; init; }
     public string name { get; init; }
     public string name_color { get; init; }
-    public int tradable { get; init; }
+    public sbyte tradable { get; init; }
     public string type { get; init; }
     public ItemTag[] tags { get; init; } = new ItemTag[0];
 }

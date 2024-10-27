@@ -14,11 +14,11 @@ public class Description
     [JsonPropertyName("name_color")] public string NameColor { get; init; }
     [JsonPropertyName("background_color")] public string BackgroundColor { get; init; } = string.Empty;
     [JsonPropertyName("type")] public string Type { get; init; }
-    [JsonPropertyName("tradable")] public byte Tradable { get; init; }
-    [JsonPropertyName("marketable")] public byte Marketable { get; init; }
-    [JsonPropertyName("commodity")] public byte Commodity { get; init; }
-    [JsonPropertyName("market_tradable_restriction")] public byte MarketTradableRestriction { get; init; }
-    [JsonPropertyName("market_marketable_restriction")] public byte MarketMarketableRestriction { get; init; }
+    [JsonPropertyName("tradable")] public sbyte Tradable { get; init; }
+    [JsonPropertyName("marketable")] public sbyte Marketable { get; init; }
+    [JsonPropertyName("commodity")] public sbyte Commodity { get; init; }
+    [JsonPropertyName("market_tradable_restriction")] public sbyte MarketTradableRestriction { get; init; }
+    [JsonPropertyName("market_marketable_restriction")] public sbyte MarketMarketableRestriction { get; init; }
     /// <summary>
     /// Время истечения ограничений на трейдинг
     /// </summary>

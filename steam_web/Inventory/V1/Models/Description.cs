@@ -14,11 +14,11 @@ public sealed class Description
     public Action[] market_actions { get; init; } = new Action[0];
     public string market_hash_name { get; init; }
     public string market_name { get; init; }
-    public uint market_tradable_restriction { get; init; }
-    public uint marketable { get; init; }
+    public sbyte market_tradable_restriction { get; init; }
+    public sbyte marketable { get; init; }
     public string name { get; init; }
     public string name_color { get; init; }
     public Tag[] tags { get; init; } = new Tag[0];
-    public uint tradable { get; init; }
+    public sbyte tradable { get; init; }
     public string type { get; init; }
 }

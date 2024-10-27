@@ -41,8 +41,8 @@ public class ListingItem
     [JsonPropertyName("market_hash_name")] public string MarketHashName { get; init; }
     [JsonPropertyName("market_fee_app")] public uint? MarketFeeApp { get; init; }
     [JsonPropertyName("commodity")] public byte Commodity { get; init; }
-    [JsonPropertyName("market_tradable_restriction")] public byte MarketTradableRestriction { get; init; }
-    [JsonPropertyName("market_marketable_restriction")] public byte MarketMarketableRestriction { get; init; }
+    [JsonPropertyName("market_tradable_restriction")] public sbyte MarketTradableRestriction { get; init; }
+    [JsonPropertyName("market_marketable_restriction")] public sbyte MarketMarketableRestriction { get; init; }
     [JsonPropertyName("item_expiration")] public string? ItemExpiration { get; init; }
     [JsonPropertyName("owner")] public uint? Owner { get; init; }
     [JsonPropertyName("marketable")] public byte Marketable { get; set; }

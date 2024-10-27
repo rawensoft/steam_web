@@ -27,7 +27,7 @@ public class ItemRenderAsset
     [JsonPropertyName("market_actions")] public ItemAction[] MarketActions { get; init; } = Array.Empty<ItemAction>();
     [JsonPropertyName("app_icon")] public string? AppIcon { get; init; }
     [JsonPropertyName("commodity")] public byte Commodity { get; init; }
-    [JsonPropertyName("market_tradable_restriction")] public byte MarketTradableRestriction { get; init; }
-    [JsonPropertyName("market_marketable_restriction")] public byte MarketMarketableRestriction { get; init; }
+    [JsonPropertyName("market_tradable_restriction")] public sbyte MarketTradableRestriction { get; init; }
+    [JsonPropertyName("market_marketable_restriction")] public sbyte MarketMarketableRestriction { get; init; }
     [JsonPropertyName("marketable")] public byte Marketable { get; init; }
 }
