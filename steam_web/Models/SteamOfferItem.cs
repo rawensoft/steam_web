@@ -9,8 +9,8 @@ public class SteamOfferItem
     private static Regex _rgxEconomy = new(@"^\w+/(\d{3,9})/(\d{1,11})(?:/(\d{1,11})){0,1}$", RegexOptions.Compiled, TimeSpan.FromMilliseconds(250));
 
     public uint AppId { get; init; }
-    public uint ClassId { get; init; }
-	public uint InstanceId { get; init; }
+    public ulong ClassId { get; init; }
+	public ulong InstanceId { get; init; }
 
 	/// <summary>
 	/// Парсит html атрибут id класса trade_item
@@ -43,7 +43,7 @@ public class SteamOfferItem
     /// </summary>
     /// <param name="id">данные из html атрибута</param>
     /// <returns>true данные спарсены; app id; class id; instance id</returns>
-    internal static (bool, uint, uint, uint) ParseEconomyData(string? id)
+    internal static (bool, uint, ulong, ulong) ParseEconomyData(string? id)
     {
         if (id.IsEmpty())
             return (false, 0, 0, 0);
@@ -53,8 +53,8 @@ public class SteamOfferItem
             if (match.Success)
             {
                 var appid = match.Groups[1].Value.ParseUInt32();
-                var classid = match.Groups[2].Value.ParseUInt32();
-				var instanceid = match.Groups[3].Value.ParseUInt32();
+                var classid = match.Groups[2].Value.ParseUInt64();
+				var instanceid = match.Groups[3].Value.ParseUInt64();
                 if (instanceid == 0)
 				    return (true, appid, instanceid, classid);
                 return (true, appid, classid, instanceid);

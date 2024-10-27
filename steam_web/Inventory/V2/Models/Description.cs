@@ -3,8 +3,8 @@ namespace SteamWeb.Inventory.V2.Models;
 public class Description
 {
     [JsonPropertyName("appid")] public uint AppId { get; init; }
-    [JsonPropertyName("classid")] public string classId { get; init; }
-    [JsonPropertyName("instanceid")] public string InstanceId { get; init; }
+    [JsonPropertyName("classid")] public ulong classId { get; init; }
+    [JsonPropertyName("instanceid")] public ulong InstanceId { get; init; }
     [JsonPropertyName("icon_url")] public string? IconUrl { get; init; }
     [JsonPropertyName("icon_url_large")] public string? IconUrlLarge { get; init; }
     [JsonPropertyName("icon_drag_url")] public string? IconFragUrl { get; init; }

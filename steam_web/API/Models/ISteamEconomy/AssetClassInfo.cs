@@ -14,8 +14,8 @@ public class AssetClassInfo
     [JsonPropertyName("tradable")] public byte Tradable { get; init; }
     [JsonPropertyName("marketable")] public byte Narketable { get; init; }
     [JsonPropertyName("commodity")] public byte Commodity { get; init; }
-    [JsonPropertyName("classid")] public uint ClassId { get; init; }
-    [JsonPropertyName("instanceid")] public uint? InstanceId { get; init; }
+    [JsonPropertyName("classid")] public ulong ClassId { get; init; }
+    [JsonPropertyName("instanceid")] public ulong? InstanceId { get; init; }
 
     [JsonPropertyName("fraudwarnings")]
 #if NET8_0_OR_GREATER

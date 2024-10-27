@@ -21,7 +21,7 @@ public class ListingItem
     [JsonPropertyName("contextid")] public byte ContextId { get; init; }
     [JsonPropertyName("id")] public ulong Id { get; init; }
     [JsonPropertyName("classid")] public ulong ClassId { get; init; }
-    [JsonPropertyName("instanceid")] public uint InstanceId { get; init; }
+    [JsonPropertyName("instanceid")] public ulong InstanceId { get; init; }
     [JsonPropertyName("amount")] public ushort Amount { get; init; }
     [JsonPropertyName("status")] public LISTING_STATUS Status { get; init; }
     [JsonPropertyName("original_amount")] public ushort OriginalAmount { get; init; }

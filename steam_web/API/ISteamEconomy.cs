@@ -15,7 +15,7 @@ public static class ISteamEconomy
     /// <param name="class_count">Number of classes requested. Must be at least one.</param>
     /// <param name="instanceid0">Instance ID of the nth class.</param>
     /// <returns>Информация о предмете</returns>
-    public static ResultData<Dictionary<string, AssetClassInfo>> GetAssetClassInfo(ApiRequest apiRequest, uint appid, uint classid0, byte class_count = 1, uint? instanceid0 = null)
+    public static ResultData<Dictionary<string, AssetClassInfo>> GetAssetClassInfo(ApiRequest apiRequest, uint appid, ulong classid0, byte class_count = 1, ulong? instanceid0 = null)
     {
         var request = new PostRequest(SteamApiUrls.ISteamEconomy_GetAssetClassInfo_v1, Downloader.AppFormUrlEncoded)
         {
@@ -79,7 +79,7 @@ public static class ISteamEconomy
     /// <param name="class_count">Number of classes requested. Must be at least one.</param>
     /// <param name="instanceid0">Instance ID of the nth class.</param>
     /// <returns>Информация о предмете</returns>
-    public static async Task<ResultData<Dictionary<string, AssetClassInfo>>> GetAssetClassInfoAsync(ApiRequest apiRequest, uint appid, uint classid0, byte class_count = 1, uint? instanceid0 = null)
+    public static async Task<ResultData<Dictionary<string, AssetClassInfo>>> GetAssetClassInfoAsync(ApiRequest apiRequest, uint appid, ulong classid0, byte class_count = 1, ulong? instanceid0 = null)
     {
         var request = new PostRequest(SteamApiUrls.ISteamEconomy_GetAssetClassInfo_v1, Downloader.AppFormUrlEncoded)
         {
