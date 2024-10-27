@@ -51,7 +51,7 @@ public class Historing
                 item.ActedOn = el_acted == "" ? null : el_acted;
 
                 var el_listed = el[i].Children[5].InnerHtml.Replace("\n", "").Replace("\t", "");
-                item.ListedOn = el_acted == "" ? null : el_acted;
+                item.ListedOn = el_listed == "" ? null : el_listed;
 
                 var el_game = el[i].GetElementsByClassName("market_listing_game_name")[0].TextContent;
                 item.Game = el_game;
