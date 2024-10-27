@@ -27,6 +27,11 @@ public static class Ajax
 	#region jwt refresh
 	public static AjaxRefreshResponse jwt_ajaxrefresh(DefaultRequest defaultRequest, string steamRefresh_steam, string redir = "https://steamcommunity.com/market/")
 	{
+        if (!steamRefresh_steam.StartsWith('7'))
+        {
+            var jwt = JwtData.Deserialize(steamRefresh_steam);
+			steamRefresh_steam = jwt.Subject + "%7C%7C" + steamRefresh_steam;
+		}
 		var request = new PostRequest(SteamPoweredUrls.Jwt_AjaxRefresh, Downloader.AppFormUrlEncoded)
 		{
 			Proxy = defaultRequest.Proxy,
@@ -52,6 +57,11 @@ public static class Ajax
 	}
 	public static async Task<AjaxRefreshResponse> jwt_ajaxrefresh_async(DefaultRequest defaultRequest, string steamRefresh_steam, string redir = "https://steamcommunity.com/market/")
 	{
+		if (!steamRefresh_steam.StartsWith('7'))
+		{
+			var jwt = JwtData.Deserialize(steamRefresh_steam);
+			steamRefresh_steam = jwt.Subject + "%7C%7C" + steamRefresh_steam;
+		}
 		var request = new PostRequest(SteamPoweredUrls.Jwt_AjaxRefresh, Downloader.AppFormUrlEncoded)
 		{
 			Proxy = defaultRequest.Proxy,
@@ -135,8 +145,19 @@ public static class Ajax
 		}
 	}
 
-	public static AjaxSetTokenResponse store_jwtrefresh(DefaultRequest defaultRequest, string steamRefresh_steam, string redir = "https://store.steampowered.com/")
+	/// <summary>
+	/// Обновляет истёкший steaLoginSecure на новый
+	/// </summary>
+	/// <param name="steamRefresh_steam">Не истёкшая кука steamRefresh_steam с login.steampowered.com</param>
+	/// <param name="redir">Для обновления в магазине steam нужно использовать поддомен store, а для поддержки help, также и с поддоменом checkout</param>
+	/// <returns>Данные о выполнении запроса. Новый токен находится в <see cref="SteamWeb.Auth.v2.Models.SessionData.AccessToken"/></returns>
+	public static AjaxSetTokenResponse jwt_refresh(DefaultRequest defaultRequest, string steamRefresh_steam, string redir = "https://store.steampowered.com/")
 	{
+		if (!steamRefresh_steam.StartsWith('7'))
+		{
+			var jwt = JwtData.Deserialize(steamRefresh_steam);
+			steamRefresh_steam = jwt.Subject + "%7C%7C" + steamRefresh_steam;
+		}
 		var request = new PostRequest(SteamPoweredUrls.Jwt_Refresh, Downloader.AppFormUrlEncoded)
 		{
 			Proxy = defaultRequest.Proxy,
@@ -159,8 +180,19 @@ public static class Ajax
 			return new() { Result = EResult.BadResponse };
 		}
 	}
-	public static async Task<AjaxSetTokenResponse> store_jwtrefresh_async(DefaultRequest defaultRequest, string steamRefresh_steam, string redir = "https://store.steampowered.com/")
+	/// <summary>
+	/// Обновляет истёкший steaLoginSecure на новый
+	/// </summary>
+	/// <param name="steamRefresh_steam">Не истёкшая кука steamRefresh_steam с login.steampowered.com</param>
+	/// <param name="redir">Для обновления в магазине steam нужно использовать поддомен store, а для поддержки help, также и с поддоменом checkout</param>
+	/// <returns>Данные о выполнении запроса. Новый токен находится в <see cref="SteamWeb.Auth.v2.Models.SessionData.AccessToken"/></returns>
+	public static async Task<AjaxSetTokenResponse> jwt_refresh_async(DefaultRequest defaultRequest, string steamRefresh_steam, string redir = "https://store.steampowered.com/")
 	{
+		if (!steamRefresh_steam.StartsWith('7'))
+		{
+			var jwt = JwtData.Deserialize(steamRefresh_steam);
+			steamRefresh_steam = jwt.Subject + "%7C%7C" + steamRefresh_steam;
+		}
 		var request = new PostRequest(SteamPoweredUrls.Jwt_Refresh, Downloader.AppFormUrlEncoded)
 		{
 			Proxy = defaultRequest.Proxy,
