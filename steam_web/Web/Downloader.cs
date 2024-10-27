@@ -232,7 +232,7 @@ public static class Downloader
 
     public static async Task<StringResponse> PostAsync(PostRequest request)
     {
-        var cookies = AddCookieSession(request.Url, request.Session);
+        var cookies = request.CookieContainer ?? AddCookieSession(request.Url, request.Session);
         var (client, req) = GetRestClient(request, Method.Post, cookies);
 		var res = await (request.CancellationToken == null ? client.ExecuteAsync(req) : client.ExecuteAsync(req, request.CancellationToken.Value));
         if (request.Session != null)
@@ -243,7 +243,7 @@ public static class Downloader
     }
     public static StringResponse Post(PostRequest request)
     {
-        var cookies = AddCookieSession(request.Url, request.Session);
+        var cookies = request.CookieContainer ?? AddCookieSession(request.Url, request.Session);
 		var (client, req) = GetRestClient(request, Method.Post, cookies);
 		var res = request.CancellationToken == null ? client.Execute(req) : client.Execute(req, request.CancellationToken.Value);
         if (request.Session != null)
@@ -254,7 +254,7 @@ public static class Downloader
     }
     public static async Task<StringResponse> GetAsync(GetRequest request)
     {
-        var cookies = AddCookieSession(request.Url, request.Session);
+        var cookies = request.CookieContainer ?? AddCookieSession(request.Url, request.Session);
 		var (client, req) = GetRestClient(request, Method.Get, cookies);
 		var res = await (request.CancellationToken == null ? client.ExecuteAsync(req) : client.ExecuteAsync(req, request.CancellationToken.Value));
         if (request.Session != null)
@@ -265,7 +265,7 @@ public static class Downloader
     }
     public static StringResponse Get(GetRequest request)
 	{
-		var cookies = AddCookieSession(request.Url, request.Session);
+		var cookies = request.CookieContainer ?? AddCookieSession(request.Url, request.Session);
 		var (client, req) = GetRestClient(request, Method.Get, cookies);
 		var res = request.CancellationToken == null ? client.Execute(req) : client.Execute(req, request.CancellationToken.Value);
 		if (request.Session != null)
@@ -410,7 +410,8 @@ public static class Downloader
     }
     public static (bool, byte[], string) GetCaptcha(string captchagid, IWebProxy? proxy = null, ISessionProvider? session = null, CancellationToken? cts = null)
     {
-        if (captchagid.IsEmpty()) return (false, Encoding.UTF8.GetBytes("Не указан CaptchaGID"), string.Empty);
+        if (captchagid.IsEmpty())
+            return (false, Encoding.UTF8.GetBytes("Не указан CaptchaGID"), string.Empty);
         string url = "https://store.steampowered.com/login/rendercaptcha?gid=" + captchagid;
         var cookie_container = new CookieContainer();
         if (session != null)
