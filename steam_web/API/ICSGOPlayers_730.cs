@@ -57,7 +57,7 @@ public static class ICSGOPlayers_730
             CancellationToken = apiRequest.CancellationToken,
         };
         apiRequest.AddAuthToken(request).AddQuery("steamid", steamid).AddQuery("steamidkey", steamidkey, false).AddQuery("knowncode", knowncode, false);
-        var response = Downloader.Get(request);
+        var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return new();
         try
