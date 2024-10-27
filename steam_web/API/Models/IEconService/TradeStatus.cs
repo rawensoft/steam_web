@@ -10,31 +10,32 @@ public class TradeStatus
 	/// </summary>
 	[JsonPropertyName("descriptions")] public List<TradeHistoryDescription> Descriptions { get; init; } = new(1);
 
-        /// <summary>
-        /// Доступно если get_descriptions == true
-        /// </summary>
-        /// <param name="classid"></param>
-        /// <param name="instanceid"></param>
-        /// <returns>Null если описание не найдено</returns>
-        public TradeHistoryDescription GetDescriptionForItem(string classid, string instanceid)
-        {
-            foreach (var item in descriptions)
-            {
-                if (item.classid == classid && item.instanceid == instanceid) return item;
-            }
-            return null;
-        }
-        /// <summary>
-        /// Доступно если get_descriptions == true
-        /// </summary>
-        /// <param name="classid"></param>
-        /// <param name="instanceid"></param>
-        /// <returns>Null если описание не найдено</returns>
-        public TradeHistoryDescription GetDescriptionForItem(ulong classid, uint instanceid)
-        {
-            var @class = classid.ToString();
-            var instance = instanceid.ToString();
-            return GetDescriptionForItem(@class, instance);
-        }
-    }
+	/// <summary>
+	/// Доступно если get_descriptions == true
+	/// </summary>
+	/// <param name="classid"></param>
+	/// <param name="instanceid"></param>
+	/// <returns>Null если описание не найдено</returns>
+	public TradeHistoryDescription? GetDescriptionForItem(string classid, string instanceid)
+	{
+		var cid = classid.ParseUInt64();
+		var iid = instanceid.ParseUInt64();
+		var item = Descriptions
+			.Where(x => x.ClassId == cid)
+			.FirstOrDefault(x => x.InstanceId == iid);
+		return item;
+	}
+	/// <summary>
+	/// Доступно если get_descriptions == true
+	/// </summary>
+	/// <param name="classid"></param>
+	/// <param name="instanceid"></param>
+	/// <returns>Null если описание не найдено</returns>
+	public TradeHistoryDescription? GetDescriptionForItem(ulong classid, ulong instanceid)
+	{
+		var item = Descriptions
+			.Where(x => x.ClassId == classid)
+			.FirstOrDefault(x => x.InstanceId == instanceid);
+		return item;
+	}
 }
