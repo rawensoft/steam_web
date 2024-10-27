@@ -236,7 +236,7 @@ public static class Ajax
         }
     }
     public static (ConfTradeOffer?, SteamTradeError?) tradeoffer_accept(DefaultRequest ajaxRequest, Trade trade) =>
-        tradeoffer_accept(ajaxRequest, trade.u_tradeofferid, trade.accountid_other);
+        tradeoffer_accept(ajaxRequest, trade.TradeOfferId, trade.AccountIdOther);
     /// <summary>
     /// Принимает трейд
     /// </summary>
@@ -326,7 +326,7 @@ public static class Ajax
 	/// </summary>
 	/// <param name="trade">trade offer id</param>
 	public static async Task<CancelTrade> tradeoffer_cancel_async(DefaultRequest defaultRequest, Trade trade)
-        => await tradeoffer_cancel_async(defaultRequest, trade.u_tradeofferid);
+        => await tradeoffer_cancel_async(defaultRequest, trade.TradeOfferId);
 	/// <summary>
 	/// Отменяет трейд, который этот аккаунт создал
 	/// </summary>
@@ -366,7 +366,7 @@ public static class Ajax
 	/// </summary>
 	/// <param name="trade">trade offer id</param>
 	public static CancelTrade tradeoffer_cancel(DefaultRequest defaultRequest, Trade trade)
-        => tradeoffer_cancel(defaultRequest, trade.u_tradeofferid);
+        => tradeoffer_cancel(defaultRequest, trade.TradeOfferId);
 
 	/// <summary>
 	/// Отклоняет трейд, который был отправлен на этот аккаунт
@@ -407,7 +407,7 @@ public static class Ajax
 	/// </summary>
 	/// <param name="trade">trade offer id</param>
 	public static async Task<CancelTrade> tradeoffer_decline_async(DefaultRequest defaultRequest, Trade trade)
-		=> await tradeoffer_decline_async(defaultRequest, trade.u_tradeofferid);
+		=> await tradeoffer_decline_async(defaultRequest, trade.TradeOfferId);
 	/// <summary>
 	/// Отклоняет трейд, который был отправлен на этот аккаунт
 	/// </summary>
@@ -447,7 +447,7 @@ public static class Ajax
 	/// </summary>
 	/// <param name="trade">trade offer id</param>
 	public static CancelTrade tradeoffer_decline(DefaultRequest defaultRequest, Trade trade)
-		=> tradeoffer_decline(defaultRequest, trade.u_tradeofferid);
+		=> tradeoffer_decline(defaultRequest, trade.TradeOfferId);
 	#endregion
 
 	#region market
@@ -1064,7 +1064,7 @@ public static class Ajax
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<PriceOverview>(response.Data!)!;
+            var obj = JsonSerializer.Deserialize<PriceOverview>(response.Data!, Steam.JsonOptions)!;
             return obj;
         }
         catch (Exception)
@@ -1087,7 +1087,7 @@ public static class Ajax
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<PriceOverview>(response.Data!)!;
+            var obj = JsonSerializer.Deserialize<PriceOverview>(response.Data!, Steam.JsonOptions)!;
             return obj;
         }
         catch (Exception)
@@ -1256,10 +1256,10 @@ public static class Ajax
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<CommentResponse>(response.Data);
+            var obj = JsonSerializer.Deserialize<CommentResponse>(response.Data!)!;
             return obj;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return new CommentResponse() { success = false };
         }
@@ -1818,7 +1818,8 @@ public static class Ajax
             request.AddQuery("app%5B%5D", appid[i]);
         var response = await Downloader.GetAsync(request);
         if (!response.Success || response.Data.IsEmpty() || response.Data == "<!DOCTYPE html>" ||
-            response.Data!.Contains("btn_blue_steamui btn_medium login_btn")) return new();
+            response.Data!.Contains("btn_blue_steamui btn_medium login_btn"))
+            return new();
         InventoryHistory obj;
         try
         {

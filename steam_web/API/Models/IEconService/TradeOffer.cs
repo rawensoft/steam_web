@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SteamWeb.API.Models.IEconService
+﻿using System.Text.Json.Serialization;
+namespace SteamWeb.API.Models.IEconService;
+public class TradeOffer
 {
-    public class TradeOffer
-    {
-        public Trade offer { get; set; } = new();
-    }
+	[JsonPropertyName("offer")] public Trade? Offer { get; init; }
 }

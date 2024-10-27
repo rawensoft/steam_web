@@ -108,7 +108,7 @@ public sealed class MarketItem
         };
         try
         {
-            string raw = html.GetBetween("var g_rgWalletInfo = ", ";");
+            string? raw = html.GetBetween("var g_rgWalletInfo = ", ";");
             if (raw != null)
                 item.WalletInfo = JsonSerializer.Deserialize<WalletInfo>(raw, options)!;
         }

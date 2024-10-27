@@ -1,17 +1,14 @@
-﻿using System;
-using System.Threading.Tasks;
-using System.Text.Json;
-using System.IO;
+﻿using System.Text.Json;
 using SteamWeb.Inventory.V1.Models;
 using SteamWeb.Web;
 using SteamWeb.Auth.Interfaces;
 
 namespace SteamWeb.Inventory.V1;
-public partial class SteamInventory
+public class SteamInventory
 {
-    public Asset[] assets { get; set; } = new Asset[0];
-    public Description[] descriptions { get; set; } = new Description[0];
-    public string last_assetid { get; set; }
+    public Asset[] assets { get; set; } = Array.Empty<Asset>();
+    public Description[] descriptions { get; set; } = Array.Empty<Description>();
+    public string? last_assetid { get; set; }
     public uint? more_items { get; set; }
     public int? rwgrsn { get; set; }
     public int? success { get; set; }
@@ -25,14 +22,15 @@ public partial class SteamInventory
             var response = await Downloader.GetAsync(getRequest);
             if (!response.Success) return new SteamInventory() { success = 0 };
             else if (string.IsNullOrEmpty(response.Data)) return new SteamInventory() { success = 0 };
-            var inv = JsonSerializer.Deserialize<SteamInventory>(response.Data);
+            var inv = JsonSerializer.Deserialize<SteamInventory>(response.Data)!;
             return inv;
         }
-        catch (Exception ex)
-        { }
-        return new SteamInventory() { success = 0 };
+        catch (Exception)
+        {
+			return new SteamInventory() { success = 0 };
+		}
     }
-    public static SteamInventory Restore(string steamid64, string appid, string dir = null)
+    public static SteamInventory Restore(string steamid64, string appid, string? dir = null)
     {
         if (dir == null) dir = Environment.CurrentDirectory + $"\\{appid}\\";
         if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
@@ -48,15 +46,17 @@ public partial class SteamInventory
                     PropertyNameCaseInsensitive = true,
                     Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
                 };
-                var obj = JsonSerializer.Deserialize<SteamInventory>(data, options);
+                var obj = JsonSerializer.Deserialize<SteamInventory>(data, options)!;
                 return obj;
             }
-            catch (Exception ex)
-            { }
+            catch (Exception)
+            {
+				return new SteamInventory() { success = -1 };
+			}
         }
         return new SteamInventory() { success = 0 };
     }
-    public void Save(string steamid64, string appid, string dir = null)
+    public void Save(string steamid64, string appid, string? dir = null)
     {
         if (dir == null) dir = Environment.CurrentDirectory + $"\\{appid}\\";
         if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
@@ -72,17 +72,17 @@ public partial class SteamInventory
         {
             File.WriteAllText(path, data);
         }
-        catch (Exception ex)
-        { }
+        catch (Exception)
+        {
+
+        }
     }
-    public Description GetDescription(string classid, string instanceid)
+    public Description? GetDescription(string classid, string instanceid)
     {
         for (int i = 0; i < descriptions.Length; i++)
-        {
-            if (descriptions[i].classid == classid &&
-                descriptions[i].instanceid == instanceid)
-                return descriptions[i];
-        }
-        return new Description();
+			if (descriptions[i].classid == classid &&
+				descriptions[i].instanceid == instanceid)
+				return descriptions[i];
+		return null;
     }
 }

@@ -270,7 +270,7 @@ public class AuthenticatorLinker
         int tries = 0;
         while (tries <= 30)
         {
-            request.authenticator_code = LinkedAccount.GenerateSteamGuardCode();
+            request.authenticator_code = LinkedAccount!.GenerateSteamGuardCode();
             request.authenticator_time = TimeAligner.GetSteamTime();
             Serializer.Serialize(memStream1, request);
             string content = Convert.ToBase64String(memStream1.ToArray());
@@ -446,7 +446,7 @@ public class AuthenticatorLinker
 		int tries = 0;
 		while (tries <= 30)
 		{
-			request.authenticator_code = LinkedAccount.GenerateSteamGuardCode();
+			request.authenticator_code = LinkedAccount!.GenerateSteamGuardCode();
 			request.authenticator_time = TimeAligner.GetSteamTime();
 			Serializer.Serialize(memStream1, request);
 			string content = Convert.ToBase64String(memStream1.ToArray());
@@ -538,7 +538,7 @@ public class AuthenticatorLinker
 			steamid = session.SteamID,
 			activation_code = emailCode,
 			validate_sms_code = true,
-			authenticator_code = LinkedAccount.GenerateSteamGuardCode(),
+			authenticator_code = LinkedAccount!.GenerateSteamGuardCode(),
 			authenticator_time = TimeAligner.GetSteamTime()
 		};
 		Serializer.Serialize(memStream1, request);
@@ -624,7 +624,7 @@ public class AuthenticatorLinker
 			steamid = session.SteamID,
 			activation_code = emailCode,
 			validate_sms_code = true,
-			authenticator_code = LinkedAccount.GenerateSteamGuardCode(),
+			authenticator_code = LinkedAccount!.GenerateSteamGuardCode(),
 			authenticator_time = TimeAligner.GetSteamTime()
 		};
 		Serializer.Serialize(memStream1, request);

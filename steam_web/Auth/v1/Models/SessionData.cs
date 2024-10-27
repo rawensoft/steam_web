@@ -20,7 +20,7 @@ public class SessionData : ISessionProvider
     /// <summary>
     /// Вызывается при обновлении данных сессии
     /// </summary>
-    public event OnSessionUpdatedHandler OnSessionUpdated;
+    public event OnSessionUpdatedHandler? OnSessionUpdated;
     
     [JsonIgnore] public string SteamLanguage
     {
@@ -32,7 +32,7 @@ public class SessionData : ISessionProvider
             OnSessionUpdated?.Invoke(this);
         }
     }
-	public string SessionID
+	public string? SessionID
 	{
 		get => _sessionID;
 		set
@@ -43,7 +43,7 @@ public class SessionData : ISessionProvider
 			OnSessionUpdated?.Invoke(this);
 		}
 	}
-	public string AccessToken
+	public string? AccessToken
 	{
 		get => _accessToken;
 		set
@@ -54,7 +54,7 @@ public class SessionData : ISessionProvider
 			OnSessionUpdated?.Invoke(this);
 		}
 	}
-	public string RefreshToken
+	public string? RefreshToken
 	{
 		get => _refreshToken;
 		set

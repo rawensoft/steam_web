@@ -1,12 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System.Text.Json.Serialization;
+using SteamWeb.Extensions;
 
 namespace SteamWeb.API.Models.IEconService;
 public class Trades
 {
-    public Trade[] trade_offers_sent { get; init; } = new Trade[0];
-    public Trade[] trade_offers_received { get; init; } = new Trade[0];
-    public TradeHistoryDescription[] descriptions { get; init; } = new TradeHistoryDescription[0];
-    public int next_cursor { get; init; }
+	[JsonPropertyName("trade_offers_sent")] public Trade[] TradeOffersSent { get; init; } = Array.Empty<Trade>();
+	[JsonPropertyName("trade_offers_received")] public Trade[] TradeOffersReceived { get; init; } = Array.Empty<Trade>();
+	[JsonPropertyName("descriptions")] public TradeHistoryDescription[] Descriptions { get; init; } = Array.Empty<TradeHistoryDescription>();
+	[JsonPropertyName("next_cursor")] public int NextCursor { get; init; }
 
     /// <summary>
     /// Доступно если get_descriptions == true

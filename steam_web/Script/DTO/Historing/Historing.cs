@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using SteamWeb.Script.Enums;
+﻿using SteamWeb.Script.Enums;
 using System.Text.Json;
 using SteamWeb.Extensions;
 using AngleSharp.Html.Parser;
@@ -14,12 +13,12 @@ public class Historing
     public int start { get; init; } = 0;
     public bool IsAuthtorized { get; internal set; } = true;
     public bool IsError { get; init; } = false;
-    public HistoryItem[] History { get; init; } = new HistoryItem[0];
+    public HistoryItem[] History { get; init; } = Array.Empty<HistoryItem>();
 
     public static Historing Deserialize(string data)
     {
         data = data.Replace("\"assets\":[]", "\"assets\":{}");
-        var obj = JsonSerializer.Deserialize<Listing>(data);
+        var obj = JsonSerializer.Deserialize<Listing>(data)!;
         var html = new HtmlParser();
         var doc = html.ParseDocument(obj.ResultsHtml);
         var el = doc.GetElementsByClassName("market_listing_row");
@@ -36,8 +35,8 @@ public class Historing
                 item.Name = el_name;
 
                 var el_removeid = el[i].Id;
-                item.RemoveID0 = el_removeid.GetBetween("history_row_", "_");
-                item.RemoveID1 = el_removeid.GetBetween($"history_row_{item.RemoveID0}_", "_");
+                item.RemoveID0 = el_removeid?.GetBetween("history_row_", "_");
+                item.RemoveID1 = el_removeid?.GetBetween($"history_row_{item.RemoveID0}_", "_");
                 if (item.RemoveID1 == "event") item.RemoveID1 = null;
 
                 var el_type = el[i].Children[3].InnerHtml;
@@ -67,7 +66,7 @@ public class Historing
                 }
                 list.Add(item);
             }
-            catch (System.Exception ex)
+            catch (Exception)
             {
                 return new Historing()
                 {

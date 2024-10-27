@@ -40,11 +40,14 @@ public static class TimeAligner
         try
         {
             string response = await client.UploadStringTaskAsync(APIEndpoints.TWO_FACTOR_TIME_QUERY, "steamid=0");
-            TimeQuery query = JsonSerializer.Deserialize<TimeQuery>(response);
-            timeDifference = query.response.server_time.ParseInt32() - currentTime;
+            TimeQuery query = JsonSerializer.Deserialize<TimeQuery>(response)!;
+            timeDifference = query!.response.server_time.ParseInt32() - currentTime;
             aligned = true;
         }
         catch (WebException)
-        { }
+        {
+            // нам нужна только выполнить запрос без никаких ошибок
+            // если будет ошибка aligned==false
+        }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using SteamWeb.Auth.v2;
 
 namespace ExampleAuth3;
-internal class Program
+internal static class Program
 {
 	static void Main(string[] args)
 	{

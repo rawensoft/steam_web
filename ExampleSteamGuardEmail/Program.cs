@@ -153,7 +153,7 @@ internal static class Program
 			Environment.Exit(0);
 		}
 
-		SaveLinker(linker.LinkedAccount);
+		SaveLinker(linker.LinkedAccount!);
 		Console.WriteLine("Введите код с почты:");
 		var emailCode = Console.ReadLine();
 		if (emailCode.IsEmpty() || emailCode!.Length != 5)
@@ -172,7 +172,7 @@ internal static class Program
 		}
 
 
-		SaveLinker(linker.LinkedAccount);
+		SaveLinker(linker.LinkedAccount!);
 		Console.WriteLine("Аутентификатор добавлен...");
 		Console.ReadKey();
 	}
@@ -189,9 +189,9 @@ internal static class Program
 
 		var sessionOld = new SessionOld
 		{
-			AccessToken = sda.Session!.AccessToken,
-			RefreshToken = sda.Session!.RefreshToken,
-			SessionID = sda.Session!.SessionID,
+			AccessToken = sda.Session!.AccessToken!,
+			RefreshToken = sda.Session!.RefreshToken!,
+			SessionID = sda.Session!.SessionID!,
 			SteamID = sda.Session!.SteamID,
 			SteamLanguage = sda.Session!.SteamLanguage,
 		};

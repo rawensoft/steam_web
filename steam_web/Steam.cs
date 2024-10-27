@@ -939,7 +939,7 @@ public static partial class Steam
     }
     [Obsolete("Данный метод переехал в Script.Ajax.tradeoffer_accept")]
     public static (ConfTradeOffer?, SteamTradeError?) AcceptTrade(DefaultRequest ajaxRequest, Trade trade) =>
-        AcceptTrade(ajaxRequest, trade.u_tradeofferid, trade.accountid_other);
+        AcceptTrade(ajaxRequest, trade.TradeOfferId, trade.AccountIdOther);
     /// <summary>
     /// Принимает трейд
     /// </summary>
@@ -1106,7 +1106,7 @@ public static partial class Steam
             }
 
             var op = new Operation();
-            op.Name = td[0].TextContent.GetClearWebString();
+            op.Name = td[0].TextContent.GetClearWebString()!;
 
             var ms_comp = td[1].TextContent.GetClearWebString().GetOnlyDigit();
             op.Missions_Completed = ms_comp.IsEmpty() ? 0 : int.Parse(ms_comp);
@@ -1124,7 +1124,7 @@ public static partial class Steam
             op.Redeemable_Balance = redeemable_bal.IsEmpty() ? 0 : int.Parse(st_pur);
 
             var act_time = td[6].TextContent.GetClearWebString();
-            op.Activation_Time = act_time.IsEmpty() ? "None" : act_time;
+            op.Activation_Time = act_time.IsEmpty() ? "None" : act_time!;
 
             op_progress.Operations[^1] = op;
         }
@@ -1184,7 +1184,7 @@ public static partial class Steam
                 for (int x = 0; x < generic_kv_lines.Length; x++)
                 {
                     var generic_kv_line = generic_kv_lines[x];
-                    var splitted = generic_kv_line.TextContent.GetClearWebString().Replace(": ", "|").Split('|'); //.Replace("CS:GO", "CSGO")
+                    var splitted = generic_kv_line.TextContent.GetClearWebString()!.Replace(": ", "|").Split('|'); //.Replace("CS:GO", "CSGO")
                     if (splitted.Length == 1)
                         dict_mini.Add(splitted[0], "none");
                     else dict_mini.Add(splitted[0], splitted[1]);
@@ -1225,32 +1225,32 @@ public static partial class Steam
             }
             if (th.Length >= 1 && header1 == "Prime Account Status Active Since" && td.Length >= 1)
             {
-                accountMain.PrimeAccountStatusActiveSince = td[0].TextContent.GetClearWebString();
+                accountMain.PrimeAccountStatusActiveSince = td[0].TextContent.GetClearWebString()!;
             }
             if ((tr.Length == 5 || tr.Length == 6) && header1 == "Recorded Activity")
             {
                 var dict = new Dictionary<string, string>(10);
                 var name0 = tr[1].GetElementsByTagName("td")[0].TextContent.GetClearWebString();
                 var value0 = tr[1].GetElementsByTagName("td")[1].TextContent.GetClearWebString();
-                dict.Add(name0, value0);
+                dict.Add(name0!, value0!);
 
                 var name1 = tr[2].GetElementsByTagName("td")[0].TextContent.GetClearWebString();
                 var value1 = tr[2].GetElementsByTagName("td")[1].TextContent.GetClearWebString();
-                dict.Add(name1, value1);
+                dict.Add(name1!, value1!);
 
                 var name2 = tr[3].GetElementsByTagName("td")[0].TextContent.GetClearWebString();
                 var value2 = tr[3].GetElementsByTagName("td")[1].TextContent.GetClearWebString();
-                dict.Add(name2, value2);
+                dict.Add(name2!, value2!);
 
                 var name3 = tr[4].GetElementsByTagName("td")[0].TextContent.GetClearWebString();
                 var value3 = tr[4].GetElementsByTagName("td")[1].TextContent.GetClearWebString();
-                dict.Add(name3, value3);
+                dict.Add(name3!, value3!);
 
                 if (tr.Length == 6)
                 {
                     var name4 = tr[5].GetElementsByTagName("td")[0].TextContent.GetClearWebString();
                     var value4 = tr[5].GetElementsByTagName("td")[1].TextContent.GetClearWebString();
-                    dict.Add(name4, value4);
+                    dict.Add(name4!, value4!);
                 }
                 if (dict.ContainsKey("Logged out of CS:GO"))
                     accountMain.LoggedOutOfCSGO = dict["Logged out of CS:GO"];
@@ -1345,7 +1345,7 @@ public static partial class Steam
                     mm.Competitive.SkillGroup = rank.ParseInt16();
 
                     var last_match = td_tmp[5].TextContent.GetClearWebString();
-                    mm.Competitive.LastMatch = last_match;
+                    mm.Competitive.LastMatch = last_match!;
                 }
                 if (ths.Length == 6 && tr.Length >= 2 && tr10_header == "Wingman")
                 {
@@ -1371,7 +1371,7 @@ public static partial class Steam
                     mm.Wingman.SkillGroup = rank.ParseInt16();
 
                     var last_match = td_tmp[5].TextContent.GetClearWebString();
-                    mm.Wingman.LastMatch = last_match;
+                    mm.Wingman.LastMatch = last_match!;
                 }
                 if (ths.Length == 6 && tr.Length >= 3 && tr[2].GetElementsByTagName("td")[0].TextContent.GetClearWebString() == "Wingman")
                 {
@@ -1397,7 +1397,7 @@ public static partial class Steam
                     mm.Wingman.SkillGroup = rank.ParseInt16();
 
                     var last_match = td_tmp[5].TextContent.GetClearWebString();
-                    mm.Wingman.LastMatch = last_match;
+                    mm.Wingman.LastMatch = last_match!;
                 }
                 if (ths.Length == 5 && tr.Length >= 2 && tr10_header == "Danger Zone")
                 {
@@ -1418,7 +1418,7 @@ public static partial class Steam
                     mm.DangerZone.MatchesPlayed = matches.ParseUInt16();
 
                     var last_match = td_tmp[4].TextContent.GetClearWebString();
-                    mm.DangerZone.LastMatch = last_match;
+                    mm.DangerZone.LastMatch = last_match!;
                 }
 
                 var flag0 = ths.Length > 0 && ths[1].TextContent.GetClearWebString() == "Last Match";
@@ -1430,7 +1430,7 @@ public static partial class Steam
                         var mode = td_tmp[0].TextContent.GetClearWebString();
                         var last_match = td_tmp[1].TextContent.GetClearWebString();
 
-                        var match = new ModeLastMatch(mode, last_match);
+                        var match = new ModeLastMatch(mode!, last_match!);
                         var arr = new ModeLastMatch[mm.LastMatches.Length + 1];
                         mm.LastMatches.CopyTo(arr, 0);
                         mm.LastMatches = arr;

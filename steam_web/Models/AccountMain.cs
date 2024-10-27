@@ -3,7 +3,7 @@ public class AccountMain
 {
     public const string DefaultPlate = "None";
     public bool Success { get; init; } = false;
-    public string Error { get; init; } = null;
+    public string? Error { get; init; } = null;
     public SubscriptionServiceActiveUntil SubscriptionService { get; init; } = new();
 
     public string PrimeAccountStatusActiveSince { get; internal set; } = DefaultPlate;

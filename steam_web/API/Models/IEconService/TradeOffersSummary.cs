@@ -1,22 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SteamWeb.API.Models.IEconService
+﻿using System.Text.Json.Serialization;
+namespace SteamWeb.API.Models.IEconService;
+public class TradeOffersSummary
 {
-    public class TradeOffersSummary
-    {
-        public uint pending_received_count { get; set; }
-        public uint new_received_count { get; set; }
-        public uint updated_received_count { get; set; }
-        public uint historical_received_count { get; set; }
-        public uint pending_sent_count { get; set; }
-        public uint newly_accepted_sent_count { get; set; }
-        public uint updated_sent_count { get; set; }
-        public uint historical_sent_count { get; set; }
-        public uint escrow_received_count { get; set; }
-        public uint escrow_sent_count { get; set; }
-    }
+    [JsonPropertyName("pending_received_count")] public uint PendingReceivedCount { get; init; }
+    [JsonPropertyName("new_received_count")] public uint NewReceivedCount { get; init; }
+    [JsonPropertyName("updated_received_count")] public uint UpdatedReceivedCount { get; init; }
+    [JsonPropertyName("historical_received_count")] public uint HistoricalReceivedCount { get; init; }
+    [JsonPropertyName("pending_sent_count")] public uint PendingSentCount { get; init; }
+    [JsonPropertyName("newly_accepted_sent_count")] public uint NewlyAcceptedSentCount { get; init; }
+    [JsonPropertyName("updated_sent_count")] public uint UpdatedSentCount { get; init; }
+    [JsonPropertyName("historical_sent_count")] public uint HistoricalSentCount { get; init; }
+    [JsonPropertyName("escrow_received_count")] public uint EscrowReceivedCount { get; init; }
+	[JsonPropertyName("escrow_sent_count")] public uint EscrowSentCount { get; init; }
 }

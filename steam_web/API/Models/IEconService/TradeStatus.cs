@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
+using SteamWeb.Extensions;
 
-namespace SteamWeb.API.Models.IEconService
+namespace SteamWeb.API.Models.IEconService;
+public class TradeStatus
 {
-    public class TradeStatus
-    {
-        public List<TradeHistory> trades { get; set; } = new();
-        /// <summary>
-        /// Доступно если get_descriptions == true
-        /// </summary>
-        public List<TradeHistoryDescription> descriptions { get; set; } = new();
+	[JsonPropertyName("trades")] public TradeHistory[] Trades { get; init; } = Array.Empty<TradeHistory>();
+	/// <summary>
+	/// Доступно если get_descriptions == true
+	/// </summary>
+	[JsonPropertyName("descriptions")] public List<TradeHistoryDescription> Descriptions { get; init; } = new(1);
 
         /// <summary>
         /// Доступно если get_descriptions == true

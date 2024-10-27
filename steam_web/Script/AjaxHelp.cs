@@ -59,7 +59,7 @@ public static class AjaxHelp
             CancellationToken = ajaxRequest.CancellationToken,
         };
         input = string.IsNullOrEmpty(input) ? string.Empty : input.Replace("+", "%2B").Replace(" ", "+");
-        request.AddPostData("op", op.ToStringValue()).AddPostData("input", input).AddPostData("sessionID", ajaxRequest.Session.SessionID)
+        request.AddPostData("op", op.ToStringValue()).AddPostData("input", input).AddPostData("sessionID", ajaxRequest.Session!.SessionID)
             .AddPostData("confirmed", confirmed ? 1 : 0).AddPostData("checkfortos", 1).AddPostData("bisediting", 0).AddPostData("token", 0);
         var response = await Downloader.PostAsync(request);
         if (!response.Success)
@@ -90,7 +90,7 @@ public static class AjaxHelp
             IsAjax = true,
             CancellationToken = ajaxRequest.CancellationToken,
         };
-        request.AddPostData("sessionid", ajaxRequest.Session.SessionID).AddPostData("wizard_ajax", 1)
+        request.AddPostData("sessionid", ajaxRequest.Session!.SessionID).AddPostData("wizard_ajax", 1)
             .AddPostData("s", ajaxRequest.S).AddPostData("method", ajaxRequest.Method.ToDigitMethod());
         var response = await Downloader.PostAsync(request);
         if (!response.Success)
@@ -123,7 +123,7 @@ public static class AjaxHelp
             IsAjax = true,
             CancellationToken = ajaxRequest.CancellationToken,
         };
-        request.AddPostData("sessionid", ajaxRequest.Session.SessionID).AddPostData("wizard_ajax", 1).AddPostData("s", ajaxRequest.S)
+        request.AddPostData("sessionid", ajaxRequest.Session!.SessionID).AddPostData("wizard_ajax", 1).AddPostData("s", ajaxRequest.S)
             .AddPostData("reset", ajaxRequest.Reset.ToDigitReset()).AddPostData("lost", TypeLost.RecoveryConfirm.ToDigitLost())
             .AddPostData("method", ajaxRequest.Method.ToDigitMethod()).AddPostData("issueid", ajaxRequest.Reset.ToDigitIssueId());
         var response = await Downloader.PostAsync(request);
@@ -157,7 +157,7 @@ public static class AjaxHelp
         };
         request.AddQuery("code", code).AddQuery("s", ajaxRequest.S).AddQuery("reset", ajaxRequest.Reset.ToDigitReset())
             .AddQuery("lost", TypeLost.RecoveryConfirm.ToDigitLost()).AddQuery("method", ajaxRequest.Method.ToDigitMethod())
-            .AddQuery("issueid", ajaxRequest.Reset.ToDigitIssueId()).AddQuery("sessionid", ajaxRequest.Session.SessionID)
+            .AddQuery("issueid", ajaxRequest.Reset.ToDigitIssueId()).AddQuery("sessionid", ajaxRequest.Session!.SessionID)
             .AddQuery("wizard_ajax", 1);
         var response = await Downloader.GetAsync(request);
         if (!response.Success)
@@ -188,7 +188,7 @@ public static class AjaxHelp
             IsAjax = true,
             CancellationToken = ajaxRequest.CancellationToken,
         };
-        request.AddPostData("sessionid", ajaxRequest.Session.SessionID, false).AddPostData("wizard_ajax", 1).AddPostData("gamepad", 0)
+        request.AddPostData("sessionid", ajaxRequest.Session!.SessionID, false).AddPostData("wizard_ajax", 1).AddPostData("gamepad", 0)
 			.AddPostData("s", ajaxRequest.S, false).AddPostData("account", ajaxRequest.Account, false).AddPostData("email", HttpUtility.UrlEncode(email), false);
         var response = await Downloader.PostAsync(request);
         if (!response.Success)
@@ -219,7 +219,7 @@ public static class AjaxHelp
 			IsAjax = true,
             CancellationToken = ajaxRequest.CancellationToken,
         };
-		request.AddPostData("sessionid", ajaxRequest.Session.SessionID, false).AddPostData("wizard_ajax", 1).AddPostData("gamepad", 0)
+		request.AddPostData("sessionid", ajaxRequest.Session!.SessionID, false).AddPostData("wizard_ajax", 1).AddPostData("gamepad", 0)
 			.AddPostData("s", ajaxRequest.S, false).AddPostData("account", ajaxRequest.Account, false).AddPostData("email", HttpUtility.UrlEncode(email), false);
 		var response = Downloader.Post(request);
 		if (!response.Success)
@@ -251,7 +251,7 @@ public static class AjaxHelp
             IsAjax = true,
             CancellationToken = ajaxRequest.CancellationToken,
         };
-        request.AddPostData("sessionid", ajaxRequest.Session.SessionID).AddPostData("wizard_ajax", 1).AddPostData("s", ajaxRequest.S)
+        request.AddPostData("sessionid", ajaxRequest.Session!.SessionID).AddPostData("wizard_ajax", 1).AddPostData("s", ajaxRequest.S)
             .AddPostData("gamepad", 0).AddPostData("account", ajaxRequest.Account).AddPostData("email", HttpUtility.UrlEncode(email), false)
             .AddPostData("email_change_code", email_change_code);
         var response = await Downloader.PostAsync(request);
@@ -284,7 +284,7 @@ public static class AjaxHelp
 			IsAjax = true,
             CancellationToken = ajaxRequest.CancellationToken,
         };
-		request.AddPostData("sessionid", ajaxRequest.Session.SessionID).AddPostData("wizard_ajax", 1).AddPostData("s", ajaxRequest.S)
+		request.AddPostData("sessionid", ajaxRequest.Session!.SessionID).AddPostData("wizard_ajax", 1).AddPostData("s", ajaxRequest.S)
             .AddPostData("gamepad", 0).AddPostData("account", ajaxRequest.Account).AddPostData("email", HttpUtility.UrlEncode(email), false)
             .AddPostData("email_change_code", email_change_code);
 		var response = Downloader.Post(request);
@@ -316,7 +316,7 @@ public static class AjaxHelp
             IsAjax = true,
             CancellationToken = ajaxRequest.CancellationToken,
         };
-        request.AddPostData("sessionid", ajaxRequest.Session.SessionID).AddPostData("wizard_ajax", 1).AddPostData("password", password);
+        request.AddPostData("sessionid", ajaxRequest.Session!.SessionID).AddPostData("wizard_ajax", 1).AddPostData("password", password);
         var response = await Downloader.PostAsync(request);
         if (!response.Success)
             return new();
@@ -341,7 +341,7 @@ public static class AjaxHelp
             IsAjax = true,
             CancellationToken = ajaxRequest.CancellationToken,
         };
-        request.AddPostData("sessionid", ajaxRequest.Session.SessionID).AddPostData("account", ajaxRequest.Account);
+        request.AddPostData("sessionid", ajaxRequest.Session!.SessionID).AddPostData("account", ajaxRequest.Account);
         var response = await Downloader.PostAsync(request);
         if (!response.Success)
             return new();
@@ -366,7 +366,7 @@ public static class AjaxHelp
             IsAjax = true,
             CancellationToken = ajaxRequest.CancellationToken,
         };
-        request.AddPostData("sessionid", ajaxRequest.Session.SessionID).AddPostData("wizard_ajax", 1).AddPostData("s", ajaxRequest.S)
+        request.AddPostData("sessionid", ajaxRequest.Session!.SessionID).AddPostData("wizard_ajax", 1).AddPostData("s", ajaxRequest.S)
             .AddPostData("account", ajaxRequest.Account).AddPostData("reset", ajaxRequest.Reset.ToDigitReset())
             .AddPostData("issueid", ajaxRequest.Reset.ToDigitIssueId()).AddPostData("lost", ajaxRequest.Lost.ToDigitLost());
         var response = await Downloader.PostAsync(request);
@@ -430,7 +430,7 @@ public static class AjaxHelp
             CancellationToken = ajaxRequest.CancellationToken,
         };
         string encrypt = Helpers.Encrypt(password, rsa.publickey_mod!, rsa.publickey_exp!);
-        request.AddPostData("sessionid", ajaxRequest.Session.SessionID).AddPostData("wizard_ajax", 1)
+        request.AddPostData("sessionid", ajaxRequest.Session!.SessionID).AddPostData("wizard_ajax", 1)
             .AddPostData("s", ajaxRequest.S).AddPostData("account", account).AddPostData("password", encrypt)
             .AddPostData("rsatimestamp", rsa.timestamp!);
         var response = await Downloader.PostAsync(request);
@@ -517,7 +517,7 @@ public static class AjaxHelp
             IsAjax = true,
             CancellationToken = ajaxRequest.CancellationToken,
         };
-        request.AddPostData("op", "has_phone").AddPostData("arg", "null").AddPostData("sessionid", ajaxRequest.Session.SessionID);
+        request.AddPostData("op", "has_phone").AddPostData("arg", "null").AddPostData("sessionid", ajaxRequest.Session!.SessionID);
         var response = await Downloader.PostAsync(request);
         if (!response.Success)
             return new();
@@ -540,7 +540,7 @@ public static class AjaxHelp
             IsAjax = true,
             CancellationToken = ajaxRequest.CancellationToken,
         };
-        request.AddPostData("op", "has_phone").AddPostData("arg", "null").AddPostData("sessionid", ajaxRequest.Session.SessionID);
+        request.AddPostData("op", "has_phone").AddPostData("arg", "null").AddPostData("sessionid", ajaxRequest.Session!.SessionID);
         var response = Downloader.Post(request);
         if (!response.Success)
             return new();
@@ -570,8 +570,9 @@ public static class AjaxHelp
             IsAjax = true,
             CancellationToken = ajaxRequest.CancellationToken,
         };
-        request.AddPostData("sessionid", ajaxRequest.Session.SessionID).AddPostData("s", ajaxRequest.S).AddPostData("lost", ajaxRequest.Lost.ToDigitLost())
-            .AddPostData("reset", ajaxRequest.Reset.ToDigitReset()).AddPostData("password", Helpers.Encrypt(password, rsa.publickey_mod!, rsa.publickey_exp!))
+        request.AddPostData("sessionid", ajaxRequest.Session!.SessionID).AddPostData("s", ajaxRequest.S)
+            .AddPostData("lost", ajaxRequest.Lost.ToDigitLost()).AddPostData("reset", ajaxRequest.Reset.ToDigitReset())
+            .AddPostData("password", Helpers.Encrypt(password, rsa.publickey_mod!, rsa.publickey_exp!))
             .AddPostData("rsatimestamp", rsa.timestamp!);
         var response = await Downloader.PostAsync(request);
         if (!response.Success)

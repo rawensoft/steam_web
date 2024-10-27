@@ -5,14 +5,14 @@ public class Description
     [JsonPropertyName("appid")] public uint AppId { get; init; }
     [JsonPropertyName("classid")] public string classId { get; init; }
     [JsonPropertyName("instanceid")] public string InstanceId { get; init; }
-    [JsonPropertyName("icon_url")] public string IconUrl { get; init; }
-    [JsonPropertyName("icon_url_large")] public string IconUrlLarge { get; init; }
-    [JsonPropertyName("icon_drag_url")] public string IconFragUrl { get; init; }
+    [JsonPropertyName("icon_url")] public string? IconUrl { get; init; }
+    [JsonPropertyName("icon_url_large")] public string? IconUrlLarge { get; init; }
+    [JsonPropertyName("icon_drag_url")] public string? IconFragUrl { get; init; }
     [JsonPropertyName("name")] public string Name { get; init; }
     [JsonPropertyName("market_hash_name")] public string MarketHashName { get; init; }
     [JsonPropertyName("market_name")] public string MarketName { get; init; }
     [JsonPropertyName("name_color")] public string NameColor { get; init; }
-    [JsonPropertyName("background_color")] public string BackgroundColor { get; init; }
+    [JsonPropertyName("background_color")] public string BackgroundColor { get; init; } = string.Empty;
     [JsonPropertyName("type")] public string Type { get; init; }
     [JsonPropertyName("tradable")] public byte Tradable { get; init; }
     [JsonPropertyName("marketable")] public byte Marketable { get; init; }

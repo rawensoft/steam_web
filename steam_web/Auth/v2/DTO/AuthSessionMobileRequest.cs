@@ -5,7 +5,8 @@ namespace SteamWeb.Auth.v2.Models;
 [ProtoContract]
 class AuthSessionMobileRequest
 {
-    private string wesiteid = null;
+    private string? wesiteid = null;
+
     [ProtoMember(2)] public string account_name { get; set; }
     [ProtoMember(3)] public string encrypted_password { get; set; }
     [ProtoMember(4)] public ulong encryption_timestamp { get; set; }

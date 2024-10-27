@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SteamWeb.API.Models.IEconService
+﻿using System.Text.Json.Serialization;
+namespace SteamWeb.API.Models.IEconService;
+public class TradesHistory: TradeStatus
 {
-    public class TradesHistory: TradeStatus
+	/// <summary>
+	/// Есть значение если include_total == true
+	/// </summary>
+	[JsonPropertyName("total_trades")] public uint? TotalTrades { get; set; } = null;
+	[JsonPropertyName("more")] public bool More { get; set; } = false;
+    
     {
         /// <summary>
         /// Есть значение если include_total == true
