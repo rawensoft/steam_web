@@ -14,6 +14,7 @@ public class VacGameBansData
     public VacGameBansData() { }
     public VacGameBansData(string error) => Error = error;
 
+    /// <exception cref="InvalidOperationException"></exception>
     internal static VacGameBansData Deserialize(string html)
     {
         const string VACBanText = "Bans applied by VAC or Valve Anti-Cheat";
@@ -23,6 +24,7 @@ public class VacGameBansData
         const string highlight_str = "help_highlight_text";
         const string refund_info_box_str = "refund_info_box";
         const string vac_ban_header_str = "vac_ban_header";
+        const string battle_eye_str = "Visit BattlEye Support";
 
         HtmlParser parser = new HtmlParser();
         var doc = parser.ParseDocument(html);
@@ -39,31 +41,45 @@ public class VacGameBansData
             bool isGameBan = title == GameBanText;
             bool isVACBan = title == VACBanText;
 
-            foreach (var refund_info_box in refund_info_boxes)
-            {
-                var gameUri = refund_info_box.GetElementsByTagName("a").First();
-                var uri = new Uri(gameUri.GetAttribute(href_str)!);
-                var queries = HttpUtility.ParseQueryString(uri.Query);
-                var appId = queries.Get(appid_str).ParseUInt32();
-                if (appId == 0)
-                    throw new InvalidOperationException($"Не обнаружен appid из query '{uri.Query}'");
-
-                var gameName = refund_info_box.GetElementsByClassName(highlight_str).First();
-
-                if (!list.TryGetValue(appId, out var gameInfo))
+			foreach (var refund_info_box in refund_info_boxes)
+			{
+				var gameName = refund_info_box.GetElementsByClassName(highlight_str).First();
+                var appName = gameName?.TextContent.GetClearWebString() ?? "unknown game name";
+				uint appId;
+				var gameUri = refund_info_box.GetElementsByTagName("a").First();
+                if (gameUri.TextContent == battle_eye_str)
                 {
-                    gameInfo = new()
+                    appId = 4294967295;
+                    while (true)
                     {
-                        AppId = appId,
-                        Name = gameName?.TextContent.GetClearWebString() ?? "unknown game name",
-                    };
-                    list.Add(appId, gameInfo);
-                }
-                if (isGameBan)
-                    gameInfo.GameBan = isGameBan;
-                if (isVACBan)
-                    gameInfo.VACBan = isVACBan;
-            }
+						if (!list.ContainsKey(appId))
+                            break;
+                        appId--;
+					}
+                    list.Add(appId, new() { AppId = appId, Name = appName, BattleEye = true });
+				}
+                else
+                {
+					var uri = new Uri(gameUri.GetAttribute(href_str)!);
+					var queries = HttpUtility.ParseQueryString(uri.Query);
+					appId = queries.Get(appid_str).ParseUInt32();
+					if (appId == 0)
+						throw new InvalidOperationException($"Не обнаружен appid из query '{uri.Query}'");
+					if (!list.TryGetValue(appId, out var gameInfo))
+					{
+						gameInfo = new()
+						{
+							AppId = appId,
+							Name = appName,
+						};
+						list.Add(appId, gameInfo);
+					}
+					if (isGameBan)
+						gameInfo.GameBan = isGameBan;
+					if (isVACBan)
+						gameInfo.VACBan = isVACBan;
+				}
+			}
         }
         return new()
         {
