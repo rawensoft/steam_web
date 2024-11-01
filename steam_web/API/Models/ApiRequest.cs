@@ -17,7 +17,7 @@ public class ApiRequest
     public ApiRequest(string? auth_token, IWebProxy? proxy, CancellationToken? cancellationToken) : this(auth_token, proxy)
         => CancellationToken = cancellationToken;
 
-    internal GetRequest AddAuthToken(GetRequest request)
+	internal GetRequest AddAuthToken(GetRequest request)
     {
         if (!AuthToken.IsEmpty())
         {

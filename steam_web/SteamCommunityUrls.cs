@@ -2,7 +2,8 @@
 
 internal static class SteamCommunityUrls
 {
-    public const string My_Edit_Info = "https://steamcommunity.com/my/edit/info";
+	public const string Origin = "https://steamcommunity.com";
+	public const string My_Edit_Info = "https://steamcommunity.com/my/edit/info";
     public const string My_Inventory = "https://steamcommunity.com/my/inventory";
     public const string My_InventoryHistory = "https://steamcommunity.com/my/inventoryhistory";
     public const string TradeOffer = "https://steamcommunity.com/tradeoffer/";

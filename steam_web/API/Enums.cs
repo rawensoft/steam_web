@@ -113,3 +113,11 @@ public enum ETradeStatus : byte
     /// </summary>
     k_ETradeStatus_EscrowRollback,
 }
+public enum ELoyaltyReactionTargetType: int
+{
+    Review = 1,
+    UserGeneratedContent = 2,
+    Profile = 3,
+    TopicForum = 4,
+    Comment = 5,
+}

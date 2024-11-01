@@ -148,10 +148,12 @@ public enum EFriendRelationship: byte
     /// Пользователь проигнорировал текущего пользователя.
     /// </summary>
     k_EFriendRelationshipIgnoredFriend = 6,
-    /// <summary>
-    /// Устаревший параметр, не используется.
-    /// </summary>
-    k_EFriendRelationshipSuggested_DEPRECATED = 7,
+	/// <summary>
+	/// Устаревший параметр, не используется.
+	/// <para/>
+	/// removed "was used by the original implementation of the facebook linking feature; but now unused."
+	/// </summary>
+	k_EFriendRelationshipSuggested_DEPRECATED = 7,
     /// <summary>
     /// Общее число отношений, используется в циклах и для проверок.
     /// </summary>

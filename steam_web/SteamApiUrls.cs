@@ -2,13 +2,16 @@
 internal static class SteamApiUrls
 {
     public const string IMobileNotificationService_GetUserNotificationCounts_v1 = "https://api.steampowered.com/IMobileNotificationService/GetUserNotificationCounts/v0001";
-    public const string ILoyaltyRewardsService_GetSummary_v1 = "https://api.steampowered.com/ILoyaltyRewardsService/GetSummary/v1";
     public const string IGameServersService_GetAccountList_v1 = "https://api.steampowered.com/IGameServersService/GetAccountList/v1";
     public const string IUserAccountService_GetClientWalletDetails_v1 = "https://api.steampowered.com/IUserAccountService/GetClientWalletDetails/v1";
     public const string ISteamNotificationService_GetSteamNotifications_v1 = "https://api.steampowered.com/ISteamNotificationService/GetSteamNotifications/v1";
     public const string ISteamApps_UpToDateCheck_v1 = "https://api.steampowered.com/ISteamApps/UpToDateCheck/v1";
 
-    public const string IAuthenticationService_GetPasswordRSAPublicKey_v1 = "https://api.steampowered.com/IAuthenticationService/GetPasswordRSAPublicKey/v1";
+	public const string ILoyaltyRewardsService_GetSummary_v1 = "https://api.steampowered.com/ILoyaltyRewardsService/GetSummary/v1";
+	public const string ILoyaltyRewardsService_GetReactionConfig_v1 = "https://api.steampowered.com/ILoyaltyRewardsService/GetReactionConfig/v1";
+	public const string ILoyaltyRewardsService_AddReaction_v1 = "https://api.steampowered.com/ILoyaltyRewardsService/AddReaction/v1";
+
+	public const string IAuthenticationService_GetPasswordRSAPublicKey_v1 = "https://api.steampowered.com/IAuthenticationService/GetPasswordRSAPublicKey/v1";
 	public const string IAuthenticationService_BeginAuthSessionViaCredentials_v1 = "https://api.steampowered.com/IAuthenticationService/BeginAuthSessionViaCredentials/v1";
 	public const string IAuthenticationService_UpdateAuthSessionWithSteamGuardCode_v1 = "https://api.steampowered.com/IAuthenticationService/UpdateAuthSessionWithSteamGuardCode/v1";
 	public const string IAuthenticationService_PollAuthSessionStatus_v1 = "https://api.steampowered.com/IAuthenticationService/PollAuthSessionStatus/v1";
