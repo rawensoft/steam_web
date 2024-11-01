@@ -2,7 +2,6 @@
 using SteamWeb.Auth.Interfaces;
 
 namespace SteamWeb.Web.DTO;
-
 public class ProtobufRequest
 {
     public string Url { get; init; }
@@ -13,7 +12,8 @@ public class ProtobufRequest
     public string? UserAgent { get; init; }
     public string? Cookie { get; init; }
     public bool IsMobile { get; init; } = true;
-    public int Timeout { get; set; } = 30000;
+    public ulong? SpoofSteamId { get; init; } = null;
+	public int Timeout { get; set; } = 30000;
 	public CancellationToken? CancellationToken { get; init; } = null;
 
 	public ProtobufRequest(string url, string protoData)

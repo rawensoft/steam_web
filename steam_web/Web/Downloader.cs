@@ -133,6 +133,8 @@ public static class Downloader
 			req.AddQueryParameter("access_token", request.AccessToken);
 		if (request.Timeout > 0)
 			req.Timeout = request.Timeout;
+        if (request.SpoofSteamId.HasValue)
+			req.AddQueryParameter("spoof_steamid", request.SpoofSteamId.Value == 0 ? string.Empty : request.SpoofSteamId.Value.ToString());
 
 		if (method == Method.Post)
 		{
