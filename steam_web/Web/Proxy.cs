@@ -16,7 +16,6 @@ public sealed class Proxy : IWebProxy, INotifyPropertyChanged, IEquatable<Proxy>
     private int _port;
     private string? _username;
     private string? _password;
-    private readonly ProxyType _type = ProxyType.HTTP;
 
     /// <summary>
     /// True если IP.IsNoneEmpty && Port > 0 && UseProxy == True
@@ -104,9 +103,9 @@ public sealed class Proxy : IWebProxy, INotifyPropertyChanged, IEquatable<Proxy>
             }
         }
     }
-    public ProxyType Type => _type;
+    public ProxyType Type { get; } = ProxyType.HTTP;
 
-    public Proxy() { }
+	public Proxy() { }
     public Proxy(string ip, int port)
     {
         IP = ip;
@@ -116,7 +115,7 @@ public sealed class Proxy : IWebProxy, INotifyPropertyChanged, IEquatable<Proxy>
     {
         IP = ip;
         Port = port;
-        _type = type;
+		Type = type;
     }
 
     public Proxy(string ip, string port) : this(ip, port.GetOnlyDigit().ParseInt32()) { }
@@ -149,7 +148,7 @@ public sealed class Proxy : IWebProxy, INotifyPropertyChanged, IEquatable<Proxy>
         if (!UseProxy || string.IsNullOrEmpty(IP) || Port == 0)
             return null;
 		var sb = new StringBuilder(5);
-		switch (_type)
+		switch (Type)
         {
             case ProxyType.Socks5:
                 sb.Append("socks5://");
