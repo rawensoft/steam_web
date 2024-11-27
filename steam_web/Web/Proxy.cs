@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -7,7 +8,7 @@ using SteamWeb.Extensions;
 using SteamWeb.Web.Enums;
 
 namespace SteamWeb.Web;
-public class Proxy : IWebProxy, INotifyPropertyChanged
+public sealed class Proxy : IWebProxy, INotifyPropertyChanged, IEquatable<Proxy>
 {
     public event PropertyChangedEventHandler? PropertyChanged;
     private bool _useProxy = true;
@@ -24,7 +25,8 @@ public class Proxy : IWebProxy, INotifyPropertyChanged
     {
         get
         {
-            if (_ip.IsEmpty() || _port == 0 || !_useProxy || IsBadCredentials) return false;
+            if (_ip.IsEmpty() || _port == 0 || !_useProxy || IsBadCredentials)
+                return false;
             return true;
         }
         set { _useProxy = value; Property("UseProxy"); }
@@ -172,4 +174,22 @@ public class Proxy : IWebProxy, INotifyPropertyChanged
 
     public static bool IsLocalIPv4(string ip) => new Regex(@"(^127\.\d{0,255})|(^10\.\d{0,255})|(^172\.16)|(^192\.168)|(^169\.254)\.\d{0,255}\.\d{0,255}$", RegexOptions.Compiled, TimeSpan.FromSeconds(1)).IsMatch(ip);
     public static bool IsValidIPv4(string ip) => IPAddress.TryParse(ip, out var address) && address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork;
+
+	public bool Equals(Proxy? other)
+    {
+        if (other == null)
+            return false;
+		if (other.IP != IP)
+			return false;
+		if (other.Port != Port)
+			return false;
+		if (other.Username != Username)
+			return false;
+		if (other.Password != Password)
+			return false;
+		if (other.Type != Type)
+			return false;
+
+        return true;
+	}
 }
