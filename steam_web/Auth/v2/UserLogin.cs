@@ -109,14 +109,17 @@ public class UserLogin
         if (_nextStep != NEXT_STEP.Begin)
             return false;
         var usetAgent = Platform == EAuthTokenPlatformType.MobileApp ? KnownUserAgents.OkHttp : KnownUserAgents.WindowsBrowser;
+		var cooks = new CookieContainer();
+        cooks.Add(new Uri(KnownUri.BASE_POWERED), new Cookie(KnownCookies.COOKIE_NAME_СOOKIESETTINGS, KnownCookies.COOKIE_NAME_СOOKIESETTINGS_VALUE) { Secure = true });
         var getRequest = new GetRequest(KnownUri.BASE_POWERED)
         {
 			Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application",
             UserAgent = usetAgent,
             Proxy = Proxy,
             IsMobile = Platform == EAuthTokenPlatformType.MobileApp,
-			CancellationToken = _cts
-		};
+			CancellationToken = _cts,
+			CookieContainer = cooks,
+        };
 		var response = Downloader.Get(getRequest);
 		if (response.ErrorMessage == SocketError)
 		{
@@ -392,15 +395,18 @@ public class UserLogin
 		if (_nextStep != NEXT_STEP.Begin)
 			return false;
 		var usetAgent = Platform == EAuthTokenPlatformType.MobileApp ? KnownUserAgents.OkHttp : KnownUserAgents.WindowsBrowser;
-		var getRequest = new GetRequest(KnownUri.BASE_POWERED)
-		{
-			Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application",
-			UserAgent = usetAgent,
-			Proxy = Proxy,
-			IsMobile = Platform == EAuthTokenPlatformType.MobileApp,
-			CancellationToken = _cts
-		};
-		var response = await Downloader.GetAsync(getRequest);
+        var cooks = new CookieContainer();
+        cooks.Add(new Uri(KnownUri.BASE_POWERED), new Cookie(KnownCookies.COOKIE_NAME_СOOKIESETTINGS, KnownCookies.COOKIE_NAME_СOOKIESETTINGS_VALUE) { Secure = true });
+        var getRequest = new GetRequest(KnownUri.BASE_POWERED)
+        {
+            Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application",
+            UserAgent = usetAgent,
+            Proxy = Proxy,
+            IsMobile = Platform == EAuthTokenPlatformType.MobileApp,
+            CancellationToken = _cts,
+            CookieContainer = cooks,
+        };
+        var response = await Downloader.GetAsync(getRequest);
 		if (response.ErrorMessage == SocketError)
 		{
 			_result = LoginResult.ProxyError;
