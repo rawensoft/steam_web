@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using SteamWeb.Extensions;
 using System.Text.Json.Serialization;
+using System.Collections.Generic;
 
 namespace SteamWeb.Models;
 public class AppContextData
@@ -16,20 +17,20 @@ public class AppContextData
     [JsonPropertyName("trade_permissions")] public string TradePermissions { get; init; }
     [JsonPropertyName("load_failed")] public byte LoadFailed { get; init; } = 0;
     [JsonPropertyName("owner_only")] public bool OwnerOnly { get; init; } = false;
-    [JsonPropertyName("rgContexts")] public Dictionary<uint, ContextItem> rgContexts { get; init; } = new(3);
+    [JsonPropertyName("rgContexts")] public Dictionary<ulong, ContextItem> rgContexts { get; init; } = new(3);
 
-    public static Dictionary<uint, AppContextData> Deserialize(string data)
+    public static Dictionary<ulong, AppContextData> Deserialize(string data)
     {
         string? json = data.GetBetween("var g_rgAppContextData = ", ";")?.Replace("rgContexts\":[]", "rgContexts\":{}");
         if (json == null || json == emptyString)
             return new(1);
-        var obj = JsonSerializer.Deserialize<Dictionary<uint, AppContextData>>(json, Steam.JsonOptions)!;
+        var obj = JsonSerializer.Deserialize<Dictionary<ulong, AppContextData>>(json, Steam.JsonOptions)!;
         return obj;
     }
 }
 public class ContextItem
 {
     [JsonPropertyName("asset_count")] public ushort AssetsCount { get; init; }
-    [JsonPropertyName("id")] public uint ContextId { get; init; }
+    [JsonPropertyName("id")] public ulong ContextId { get; init; }
     [JsonPropertyName("name")] public string Name { get; init; }
 }

@@ -4,7 +4,7 @@ namespace SteamWeb.API.Models.IEconService;
 public class TradeAssets
 {
 	[JsonPropertyName("appid")] public uint AppId { get; init; }
-	[JsonPropertyName("contextid")] public uint ContextId { get; init; }
+	[JsonPropertyName("contextid")] public ulong ContextId { get; init; }
 	/// <summary>
 	/// either assetid or currencyid will be set
 	/// </summary>

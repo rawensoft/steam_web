@@ -845,12 +845,12 @@ public static partial class Steam
     /// Получает доступные инвентари аккаунта
     /// </summary>
     /// <returns>Коллекция доступных инвентарей, где Key=app_id</returns>
-    public static Dictionary<uint, AppContextData> GetAppContextData(DefaultRequest ajaxRequest) => GetAppContextData(ajaxRequest, ajaxRequest.Session!.SteamID);
+    public static Dictionary<ulong, AppContextData> GetAppContextData(DefaultRequest ajaxRequest) => GetAppContextData(ajaxRequest, ajaxRequest.Session!.SteamID);
     /// <summary>
     /// Получает доступные инвентари аккаунта
     /// </summary>
     /// <returns>Коллекция доступных инвентарей, где Key=app_id</returns>
-    public static Dictionary<uint, AppContextData> GetAppContextData(DefaultRequest ajaxRequest, ulong steamid64)
+    public static Dictionary<ulong, AppContextData> GetAppContextData(DefaultRequest ajaxRequest, ulong steamid64)
     {
         string url = "https://steamcommunity.com/profiles/" + steamid64 + "/inventory/";
         string referer = "https://steamcommunity.com/profiles/" + steamid64;
@@ -866,13 +866,13 @@ public static partial class Steam
     /// Получает доступные инвентари аккаунта
     /// </summary>
     /// <returns>Коллекция доступных инвентарей, где Key=app_id</returns>
-    public static async Task<Dictionary<uint, AppContextData>> GetAppContextDataAsync(DefaultRequest ajaxRequest) =>
+    public static async Task<Dictionary<ulong, AppContextData>> GetAppContextDataAsync(DefaultRequest ajaxRequest) =>
         await GetAppContextDataAsync(ajaxRequest, ajaxRequest.Session!.SteamID);
     /// <summary>
     /// Получает доступные инвентари аккаунта
     /// </summary>
     /// <returns>Коллекция доступных инвентарей, где Key=app_id</returns>
-    public static async Task<Dictionary<uint, AppContextData>> GetAppContextDataAsync(DefaultRequest ajaxRequest, ulong steamid64)
+    public static async Task<Dictionary<ulong, AppContextData>> GetAppContextDataAsync(DefaultRequest ajaxRequest, ulong steamid64)
 	{
 		string url = $"https://steamcommunity.com/profiles/" + steamid64 + "/inventory/";
 		string referer = $"https://steamcommunity.com/profiles/" + steamid64;

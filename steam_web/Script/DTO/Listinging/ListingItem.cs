@@ -18,7 +18,7 @@ public class ListingItem
 
     [JsonPropertyName("currency")] public byte Currency { get; init; }
     [JsonPropertyName("appid")] public uint AppId { get; init; }
-    [JsonPropertyName("contextid")] public uint ContextId { get; init; }
+    [JsonPropertyName("contextid")] public ulong ContextId { get; init; }
     [JsonPropertyName("id")] public ulong Id { get; init; }
     [JsonPropertyName("classid")] public ulong ClassId { get; init; }
     [JsonPropertyName("instanceid")] public ulong InstanceId { get; init; }
@@ -26,9 +26,9 @@ public class ListingItem
     [JsonPropertyName("status")] public LISTING_STATUS Status { get; init; }
     [JsonPropertyName("original_amount")] public ushort OriginalAmount { get; init; }
     [JsonPropertyName("unowned_id")] public ulong UnownedId { get; init; }
-    [JsonPropertyName("unowned_contextid")] public uint UnownedContextId { get; init; }
+    [JsonPropertyName("unowned_contextid")] public ulong UnownedContextId { get; init; }
     [JsonPropertyName("rollback_new_id")] public ulong? RollbackNewId { get; init; }
-    [JsonPropertyName("rollback_new_contextid")] public uint? RollbackNewContextId { get; init; }
+    [JsonPropertyName("rollback_new_contextid")] public ulong? RollbackNewContextId { get; init; }
     [JsonPropertyName("background_color")] public string BackgroundColor { get; init; } = string.Empty;
     [JsonPropertyName("icon_url")] public string? IconUrl { get; init; }
     [JsonPropertyName("icon_url_large")] public string? IconUrlLarge { get; init; }

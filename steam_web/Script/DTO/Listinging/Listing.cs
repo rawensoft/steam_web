@@ -212,7 +212,7 @@ public class Listing
 
             ulong removeId = match.Groups[1].Value.ParseUInt64();
             uint appId = match.Groups[2].Value.ParseUInt32();
-            uint contextId = match.Groups[3].Value.ParseUInt32();
+            ulong contextId = match.Groups[3].Value.ParseUInt64();
             ulong assetId = match.Groups[4].Value.ParseUInt64();
 
             var listing = items.Where(x => x.AppId == appId)
