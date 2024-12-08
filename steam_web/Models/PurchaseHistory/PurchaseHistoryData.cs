@@ -254,7 +254,7 @@ public class PurchaseHistoryData
                     {
                         // если нет тега ссылки, тогда это доп описание купленого предмета внутри игры
                         objItemDescription = children.TextContent.GetClearWebString()!;
-                        if (objItemDescription[0].IsWhiteSpaceCharacter())
+                        if (objItemDescription.Length != 0 && objItemDescription[0].IsWhiteSpaceCharacter())
                             objItemDescription = objItemDescription.Remove(0, 1);
                         // обычно перед предметов всегда есть whitespace символ для сдвига написания правее
                     }
