@@ -7,7 +7,7 @@ public class ItemRenderAsset
 {
     [JsonPropertyName("currency")] public byte Currency { get; init; }
     [JsonPropertyName("appid")] public uint AppId { get; init; }
-    [JsonPropertyName("contextid")] public byte ContextId { get; init; }
+    [JsonPropertyName("contextid")] public uint ContextId { get; init; }
     [JsonPropertyName("id")] public ulong Id { get; init; }
     [JsonPropertyName("classid")] public ulong ClassId { get; init; }
     [JsonPropertyName("instanceid")] public ulong InstanceId { get; init; }
@@ -15,7 +15,7 @@ public class ItemRenderAsset
     [JsonPropertyName("status")] public ushort Status { get; init; }
     [JsonPropertyName("original_amount")] public ushort OriginalAmount { get; init; }
     [JsonPropertyName("unowned_id")] public ulong UnownedId { get; init; }
-    [JsonPropertyName("unowned_contextid")] public byte UnownedContextId { get; init; }
+    [JsonPropertyName("unowned_contextid")] public uint UnownedContextId { get; init; }
     [JsonPropertyName("background_color")] public string BackgroundColor { get; init; } = string.Empty;
     [JsonPropertyName("icon_url")] public string? IconUrl { get; init; }
     [JsonPropertyName("tradable")] public byte Tradable { get; init; }

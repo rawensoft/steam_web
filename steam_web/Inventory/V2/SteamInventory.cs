@@ -24,11 +24,11 @@ public class SteamInventory
     /// </summary>
     [JsonPropertyName("rgDescriptions")] public Dictionary<string, Description> RgDescriptions { get; init; } = new(1);
     [JsonPropertyName("more")] public bool More { get; init; } = false;
-    [JsonPropertyName("context")] public byte Context { get; set; } = 2;
+    [JsonPropertyName("context")] public uint Context { get; set; } = 2;
     [JsonPropertyName("error")] public string? Error { get; init; }
     [JsonPropertyName("is_too_many_requests")] public bool IsTooManyRequests { get; init; } = false;
 
-    public static SteamInventory Load(DefaultRequest defaultRequest, ulong steamid64, uint appid, byte context = 2, bool trading = false)
+    public static SteamInventory Load(DefaultRequest defaultRequest, ulong steamid64, uint appid, uint context = 2, bool trading = false)
     {
         string url = GetUrl(steamid64, appid, context, trading);
         var getRequest = new GetRequest(url)
@@ -60,7 +60,7 @@ public class SteamInventory
             };
         }
     }
-    public async static Task<SteamInventory> LoadAsync(DefaultRequest defaultRequest, ulong steamid64, uint appid, byte context = 2, bool trading = false)
+    public async static Task<SteamInventory> LoadAsync(DefaultRequest defaultRequest, ulong steamid64, uint appid, uint context = 2, bool trading = false)
     {
         string url = GetUrl(steamid64, appid, context, trading);
         var getRequest = new GetRequest(url)
@@ -202,14 +202,14 @@ public class SteamInventory
     /// <param name="appId"></param>
     /// <param name="context">Обычный context 753=6, но также может быть и другой, например 7</param>
     /// <returns>2 - если приложение не найдено (вдруг заработает)</returns>
-    public byte GetContext(uint appId, byte context = 6)
+    public uint GetContext(uint appId, uint context = 6)
     {
         if (appId == 753)
             return context;
         return 2;
     }
 
-    private static string GetUrl(ulong steamid64, uint appid, byte context, bool trading)
+    private static string GetUrl(ulong steamid64, uint appid, uint context, bool trading)
     {
         var sb = new StringBuilder(10);
         sb.Append("https://steamcommunity.com/profiles/");

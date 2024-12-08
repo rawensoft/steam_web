@@ -3,7 +3,7 @@ namespace SteamWeb.API.Models.IEconService;
 public class TradeHistoryAssets
 {
 	[JsonPropertyName("appid")] public uint AppId { get; init; }
-	[JsonPropertyName("context")] public byte Context { get; init; }
+	[JsonPropertyName("context")] public uint Context { get; init; }
 	[JsonPropertyName("assetid")] public ulong AssetId { get; init; }
 	[JsonPropertyName("amount")] public uint Amount { get; init; }
 	/// <summary>
@@ -21,7 +21,7 @@ public class TradeHistoryAssets
 	/// <summary>
 	/// the context ID the item was placed in
 	/// </summary>
-	[JsonPropertyName("new_contextid")] public byte NewContextId { get; init; }
+	[JsonPropertyName("new_contextid")] public uint NewContextId { get; init; }
 	/// <summary>
 	/// if the trade has been rolled back, the new asset ID given in the rollback
 	/// </summary>
@@ -29,5 +29,5 @@ public class TradeHistoryAssets
 	/// <summary>
 	/// if the trade has been rolled back, the context ID the new asset was placed in
 	/// </summary>
-	[JsonPropertyName("rollback_new_contextid")] public byte RollbackNewContextId { get; init; }
+	[JsonPropertyName("rollback_new_contextid")] public uint RollbackNewContextId { get; init; }
 }

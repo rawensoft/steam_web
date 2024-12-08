@@ -17,7 +17,7 @@ public class SteamOfferItem
 	/// </summary>
 	/// <param name="id">данные из html атрибута</param>
 	/// <returns>true данные спарсены; app id; context id; asset id</returns>
-	internal static (bool, uint, byte, ulong) ParseItemId(string? id)
+	internal static (bool, uint, uint, ulong) ParseItemId(string? id)
     {
         if (id.IsEmpty())
             return (false, 0, 0, 0);
@@ -27,7 +27,7 @@ public class SteamOfferItem
             if (match.Success)
             {
                 var appid = match.Groups[1].Value.ParseUInt32();
-                var contextid = match.Groups[2].Value.ParseByte();
+                var contextid = match.Groups[2].Value.ParseUInt32();
                 var assetid = match.Groups[3].Value.ParseUInt64();
                 return (true, appid, contextid, assetid);
             }

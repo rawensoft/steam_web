@@ -15,7 +15,7 @@ public class NewTradeOffer
         [JsonPropertyName("ready")] public bool Ready { get; init; } = false;
 
         public void AddAssets(uint appid, string contextid, string assetid, uint amount = 1) => Assets.Add(new NewAssets(appid, contextid, assetid, amount));
-        public void AddAssets(uint appid, byte contextid, ulong assetid, uint amount = 1) => Assets.Add(new NewAssets(appid, contextid, assetid, amount));
+        public void AddAssets(uint appid, uint contextid, ulong assetid, uint amount = 1) => Assets.Add(new NewAssets(appid, contextid, assetid, amount));
     }
     public class NewAssets
     {
@@ -32,7 +32,7 @@ public class NewTradeOffer
             this.Amount = Amount;
             this.AssetId = AssetId;
         }
-        public NewAssets(uint AppId, byte ContextId, ulong AssetId, uint Amount = 1)
+        public NewAssets(uint AppId, uint ContextId, ulong AssetId, uint Amount = 1)
         {
             this.AppId = AppId;
             this.ContextId = ContextId.ToString();

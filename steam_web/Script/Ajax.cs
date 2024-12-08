@@ -929,7 +929,7 @@ public static class Ajax
         return Historing.Deserialize(response.Data);
     }
 
-    public static async Task<SellItem> market_sellitem_async(DefaultRequest defaultRequest, uint appid, byte contextid, ulong assetid, uint amount, uint price)
+    public static async Task<SellItem> market_sellitem_async(DefaultRequest defaultRequest, uint appid, uint contextid, ulong assetid, uint amount, uint price)
     {
         var request = new PostRequest(SteamCommunityUrls.Market_SellItem, Downloader.AppFormUrlEncoded)
         {
@@ -947,7 +947,7 @@ public static class Ajax
         var obj = JsonSerializer.Deserialize<SellItem>(response.Data!)!;
         return obj;
     }
-    public static SellItem market_sellitem(DefaultRequest defaultRequest, uint appid, byte contextid, ulong assetid, uint amount, uint price)
+    public static SellItem market_sellitem(DefaultRequest defaultRequest, uint appid, uint contextid, ulong assetid, uint amount, uint price)
     {
         var request = new PostRequest(SteamCommunityUrls.Market_SellItem, Downloader.AppFormUrlEncoded)
         {
