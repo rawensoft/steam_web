@@ -19,12 +19,12 @@ public class AppContextData
     [JsonPropertyName("owner_only")] public bool OwnerOnly { get; init; } = false;
     [JsonPropertyName("rgContexts")] public Dictionary<ulong, ContextItem> rgContexts { get; init; } = new(3);
 
-    public static Dictionary<ulong, AppContextData> Deserialize(string data)
+    public static Dictionary<uint, AppContextData> Deserialize(string data)
     {
         string? json = data.GetBetween("var g_rgAppContextData = ", ";")?.Replace("rgContexts\":[]", "rgContexts\":{}");
         if (json == null || json == emptyString)
             return new(1);
-        var obj = JsonSerializer.Deserialize<Dictionary<ulong, AppContextData>>(json, Steam.JsonOptions)!;
+        var obj = JsonSerializer.Deserialize<Dictionary<uint, AppContextData>>(json, Steam.JsonOptions)!;
         return obj;
     }
 }
