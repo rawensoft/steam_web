@@ -3,6 +3,7 @@ using System.Text;
 using SteamWeb.Extensions;
 using System.Text.RegularExpressions;
 using SteamWeb.Auth.Interfaces;
+using RestSharp;
 
 namespace SteamWeb.Web.DTO;
 public class PostRequest : GetRequest
@@ -20,6 +21,17 @@ public class PostRequest : GetRequest
     /// Указывать куку только при запросе <see cref="Script.Ajax.jwt_ajaxrefresh(Models.DefaultRequest, string?)"/>
     /// </summary>
 	public string? SteamRefresh_Steam { get; set; }
+    /// <summary>
+    /// Boundary для multipart/form-data. Обычно для steam запроса нужно указать:
+    /// <code>
+    /// string boudary = "----WebKitFormBoundary" + 17.GetRandomString();
+    /// ...
+    /// request.MultipartFormDataBoudary = boudary;
+    /// </code>
+    /// <para/>
+    /// Если указано принудительно отправляет multipart/form-data, в других случаях отправить валидный multipart невозможно
+    /// </summary>
+    public string? MultipartFormDataBoudary { get; set; }
 
 	public PostRequest(string url, string contentType) : base(url) => ContentType = contentType;
     public PostRequest(string url, string content, string contentType) : this(url, contentType) => Content = content;
@@ -112,5 +124,11 @@ public class PostRequest : GetRequest
     {
         PostData.Add(new(name, value.ToString()));
         return this;
+    }
+    internal RestRequest AddPostData(RestRequest restRequest)
+    {
+        foreach (var (key, value) in PostData)
+            restRequest.AddParameter(key, value, false);
+        return restRequest;
     }
 }

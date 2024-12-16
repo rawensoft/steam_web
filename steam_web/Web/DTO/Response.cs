@@ -19,6 +19,10 @@ public class Response
     public bool LostAuth { get; init; } = false;
     public EResult EResult { get; init; } = EResult.Invalid;
 	public SocketError SocketErrorCode { get; private set; } = SocketError.Success;
+	/// <summary>
+	/// Не null, если есть Location заголовок в ответе
+	/// </summary>
+	public string? Location { get; set; }
 
 	public Response(RestResponse res)
 	{
@@ -31,9 +35,13 @@ public class Response
 				switch (header.Name)
 				{
 					case KnownHeaders.Location:
-						if (header.Value!.ToString() == HeaderValueLocation)
+						var location = header.Value!.ToString();
+						if (location == HeaderValueLocation)
 							LostAuth = true;
-						break;
+						else
+							Location = location;
+                        break;
+
 					case HeaderNameXEResult:
 						if (header.Value != null)
 							EResult = (EResult)header.Value.ToString()!.ParseInt32();
@@ -80,11 +88,15 @@ public class Response
 			foreach (string name in res.Headers.AllKeys)
 			{
 				switch (name)
-				{
-					case KnownHeaders.Location:
-						if (res.Headers[KnownHeaders.Location] == HeaderValueLocation)
-							LostAuth = true;
+                {
+                    case KnownHeaders.Location:
+                        var location = res.Headers[KnownHeaders.Location];
+                        if (location == HeaderValueLocation)
+                            LostAuth = true;
+                        else
+                            Location = location;
 						break;
+
 					case HeaderNameXEResult:
 						EResult = (EResult)res.Headers[KnownHeaders.Location]!.ParseInt32();
 						break;

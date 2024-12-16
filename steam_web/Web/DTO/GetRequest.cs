@@ -8,6 +8,9 @@ public class GetRequest
 {
     public string? Accept { get; set; } = null;
     public int CurrentRedirect { get; set; } = 0;
+    /// <summary>
+    /// Заменяет <see cref="Session"/>, если указано не null
+    /// </summary>
     public CookieContainer? CookieContainer { get; set; } = null;
     public int MaxRedirects { get; set; } = 10;
     public string Url { get; set; }
@@ -19,6 +22,9 @@ public class GetRequest
     public string? Referer { get; set; }
     public string? Cookie { get; set; }
     public bool UseVersion2 { get; set; } = false;
+    /// <summary>
+    /// Добавляет header 'XMLHttpRequest'
+    /// </summary>
     public bool IsAjax { get; set; } = false;
     public bool IsMobile { get; set; } = false;
     public int Timeout { get; set; } = 30000;

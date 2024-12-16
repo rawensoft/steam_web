@@ -96,9 +96,19 @@ public static class Downloader
     private static (RestClient, RestRequest) GetRestClient(PostRequest request, Method method, CookieContainer? cookies)
     {
         var (client, req) = GetRestClient(request as GetRequest, method, cookies);
-
-		req.AddHeader(RestSharp.KnownHeaders.ContentType, request.ContentType);
-		req.AddStringBody(request.GetContent(), request.ContentType);
+        if (!request.MultipartFormDataBoudary.IsEmpty())
+        {
+            req.AlwaysMultipartFormData = true;
+            req.MultipartFormQuoteBoundary = false; // steam does'nt send requests with quote
+            req.FormBoundary = request.MultipartFormDataBoudary;
+            req.AddHeader(RestSharp.KnownHeaders.ContentType, MultiPartForm);
+            request.AddPostData(req);
+        }
+        else
+        {
+            req.AddHeader(RestSharp.KnownHeaders.ContentType, request.ContentType);
+            req.AddStringBody(request.GetContent(), request.ContentType);
+        }
 		if (!request.SecOpenIDNonce.IsEmpty() && req.CookieContainer != null)
 			req.CookieContainer.Add(new Uri(KnownUri.BASE_COMMUNITY), new Cookie("sessionidSecureOpenIDNonce", request.SecOpenIDNonce)
             {
