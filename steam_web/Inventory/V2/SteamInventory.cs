@@ -4,6 +4,7 @@ using SteamWeb.Web;
 using System.Text;
 using SteamWeb.Models;
 using System.Text.Json.Serialization;
+using SteamWeb.Extensions;
 
 namespace SteamWeb.Inventory.V2;
 public class SteamInventory
@@ -171,10 +172,14 @@ public class SteamInventory
     }
     public Asset? GetAsset(string classid, string instanceid)
     {
-        foreach (var (_, asset) in RgInventory)
+        var u_classid = classid.ParseUInt64();
+        if (u_classid == 0)
+            return null;
+		var u_instanceid = instanceid.ParseUInt64();
+		foreach (var (_, asset) in RgInventory)
         {
-            if (asset.ClassId == classid &&
-                asset.InstanceId == instanceid)
+            if (asset.ClassId == u_classid &&
+                asset.InstanceId == u_instanceid)
                 return asset;
         }
         return null;

@@ -5,6 +5,7 @@ using SteamWeb.Models;
 using SteamWeb.Script.Enums;
 using SteamWeb.Script.Models;
 using SteamWeb.Web;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -188,12 +189,20 @@ public static class ExtensionMethods
     }
     public static bool RemoveAsset(this Inventory.V2.SteamInventory inventory, Inventory.V2.Models.Asset asset)
     {
-        return inventory.RgInventory.Remove(asset.ClassId + '_' + asset.InstanceId);
+        var sb = new StringBuilder(4);
+        sb.Append(asset.ClassId);
+		sb.Append('_');
+		sb.Append(asset.InstanceId);
+		return inventory.RgInventory.Remove(sb.ToString());
     }
     public static bool RemoveAsset(this Inventory.V2.SteamInventory inventory, string classid, string instanceid)
 	{
-		return inventory.RgInventory.Remove(classid + '_' + instanceid);
-    }
+		var sb = new StringBuilder(4);
+		sb.Append(classid);
+		sb.Append('_');
+		sb.Append(instanceid);
+		return inventory.RgInventory.Remove(sb.ToString());
+	}
 	public static string GetRandomString(this int length)
 	{
 		var random = new Random();

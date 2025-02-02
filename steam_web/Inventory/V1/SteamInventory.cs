@@ -2,6 +2,7 @@
 using SteamWeb.Inventory.V1.Models;
 using SteamWeb.Web;
 using SteamWeb.Auth.Interfaces;
+using SteamWeb.Extensions;
 
 namespace SteamWeb.Inventory.V1;
 public class SteamInventory
@@ -20,8 +21,10 @@ public class SteamInventory
         {
             var getRequest = new GetRequest($"http://steamcommunity.com/inventory/{steamid64}/{appid}/{contextid}?l=english&count={count}", proxy, session) { IsAjax = true };
             var response = await Downloader.GetAsync(getRequest);
-            if (!response.Success) return new SteamInventory() { success = 0 };
-            else if (string.IsNullOrEmpty(response.Data)) return new SteamInventory() { success = 0 };
+            if (!response.Success)
+                return new SteamInventory() { success = 0 };
+            else if (string.IsNullOrEmpty(response.Data))
+                return new SteamInventory() { success = 0 };
             var inv = JsonSerializer.Deserialize<SteamInventory>(response.Data)!;
             return inv;
         }
@@ -32,9 +35,11 @@ public class SteamInventory
     }
     public static SteamInventory Restore(string steamid64, string appid, string? dir = null)
     {
-        if (dir == null) dir = Environment.CurrentDirectory + $"\\{appid}\\";
-        if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
-        string path = dir + $"{steamid64}.json";
+        if (dir == null)
+            dir = Environment.CurrentDirectory + $"\\{appid}\\";
+        if (!Directory.Exists(dir))
+            Directory.CreateDirectory(dir);
+        string path = dir + steamid64 + ".json";
         if (File.Exists(path))
         {
             try
@@ -58,9 +63,11 @@ public class SteamInventory
     }
     public void Save(string steamid64, string appid, string? dir = null)
     {
-        if (dir == null) dir = Environment.CurrentDirectory + $"\\{appid}\\";
-        if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
-        string path = dir + $"{steamid64}.json";
+        if (dir == null)
+            dir = Environment.CurrentDirectory + $"\\{appid}\\";
+        if (!Directory.Exists(dir))
+            Directory.CreateDirectory(dir);
+        string path = dir + steamid64 + ".json";
         var options = new JsonSerializerOptions()
         {
             WriteIndented = true,
@@ -76,12 +83,22 @@ public class SteamInventory
         {
 
         }
-    }
-    public Description? GetDescription(string classid, string instanceid)
+	}
+	public Description? GetDescription(string classid, string instanceid)
+	{
+        var classidN = classid.ParseUInt64();
+		var instanceidN = instanceid.ParseUInt64();
+		for (int i = 0; i < descriptions.Length; i++)
+			if (descriptions[i].ClassId == classidN &&
+				descriptions[i].InstanceId == instanceidN)
+				return descriptions[i];
+		return null;
+	}
+	public Description? GetDescription(ulong classid, ulong instanceid)
     {
         for (int i = 0; i < descriptions.Length; i++)
-			if (descriptions[i].classid == classid &&
-				descriptions[i].instanceid == instanceid)
+			if (descriptions[i].ClassId == classid &&
+				descriptions[i].InstanceId == instanceid)
 				return descriptions[i];
 		return null;
     }
