@@ -4,8 +4,8 @@ namespace SteamWeb.Inventory.V2.Models;
 public class Asset
 {
     [JsonPropertyName("id")] public ulong Id { get; init; }
-    [JsonPropertyName("classid")] public string ClassId { get; init; }
-    [JsonPropertyName("instanceid")] public string InstanceId { get; init; }
+    [JsonPropertyName("classid")] public ulong ClassId { get; init; }
+    [JsonPropertyName("instanceid")] public ulong InstanceId { get; init; }
     [JsonPropertyName("amount")] public uint Amount { get; init; }
     /// <summary>
     /// 1 - Не отображяется для китая

@@ -1,24 +1,65 @@
-﻿namespace SteamWeb.Inventory.V1.Models;
-public sealed class Description
+﻿using System.Text.Json.Serialization;
+
+namespace SteamWeb.Inventory.V1.Models;
+public class Description
 {
-    public Action[] actions { get; init; } = new Action[0];
-    public uint appid { get; init; }
-    public string background_color { get; init; }
-    public string classid { get; init; }
-    public ulong commodity { get; init; }
-    public ulong currency { get; init; }
-    public DescriptionItem[] descriptions { get; init; } = new DescriptionItem[0];
-    public string icon_url { get; init; }
-    public string icon_url_large { get; init; }
-    public string instanceid { get; init; }
-    public Action[] market_actions { get; init; } = new Action[0];
-    public string market_hash_name { get; init; }
-    public string market_name { get; init; }
-    public sbyte market_tradable_restriction { get; init; }
-    public sbyte marketable { get; init; }
-    public string name { get; init; }
-    public string name_color { get; init; }
-    public Tag[] tags { get; init; } = new Tag[0];
-    public sbyte tradable { get; init; }
-    public string type { get; init; }
+    [JsonPropertyName("actions")]
+    public Action[] Actions { get; init; } = Array.Empty<Action>();
+
+	[JsonPropertyName("appid")]
+	public uint AppId { get; init; }
+
+	[JsonPropertyName("background_color")]
+	public string BackgroundColor { get; init; } = string.Empty;
+
+	[JsonPropertyName("classid")]
+	public ulong ClassId { get; init; }
+
+	[JsonPropertyName("commodity")]
+	public ulong Commodity { get; init; }
+
+	[JsonPropertyName("currency")]
+	public ulong Currency { get; init; }
+
+	[JsonPropertyName("descriptions")]
+	public DescriptionItem[] Descriptions { get; init; } = Array.Empty<DescriptionItem>();
+
+	[JsonPropertyName("icon_url")]
+	public string IconUrl { get; init; }
+
+	[JsonPropertyName("icon_url_large")]
+	public string IconUrlLarge { get; init; }
+
+	[JsonPropertyName("instanceid")]
+	public ulong InstanceId { get; init; }
+
+	[JsonPropertyName("market_actions")]
+	public Action[] MarketActions { get; init; } = Array.Empty<Action>();
+
+	[JsonPropertyName("market_hash_name")]
+	public string MarketHashName { get; init; }
+
+	[JsonPropertyName("market_name")]
+	public string MarketName { get; init; }
+
+	[JsonPropertyName("market_tradable_restriction")]
+	public sbyte MarketTradableRestriction { get; init; }
+
+	[JsonPropertyName("marketable")]
+	public sbyte Marketable { get; init; }
+
+	[JsonPropertyName("name")]
+	public string Name { get; init; }
+
+	[JsonPropertyName("name_color")]
+	public string NameColor { get; init; }
+
+	[JsonPropertyName("tags")]
+	public Tag[] Tags { get; init; } = Array.Empty<Tag>();
+
+	[JsonPropertyName("tradable")]
+	public sbyte Tradable { get; init; }
+
+	[JsonPropertyName("type")]
+	public string Type { get; init; }
 }
