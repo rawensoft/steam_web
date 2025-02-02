@@ -99,7 +99,7 @@ internal static class Program
 
 
 		Console.WriteLine("Начинаем авторизацию..");
-		var userLogin = new UserLogin(userName, password, EAuthTokenPlatformType.MobileApp);
+		var userLogin = new UserLogin(userName, password, SteamWeb.Auth.v2.Enums.EAuthTokenPlatformType.MobileApp);
 		var resultBegin = userLogin.BeginAuthSessionViaCredentials();
 		if (!resultBegin)
 		{

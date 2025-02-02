@@ -96,7 +96,7 @@ public sealed class SessionData : ISessionProvider, IEquatable<SessionData>
 				_steamLoginSecureCookie.Value = value + "%7C%7C" + AccessToken;
 		}
 	}
-	[JsonPropertyName("platform")] public EAuthTokenPlatformType PlatformType { get; init; }
+	[JsonPropertyName("platform")] public Enums.EAuthTokenPlatformType PlatformType { get; init; }
 	[JsonPropertyName("steam_language")] public string SteamLanguage
 	{
 		get => _steamLanguage;

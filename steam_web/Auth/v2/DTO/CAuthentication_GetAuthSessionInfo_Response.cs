@@ -13,7 +13,7 @@ public class CAuthentication_GetAuthSessionInfo_Response
     /// <summary>
     /// platform type of requestor
     /// </summary>
-    [ProtoMember(6)] public EAuthTokenPlatformType platform_type { get; set; }
+    [ProtoMember(6)] public Enums.EAuthTokenPlatformType platform_type { get; set; }
     /// <summary>
     /// name of requestor device
     /// </summary>

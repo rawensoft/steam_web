@@ -13,7 +13,7 @@ internal static class Program
 		Console.WriteLine("Введите пароль:");
 		var passwd = Console.ReadLine()!;
 
-		var userLogin = new UserLogin(login, passwd, EAuthTokenPlatformType.WebBrowser);
+		var userLogin = new UserLogin(login, passwd, SteamWeb.Auth.v2.Enums.EAuthTokenPlatformType.WebBrowser);
 		if (!userLogin.BeginAuthSessionViaCredentials())
 		{
 			Console.WriteLine($"Ошибка в begin_auth_session_via_credentials {userLogin.Result}; eresult={userLogin.LastEResult}");

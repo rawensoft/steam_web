@@ -16,7 +16,7 @@ internal static class Program
 		Console.WriteLine("Введите 2fa для SteamGuard или оставьте пустым для NoneGuard:");
 		var fa2 = Console.ReadLine()!;
 
-		var (result, session) = Steam.Auth(login, passwd, fa2, null, EAuthTokenPlatformType.WebBrowser);
+		var (result, session) = Steam.Auth(login, passwd, fa2, null, SteamWeb.Auth.v2.Enums.EAuthTokenPlatformType.WebBrowser);
 		if (result != SteamWeb.Auth.v2.Enums.LoginResult.LoginOkay)
 			Console.WriteLine("Ошибка при входе: " + result);
 		else

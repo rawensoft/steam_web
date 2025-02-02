@@ -2,7 +2,7 @@
 using SteamWeb.Auth.v2;
 
 namespace ExampleAuth2;
-internal class Program
+internal static class Program
 {
 	static void Main(string[] args)
 	{
@@ -17,7 +17,7 @@ internal class Program
 		Console.WriteLine("Введите 2fa для SteamGuard или оставьте пустым для NoneGuard:");
 		var fa2 = Console.ReadLine()!;
 
-		var userLogin = new UserLogin(login, passwd, EAuthTokenPlatformType.WebBrowser);
+		var userLogin = new UserLogin(login, passwd, SteamWeb.Auth.v2.Enums.EAuthTokenPlatformType.WebBrowser);
 		userLogin.Data = fa2;
 		var (result, session) = Steam.Auth(userLogin);
 		if (result != SteamWeb.Auth.v2.Enums.LoginResult.LoginOkay)

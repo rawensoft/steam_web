@@ -1,4 +1,5 @@
-﻿using SteamWeb.Auth.v2.Models;
+﻿using SteamWeb.Auth.v2.Enums;
+using SteamWeb.Auth.v2.Models;
 using SteamWeb.Enums;
 using SteamWeb.Models;
 using SteamWeb.Script.Enums;

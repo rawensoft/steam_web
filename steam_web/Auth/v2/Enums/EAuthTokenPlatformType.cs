@@ -1,4 +1,5 @@
-﻿public enum EAuthTokenPlatformType
+﻿namespace SteamWeb.Auth.v2.Enums;
+public enum EAuthTokenPlatformType
 {
     Unknown = 0,
     SteamClient = 1,
