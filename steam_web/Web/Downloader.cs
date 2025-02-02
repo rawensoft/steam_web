@@ -145,6 +145,8 @@ public static class Downloader
 			req.Timeout = request.Timeout;
         if (request.SpoofSteamId.HasValue)
 			req.AddQueryParameter("spoof_steamid", request.SpoofSteamId.Value == 0 ? string.Empty : request.SpoofSteamId.Value.ToString());
+        if (!request.Referer.IsEmpty())
+            req.AddHeader(KnownHeaders.Referer, request.Referer!);
 
 		if (method == Method.Post)
 		{

@@ -15,6 +15,7 @@ public class ProtobufRequest
     public ulong? SpoofSteamId { get; init; } = null;
 	public int Timeout { get; set; } = 30000;
 	public CancellationToken? CancellationToken { get; init; } = null;
+    public string? Referer { get; init; }
 
 	public ProtobufRequest(string url, string protoData)
     {
