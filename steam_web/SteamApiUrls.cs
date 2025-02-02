@@ -8,6 +8,10 @@ internal static class SteamApiUrls
     public const string ISteamApps_UpToDateCheck_v1 = "https://api.steampowered.com/ISteamApps/UpToDateCheck/v1";
 
 	public const string ILoyaltyRewardsService_GetSummary_v1 = "https://api.steampowered.com/ILoyaltyRewardsService/GetSummary/v1";
+
+    public const string ISteamAwardsService_Nominate_v1 = "https://api.steampowered.com/ISteamAwardsService/Nominate/v1";
+    public const string ISteamAwardsService_GetNominationRecommendations_v1 = "https://api.steampowered.com/ISteamAwardsService/GetNominationRecommendations/v1";
+
 	public const string ILoyaltyRewardsService_GetReactionConfig_v1 = "https://api.steampowered.com/ILoyaltyRewardsService/GetReactionConfig/v1";
 	public const string ILoyaltyRewardsService_AddReaction_v1 = "https://api.steampowered.com/ILoyaltyRewardsService/AddReaction/v1";
 
