@@ -44,5 +44,18 @@ public class Description
             if (tag.Category == category)
                 return tag;
         return null;
-    }
+	}
+	public (uint, uint, uint) GetGooValue()
+	{
+		foreach (var action in Actions)
+        {
+			if (action.IsJavascript())
+            {
+                var value = action.GetGooValue();
+                if (value.Item1 != 0)
+                    return value;
+			}
+		}
+		return (0, 0, 0);
+	}
 }
