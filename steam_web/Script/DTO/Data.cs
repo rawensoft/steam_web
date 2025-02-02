@@ -1,8 +1,17 @@
-﻿namespace SteamWeb.Script.DTO;
+﻿using System.Text.Json.Serialization;
 
-public class Data<T>
+namespace SteamWeb.Script.DTO;
+
+public class Data<T> : Data
 {
-    public bool IsSuccess => success == 1;
-    public int success { get; set; } = 0;
-    public T? data { get; set; } = default;
+	[JsonPropertyName("Data")]
+	public T? data { get; set; } = default;
+}
+public class Data
+{
+	[JsonIgnore]
+	public bool IsSuccess => Success == EResult.OK;
+
+	[JsonPropertyName("Data")]
+	public EResult Success { get; set; } = EResult.Invalid;
 }
