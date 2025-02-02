@@ -1,4 +1,5 @@
 ﻿using ProtoBuf;
+using SteamWeb.Auth.v2.Enums;
 
 namespace SteamWeb.Auth.v2.Models;
 
@@ -7,13 +8,25 @@ class AuthSessionMobileRequest
 {
     private string? wesiteid = null;
 
-    [ProtoMember(2)] public string account_name { get; set; }
-    [ProtoMember(3)] public string encrypted_password { get; set; }
-    [ProtoMember(4)] public ulong encryption_timestamp { get; set; }
-    [ProtoMember(5)] public bool remember_login { get; set; } = true;
-    [ProtoMember(7)] public ESessionPersistence persistence { get; set; } = ESessionPersistence.Persistent;
-    [ProtoMember(8)]
-    public string website_id
+    [ProtoMember(2)] public string account_name { get; init; }
+    [ProtoMember(3)] public string encrypted_password { get; init; }
+    [ProtoMember(4)] public ulong encryption_timestamp { get; init; }
+    [ProtoMember(5)] public bool remember_login { get; init; } = true;
+    [ProtoMember(7)] public ESessionPersistence persistence { get; init; } = ESessionPersistence.Persistent;
+	/// <summary>
+	/// Доступные для использования id:
+	/// <br/>
+	/// Client = Steam Desktop Client
+	/// <br/>
+	/// Mobile = Steam Mobile App
+	/// <br/>
+	/// Community = steamcommunity.com
+	/// <br/>
+	/// Store = store.steampowered.com
+	/// <br/>
+	/// Help = help.steampowered.com
+	/// </summary>
+	[ProtoMember(8)] public string website_id
     {
         get
         {
@@ -31,6 +44,6 @@ class AuthSessionMobileRequest
         }
         set => wesiteid = value;
     }
-    [ProtoMember(9)] public CAuthentication_DeviceDetails_Mobile device_details { get; set; } = new();
-    [ProtoMember(11)] public int language { get; set; } = 0;
+    [ProtoMember(9)] public CAuthentication_DeviceDetails_Mobile device_details { get; init; } = new();
+    [ProtoMember(11)] public int language { get; init; } = 0;
 }
