@@ -18,5 +18,5 @@ public class ConfTradeOffer
     /// <summary>
     /// tradeofferid созданного трейда
     /// </summary>
-    [JsonPropertyName("tradeofferid")] public ulong TradeOfferId { get; init; }
+    [JsonPropertyName("tradeofferid")] public ulong? TradeOfferId { get; init; }
 }
