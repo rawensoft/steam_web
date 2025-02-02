@@ -1918,13 +1918,14 @@ public static class Ajax
 		return obj;
     }
 
-	public static CStoreSalesService_SetVote_Response? set_vote(string web_token, Proxy? proxy, int voteid, int appid, int sale_appid, CancellationToken? token = null)
+    [Obsolete("Этот метод теперь находится в API.IStoreSalesService.SetVote и будет скоро удалён")]
+    public static CStoreSalesService_SetVote_Response? set_vote(string web_token, Proxy? proxy, uint voteid, uint appid, uint sale_appid, CancellationToken? token = null)
 	{
         var requestDetails = new CStoreSalesService_SetVote_Request
         {
-            appid = appid,
-            sale_appid = sale_appid,
-            voteid = voteid,
+            AppId = appid,
+            SaleAppId = sale_appid,
+            VoteId = voteid,
         };
 		using var memStream1 = new MemoryStream();
 		Serializer.Serialize(memStream1, requestDetails);

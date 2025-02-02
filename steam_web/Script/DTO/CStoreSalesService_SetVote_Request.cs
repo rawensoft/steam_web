@@ -1,4 +1,5 @@
-﻿using ProtoBuf;
+﻿using System.Text.Json.Serialization;
+using ProtoBuf;
 
 namespace SteamWeb.Script.DTO;
 
@@ -6,9 +7,14 @@ namespace SteamWeb.Script.DTO;
 public class CStoreSalesService_SetVote_Request
 {
     [ProtoMember(1)]
-    public int voteid { get; set; }
+    [JsonPropertyName("voteid")]
+    public uint VoteId { get; init; }
+
     [ProtoMember(2)]
-    public int appid { get; set; }
+    [JsonPropertyName("appid")]
+    public uint AppId { get; init; }
+
     [ProtoMember(3)]
-    public int sale_appid { get; set; }
+    [JsonPropertyName("sale_appid")]
+    public uint SaleAppId { get; init; }
 }
