@@ -113,11 +113,29 @@ public enum ETradeStatus : byte
     /// </summary>
     k_ETradeStatus_EscrowRollback,
 }
-public enum ELoyaltyReactionTargetType: int
+public enum ELoyaltyReactionTargetType
 {
     Review = 1,
     UserGeneratedContent = 2,
     Profile = 3,
     TopicForum = 4,
     Comment = 5,
+}
+public enum EStoreDiscoveryQueueType
+{
+    k_EStoreDiscoveryQueueTypeNew = 0,
+    k_EStoreDiscoveryQueueTypeComingSoon = 1,
+    k_EStoreDiscoveryQueueTypeRecommended = 2,
+    k_EStoreDiscoveryQueueTypeEveryNewRelease = 3,
+    k_EStoreDiscoveryQueueTypeMLRecommender = 5,
+    k_EStoreDiscoveryQueueTypeWishlistOnSale = 6,
+    k_EStoreDiscoveryQueueTypeDLC = 7,
+    k_EStoreDiscoveryQueueTypeDLCOnSale = 8,
+    k_EStoreDiscoveryQueueTypeRecommendedComingSoon = 9,
+    k_EStoreDiscoveryQueueTypeRecommendedFree = 10,
+    k_EStoreDiscoveryQueueTypeRecommendedOnSale = 11,
+    k_EStoreDiscoveryQueueTypeRecommendedDemos = 12,
+    k_EStoreDiscoveryQueueTypeDLCNewReleases = 13,
+    k_EStoreDiscoveryQueueTypeDLCTopSellers = 14,
+    k_EStoreDiscoveryQueueTypeMAX = 15,
 }

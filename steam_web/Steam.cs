@@ -773,7 +773,7 @@ public static partial class Steam
             return Array.Empty<byte>();
         return bytes;
     }
-    
+
     /// <summary>
     /// Получает страницу предмета в steam
     /// </summary>
@@ -1932,7 +1932,7 @@ public static partial class Steam
     /// Загружает начальную историю покупок аккаунта.
     /// <para/>
     /// Для дальнейшей загрузки нужно использовать встроенный метод <see cref="PurchaseHistoryData.LoadMoreHistory(DefaultRequest)"/>.
-    /// 
+    ///
     /// <para/>
     /// Пример полной загрузки истории покупок:
     /// <code>
@@ -1942,7 +1942,6 @@ public static partial class Steam
     ///     history = history.LoadMoreHistory(new(session));
     /// }
     /// </code>
-    /// 
     /// </summary>
     /// <returns>Класс с историей покупок, либо ошибки</returns>
     public static PurchaseHistoryData GetPurchaseHistory(DefaultRequest ajaxRequest)
@@ -1964,7 +1963,7 @@ public static partial class Steam
     /// Загружает начальную историю покупок аккаунта.
     /// <para/>
     /// Для дальнейшей загрузки нужно использовать встроенный метод <see cref="PurchaseHistoryData.LoadMoreHistory(DefaultRequest)"/>.
-    /// 
+    ///
     /// <para/>
     /// Пример полной загрузки истории покупок:
     /// <code>
@@ -1974,7 +1973,6 @@ public static partial class Steam
     ///     history = history.LoadMoreHistory(new(session));
     /// }
     /// </code>
-    /// 
     /// </summary>
     /// <returns>Класс с историей покупок, либо ошибки</returns>
     public static async Task<PurchaseHistoryData> GetPurchaseHistoryAsync(DefaultRequest ajaxRequest)
@@ -1993,7 +1991,7 @@ public static partial class Steam
         return PurchaseHistoryData.Deserialize(response.Data!);
     }
 
-    public static ulong Steam32ToSteam64(uint input) => SteamIDConverter + input;
+	public static ulong Steam32ToSteam64(uint input) => SteamIDConverter + input;
     public static uint Steam64ToSteam32(ulong input) => (uint)(input - SteamIDConverter);
     /// <summary>
     /// </summary>

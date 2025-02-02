@@ -6,7 +6,10 @@ internal static class SteamCommunityUrls
 	public const string My_Edit_Info = "https://steamcommunity.com/my/edit/info";
     public const string My_Inventory = "https://steamcommunity.com/my/inventory";
     public const string My_InventoryHistory = "https://steamcommunity.com/my/inventoryhistory";
-    public const string TradeOffer = "https://steamcommunity.com/tradeoffer/";
+	public const string My_AjaxExchangeGoo = "https://steamcommunity.com/my/ajaxexchangegoo/";
+	public const string My_AjaxGrindIntoGoo = "https://steamcommunity.com/my/ajaxgrindintogoo/";
+	public const string Auction_AjaxGetGooValueForItemType = "https://steamcommunity.com/auction/ajaxgetgoovalueforitemtype/";
+	public const string TradeOffer = "https://steamcommunity.com/tradeoffer/";
     public const string TradeOffer_New_Send = "https://steamcommunity.com/tradeoffer/new/send";
     public const string TradeOffer_New = "https://steamcommunity.com/tradeoffer/new";
     public const string Actions_SetLanguage = "https://steamcommunity.com/actions/SetLanguage";

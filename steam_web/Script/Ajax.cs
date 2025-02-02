@@ -158,7 +158,7 @@ public static class Ajax
 			var jwt = JwtData.Deserialize(steamRefresh_steam);
 			steamRefresh_steam = jwt.Subject + "%7C%7C" + steamRefresh_steam;
 		}
-		var request = new PostRequest(SteamPoweredUrls.Jwt_Refresh, Downloader.AppFormUrlEncoded)
+        var request = new PostRequest(SteamPoweredUrls.Jwt_Refresh, Downloader.AppFormUrlEncoded)
 		{
 			Proxy = defaultRequest.Proxy,
 			IsAjax = false,
@@ -232,7 +232,7 @@ public static class Ajax
     /// <param name="tradeofferid">id трейда для принятия</param>
     /// <param name="steamid_other">steamid32 аккаунта, который отослал трейд</param>
     /// <returns>False трейд не принят, но иногда может быть принят, для точности используйте API</returns>
-    public static (ConfTradeOffer?, SteamTradeError?) tradeoffer_accept(DefaultRequest ajaxRequest, ulong tradeofferid, ulong steamid64)
+    public static (ConfTradeOffer?, SteamTradeError?) tradeoffer_accept(DefaultRequest ajaxRequest, ulong tradeofferid, ulong steamid_other)
     {
         var request = new PostRequest("https://steamcommunity.com/tradeoffer/" + tradeofferid + "/accept", Downloader.AppFormUrlEncoded)
         {
@@ -243,7 +243,7 @@ public static class Ajax
             Referer = "https://steamcommunity.com/tradeoffer/" + tradeofferid + "/"
         }
         .AddPostData("sessionid", ajaxRequest.Session!.SessionID).AddPostData("serverid", 1).AddPostData("tradeofferid", tradeofferid)
-        .AddPostData("partner", steamid64).AddPostData("captcha", string.Empty);
+        .AddPostData("partner", steamid_other).AddPostData("captcha", string.Empty);
         var response = Downloader.Post(request);
         try
         {
@@ -642,7 +642,7 @@ public static class Ajax
         }
         catch (Exception)
         {
-            return new(); 
+            return new();
         }
     }
     public static MarketSearchResponse market_search_render(DefaultRequest defaultRequest, MarketSearchRequest request)
@@ -2012,4 +2012,234 @@ public static class Ajax
 	/// <returns>Ответ на запрос</returns>
 	public static RequestKeyResponse dev_requestkey(DefaultRequest defaultRequest, string domain, RequestKeyResponse request)
         => dev_requestkey(defaultRequest, domain, request.RequestId!.Value);
+
+	public static GooValue auction_ajaxgetgoovalueforitemtype(DefaultRequest ajaxRequest, uint appid, uint item_type, byte border_color)
+	{
+		var request = new GetRequest(SteamCommunityUrls.Auction_AjaxGetGooValueForItemType)
+		{
+			CancellationToken = ajaxRequest.CancellationToken,
+			Referer = SteamCommunityUrls.My_Inventory,
+			IsAjax = true,
+			Session = ajaxRequest.Session,
+			Proxy = ajaxRequest.Proxy,
+		};
+		request.AddQuery("appid", appid).AddQuery("appid", appid).AddQuery("item_type", item_type).AddQuery("border_color", border_color);
+		var response = Downloader.Get(request);
+		try
+		{
+			var obj = JsonSerializer.Deserialize<GooValue>(response.Data!, Steam.JsonOptions)!;
+			return obj;
+		}
+		catch (Exception)
+		{
+			return new() { Success = EResult.BadResponse };
+		}
+	}
+	public static async Task<GooValue> auction_ajaxgetgoovalueforitemtype_async(DefaultRequest ajaxRequest, uint appid, uint item_type, byte border_color)
+	{
+		var request = new GetRequest(SteamCommunityUrls.Auction_AjaxGetGooValueForItemType)
+		{
+			CancellationToken = ajaxRequest.CancellationToken,
+			Referer = SteamCommunityUrls.My_Inventory,
+			IsAjax = true,
+			Session = ajaxRequest.Session,
+			Proxy = ajaxRequest.Proxy,
+		};
+		request.AddQuery("appid", appid).AddQuery("appid", appid).AddQuery("item_type", item_type).AddQuery("border_color", border_color);
+		var response = await Downloader.GetAsync(request);
+		try
+		{
+			var obj = JsonSerializer.Deserialize<GooValue>(response.Data!, Steam.JsonOptions)!;
+			return obj;
+		}
+		catch (Exception)
+		{
+			return new() { Success = EResult.BadResponse };
+		}
+	}
+
+
+    /// <summary>
+    /// Запаковывает и распаковывает гемы из пака.
+    ///
+    /// <br/>
+    /// Пример кода для запаковки в пак 2000 гемов:
+    /// <code>
+    /// var assetid = 12345678;
+    /// var totalPacks = 2;
+    /// var amounts = totalPacks * 1000;
+    /// var response = ExchangeGoo(new(Session), 753, assetid, totalPacks, amounts, totalPacks, amounts);
+    /// var result = response.Success; // check on EResult.OK
+    /// </code>
+    ///
+    /// <br/>
+    /// Пример кода для распаковки 2х паков гемов:
+    /// <code>
+    /// var assetid = 12345678;
+    /// var totalPacks = 2;
+    /// var amounts = totalPacks * 1000;
+    /// var response = ExchangeGoo(new(Session), 753, assetid, amounts, totalPacks, amounts, totalPacks);
+    /// var result = response.Success; // check on EResult.OK
+    /// </code>
+    /// </summary>
+    /// <param name="goo_denomination_in">Сколько хочется получить паков</param>
+    /// <param name="goo_amount_in">Сколько отдаём предметов</param>
+    /// <param name="goo_denomination_out">Сколько паков получаем | Сколько в одном паке amount</param>
+    /// <param name="goo_amount_out_expected">Сколько паков ожидаем на выходе</param>
+    public static Data exchange_goo(DefaultRequest ajaxRequest, uint appid, ulong assetid, uint goo_denomination_in, uint goo_amount_in, uint goo_denomination_out, uint goo_amount_out_expected)
+    {
+        var request = new PostRequest(SteamCommunityUrls.My_AjaxExchangeGoo, Downloader.AppFormUrlEncoded)
+        {
+            CancellationToken = ajaxRequest.CancellationToken,
+            Referer = SteamCommunityUrls.My_Inventory,
+            IsAjax = true,
+            Session = ajaxRequest.Session,
+            Proxy = ajaxRequest.Proxy,
+        };
+        request.AddPostData("sessionid", ajaxRequest.Session?.SessionID!, false).AddPostData("appid", appid)
+            .AddPostData("assetid", assetid).AddPostData("goo_denomination_in", goo_denomination_in).AddPostData("goo_amount_in", goo_amount_in)
+            .AddPostData("goo_denomination_out", goo_denomination_out).AddPostData("goo_amount_out_expected", goo_amount_out_expected);
+        var response = Downloader.Post(request);
+        try
+        {
+            var obj = JsonSerializer.Deserialize<Data>(response.Data!, Steam.JsonOptions)!;
+            return obj;
+        }
+        catch (Exception)
+        {
+            return new() { Success = EResult.BadResponse };
+        }
+    }
+    /// <summary>
+    /// Запаковывает и распаковывает гемы из пака.
+    ///
+    /// <br/>
+    /// Пример кода для запаковки в пак 2000 гемов:
+    /// <code>
+    /// var assetid = 12345678;
+    /// var totalPacks = 2;
+    /// var amounts = totalPacks * 1000;
+    /// var response = ExchangeGoo(new(Session), 753, assetid, totalPacks, amounts, totalPacks, amounts);
+    /// var result = response.Success; // check on EResult.OK
+    /// </code>
+    ///
+    /// <br/>
+    /// Пример кода для распаковки 2х паков гемов:
+    /// <code>
+    /// var assetid = 12345678;
+    /// var totalPacks = 2;
+    /// var amounts = totalPacks * 1000;
+    /// var response = ExchangeGoo(new(Session), 753, assetid, amounts, totalPacks, amounts, totalPacks);
+    /// var result = response.Success; // check on EResult.OK
+    /// </code>
+    /// </summary>
+    /// <param name="goo_denomination_in">Сколько хочется получить паков</param>
+    /// <param name="goo_amount_in">Сколько отдаём предметов</param>
+    /// <param name="goo_denomination_out">Сколько паков получаем | Сколько в одном паке amount</param>
+    /// <param name="goo_amount_out_expected">Сколько паков ожидаем на выходе</param>
+    public static async Task<Data> exchange_goo_async(DefaultRequest ajaxRequest, uint appid, ulong assetid, uint goo_denomination_in, uint goo_amount_in, uint goo_denomination_out, uint goo_amount_out_expected)
+    {
+        var request = new PostRequest(SteamCommunityUrls.My_AjaxExchangeGoo, Downloader.AppFormUrlEncoded)
+        {
+            CancellationToken = ajaxRequest.CancellationToken,
+            Referer = SteamCommunityUrls.My_Inventory,
+            IsAjax = true,
+            Session = ajaxRequest.Session,
+            Proxy = ajaxRequest.Proxy,
+        };
+        request.AddPostData("sessionid", ajaxRequest.Session?.SessionID!, false).AddPostData("appid", appid)
+            .AddPostData("assetid", assetid).AddPostData("goo_denomination_in", goo_denomination_in).AddPostData("goo_amount_in", goo_amount_in)
+            .AddPostData("goo_denomination_out", goo_denomination_out).AddPostData("goo_amount_out_expected", goo_amount_out_expected);
+        var response = await Downloader.PostAsync(request);
+        try
+        {
+            var obj = JsonSerializer.Deserialize<Data>(response.Data!, Steam.JsonOptions)!;
+            return obj;
+        }
+        catch (Exception)
+        {
+            return new() { Success = EResult.BadResponse };
+        }
+    }
+
+    /// <summary>
+    /// Конвертирует предмет в gem.
+    ///
+    /// <br/>
+    /// Пример кода для конвертирования (steam inv 753):
+    /// <code>
+    /// var (appid, amount_expected, _) = inv_asset.GetGooValue();
+    /// var assetid = 12345678;
+    /// var contextid = 6;
+    /// var response = GrindIntoGoo(new(Session), appid, assetid, contextid, amount_expected);
+    /// var result = response.Success; // check on EResult.OK
+    /// </code>
+    /// </summary>
+    /// <param name="appid">Id приложения, к которому относится предмет</param>
+    /// <param name="assetid">Id ассета, в инвентаре</param>
+    /// <param name="contextid">Id конекста, где находится ассет</param>
+    /// <param name="goo_value_expected">Какое количество должно быть получено</param>
+    public static GridIntoGoo grind_into_goo(DefaultRequest ajaxRequest, uint appid, ulong assetid, ulong contextid, uint goo_value_expected)
+    {
+        var request = new PostRequest(SteamCommunityUrls.My_AjaxGrindIntoGoo, Downloader.AppFormUrlEncoded)
+        {
+            CancellationToken = ajaxRequest.CancellationToken,
+            Referer = SteamCommunityUrls.My_Inventory,
+            IsAjax = true,
+            Session = ajaxRequest.Session,
+            Proxy = ajaxRequest.Proxy,
+        };
+        request.AddPostData("sessionid", ajaxRequest.Session?.SessionID!, false).AddPostData("appid", appid)
+            .AddPostData("assetid", assetid).AddPostData("contextid", contextid).AddPostData("goo_value_expected", goo_value_expected);
+        var response = Downloader.Post(request);
+        try
+        {
+            var obj = JsonSerializer.Deserialize<GridIntoGoo>(response.Data!, Steam.JsonOptions)!;
+            return obj;
+        }
+        catch (Exception)
+        {
+            return new() { Success = EResult.BadResponse };
+        }
+    }
+    /// <summary>
+    /// Конвертирует предмет в gem.
+    ///
+    /// <br/>
+    /// Пример кода для конвертирования (steam inv 753):
+    /// <code>
+    /// var (appid, amount_expected, _) = inv_asset.GetGooValue();
+    /// var assetid = 12345678;
+    /// var contextid = 6;
+    /// var response = GrindIntoGoo(new(Session), appid, assetid, contextid, amount_expected);
+    /// var result = response.Success; // check on EResult.OK
+    /// </code>
+    /// </summary>
+    /// <param name="appid">Id приложения, к которому относится предмет</param>
+    /// <param name="assetid">Id ассета, в инвентаре</param>
+    /// <param name="contextid">Id конекста, где находится ассет</param>
+    /// <param name="goo_value_expected">Какое количество должно быть получено</param>
+    public static async Task<GridIntoGoo> grind_into_goo_async(DefaultRequest ajaxRequest, uint appid, ulong assetid, ulong contextid, uint goo_value_expected)
+    {
+        var request = new PostRequest(SteamCommunityUrls.My_AjaxGrindIntoGoo, Downloader.AppFormUrlEncoded)
+        {
+            CancellationToken = ajaxRequest.CancellationToken,
+            Referer = SteamCommunityUrls.My_Inventory,
+            IsAjax = true,
+            Session = ajaxRequest.Session,
+            Proxy = ajaxRequest.Proxy,
+        };
+        request.AddPostData("sessionid", ajaxRequest.Session?.SessionID!, false).AddPostData("appid", appid)
+            .AddPostData("assetid", assetid).AddPostData("contextid", contextid).AddPostData("goo_value_expected", goo_value_expected);
+        var response = await Downloader.PostAsync(request);
+        try
+        {
+            var obj = JsonSerializer.Deserialize<GridIntoGoo>(response.Data!, Steam.JsonOptions)!;
+            return obj;
+        }
+        catch (Exception)
+        {
+            return new() { Success = EResult.BadResponse };
+        }
+    }
 }
