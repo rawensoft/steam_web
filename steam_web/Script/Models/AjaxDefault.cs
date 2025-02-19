@@ -4,10 +4,23 @@ using System.Text.Json.Serialization;
 namespace SteamWeb.Script.Models;
 public class AjaxDefault
 {
-    public bool success { get; init; } = false;
-    public string? hash { get; init; } = null;
-    public string? errorMsg { get; init; } = null;
+    /// <summary>
+    /// This account recovery session has expired. Please select 'Find Account' and start again.
+    /// </summary>
+    public const string Error_SessionExpired = "This account recovery session has expired. Please select 'Find Account' and start again.";
 
-    [JsonIgnore] public bool IsErrorMsg => !errorMsg.IsEmpty();
-    [JsonIgnore] public bool IsHash => !hash.IsEmpty();
+    [JsonPropertyName("success")]
+    public bool Success { get; init; } = false;
+
+    [JsonPropertyName("hash")]
+    public string? Hash { get; init; } = null;
+
+    [JsonPropertyName("errorMsg")]
+    public string? ErrorMsg { get; init; } = null;
+
+    [JsonIgnore]
+    public bool IsErrorMsg => !ErrorMsg.IsEmpty();
+
+    [JsonIgnore]
+    public bool IsHash => !Hash.IsEmpty();
 }

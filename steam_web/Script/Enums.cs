@@ -161,18 +161,20 @@ public enum AUTH_TYPE : byte
 }
 public enum TypeMethod : byte
 {
-    Mobile,
-    Email
+    Email = 2,
+    Phone = 4,
+    Mobile = 8,
 }
 public enum TypeReset : byte
 {
     Email,
     Password,
     Phone,
+    Guard,
+    KTEmail,
     KTPassword,
     KTPhone,
     KTGuard,
-    KTEmail
 }
 public enum LISTING_STATUS : byte
 {

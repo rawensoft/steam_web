@@ -24,7 +24,7 @@ namespace SteamWeb;
 /// <summary>
 /// Здесь собраны все методы, которые не вызывают голый http метод внутреннего api, а используют парсинг, либо свою реализацию
 /// </summary>
-public static partial class Steam
+public static class Steam
 {
     /// <summary>
     /// Значение которое отнимается или прибавляется к steamid64\steamid32

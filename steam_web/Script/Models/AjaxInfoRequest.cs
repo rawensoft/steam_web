@@ -6,5 +6,5 @@ public class AjaxInfoRequest : AjaxWizardRequest
     public TypeMethod Method { get; init; }
     public TypeReset Reset { get; init; }
     public TypeLost Lost { get; init; }
-    public string Account { get; init; }
+    public uint Account { get; init; }
 }

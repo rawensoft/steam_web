@@ -1,9 +1,20 @@
-﻿namespace SteamWeb.Script.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace SteamWeb.Script.Models;
 public class SteamRSA
 {
-    public bool success { get; init; } = false;
-    public string? publickey_mod { get; init; } = null;
-    public string? publickey_exp { get; init; } = null;
-    public string? timestamp { get; init; } = null;
-    public string? token_gid { get; init; } = null;
+    [JsonPropertyName("success")]
+    public bool Success { get; init; } = false;
+
+    [JsonPropertyName("publickey_mod")]
+    public string? PublicKeyMod { get; init; } = null;
+
+    [JsonPropertyName("publickey_exp")]
+    public string? PublicKeyExp { get; init; } = null;
+
+    [JsonPropertyName("timestamp")]
+    public string? Timestamp { get; init; } = null;
+
+    [JsonPropertyName("token_gid")]
+    public string? TokenGid { get; init; } = null;
 }

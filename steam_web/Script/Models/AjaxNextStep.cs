@@ -1,5 +1,8 @@
-﻿namespace SteamWeb.Script.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace SteamWeb.Script.Models;
 public class AjaxNextStep
 {
-    public string? redirect { get; set; } = null;
+    [JsonPropertyName("redirect")]
+    public string? Redirect { get; init; }
 }

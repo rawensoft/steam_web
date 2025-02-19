@@ -246,30 +246,33 @@ public static class ExtensionMethods
 	public static int ToDigitMethod(this TypeMethod method) => method switch
 	{
 		TypeMethod.Mobile => 8,
-		TypeMethod.Email => 2,
-		_ => -1
+        TypeMethod.Phone => 4,
+        TypeMethod.Email => 2,
+		_ => -1,
 	};
 	public static int ToDigitReset(this TypeReset reset) => reset switch
-	{
-		TypeReset.Email => 2,
-		TypeReset.Password => 1,
+    {
+        TypeReset.Password => 1,
+        TypeReset.Email => 2,
 		TypeReset.Phone => 4,
-		TypeReset.KTEmail => 0,
+        TypeReset.Guard => 8,
+        TypeReset.KTEmail => 0,
 		TypeReset.KTGuard => 0,
 		TypeReset.KTPhone => 0,
 		TypeReset.KTPassword => 0,
-		_ => -1
+		_ => -1,
 	};
 	public static int ToDigitIssueId(this TypeReset reset) => reset switch
 	{
 		TypeReset.Email => 409,
 		TypeReset.Password => 406,
 		TypeReset.Phone => 403,
-		TypeReset.KTEmail => 0,
-		TypeReset.KTGuard => 0,
-		TypeReset.KTPhone => 0,
-		TypeReset.KTPassword => 0,
-		_ => -1
+        TypeReset.Guard => 406,
+        TypeReset.KTEmail => 0,
+        TypeReset.KTPassword => 0,
+        TypeReset.KTPhone => 0,
+        TypeReset.KTGuard => 0,
+		_ => -1,
 	};
 	public static byte ToDigitLost(this TypeLost lost) => (byte)lost;
     public static PURCHASE_TYPE ToEnumPurchaseType(this string stringValue)
@@ -391,7 +394,7 @@ public static class ExtensionMethods
         return value;
     }
 
-    public static AjaxWizardRequest CreateWizard(this DefaultRequest request, string s, string? referer)
+    public static AjaxWizardRequest CreateWizard(this DefaultRequest request, ulong s, string? referer)
     {
         var wizard = new AjaxWizardRequest
         {
@@ -403,7 +406,7 @@ public static class ExtensionMethods
         };
         return wizard;
     }
-    public static AjaxInfoRequest CreateInfo(this AjaxWizardRequest request, string account, TypeLost lost, TypeMethod method, TypeReset reset)
+    public static AjaxInfoRequest CreateInfo(this AjaxWizardRequest request, uint account, TypeLost lost, TypeMethod method, TypeReset reset)
     {
         var wizard = new AjaxInfoRequest
         {

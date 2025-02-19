@@ -1,5 +1,8 @@
-﻿namespace SteamWeb.Script.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace SteamWeb.Script.Models;
 public class AjaxPasswordAvailable
 {
-    public bool available { get; init; } = false;
+    [JsonPropertyName("available")]
+    public bool Available { get; init; } = false;
 }

@@ -1,5 +1,8 @@
-﻿namespace SteamWeb.Script.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace SteamWeb.Script.Models;
 public class AjaxPollRecoveryConf: AjaxDefault
 {
-    public bool @continue { get; init; } = false;
+    [JsonPropertyName("continue")]
+    public bool Continue { get; init; } = false;
 }

@@ -1,5 +1,8 @@
-﻿namespace SteamWeb.Script.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace SteamWeb.Script.Models;
 public class AjaxEmailConfirm : AjaxDefault
 {
-    public bool show_confirmation { get; init; } = false;
+    [JsonPropertyName("show_confirmation")]
+    public bool ShowConfirmation { get; init; } = false;
 }
