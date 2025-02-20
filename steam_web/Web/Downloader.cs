@@ -16,7 +16,7 @@ public static class Downloader
     public const string AppJson = "application/json";
     public const string AppOctetSteam = "application/octet-stream";
     public const string MultiPartForm = "multipart/form-data";
-    
+
 #if !FACTORY
     private static readonly ConcurrentDictionary<int, RestClient> _clients = new(4, 1000);
 
@@ -88,6 +88,8 @@ public static class Downloader
 			req.AddHeader(KnownHeaders.Dnt, "1");
 			req.AddHeader(KnownHeaders.UpgradeInsecureRequests, "1");
 		}
+        if (request.IsMobile)
+            req.AddQueryParameter("origin", "SteamMobile");
 		if (request.Timeout > 0)
 			req.Timeout = request.Timeout;
 

@@ -108,13 +108,13 @@ public class UserLogin
     {
         if (_nextStep != NEXT_STEP.Begin)
             return false;
-        var usetAgent = Platform == EAuthTokenPlatformType.MobileApp ? KnownUserAgents.OkHttp : KnownUserAgents.WindowsBrowser;
+        var userAgent = Platform == EAuthTokenPlatformType.MobileApp ? KnownUserAgents.OkHttp : KnownUserAgents.WindowsBrowser;
 		var cooks = new CookieContainer();
         cooks.Add(new Uri(KnownUri.BASE_POWERED), new Cookie(KnownCookies.COOKIE_NAME_СOOKIESETTINGS, KnownCookies.COOKIE_NAME_СOOKIESETTINGS_VALUE) { Secure = true });
         var getRequest = new GetRequest(KnownUri.BASE_POWERED)
         {
 			Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application",
-            UserAgent = usetAgent,
+            UserAgent = userAgent,
             Proxy = Proxy,
             IsMobile = Platform == EAuthTokenPlatformType.MobileApp,
 			CancellationToken = _cts,
@@ -143,7 +143,7 @@ public class UserLogin
             _isCookieNotGet = true;
             return false;
         }
-		
+
 		string? steamCountry = null, browserID = null, sessionID = null;
 		var cookies = response.CookieContainer.GetAllCookies();
 		foreach (Cookie cookie in cookies)
@@ -168,7 +168,7 @@ public class UserLogin
         var getRequestProto = new ProtobufRequest(SteamApiUrls.IAuthenticationService_GetPasswordRSAPublicKey_v1, tmp)
         {
             Proxy = Proxy,
-            UserAgent = usetAgent,
+            UserAgent = userAgent,
             Cookie = KnownCookies.DefaultMobileCookie,
 			CancellationToken = _cts
 		};
@@ -218,7 +218,7 @@ public class UserLogin
 				encryption_timestamp = rsaResponse.timestamp,
 				device_details = new()
 				{
-					device_friendly_name = usetAgent,
+					device_friendly_name = userAgent,
 					platform_type = Platform
 				}
 			};
@@ -237,7 +237,7 @@ public class UserLogin
 		var postRequestProto = new ProtobufRequest(SteamApiUrls.IAuthenticationService_BeginAuthSessionViaCredentials_v1, content)
         {
             Proxy = Proxy,
-            UserAgent = usetAgent,
+            UserAgent = userAgent,
             Cookie = stringCookies.ToString(),
 			CancellationToken = _cts
 		};
