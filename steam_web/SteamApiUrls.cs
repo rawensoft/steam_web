@@ -9,6 +9,8 @@ internal static class SteamApiUrls
 
     public const string IStoreSalesService_SetVote_v1 = "https://api.steampowered.com/IStoreSalesService/SetVote/v1";
 
+    public const string IMobileAppService_GetMobileSummary_v1 = "https://api.steampowered.com/IMobileAppService/GetMobileSummary/v1";
+
     public const string ISteamAwardsService_Nominate_v1 = "https://api.steampowered.com/ISteamAwardsService/Nominate/v1";
     public const string ISteamAwardsService_GetNominationRecommendations_v1 = "https://api.steampowered.com/ISteamAwardsService/GetNominationRecommendations/v1";
 
