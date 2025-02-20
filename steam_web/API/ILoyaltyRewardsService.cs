@@ -1,6 +1,5 @@
 ﻿using SteamWeb.API.Models;
 using SteamWeb.Web;
-using SteamWeb.API.Enums;
 using ProtoBuf;
 using SteamWeb.API.Protobufs;
 
