@@ -92,8 +92,18 @@ public static class Downloader
             req.AddQueryParameter("origin", "SteamMobile");
 		if (request.Timeout > 0)
 			req.Timeout = request.Timeout;
+        if (!request.SteamRefresh_Steam.IsEmpty())
+        {
+            if (req.CookieContainer == null)
+                req.CookieContainer = new();
+            req.CookieContainer.Add(new Uri(KnownUri.BASE_LOGIN_POWERED), new Cookie("steamRefresh_steam", request.SteamRefresh_Steam)
+            {
+                HttpOnly = false,
+                Secure = true
+            });
+        }
 
-		return (client, req);
+        return (client, req);
 	}
     private static (RestClient, RestRequest) GetRestClient(PostRequest request, Method method, CookieContainer? cookies)
     {
@@ -117,12 +127,6 @@ public static class Downloader
                 HttpOnly = true,
                 Secure = true
             });
-		if (!request.SteamRefresh_Steam.IsEmpty() && req.CookieContainer != null)
-			req.CookieContainer.Add(new Uri(KnownUri.BASE_LOGIN_POWERED), new Cookie("steamRefresh_steam", request.SteamRefresh_Steam)
-			{
-				HttpOnly = false,
-				Secure = true
-			});
 
 		return (client, req);
 	}
@@ -211,7 +215,7 @@ public static class Downloader
 		}
 	}
 	/// <summary>
-	/// 
+	///
 	/// </summary>
 	/// <param name="url"></param>
 	/// <returns>Host, Origin</returns>

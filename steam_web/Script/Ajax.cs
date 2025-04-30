@@ -178,36 +178,31 @@ public static class Ajax
 	/// </summary>
 	/// <param name="steamRefresh_steam">Не истёкшая кука steamRefresh_steam с login.steampowered.com</param>
 	/// <param name="redir">Для обновления в магазине steam нужно использовать поддомен store, а для поддержки help, также и с поддоменом checkout</param>
-	/// <returns>Данные о выполнении запроса. Новый токен находится в <see cref="SteamWeb.Auth.v2.Models.SessionData.AccessToken"/></returns>
-	public static AjaxSetTokenResponse jwt_refresh(DefaultRequest defaultRequest, string steamRefresh_steam, string redir = "https://store.steampowered.com/")
+	/// <returns>Данные о выполнении запроса. Новый токен находится в <see cref="Auth.v2.Models.SessionData.AccessToken"/></returns>
+	public static (EResult, string?) jwt_refresh(DefaultRequest defaultRequest, string steamRefresh_steam, string redir = "https://store.steampowered.com/")
 	{
 		if (!steamRefresh_steam.StartsWith('7'))
 		{
 			var jwt = JwtData.Deserialize(steamRefresh_steam);
 			steamRefresh_steam = jwt.Subject + "%7C%7C" + steamRefresh_steam;
 		}
-        var request = new PostRequest(SteamPoweredUrls.Jwt_Refresh, Downloader.AppFormUrlEncoded)
+        var request = new GetRequest(SteamPoweredUrls.Jwt_Refresh)
 		{
 			Proxy = defaultRequest.Proxy,
 			IsAjax = false,
 			CancellationToken = defaultRequest.CancellationToken,
 			SteamRefresh_Steam = steamRefresh_steam,
             Session = defaultRequest.Session,
+            MaxRedirects = 0,
 		};
-		request.AddPostData("redir", Uri.UnescapeDataString(redir!), false);
-		var response = Downloader.Post(request);
-		if (!response.Success)
-			return new();
-		try
-		{
-			var obj = JsonSerializer.Deserialize<AjaxSetTokenResponse>(response.Data!, Steam.JsonOptions)!;
-			return obj;
-		}
-		catch (Exception)
-		{
-			return new() { Result = EResult.BadResponse };
-		}
-	}
+		request.AddQuery("redir", Uri.EscapeDataString(redir!), false);
+		var response = Downloader.Get(request);
+        if (!response.Location.IsEmpty())
+            return (EResult.OK, response.Location);
+        if (!response.Success)
+            return (EResult.BadResponse, response.Location);
+        return (EResult.Expired, response.Location);
+    }
 	/// <summary>
 	/// Обновляет истёкший steaLoginSecure на новый
 	/// </summary>

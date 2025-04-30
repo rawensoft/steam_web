@@ -29,8 +29,12 @@ public class GetRequest
     public bool IsMobile { get; set; } = false;
     public int Timeout { get; set; } = 30000;
 	public CancellationToken? CancellationToken { get; init; } = null;
+    /// <summary>
+    /// Указывать куку только при запросе <see cref="Script.Ajax.jwt_refresh(Models.DefaultRequest, string, string)"/>
+    /// </summary>
+	public string? SteamRefresh_Steam { get; set; }
 
-	public GetRequest(string url) => Url = url;
+    public GetRequest(string url) => Url = url;
     public GetRequest(string url, IWebProxy? proxy) : this(url) => Proxy = proxy;
     public GetRequest(string url, ISessionProvider? session) : this(url) => Session = session;
     public GetRequest(string url, IWebProxy? proxy, ISessionProvider? session) : this(url, proxy) => Session = session;

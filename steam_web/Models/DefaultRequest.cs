@@ -9,6 +9,7 @@ public class DefaultRequest
     public CancellationToken? CancellationToken { get; init; }
 
     public DefaultRequest() { }
+    public DefaultRequest(IWebProxy? proxy) => Proxy = proxy;
     public DefaultRequest(ISessionProvider? session) => Session = session;
     public DefaultRequest(ISessionProvider? session, IWebProxy? proxy) : this(session) => Proxy = proxy;
     public DefaultRequest(ISessionProvider? session, IWebProxy? proxy, CancellationToken? cancellationToken) : this(session, proxy)

@@ -228,7 +228,7 @@ public sealed class SessionData : ISessionProvider, IEquatable<SessionData>
 		if (SteamCountry != other?.SteamCountry)
 			return false;
 		if (PlatformType != other?.PlatformType)
-			return false; 
+			return false;
 		if (SteamLanguage != other?.SteamLanguage)
 			return false;
 		if (SteamID != other.SteamID)

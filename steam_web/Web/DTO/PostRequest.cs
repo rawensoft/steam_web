@@ -18,10 +18,6 @@ public class PostRequest : GetRequest
     /// </summary>
     public string? SecOpenIDNonce { get; set; }
     /// <summary>
-    /// Указывать куку только при запросе <see cref="Script.Ajax.jwt_ajaxrefresh(Models.DefaultRequest, string?)"/>
-    /// </summary>
-	public string? SteamRefresh_Steam { get; set; }
-    /// <summary>
     /// Boundary для multipart/form-data. Обычно для steam запроса нужно указать:
     /// <code>
     /// string boudary = "----WebKitFormBoundary" + 17.GetRandomString();
