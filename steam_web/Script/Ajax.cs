@@ -229,7 +229,7 @@ public static class Ajax
 			SteamRefresh_Steam = steamRefresh_steam,
 			Session = defaultRequest.Session,
 		};
-		request.AddPostData("redir", Uri.UnescapeDataString(redir!), false);
+		request.AddPostData("redir", Uri.EscapeDataString(redir!), false);
 		var response = await Downloader.PostAsync(request);
 		if (!response.Success)
 			return new();
@@ -572,13 +572,13 @@ public static class Ajax
             Proxy = defaultRequest.Proxy,
             IsAjax = true,
             CancellationToken = defaultRequest.CancellationToken,
-            Referer = SteamCommunityUrls.Market_Listings + "/" + appid + "/" + Uri.UnescapeDataString(market_hash_name),
+            Referer = SteamCommunityUrls.Market_Listings + "/" + appid + "/" + Uri.EscapeDataString(market_hash_name),
             UseVersion2 = true
 		};
 		request.AddPostData("sessionid", defaultRequest.Session!.SessionID);
 		request.AddPostData("currency", currency);
 		request.AddPostData("appid", appid);
-		request.AddPostData("market_hash_name", Uri.UnescapeDataString(market_hash_name), false);
+		request.AddPostData("market_hash_name", Uri.EscapeDataString(market_hash_name), false);
 		request.AddPostData("price_total", price_total);
 		request.AddPostData("quantity", quantity);
 		request.AddPostData("billing_state", string.Empty);
@@ -607,15 +607,15 @@ public static class Ajax
 			Referer = SteamCommunityUrls.Market_Listings + "/" + appid + "/" + Uri.UnescapeDataString(market_hash_name),
 			UseVersion2 = true
 		};
-		request.AddPostData("sessionid", defaultRequest.Session!.SessionID);
-		request.AddPostData("currency", currency);
-		request.AddPostData("appid", appid);
-		request.AddPostData("market_hash_name", Uri.UnescapeDataString(market_hash_name), false);
-		request.AddPostData("price_total", price_total);
-		request.AddPostData("quantity", quantity);
-		request.AddPostData("billing_state", string.Empty);
-		request.AddPostData("save_my_address", 0);
-		var response = await Downloader.PostAsync(request);
+        request.AddPostData("sessionid", defaultRequest.Session!.SessionID);
+        request.AddPostData("currency", currency);
+        request.AddPostData("appid", appid);
+        request.AddPostData("market_hash_name", Uri.EscapeDataString(market_hash_name), false);
+        request.AddPostData("price_total", price_total);
+        request.AddPostData("quantity", quantity);
+        request.AddPostData("billing_state", string.Empty);
+        request.AddPostData("save_my_address", 0);
+        var response = await Downloader.PostAsync(request);
 		if (!response.Success)
 			return new();
 		try
@@ -765,7 +765,7 @@ public static class Ajax
 	/// <exception cref="NotSupportedException"/>
 	public static ItemRenderResponse market_listings_render(ItemRenderRequest renderRequest)
 	{
-        var url = Path.Join(SteamCommunityUrls.Market_Listings, renderRequest.AppId.ToString(), Uri.UnescapeDataString(renderRequest.MarketHashName), "render");
+        var url = Path.Join(SteamCommunityUrls.Market_Listings, renderRequest.AppId.ToString(), Uri.EscapeDataString(renderRequest.MarketHashName), "render");
 		var request = new GetRequest(url)
 		{
 			Session = renderRequest.DefaultRequest.Session,
@@ -795,7 +795,7 @@ public static class Ajax
 	/// <exception cref="NotSupportedException"/>
 	public static async Task<ItemRenderResponse> market_listings_render_async(ItemRenderRequest renderRequest)
 	{
-		var url = Path.Join(SteamCommunityUrls.Market_Listings, renderRequest.AppId.ToString(), Uri.UnescapeDataString(renderRequest.MarketHashName), "render");
+		var url = Path.Join(SteamCommunityUrls.Market_Listings, renderRequest.AppId.ToString(), Uri.EscapeDataString(renderRequest.MarketHashName), "render");
 		var request = new GetRequest(url)
 		{
 			Session = renderRequest.DefaultRequest.Session,
