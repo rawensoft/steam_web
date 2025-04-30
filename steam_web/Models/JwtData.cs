@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Linq;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Web;
 using SteamWeb.Extensions;
@@ -13,6 +14,8 @@ public class JwtData
     public const string WebStore = "web:store";
     public const string WebCheckout = "web:checkout";
     public const string WebHelp = "web:help";
+    public const string Client = "client";
+    public const string Mobile = "mobile";
 
     [JsonPropertyName("iss")] public string Issuer { get; init; }
     [JsonPropertyName("sub")] public ulong Subject { get; init; }
@@ -53,5 +56,26 @@ public class JwtData
         var bytes = Convert.FromBase64String(spl[1].FromBase64UrlToBase64());
         var jwt = JsonSerializer.Deserialize<JwtData>(bytes, new JsonSerializerOptions { NumberHandling = JsonNumberHandling.AllowReadingFromString })!;
         return jwt;
+    }
+
+    public bool HasRenewAudience()
+    {
+        bool flag_web_site = Audience.Contains(Renew) && Audience.Contains(Derive);
+        return flag_web_site;
+    }
+    public bool HasCookieAudience()
+    {
+        bool flag_web_site = Audience.Contains(WebCommunity) || Audience.Contains(WebStore) || Audience.Contains(WebCheckout) || Audience.Contains(WebHelp);
+        return flag_web_site;
+    }
+    public bool HasClientAudience()
+    {
+        bool flag_web_site = Audience.Contains(Client) && Audience.Contains(Web);
+        return flag_web_site;
+    }
+    public bool HasAudience()
+    {
+        bool flag_web_site = Audience.Contains(Client) && Audience.Contains(Web);
+        return flag_web_site;
     }
 }
