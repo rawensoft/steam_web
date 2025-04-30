@@ -1222,7 +1222,7 @@ public static class Ajax
         }
         .AddPostData("language", language).AddPostData("sessionid", ajaxRequest.Session!.SessionID);
         var response = await Downloader.PostAsync(request);
-        return response.Success;
+        return response.Data == "true";
     }
     /// <summary>
     /// Изменяет язык на steam аккаунте
@@ -1239,7 +1239,7 @@ public static class Ajax
         }
         .AddPostData("language", language).AddPostData("sessionid", ajaxRequest.Session!.SessionID);
         var response = Downloader.Post(request);
-        return response.Success;
+        return response.Data == "true";
     }
     #endregion
 
