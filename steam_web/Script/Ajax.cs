@@ -38,7 +38,7 @@ public static class Ajax
 			CancellationToken = defaultRequest.CancellationToken,
             SteamRefresh_Steam = steamRefresh_steam,
 		};
-		request.AddPostData("redir", Uri.UnescapeDataString(redir!), false);
+		request.AddPostData("redir", Uri.EscapeDataString(redir!), false);
 		var response = Downloader.Post(request);
 		if (!response.Success)
 			return new();
@@ -68,7 +68,7 @@ public static class Ajax
 			CancellationToken = defaultRequest.CancellationToken,
 			SteamRefresh_Steam = steamRefresh_steam,
 		};
-		request.AddPostData("redir", Uri.UnescapeDataString(redir!), false);
+		request.AddPostData("redir", Uri.EscapeDataString(redir!), false);
 		var response = await Downloader.PostAsync(request);
 		if (!response.Success)
 			return new();
