@@ -20,7 +20,8 @@ public class VacGameBansData
         const string VACBanText = "Bans applied by VAC or Valve Anti-Cheat";
         const string GameBanText = "Bans applied by the Game Developer";
         const string href_str = "href";
-        const string appid_str = "appid";
+        const string appid_str_1 = "appid";
+        const string appid_str_2 = "steamAppId";
         const string highlight_str = "help_highlight_text";
         const string refund_info_box_str = "refund_info_box";
         const string vac_ban_header_str = "vac_ban_header";
@@ -62,9 +63,11 @@ public class VacGameBansData
                 {
 					var uri = new Uri(gameUri.GetAttribute(href_str)!);
 					var queries = HttpUtility.ParseQueryString(uri.Query);
-					appId = queries.Get(appid_str).ParseUInt32();
+					appId = queries.Get(appid_str_1).ParseUInt32();
 					if (appId == 0)
-						throw new InvalidOperationException($"Не обнаружен appid из query '{uri.Query}'");
+                        appId = queries.Get(appid_str_2).ParseUInt32();
+                    if (appId == 0)
+                        throw new InvalidOperationException($"Не обнаружен appid из query '{uri.Query}'");
 					if (!list.TryGetValue(appId, out var gameInfo))
 					{
 						gameInfo = new()
