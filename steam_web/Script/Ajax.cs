@@ -23,7 +23,8 @@ namespace SteamWeb.Script;
 /// </summary>
 public static class Ajax
 {
-	#region jwt refresh
+    #region jwt refresh
+    [Obsolete("Метод более не работает. Используйте jwt_refresh и login_settoken(DefaultRequest, string)")]
 	public static AjaxRefreshResponse jwt_ajaxrefresh(DefaultRequest defaultRequest, string steamRefresh_steam, string redir = "https://steamcommunity.com/market/")
 	{
         if (!steamRefresh_steam.StartsWith('7'))
@@ -53,8 +54,9 @@ public static class Ajax
 		{
 			return new();
 		}
-	}
-	public static async Task<AjaxRefreshResponse> jwt_ajaxrefresh_async(DefaultRequest defaultRequest, string steamRefresh_steam, string redir = "https://steamcommunity.com/market/")
+    }
+    [Obsolete("Метод более не работает. Используйте jwt_refresh и login_settoken(DefaultRequest, string)")]
+    public static async Task<AjaxRefreshResponse> jwt_ajaxrefresh_async(DefaultRequest defaultRequest, string steamRefresh_steam, string redir = "https://steamcommunity.com/market/")
 	{
 		if (!steamRefresh_steam.StartsWith('7'))
 		{
@@ -114,6 +116,7 @@ public static class Ajax
         return response.Success || response.StatusCode == 302;
     }
 
+    [Obsolete("Метод более не работает. Используйте jwt_refresh и login_settoken(DefaultRequest, string)")]
     public static AjaxSetTokenResponse login_settoken(DefaultRequest defaultRequest, AjaxRefreshResponse jwtRefresh, string prior)
 	{
         if (!jwtRefresh.Success)
@@ -142,8 +145,9 @@ public static class Ajax
 		{
 			return new();
 		}
-	}
-	public static async Task<AjaxSetTokenResponse> login_settoken_async(DefaultRequest defaultRequest, AjaxRefreshResponse jwtRefresh, string prior)
+    }
+    [Obsolete("Метод более не работает. Используйте jwt_refresh и login_settoken(DefaultRequest, string)")]
+    public static async Task<AjaxSetTokenResponse> login_settoken_async(DefaultRequest defaultRequest, AjaxRefreshResponse jwtRefresh, string prior)
 	{
 		if (!jwtRefresh.Success)
 			return new() { Result = EResult.InvalidParam };
