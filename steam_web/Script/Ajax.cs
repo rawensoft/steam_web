@@ -564,7 +564,7 @@ public static class Ajax
         }
     }
 
-	public static DataOrder market_createbuyorder(DefaultRequest defaultRequest, byte currency, uint appid, string market_hash_name, int price_total, ushort quantity)
+	public static DataOrder market_createbuyorder(DefaultRequest defaultRequest, byte currency, uint appid, string market_hash_name, int price_total, ushort quantity, int tradefee_tax)
 	{
 		var request = new PostRequest(SteamCommunityUrls.Market_CreateBuyOrder, Downloader.AppFormUrlEncoded)
         {
@@ -580,8 +580,9 @@ public static class Ajax
 		request.AddPostData("appid", appid);
 		request.AddPostData("market_hash_name", Uri.EscapeDataString(market_hash_name), false);
 		request.AddPostData("price_total", price_total);
-		request.AddPostData("quantity", quantity);
-		request.AddPostData("billing_state", string.Empty);
+		request.AddPostData("tradefee_tax", tradefee_tax);
+        request.AddPostData("quantity", quantity);
+        request.AddPostData("billing_state", string.Empty);
 		request.AddPostData("save_my_address", 0);
 		var response = Downloader.Post(request);
 		if (!response.Success)
@@ -596,7 +597,7 @@ public static class Ajax
 			return new();
 		}
 	}
-	public static async Task<DataOrder> market_createbuyorder_async(DefaultRequest defaultRequest, int currency, uint appid, string market_hash_name, int price_total, ushort quantity)
+	public static async Task<DataOrder> market_createbuyorder_async(DefaultRequest defaultRequest, int currency, uint appid, string market_hash_name, int price_total, ushort quantity, int tradefee_tax)
 	{
 		var request = new PostRequest(SteamCommunityUrls.Market_CreateBuyOrder, Downloader.AppFormUrlEncoded)
 		{
@@ -604,7 +605,7 @@ public static class Ajax
 			Proxy = defaultRequest.Proxy,
 			IsAjax = true,
 			CancellationToken = defaultRequest.CancellationToken,
-			Referer = SteamCommunityUrls.Market_Listings + "/" + appid + "/" + Uri.UnescapeDataString(market_hash_name),
+			Referer = SteamCommunityUrls.Market_Listings + "/" + appid + "/" + Uri.EscapeDataString(market_hash_name),
 			UseVersion2 = true
 		};
         request.AddPostData("sessionid", defaultRequest.Session!.SessionID);
@@ -612,6 +613,7 @@ public static class Ajax
         request.AddPostData("appid", appid);
         request.AddPostData("market_hash_name", Uri.EscapeDataString(market_hash_name), false);
         request.AddPostData("price_total", price_total);
+        request.AddPostData("tradefee_tax", tradefee_tax);
         request.AddPostData("quantity", quantity);
         request.AddPostData("billing_state", string.Empty);
         request.AddPostData("save_my_address", 0);
@@ -641,6 +643,7 @@ public static class Ajax
             Proxy = defaultRequest.Proxy,
             IsAjax = true,
             CancellationToken = defaultRequest.CancellationToken,
+            Timeout = 90000,
         };
         if (!request.Query.IsEmpty())
             getRequest.AddQuery("query", request.Query);
@@ -681,6 +684,7 @@ public static class Ajax
             Proxy = defaultRequest.Proxy,
             IsAjax = true,
             CancellationToken = defaultRequest.CancellationToken,
+            Timeout = 90000,
         };
         if (!request.Query.IsEmpty())
             getRequest.AddQuery("query", request.Query);
@@ -834,13 +838,16 @@ public static class Ajax
 			CancellationToken = defaultRequest.CancellationToken,
 			Referer = SteamCommunityUrls.Market_Listings + "/" + renderRequest.PublisherFeeApp + "/",
 		};
-		request.AddPostData("sessionid", defaultRequest.Session!.SessionID, false).AddPostData("currency", renderRequest.CurrencyId - 2000)
-            .AddPostData("subtotal", renderRequest.Price).AddPostData("fee", renderRequest.Fee).AddPostData("total", renderRequest.TotalPrice)
-			.AddPostData("quantity", quantity).AddPostData("save_my_address", save_my_address ? 1 : 0);
-        if (!billing_state.IsEmpty())
-            request.AddPostData("billing_state", Uri.UnescapeDataString(billing_state!), false);
+		request.AddPostData("sessionid", defaultRequest.Session!.SessionID, false)
+            .AddPostData("currency", renderRequest.CurrencyId - 2000)
+            .AddPostData("subtotal", renderRequest.Price)
+            .AddPostData("fee", renderRequest.Fee)
+            .AddPostData("total", renderRequest.TotalPrice)
+			.AddPostData("quantity", quantity)
+            .AddPostData("save_my_address", save_my_address ? 1 : 0)
+            .AddPostData("billing_state", !billing_state.IsEmpty() ? Uri.EscapeDataString(billing_state!) : string.Empty, false);
 
-		var response = Downloader.Post(request);
+        var response = Downloader.Post(request);
 		if (!response.Success)
 			return new();
 
@@ -859,13 +866,16 @@ public static class Ajax
 			CancellationToken = defaultRequest.CancellationToken,
 			Referer = SteamCommunityUrls.Market_Listings + "/" + renderRequest.PublisherFeeApp + "/",
 		};
-		request.AddPostData("sessionid", defaultRequest.Session!.SessionID, false).AddPostData("currency", renderRequest.CurrencyId - 2000)
-			.AddPostData("subtotal", renderRequest.Price).AddPostData("fee", renderRequest.Fee).AddPostData("total", renderRequest.TotalPrice)
-			.AddPostData("quantity", quantity).AddPostData("save_my_address", save_my_address ? 1 : 0);
-		if (!billing_state.IsEmpty())
-			request.AddPostData("billing_state", Uri.UnescapeDataString(billing_state!), false);
+        request.AddPostData("sessionid", defaultRequest.Session!.SessionID, false)
+            .AddPostData("currency", renderRequest.CurrencyId - 2000)
+            .AddPostData("subtotal", renderRequest.Price)
+            .AddPostData("fee", renderRequest.Fee)
+            .AddPostData("total", renderRequest.TotalPrice)
+            .AddPostData("quantity", quantity)
+            .AddPostData("save_my_address", save_my_address ? 1 : 0)
+            .AddPostData("billing_state", !billing_state.IsEmpty() ? Uri.EscapeDataString(billing_state!) : string.Empty, false);
 
-		var response = await Downloader.PostAsync(request);
+        var response = await Downloader.PostAsync(request);
 		if (!response.Success)
 			return new();
 
