@@ -62,7 +62,8 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
             Proxy = Proxy,
             UserAgent = KnownUserAgents.OkHttp,
             CancellationToken = token,
-		};
+            IsMobile = true,
+        };
         using var response = Downloader.PostProtobuf(request);
         if (!response.Success || response.EResult != EResult.OK)
 			return new();
@@ -87,6 +88,7 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
 			Proxy = Proxy,
 			UserAgent = KnownUserAgents.OkHttp,
             CancellationToken = token,
+            IsMobile = true,
         };
 		using var response = await Downloader.PostProtobufAsync(request);
 		if (!response.Success || response.EResult != EResult.OK)
@@ -166,6 +168,7 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
             Proxy = Proxy,
             UserAgent = KnownUserAgents.OkHttp,
             CancellationToken = token,
+            IsMobile = true,
         };
         using var response = Downloader.PostProtobuf(request);
         if (!response.Success || response.EResult != EResult.OK)
@@ -201,6 +204,7 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
             Proxy = Proxy,
             UserAgent = KnownUserAgents.OkHttp,
             CancellationToken = token,
+            IsMobile = true,
         };
         using var response = await Downloader.PostProtobufAsync(request);
         if (!response.Success || response.EResult != EResult.OK)
@@ -276,6 +280,7 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
             Session = Session,
             AccessToken = Session.AccessToken,
             CancellationToken = token,
+            IsMobile = true,
         };
         using var response = Downloader.PostProtobuf(request);
         if (response.EResult != EResult.OK)
@@ -301,6 +306,7 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
             Session = Session,
             AccessToken = Session.AccessToken,
             CancellationToken = token,
+            IsMobile = true,
         };
         using var response = await Downloader.PostProtobufAsync(request);
         if (response.EResult != EResult.OK)
@@ -320,6 +326,7 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
 			UseVersion2 = true,
 			UserAgent = KnownUserAgents.SteamMobileBrowser,
             CancellationToken = token,
+            IsMobile = true,
         }.AddQuery("p", DeviceID).AddQuery("a", Session.SteamID)
 		.AddQuery("k", _generateConfirmationHashForTime(time, tag)!).AddQuery("t", time).AddQuery("m", "react").AddQuery("tag", tag);
 
@@ -351,6 +358,7 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
             UseVersion2 = true,
             UserAgent = KnownUserAgents.SteamMobileBrowser,
             CancellationToken = token,
+            IsMobile = true,
         }.AddQuery("p", DeviceID).AddQuery("a", Session.SteamID)
         .AddQuery("k", _generateConfirmationHashForTime(time, tag)!).AddQuery("t", time).AddQuery("m", "react").AddQuery("tag", tag);
 
@@ -385,6 +393,7 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
             Timeout = 90000,
             UserAgent = KnownUserAgents.OkHttp,
             CancellationToken = token,
+            IsMobile = true,
         };
         var response = Downloader.Post(request);
         if (response.LostAuth)
@@ -409,6 +418,7 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
             Timeout = 90000,
             UserAgent = KnownUserAgents.OkHttp,
             CancellationToken = token,
+            IsMobile = true,
         };
         var response = Downloader.Post(request);
 		if (response.LostAuth)
@@ -444,6 +454,7 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
             Timeout = 90000,
             CancellationToken = token,
             UserAgent = KnownUserAgents.OkHttp,
+            IsMobile = true,
         };
         var response = Downloader.Post(request);
         if (response.LostAuth)
@@ -477,6 +488,7 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
             Timeout = 90000,
             CancellationToken = token,
             UserAgent = KnownUserAgents.OkHttp,
+            IsMobile = true,
         };
         var response = Downloader.Post(request);
         if (response.LostAuth)
@@ -500,6 +512,7 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
             UseVersion2 = true,
             CancellationToken = token,
             UserAgent = KnownUserAgents.OkHttp,
+            IsMobile = true,
         };
         var response = await Downloader.PostAsync(request);
         if (response.LostAuth)
@@ -523,6 +536,7 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
             UseVersion2 = true,
             CancellationToken = token,
             UserAgent = KnownUserAgents.OkHttp,
+            IsMobile = true,
         };
         var response = await Downloader.PostAsync(request);
         if (response.LostAuth)
@@ -556,6 +570,7 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
             UseVersion2 = true,
             CancellationToken = token,
             UserAgent = KnownUserAgents.OkHttp,
+            IsMobile = true,
         };
         var response = await Downloader.PostAsync(request);
         if (response.LostAuth)
@@ -587,6 +602,7 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
             UseVersion2 = true,
             CancellationToken = token,
             UserAgent = KnownUserAgents.OkHttp,
+            IsMobile = true,
         };
         var response = await Downloader.PostAsync(request);
         if (response.LostAuth)
@@ -650,6 +666,7 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
 			Proxy = Proxy,
 			AccessToken = Session.AccessToken,
             CancellationToken = token,
+            IsMobile = true,
         };
 		using var response = Downloader.PostProtobuf(request);
 		if (response.EResult != EResult.OK)
@@ -669,6 +686,7 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
 			Proxy = Proxy,
 			AccessToken = Session.AccessToken,
             CancellationToken = token,
+            IsMobile = true,
         };
 		using var response = await Downloader.PostProtobufAsync(request);
 		if (response.EResult != EResult.OK)
