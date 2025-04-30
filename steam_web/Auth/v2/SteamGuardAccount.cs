@@ -16,7 +16,7 @@ using SteamWeb.Auth.v2.Enums;
 namespace SteamWeb.Auth.v2;
 public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
 {
-	private static byte[] _steamGuardCodeTranslations = new byte[] { 50, 51, 52, 53, 54, 55, 56, 57, 66, 67, 68, 70, 71, 72, 74, 75, 77, 78, 80, 81, 82, 84, 86, 87, 88, 89 };
+	internal static byte[] _steamGuardCodeTranslations = new byte[] { 50, 51, 52, 53, 54, 55, 56, 57, 66, 67, 68, 70, 71, 72, 74, 75, 77, 78, 80, 81, 82, 84, 86, 87, 88, 89 };
 
 	[JsonPropertyName("shared_secret")] public string SharedSecret { get; init; }
     [JsonPropertyName("serial_number")] public ulong SerialNumber { get; init; }
@@ -43,7 +43,7 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
     /// Показывает какой ClientId был последним после вызова <see cref="CheckSession"/> или <see cref="CheckSessionAsync"/>
     /// </summary>
     [JsonIgnore] public ulong LastClientId { get; private set; } = 0;
-	
+
     public CTwoFactor_RemoveAuthenticator_Response RemoveAuthenticator(bool remove_all_steamguard_cookies, CancellationToken? token = null)
     {
         if (Session == null)
@@ -99,14 +99,16 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
 	/// Generate Steam Guard Code from Steam Time Request
 	/// </summary>
 	/// <returns>Null Or Code</returns>
-	public string GenerateSteamGuardCode() => GenerateSteamGuardCodeForTime(TimeAligner.GetSteamTime())!;
+	public string GenerateSteamGuardCode() => GenerateSteamGuardCodeForTime(SharedSecret, TimeAligner.GetSteamTime())!;
     /// <summary>
     /// Generate Steam Guard Code from your time
     /// </summary>
     /// <returns>Null Or Code</returns>
-    public string? GenerateSteamGuardCodeForTime(long time)
+    public string? GenerateSteamGuardCodeForTime(long time) => GenerateSteamGuardCodeForTime(SharedSecret, time);
+    public static string? GenerateSteamGuardCode(string sharedSecret) => GenerateSteamGuardCodeForTime(sharedSecret, TimeAligner.GetSteamTime());
+    public static string? GenerateSteamGuardCodeForTime(string sharedSecret, long time)
     {
-        if (SharedSecret == null || SharedSecret.Length == 0)
+        if (sharedSecret == null || sharedSecret.Length == 0)
             return null;
 
         byte[] timeArray = new byte[8];
@@ -118,7 +120,7 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
         }
 
         HMACSHA1 hmacGenerator = new HMACSHA1();
-        hmacGenerator.Key = Convert.FromBase64String(Regex.Unescape(SharedSecret));
+        hmacGenerator.Key = Convert.FromBase64String(Regex.Unescape(sharedSecret));
         byte[] hashedData = hmacGenerator.ComputeHash(timeArray);
         byte[] codeArray = new byte[5];
         try
@@ -157,7 +159,7 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
         {
             refresh_token = Session.RefreshToken!,
             steamid = Session.SteamID
-        }); 
+        });
         var request = new ProtobufRequest(SteamApiUrls.IAuthenticationService_GenerateAccessTokenForApp_v1, Convert.ToBase64String(memStream1.ToArray()))
         {
             AccessToken = Session.AccessToken,
@@ -306,7 +308,7 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
         var wallet = Serializer.Deserialize<CUserAccount_GetWalletDetails_Response>(response.Stream);
 		return wallet;
 	}
-    
+
     public ConfirmationsResponse FetchConfirmations(CancellationToken? token = null)
     {
 		if (Session == null)
