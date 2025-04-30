@@ -85,7 +85,36 @@ public static class Ajax
 		}
 	}
 
-	public static AjaxSetTokenResponse login_settoken(DefaultRequest defaultRequest, AjaxRefreshResponse jwtRefresh, string prior)
+    public static bool login_settoken(DefaultRequest defaultRequest, string login_settoken_url)
+    {
+        var request = new GetRequest(login_settoken_url)
+        {
+            Proxy = defaultRequest.Proxy,
+            IsAjax = true,
+            CancellationToken = defaultRequest.CancellationToken,
+            Session = defaultRequest.Session,
+        };
+        var response = Downloader.Get(request);
+        if (!response.Success)
+            return new();
+        return response.Success || response.StatusCode == 302;
+    }
+    public static async Task<bool> login_settoken_async(DefaultRequest defaultRequest, string login_settoken_url)
+    {
+        var request = new GetRequest(login_settoken_url)
+        {
+            Proxy = defaultRequest.Proxy,
+            IsAjax = true,
+            CancellationToken = defaultRequest.CancellationToken,
+            Session = defaultRequest.Session,
+        };
+        var response = await Downloader.GetAsync(request);
+        if (!response.Success)
+            return new();
+        return response.Success || response.StatusCode == 302;
+    }
+
+    public static AjaxSetTokenResponse login_settoken(DefaultRequest defaultRequest, AjaxRefreshResponse jwtRefresh, string prior)
 	{
         if (!jwtRefresh.Success)
             return new() { Result = EResult.InvalidParam };
