@@ -4,7 +4,7 @@ namespace SteamWeb.Script.DTO;
 
 public class Data<T> : Data
 {
-	[JsonPropertyName("Data")]
+	[JsonPropertyName("data")]
 	public T? data { get; set; } = default;
 }
 public class Data
@@ -12,6 +12,6 @@ public class Data
 	[JsonIgnore]
 	public bool IsSuccess => Success == EResult.OK;
 
-	[JsonPropertyName("Data")]
+	[JsonPropertyName("success")]
 	public EResult Success { get; set; } = EResult.Invalid;
 }
