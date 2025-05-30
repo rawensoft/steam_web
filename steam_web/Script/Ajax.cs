@@ -24,21 +24,23 @@ namespace SteamWeb.Script;
 public static class Ajax
 {
     #region jwt refresh
-    [Obsolete("Метод более не работает. Используйте jwt_refresh и login_settoken(DefaultRequest, string)")]
 	public static AjaxRefreshResponse jwt_ajaxrefresh(DefaultRequest defaultRequest, string steamRefresh_steam, string redir = "https://steamcommunity.com/market/")
 	{
         if (!steamRefresh_steam.StartsWith('7'))
         {
             var jwt = JwtData.Deserialize(steamRefresh_steam);
 			steamRefresh_steam = jwt.Subject + "%7C%7C" + steamRefresh_steam;
-		}
-		var request = new PostRequest(SteamPoweredUrls.Jwt_AjaxRefresh, Downloader.AppFormUrlEncoded)
+        }
+        var redirUri = new Uri(redir);
+        var request = new PostRequest(SteamPoweredUrls.Jwt_AjaxRefresh, Downloader.AppFormUrlEncoded)
 		{
 			Proxy = defaultRequest.Proxy,
 			IsAjax = true,
 			CancellationToken = defaultRequest.CancellationToken,
             SteamRefresh_Steam = steamRefresh_steam,
-		};
+            Referer = redirUri.Scheme + "://" + redirUri.Host,
+        };
+        request.AddHeader("Origin", request.Referer);
 		request.AddPostData("redir", Uri.EscapeDataString(redir!), false);
 		var response = Downloader.Post(request);
 		if (!response.Success)
@@ -55,37 +57,39 @@ public static class Ajax
 			return new();
 		}
     }
-    [Obsolete("Метод более не работает. Используйте jwt_refresh и login_settoken(DefaultRequest, string)")]
     public static async Task<AjaxRefreshResponse> jwt_ajaxrefresh_async(DefaultRequest defaultRequest, string steamRefresh_steam, string redir = "https://steamcommunity.com/market/")
-	{
-		if (!steamRefresh_steam.StartsWith('7'))
-		{
-			var jwt = JwtData.Deserialize(steamRefresh_steam);
-			steamRefresh_steam = jwt.Subject + "%7C%7C" + steamRefresh_steam;
-		}
-		var request = new PostRequest(SteamPoweredUrls.Jwt_AjaxRefresh, Downloader.AppFormUrlEncoded)
-		{
-			Proxy = defaultRequest.Proxy,
-			IsAjax = true,
-			CancellationToken = defaultRequest.CancellationToken,
-			SteamRefresh_Steam = steamRefresh_steam,
-		};
-		request.AddPostData("redir", Uri.EscapeDataString(redir!), false);
-		var response = await Downloader.PostAsync(request);
-		if (!response.Success)
-			return new();
-		try
-		{
-			// выполняем десерилизацию потому что присылают пустой объект
-			// так мы понимаем что запрос точно прошёл
-			var obj = JsonSerializer.Deserialize<AjaxRefreshResponse>(response.Data!, Steam.JsonOptions)!;
-			return obj;
-		}
-		catch (Exception)
-		{
-			return new();
-		}
-	}
+    {
+        if (!steamRefresh_steam.StartsWith('7'))
+        {
+            var jwt = JwtData.Deserialize(steamRefresh_steam);
+            steamRefresh_steam = jwt.Subject + "%7C%7C" + steamRefresh_steam;
+        }
+        var redirUri = new Uri(redir);
+        var request = new PostRequest(SteamPoweredUrls.Jwt_AjaxRefresh, Downloader.AppFormUrlEncoded)
+        {
+            Proxy = defaultRequest.Proxy,
+            IsAjax = true,
+            CancellationToken = defaultRequest.CancellationToken,
+            SteamRefresh_Steam = steamRefresh_steam,
+            Referer = redirUri.Scheme + "://" + redirUri.Host,
+        };
+        request.AddHeader("Origin", request.Referer);
+        request.AddPostData("redir", Uri.EscapeDataString(redir!), false);
+        var response = await Downloader.PostAsync(request);
+        if (!response.Success)
+            return new();
+        try
+        {
+            // выполняем десерилизацию потому что присылают пустой объект
+            // так мы понимаем что запрос точно прошёл
+            var obj = JsonSerializer.Deserialize<AjaxRefreshResponse>(response.Data!, Steam.JsonOptions)!;
+            return obj;
+        }
+        catch (Exception)
+        {
+            return new();
+        }
+    }
 
     public static bool login_settoken(DefaultRequest defaultRequest, string login_settoken_url)
     {
@@ -116,13 +120,12 @@ public static class Ajax
         return response.Success || response.StatusCode == 302;
     }
 
-    [Obsolete("Метод более не работает. Используйте jwt_refresh и login_settoken(DefaultRequest, string)")]
     public static AjaxSetTokenResponse login_settoken(DefaultRequest defaultRequest, AjaxRefreshResponse jwtRefresh, string prior)
 	{
         if (!jwtRefresh.Success)
             return new() { Result = EResult.InvalidParam };
 
-		var request = new PostRequest(jwtRefresh.LoginUrl!, Downloader.AppFormUrlEncoded)
+		var request = new PostRequest(jwtRefresh.LoginUrl, Downloader.AppFormUrlEncoded)
 		{
 			Proxy = defaultRequest.Proxy,
 			IsAjax = true,
@@ -146,36 +149,35 @@ public static class Ajax
 			return new();
 		}
     }
-    [Obsolete("Метод более не работает. Используйте jwt_refresh и login_settoken(DefaultRequest, string)")]
     public static async Task<AjaxSetTokenResponse> login_settoken_async(DefaultRequest defaultRequest, AjaxRefreshResponse jwtRefresh, string prior)
-	{
-		if (!jwtRefresh.Success)
-			return new() { Result = EResult.InvalidParam };
+    {
+        if (!jwtRefresh.Success)
+            return new() { Result = EResult.InvalidParam };
 
-		var request = new PostRequest(jwtRefresh.LoginUrl!, Downloader.AppFormUrlEncoded)
-		{
-			Proxy = defaultRequest.Proxy,
-			IsAjax = true,
-			CancellationToken = defaultRequest.CancellationToken,
-			Session = defaultRequest.Session,
-		};
-		request.AddPostData("success", true).AddPostData("login_url", Uri.EscapeDataString(jwtRefresh.LoginUrl!), false)
-			.AddPostData("steamID", jwtRefresh.SteamId).AddPostData("nonce", jwtRefresh.Nonce!, false)
-			.AddPostData("redir", Uri.EscapeDataString(jwtRefresh.Redir!), false).AddPostData("auth", jwtRefresh.Auth!, false)
-			.AddPostData("prior", prior, false);
-		var response = await Downloader.PostAsync(request);
-		if (!response.Success)
-			return new();
-		try
-		{
-			var obj = JsonSerializer.Deserialize<AjaxSetTokenResponse>(response.Data!, Steam.JsonOptions)!;
-			return obj;
-		}
-		catch (Exception)
-		{
-			return new();
-		}
-	}
+        var request = new PostRequest(jwtRefresh.LoginUrl, Downloader.AppFormUrlEncoded)
+        {
+            Proxy = defaultRequest.Proxy,
+            IsAjax = true,
+            CancellationToken = defaultRequest.CancellationToken,
+            Session = defaultRequest.Session,
+        };
+        request.AddPostData("success", true).AddPostData("login_url", Uri.EscapeDataString(jwtRefresh.LoginUrl!), false)
+            .AddPostData("steamID", jwtRefresh.SteamId).AddPostData("nonce", jwtRefresh.Nonce!, false)
+            .AddPostData("redir", Uri.EscapeDataString(jwtRefresh.Redir!), false).AddPostData("auth", jwtRefresh.Auth!, false)
+            .AddPostData("prior", prior, false);
+        var response = await Downloader.PostAsync(request);
+        if (!response.Success)
+            return new();
+        try
+        {
+            var obj = JsonSerializer.Deserialize<AjaxSetTokenResponse>(response.Data!, Steam.JsonOptions)!;
+            return obj;
+        }
+        catch (Exception)
+        {
+            return new();
+        }
+    }
 
 	/// <summary>
 	/// Обновляет истёкший steaLoginSecure на новый
