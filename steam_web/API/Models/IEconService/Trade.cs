@@ -51,11 +51,16 @@ public class Trade
 	///  the confirmation method that applies to the user asking about the offer.
 	/// </summary>
 	[JsonPropertyName("confirmation_method")] public ETradeOfferConfirmationMethod ConfirmationMethod { get; init; } = ETradeOfferConfirmationMethod.k_ETradeOfferConfirmationMethod_Invalid;
+    [JsonPropertyName("eresult")] public EResult EResult { get; init; }
+    /// <summary>
+    ///  Используется для обозначения trade protected предметов\трейда
+    /// </summary>
+    [JsonPropertyName("delay_settlement")] public bool DelaySettlement { get; init; } = false;
 
-	/// <summary>
-	/// Трейд содержит предметы только для отправки
-	/// </summary>
-	[JsonIgnore] public bool OnlyGiven => ItemsToGive.Length != 0 && ItemsToReceive.Length == 0;
+    /// <summary>
+    /// Трейд содержит предметы только для отправки
+    /// </summary>
+    [JsonIgnore] public bool OnlyGiven => ItemsToGive.Length != 0 && ItemsToReceive.Length == 0;
 	/// <summary>
 	/// Трейд содержит предметы только для меня
 	/// </summary>

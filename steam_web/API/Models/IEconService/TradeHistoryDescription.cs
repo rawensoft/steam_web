@@ -19,5 +19,7 @@ public class TradeHistoryDescription
     [JsonPropertyName("market_hash_name")] public string? MarketHashName { get; init; }
 	[JsonPropertyName("commodity")] public bool Commodity { get; init; } = false;
     [JsonPropertyName("market_tradable_restriction")] public sbyte MarketTradableRestriction { get; init; }
-	[JsonPropertyName("marketable")] public bool Marketable { get; init; } = false;
+    [JsonPropertyName("market_marketable_restriction")] public sbyte MarketMarketableRestriction { get; init; }
+    [JsonPropertyName("marketable")] public bool Marketable { get; init; } = false;
+	[JsonPropertyName("sealed")] public bool Sealed { get; init; } = false;
 }

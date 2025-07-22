@@ -19,8 +19,12 @@ public class TradeHistory
 	/// </summary>
 	[JsonPropertyName("time_escrow_end")] public int TimeEscrowEnd { get; init; }
 	[JsonPropertyName("status")] public Enums.ETradeStatus Status { get; init; } = Enums.ETradeStatus.k_ETradeStatus_Failed;
-	[JsonPropertyName("assets_given")] public List<TradeHistoryAssets> AssetsGiven { get; init; } = new(1);
-	[JsonPropertyName("assets_received")] public List<TradeHistoryAssets> AssetsReceived { get; init; } = new(1);
+	[JsonPropertyName("assets_given")] public List<TradeHistoryAssets> AssetsGiven { get; init; } = new(3);
+	[JsonPropertyName("assets_received")] public List<TradeHistoryAssets> AssetsReceived { get; init; } = new(3);
+    /// <summary>
+    /// Время, когда trade protected items перейдут во free инвентарь (разблокируются)
+    /// </summary>
+    [JsonPropertyName("time_settlement")] public int TimeSettlement { get; init; }
 
     /// <summary>
     /// Трейд содержит предметы только для отправки
