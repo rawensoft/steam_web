@@ -1,10 +1,15 @@
-﻿namespace SteamWeb.Script.DTO;
+﻿using System.Text.Json.Serialization;
 
-public record CreateBuyOrder
+namespace SteamWeb.Script.DTO;
+
+public class CreateBuyOrder
 {
     /// <summary>
     /// 16 - проблемы с серверами
     /// </summary>
-    public int success { get; init; } = 0;
-    public string message { get; init; }
+    [JsonPropertyName("success")]
+    public EResult Success { get; init; } = EResult.Invalid;
+
+    [JsonPropertyName("message")]
+    public string? Message { get; init; }
 }
