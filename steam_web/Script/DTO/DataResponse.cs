@@ -2,12 +2,12 @@
 
 namespace SteamWeb.Script.DTO;
 
-public class Data<T> : Data
+public class DataResponse<T> : DataResponse
 {
 	[JsonPropertyName("data")]
-	public T? data { get; set; } = default;
+	public T? Data { get; set; } = default;
 }
-public class Data
+public class DataResponse
 {
 	[JsonIgnore]
 	public bool IsSuccess => Success == EResult.OK;

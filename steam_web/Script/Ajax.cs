@@ -1621,7 +1621,7 @@ public static class Ajax
         }
     }
 
-    public static async Task<Data<StoreUserConfig>> pointssummary_ajaxgetasyncconfig_async(DefaultRequest defaultRequest)
+    public static async Task<DataResponse<StoreUserConfig>> pointssummary_ajaxgetasyncconfig_async(DefaultRequest defaultRequest)
     {
         var request = new GetRequest(SteamCommunityUrls.PointsSummary_AjaxGetAsyncConfig)
         {
@@ -1635,7 +1635,7 @@ public static class Ajax
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Data<StoreUserConfig>>(response.Data!)!;
+            var obj = JsonSerializer.Deserialize<DataResponse<StoreUserConfig>>(response.Data!)!;
             return obj;
         }
         catch (Exception)
@@ -1643,7 +1643,7 @@ public static class Ajax
             return new();
         }
     }
-    public static Data<StoreUserConfig> pointssummary_ajaxgetasyncconfig(DefaultRequest defaultRequest)
+    public static DataResponse<StoreUserConfig> pointssummary_ajaxgetasyncconfig(DefaultRequest defaultRequest)
     {
         var request = new GetRequest(SteamCommunityUrls.PointsSummary_AjaxGetAsyncConfig)
         {
@@ -1657,7 +1657,7 @@ public static class Ajax
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<Data<StoreUserConfig>>(response.Data!)!;
+            var obj = JsonSerializer.Deserialize<DataResponse<StoreUserConfig>>(response.Data!)!;
             return obj;
         }
         catch (Exception)
@@ -2049,7 +2049,7 @@ public static class Ajax
 	public static RequestKeyResponse dev_requestkey(DefaultRequest defaultRequest, string domain, RequestKeyResponse request)
         => dev_requestkey(defaultRequest, domain, request.RequestId!.Value);
 
-	public static GooValue auction_ajaxgetgoovalueforitemtype(DefaultRequest ajaxRequest, uint appid, uint item_type, byte border_color)
+	public static GooValueData auction_ajaxgetgoovalueforitemtype(DefaultRequest ajaxRequest, uint appid, uint item_type, byte border_color)
 	{
 		var request = new GetRequest(SteamCommunityUrls.Auction_AjaxGetGooValueForItemType)
 		{
@@ -2063,7 +2063,7 @@ public static class Ajax
 		var response = Downloader.Get(request);
 		try
 		{
-			var obj = JsonSerializer.Deserialize<GooValue>(response.Data!, Steam.JsonOptions)!;
+			var obj = JsonSerializer.Deserialize<GooValueData>(response.Data!, Steam.JsonOptions)!;
 			return obj;
 		}
 		catch (Exception)
@@ -2071,7 +2071,7 @@ public static class Ajax
 			return new() { Success = EResult.BadResponse };
 		}
 	}
-	public static async Task<GooValue> auction_ajaxgetgoovalueforitemtype_async(DefaultRequest ajaxRequest, uint appid, uint item_type, byte border_color)
+	public static async Task<GooValueData> auction_ajaxgetgoovalueforitemtype_async(DefaultRequest ajaxRequest, uint appid, uint item_type, byte border_color)
 	{
 		var request = new GetRequest(SteamCommunityUrls.Auction_AjaxGetGooValueForItemType)
 		{
@@ -2085,7 +2085,7 @@ public static class Ajax
 		var response = await Downloader.GetAsync(request);
 		try
 		{
-			var obj = JsonSerializer.Deserialize<GooValue>(response.Data!, Steam.JsonOptions)!;
+			var obj = JsonSerializer.Deserialize<GooValueData>(response.Data!, Steam.JsonOptions)!;
 			return obj;
 		}
 		catch (Exception)
@@ -2122,7 +2122,7 @@ public static class Ajax
     /// <param name="goo_amount_in">Сколько отдаём предметов</param>
     /// <param name="goo_denomination_out">Сколько паков получаем | Сколько в одном паке amount</param>
     /// <param name="goo_amount_out_expected">Сколько паков ожидаем на выходе</param>
-    public static Data exchange_goo(DefaultRequest ajaxRequest, uint appid, ulong assetid, uint goo_denomination_in, uint goo_amount_in, uint goo_denomination_out, uint goo_amount_out_expected)
+    public static DataResponse exchange_goo(DefaultRequest ajaxRequest, uint appid, ulong assetid, uint goo_denomination_in, uint goo_amount_in, uint goo_denomination_out, uint goo_amount_out_expected)
     {
         var request = new PostRequest(SteamCommunityUrls.My_AjaxExchangeGoo, Downloader.AppFormUrlEncoded)
         {
@@ -2138,7 +2138,7 @@ public static class Ajax
         var response = Downloader.Post(request);
         try
         {
-            var obj = JsonSerializer.Deserialize<Data>(response.Data!, Steam.JsonOptions)!;
+            var obj = JsonSerializer.Deserialize<DataResponse>(response.Data!, Steam.JsonOptions)!;
             return obj;
         }
         catch (Exception)
@@ -2173,7 +2173,7 @@ public static class Ajax
     /// <param name="goo_amount_in">Сколько отдаём предметов</param>
     /// <param name="goo_denomination_out">Сколько паков получаем | Сколько в одном паке amount</param>
     /// <param name="goo_amount_out_expected">Сколько паков ожидаем на выходе</param>
-    public static async Task<Data> exchange_goo_async(DefaultRequest ajaxRequest, uint appid, ulong assetid, uint goo_denomination_in, uint goo_amount_in, uint goo_denomination_out, uint goo_amount_out_expected)
+    public static async Task<DataResponse> exchange_goo_async(DefaultRequest ajaxRequest, uint appid, ulong assetid, uint goo_denomination_in, uint goo_amount_in, uint goo_denomination_out, uint goo_amount_out_expected)
     {
         var request = new PostRequest(SteamCommunityUrls.My_AjaxExchangeGoo, Downloader.AppFormUrlEncoded)
         {
@@ -2189,7 +2189,7 @@ public static class Ajax
         var response = await Downloader.PostAsync(request);
         try
         {
-            var obj = JsonSerializer.Deserialize<Data>(response.Data!, Steam.JsonOptions)!;
+            var obj = JsonSerializer.Deserialize<DataResponse>(response.Data!, Steam.JsonOptions)!;
             return obj;
         }
         catch (Exception)

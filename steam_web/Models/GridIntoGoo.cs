@@ -3,7 +3,7 @@ using SteamWeb.Script.DTO;
 
 namespace SteamWeb.Models;
 
-public class GridIntoGoo : Data
+public class GridIntoGoo : DataResponse
 {
 	[JsonPropertyName("goo_value_received ")]
 	public uint GooValueReceived { get; init; }

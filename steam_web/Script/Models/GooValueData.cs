@@ -3,8 +3,8 @@ using System.Text.Json.Serialization;
 
 namespace SteamWeb.Script.Models;
 
-public class GooValue : Data
+public class GooValueData : DataResponse
 {
 	[JsonPropertyName("goo_value")]
-	public uint goo_value { get; init; }
+	public uint GooValue { get; init; }
 }
