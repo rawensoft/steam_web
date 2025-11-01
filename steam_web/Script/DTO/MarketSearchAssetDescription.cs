@@ -17,4 +17,6 @@ public class MarketSearchAssetDescription
 	[JsonPropertyName("icon_url_large")] public string IconUrlLarge { get; init; } = string.Empty;
 	[JsonPropertyName("commodity")] public uint Commodity { get; init; } = 0;
     [JsonPropertyName("currency")] public ushort Currency { get; init; } = 0;
+    [JsonPropertyName("name_color")] public string NameColor { get; init; } = string.Empty;
+    [JsonPropertyName("background_color")] public string BackgroundColor { get; init; } = string.Empty;
 }
