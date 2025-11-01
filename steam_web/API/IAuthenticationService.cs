@@ -152,7 +152,36 @@ public static class IAuthenticationService
             return (response.EResult, default);
 
         var token = Serializer.Deserialize<UpdateTokenResponse>(response.Stream);
-        if (token.access_token == null)
+        if (token.AccessToken == null)
+            return (response.EResult, token);
+
+        response.Stream?.Close();
+        response.Stream?.Dispose();
+        return (response.EResult, token);
+    }
+    public static (EResult, UpdateTokenResponse?) GenerateAccessTokenForApp(string refresh_token, ulong steamid, Proxy? proxy, CancellationToken? ct = null)
+    {
+        var jwt = JwtData.Deserialize(refresh_token);
+        using var memStream1 = new MemoryStream();
+        Serializer.Serialize(memStream1, new UpdateTokenRequest()
+        {
+            refresh_token = refresh_token!,
+            steamid = steamid,
+        });
+        var request = new ProtobufRequest(SteamApiUrls.IAuthenticationService_GenerateAccessTokenForApp_v1, Convert.ToBase64String(memStream1.ToArray()))
+        {
+            Proxy = proxy,
+            UserAgent = "Valve/Steam HTTP Client 1.0",
+            CancellationToken = ct,
+            AccessToken = jwt.Subject + "||" + refresh_token,
+        };
+
+        using var response = Downloader.PostProtobuf(request);
+        if (response.EResult != EResult.OK)
+            return (response.EResult, default);
+
+        var token = Serializer.Deserialize<UpdateTokenResponse>(response.Stream);
+        if (token.AccessToken == null)
             return (response.EResult, token);
 
         response.Stream?.Close();
