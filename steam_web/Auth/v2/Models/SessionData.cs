@@ -145,8 +145,16 @@ public sealed class SessionData : ISessionProvider, IEquatable<SessionData>
         var values = _cookies.Values;
         foreach (var cookie in values)
             container.Add(url, cookie);
-	}
-	private void AddMobileCookieToContainer(CookieContainer? container, Uri url)
+    }
+    public void AddCookieToContainer(CookieContainer? container)
+    {
+        if (container == null)
+            container = new();
+        var values = _cookies.Values;
+        foreach (var cookie in values)
+            container.Add(new Uri($"https://{cookie.Domain}/"), cookie);
+    }
+    private void AddMobileCookieToContainer(CookieContainer? container, Uri url)
 	{
 		if (container == null)
 			container = new();
