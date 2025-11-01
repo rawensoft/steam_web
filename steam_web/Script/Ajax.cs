@@ -1312,18 +1312,20 @@ public static class Ajax
             IsAjax = true,
             CancellationToken = defaultRequest.CancellationToken,
         };
-        request.AddPostData("comment", comment).AddPostData("count", count).AddPostData("sessionid", defaultRequest.Session!.SessionID).AddPostData("feature2", feature2);
+        request.AddPostData("comment", comment).AddPostData("count", count)
+            .AddPostData("sessionid", defaultRequest.Session!.SessionID)
+            .AddPostData("feature2", feature2);
         var response = await Downloader.PostAsync(request);
         if (!response.Success)
             return new();
         try
         {
-            var obj = JsonSerializer.Deserialize<CommentResponse>(response.Data!)!;
+            var obj = JsonSerializer.Deserialize<CommentResponse>(response.Data!, Steam.JsonOptions)!;
             return obj;
         }
         catch (Exception)
         {
-            return new CommentResponse() { success = false };
+            return new();
         }
     }
     #endregion
