@@ -327,6 +327,38 @@ public static class IEconService
     /// <param name="tradeid"></param>
     /// <param name="get_descriptions">If set, the item display data for the items included in the returned trades will also be returned</param>
     /// <param name="language">The language to use when loading item display data</param>
+    public static ResponseData<TradeStatus> GetTradeStatus(ApiRequest apiRequest, ulong tradeid, bool get_descriptions = false, string? language = null)
+    {
+        var request = new GetRequest(SteamApiUrls.IEconService_GetTradeStatus_v1)
+        {
+            Proxy = apiRequest.Proxy,
+            CancellationToken = apiRequest.CancellationToken,
+        };
+        apiRequest.AddAuthToken(request).AddQuery("tradeid", tradeid);
+        if (get_descriptions)
+            request.AddQuery("get_descriptions", 1);
+        if (!string.IsNullOrEmpty(language))
+            request.AddQuery("language", language);
+        var response = Downloader.Get(request);
+        if (!response.Success)
+            return new();
+        try
+        {
+            var obj = JsonSerializer.Deserialize<ResponseData<TradeStatus>>(response.Data!, Steam.JsonOptions)!;
+            obj.Success = true;
+            return obj;
+        }
+        catch (Exception)
+        {
+            return new();
+        }
+    }
+    /// <summary>
+    /// Gets status for a specific trade
+    /// </summary>
+    /// <param name="tradeid"></param>
+    /// <param name="get_descriptions">If set, the item display data for the items included in the returned trades will also be returned</param>
+    /// <param name="language">The language to use when loading item display data</param>
     /// <returns></returns>
     public static async Task<ResponseData<TradeStatus>> GetTradeStatusAsync(ApiRequest apiRequest, ulong tradeid, bool get_descriptions = false, string? language = null)
     {
