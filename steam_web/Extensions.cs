@@ -447,23 +447,25 @@ public static class ExtensionMethods
     /// <param name="session">Сессия для проверки</param>
     /// <param name="proxy">Прокси для использования в этом запросе</param>
     /// <returns>true если сессия валидная, false если сессия null, AccessToken пустой или PlatformType не WebBrowser, а также в других случаях</returns>
-    public static bool IsValid(this SessionData? session, Proxy? proxy = null, CancellationToken? cancellationToken = null)
+    [Obsolete("Метод не работает после обновления steam api")]
+    public static bool IsValid([NotNullWhen(true)] this SessionData? session, Proxy? proxy = null, CancellationToken? cancellationToken = null)
     {
         if (session == null || session.AccessToken.IsEmpty() || session.PlatformType != EAuthTokenPlatformType.WebBrowser)
             return false;
 
 		var check_session = API.IAuthenticationService.GetAuthSessionsForAccount(session, proxy, cancellationToken);
-		if (check_session?.Response.client_ids == null)
+		if (check_session?.Response?.ClientIds == null)
             return false;
         return true;
 	}
-	/// <summary>
-	/// Обновляет AccessToken браузерной сессии
-	/// </summary>
-	/// <param name="session">Сессия для обновления</param>
-	/// <param name="proxy">Прокси для использования в этом запросе</param>
-	/// <returns>true если сессия обновлена, false если сессия null, RefreshToken пустой или PlatformType не WebBrowser, а также в других случаях</returns>
-	public static bool Refresh(this SessionData? session, Proxy? proxy = null, CancellationToken? cancellationToken = null)
+    /// <summary>
+    /// Обновляет AccessToken браузерной сессии
+    /// </summary>
+    /// <param name="session">Сессия для обновления</param>
+    /// <param name="proxy">Прокси для использования в этом запросе</param>
+    /// <returns>true если сессия обновлена, false если сессия null, RefreshToken пустой или PlatformType не WebBrowser, а также в других случаях</returns>
+    [Obsolete("Метод не работает после обновления steam api")]
+    public static bool Refresh([NotNullWhen(true)] this SessionData? session, Proxy? proxy = null, CancellationToken? cancellationToken = null)
 	{
 		if (session == null || session.RefreshToken.IsEmpty() || session.PlatformType != EAuthTokenPlatformType.WebBrowser)
 			return false;
@@ -477,29 +479,31 @@ public static class ExtensionMethods
             return true;
 		}
 	}
-	/// <summary>
-	/// Проверяем браузерную сессию на активность
-	/// </summary>
-	/// <param name="session">Сессия для проверки</param>
-	/// <param name="proxy">Прокси для использования в этом запросе</param>
-	/// <returns>true если сессия валидная, false если сессия null, AccessToken пустой или PlatformType не WebBrowser, а также в других случаях</returns>
-	public static async Task<bool> IsValidAsync(this SessionData? session, Proxy? proxy = null, CancellationToken? cancellationToken = null)
+    /// <summary>
+    /// Проверяем браузерную сессию на активность
+    /// </summary>
+    /// <param name="session">Сессия для проверки</param>
+    /// <param name="proxy">Прокси для использования в этом запросе</param>
+    /// <returns>true если сессия валидная, false если сессия null, AccessToken пустой или PlatformType не WebBrowser, а также в других случаях</returns>
+    [Obsolete("Метод не работает после обновления steam api")]
+    public static async Task<bool> IsValidAsync([NotNullWhen(true)] this SessionData? session, Proxy? proxy = null, CancellationToken? cancellationToken = null)
 	{
 		if (session == null || session.AccessToken.IsEmpty() || session.PlatformType != EAuthTokenPlatformType.WebBrowser)
 			return false;
 
 		var check_session = await API.IAuthenticationService.GetAuthSessionsForAccountAsync(session, proxy, cancellationToken);
-		if (check_session?.Response.client_ids == null)
+		if (check_session?.Response.ClientIds == null)
             return false;
         return true;
 	}
     /// <summary>
-	 /// Обновляет AccessToken браузерной сессии
-	 /// </summary>
-	 /// <param name="session">Сессия для обновления</param>
-	 /// <param name="proxy">Прокси для использования в этом запросе</param>
-	 /// <returns>true если сессия обновлена, false если сессия null, RefreshToken пустой или PlatformType не WebBrowser, а также в других случаях</returns>
-	public static async Task<bool> RefreshAsync(this SessionData? session, Proxy? proxy = null, CancellationToken? cancellationToken = null)
+    /// Обновляет AccessToken браузерной сессии
+    /// </summary>
+    /// <param name="session">Сессия для обновления</param>
+    /// <param name="proxy">Прокси для использования в этом запросе</param>
+    /// <returns>true если сессия обновлена, false если сессия null, RefreshToken пустой или PlatformType не WebBrowser, а также в других случаях</returns>
+    [Obsolete("Метод не работает после обновления steam api")]
+    public static async Task<bool> RefreshAsync([NotNullWhen(true)] this SessionData? session, Proxy? proxy = null, CancellationToken? cancellationToken = null)
 	{
 		if (session == null || session.RefreshToken.IsEmpty() || session.PlatformType != EAuthTokenPlatformType.WebBrowser)
 			return false;
