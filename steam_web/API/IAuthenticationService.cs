@@ -92,8 +92,8 @@ public static class IAuthenticationService
         using var memStream1 = new MemoryStream();
         Serializer.Serialize(memStream1, new UpdateTokenRequest()
         {
-            refresh_token = session.RefreshToken!,
-            steamid = session.SteamID
+            RefreshToken = session.RefreshToken!,
+            SteamId = session.SteamID
         });
         var request = new ProtobufRequest(SteamApiUrls.IAuthenticationService_GenerateAccessTokenForApp_v1, Convert.ToBase64String(memStream1.ToArray()))
         {
@@ -135,8 +135,8 @@ public static class IAuthenticationService
         using var memStream1 = new MemoryStream();
         Serializer.Serialize(memStream1, new UpdateTokenRequest()
         {
-            refresh_token = session.RefreshToken!,
-            steamid = session.SteamID
+            RefreshToken = session.RefreshToken!,
+            SteamId = session.SteamID
         });
         var request = new ProtobufRequest(SteamApiUrls.IAuthenticationService_GenerateAccessTokenForApp_v1, Convert.ToBase64String(memStream1.ToArray()))
         {
@@ -165,8 +165,8 @@ public static class IAuthenticationService
         using var memStream1 = new MemoryStream();
         Serializer.Serialize(memStream1, new UpdateTokenRequest()
         {
-            refresh_token = refresh_token!,
-            steamid = steamid,
+            RefreshToken = refresh_token!,
+            SteamId = steamid,
         });
         var request = new ProtobufRequest(SteamApiUrls.IAuthenticationService_GenerateAccessTokenForApp_v1, Convert.ToBase64String(memStream1.ToArray()))
         {

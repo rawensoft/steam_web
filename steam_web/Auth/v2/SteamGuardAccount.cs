@@ -159,8 +159,8 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
         using var memStream1 = new MemoryStream();
         Serializer.Serialize(memStream1, new UpdateTokenRequest()
         {
-            refresh_token = Session.RefreshToken!,
-            steamid = Session.SteamID
+            RefreshToken = Session.RefreshToken!,
+            SteamId = Session.SteamID
         });
         var request = new ProtobufRequest(SteamApiUrls.IAuthenticationService_GenerateAccessTokenForApp_v1, Convert.ToBase64String(memStream1.ToArray()))
         {
@@ -195,8 +195,8 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
         using var memStream1 = new MemoryStream();
         Serializer.Serialize(memStream1, new UpdateTokenRequest()
         {
-            refresh_token = Session.RefreshToken!,
-            steamid = Session.SteamID
+            RefreshToken = Session.RefreshToken!,
+            SteamId = Session.SteamID
         });
         var request = new ProtobufRequest(SteamApiUrls.IAuthenticationService_GenerateAccessTokenForApp_v1, Convert.ToBase64String(memStream1.ToArray()))
         {
