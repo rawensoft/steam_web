@@ -789,8 +789,9 @@ public static class Steam
         string url = Path.Combine(SteamCommunityUrls.Market_Listings, appId.ToString(), market_hash_name);
         var request = new GetRequest(url, ajaxRequest.Proxy, ajaxRequest.Session)
 		{
-			CancellationToken = ajaxRequest.CancellationToken
-		};
+			CancellationToken = ajaxRequest.CancellationToken,
+            Timeout = 60000,
+        };
 		request.AddQuery("l", "english");
 		var response = await Downloader.GetAsync(request);
 
@@ -822,7 +823,8 @@ public static class Steam
 		string url = Path.Combine(SteamCommunityUrls.Market_Listings, appId.ToString(), market_hash_name);
 		var request = new GetRequest(url, ajaxRequest.Proxy, ajaxRequest.Session)
 		{
-			CancellationToken = ajaxRequest.CancellationToken
+			CancellationToken = ajaxRequest.CancellationToken,
+            Timeout = 60000,
 		};
 		request.AddQuery("l", "english");
 		var response = Downloader.Get(request);
