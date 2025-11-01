@@ -34,7 +34,7 @@ public static class IUserAccountService
         }
         catch (Exception)
         {
-            return new();
+            return new() { Error = response.Data };
         }
     }
     public static async Task<ResponseData<ClientWalletDetails>> GetClientWalletDetailsAsync(ApiRequest apiRequest,
@@ -65,7 +65,7 @@ public static class IUserAccountService
         }
         catch (Exception)
         {
-            return new();
+            return new() { Error = response.Data };
         }
     }
 }

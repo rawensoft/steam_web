@@ -4,6 +4,7 @@ namespace SteamWeb.API.Models;
 public class ResponseData<T>
 {
     [JsonPropertyName("success")] public bool Success { get; internal set; } = false;
+    [JsonPropertyName("error")] public string? Error { get; init; }
     /// <summary>
     /// default(T)
     /// </summary>
@@ -12,6 +13,7 @@ public class ResponseData<T>
 public class ResultData<T>
 {
     [JsonPropertyName("success")] public bool Success { get; internal set; } = false;
+    [JsonPropertyName("error")] public string? Error { get; init; }
     /// <summary>
     /// default(T)
     /// </summary>
@@ -20,4 +22,5 @@ public class ResultData<T>
 public class ResponseData
 {
     [JsonPropertyName("success")] public bool Success { get; init; } = false;
+    [JsonPropertyName("error")] public string? Error { get; init; }
 }
