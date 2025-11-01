@@ -1,21 +1,21 @@
-﻿using System.Text.Json;
-using SteamWeb.Web;
+﻿using ProtoBuf;
+using SteamWeb.API.Models.IEconService;
 using SteamWeb.Extensions;
-using SteamWeb.Script.Enums;
-using System.Web;
-using SteamWeb.Script.DTO;
-using SteamWeb.Script.DTO.CookiePreferences;
-using SteamWeb.Script.DTO.Listinging;
-using SteamWeb.Script.DTO.Historing;
-using System.Text.RegularExpressions;
-using ProtoBuf;
-using System.Text.Json.Serialization;
-using SteamWeb.Script.Models;
 using SteamWeb.Models;
 using SteamWeb.Models.PurchaseHistory;
-using SteamWeb.API.Models.IEconService;
 using SteamWeb.Models.Trade;
+using SteamWeb.Script.DTO;
+using SteamWeb.Script.DTO.CookiePreferences;
+using SteamWeb.Script.DTO.Historing;
 using SteamWeb.Script.DTO.ItemRender;
+using SteamWeb.Script.DTO.Listinging;
+using SteamWeb.Script.Enums;
+using SteamWeb.Script.Models;
+using SteamWeb.Web;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
+using System.Web;
 
 namespace SteamWeb.Script;
 /// <summary>
@@ -373,8 +373,6 @@ public static class Ajax
 				NumberHandling = JsonNumberHandling.AllowReadingFromString
 			};
 			var obj = JsonSerializer.Deserialize<CancelTrade>(response.Data!, options)!;
-			if (obj.TradeOfferId != 0)
-				obj.Success = 1;
 			return obj;
 		}
 		catch (Exception)
@@ -413,8 +411,6 @@ public static class Ajax
 				NumberHandling = JsonNumberHandling.AllowReadingFromString
 			};
 			var obj = JsonSerializer.Deserialize<CancelTrade>(response.Data!, options)!;
-			if (obj.TradeOfferId != 0)
-				obj.Success = 1;
 			return obj;
 		}
 		catch (Exception)
@@ -454,8 +450,6 @@ public static class Ajax
 				NumberHandling = JsonNumberHandling.AllowReadingFromString
 			};
 			var obj = JsonSerializer.Deserialize<CancelTrade>(response.Data!, options)!;
-			if (obj.TradeOfferId != 0)
-				obj.Success = 1;
 			return obj;
 		}
 		catch (Exception)
@@ -494,8 +488,6 @@ public static class Ajax
 				NumberHandling = JsonNumberHandling.AllowReadingFromString
 			};
 			var obj = JsonSerializer.Deserialize<CancelTrade>(response.Data!, options)!;
-			if (obj.TradeOfferId != 0)
-				obj.Success = 1;
 			return obj;
 		}
 		catch (Exception)
