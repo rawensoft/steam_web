@@ -222,18 +222,18 @@ public static class ExtensionMethods
         for (int i = 0; i < length; i++)
         {
             var conf = confs[i];
-            if (conf.creator_id == creatorid)
+            if (conf.CreatorId == creatorid)
                 return conf;
         }
         return null;
     }
     public static Confirmation? GetByCreatorId(this ConfirmationsResponse confs, ulong creatorid)
     {
-        var length = confs.conf.Length;
+        var length = confs.Conf.Length;
         for (int i = 0; i < length; i++)
         {
             var conf = confs[i];
-            if (conf.creator_id == creatorid)
+            if (conf.CreatorId == creatorid)
                 return conf;
         }
         return null;

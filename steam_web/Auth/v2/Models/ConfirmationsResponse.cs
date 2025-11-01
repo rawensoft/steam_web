@@ -1,17 +1,30 @@
-﻿namespace SteamWeb.Auth.v2.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace SteamWeb.Auth.v2.Models;
 
 public class ConfirmationsResponse
 {
-    public bool success { get; init; } = false;
-    public bool needauth { get; init; } = false;
-    public string message { get; init; }
-    public string detail { get; init; }
-    public Confirmation[] conf { get; init; } = new Confirmation[0];
-    
+    [JsonPropertyName("success")]
+    public bool Success { get; init; } = false;
+
+    [JsonPropertyName("needauth")]
+    public bool NeedAuth { get; init; } = false;
+
+    [JsonPropertyName("message")]
+    public string? Message { get; init; }
+
+    [JsonPropertyName("detail")]
+    public string? Detail { get; init; }
+
+    [JsonPropertyName("creation_time")]
+    public Confirmation[] Conf { get; init; } = Array.Empty<Confirmation>();
+
+    /// <summary>
+    /// Indexing array <see cref="Conf"/>
+    /// </summary>
     public Confirmation this[int index]
 	{
-		get => conf[index];
-		set => conf[index] = value;
+		get => Conf[index];
+		set => Conf[index] = value;
 	}
 }
-

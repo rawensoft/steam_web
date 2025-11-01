@@ -1,7 +1,9 @@
-﻿namespace SteamWeb.Auth.v2.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace SteamWeb.Auth.v2.Models;
 
 public class AuthSessionForAccount
 {
-    public string[] client_ids { get; init; } = new string[0];
+    [JsonPropertyName("client_ids")]
+    public string[] ClientIds { get; init; } = Array.Empty<string>();
 }
-

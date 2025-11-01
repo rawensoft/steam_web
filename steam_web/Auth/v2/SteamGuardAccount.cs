@@ -318,7 +318,7 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
     public ConfirmationsResponse FetchConfirmations(CancellationToken? token = null)
     {
 		if (Session == null)
-			return new() { message = "Нет сессии" };
+			return new() { Message = "Нет сессии" };
 		long time = TimeAligner.GetSteamTime();
 		string tag = "list";
 		var request = new GetRequest(SteamCommunityUrls.MobileConf_GetList, Proxy, Session)
@@ -332,7 +332,7 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
 
 		var response = Downloader.Get(request);
 		if (!response.Success)
-			return new() { message = response.ErrorException?.Message ?? response.ErrorMessage ?? response.Data + "|" + response.StatusCode + "|" + response.SocketErrorCode };
+			return new() { Message = response.ErrorException?.Message ?? response.ErrorMessage ?? response.Data + "|" + response.StatusCode + "|" + response.SocketErrorCode };
 		try
 		{
 			var options = new JsonSerializerOptions
@@ -344,13 +344,13 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
 		}
 		catch (Exception e)
 		{
-			return new() { message = e.Message + "|" + response.Data };
+			return new() { Message = e.Message + "|" + response.Data };
 		}
 	}
     public async Task<ConfirmationsResponse> FetchConfirmationsAsync(CancellationToken? token = null)
     {
         if (Session == null)
-			return new() { message = "Нет сессии" };
+			return new() { Message = "Нет сессии" };
 		long time = TimeAligner.GetSteamTime();
         string tag = "list";
         var request = new GetRequest(SteamCommunityUrls.MobileConf_GetList, Proxy, Session)
@@ -364,7 +364,7 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
 
         var response = await Downloader.GetAsync(request);
 		if (!response.Success)
-			return new() { message = response.ErrorException?.Message ?? response.ErrorMessage! };
+			return new() { Message = response.ErrorException?.Message ?? response.ErrorMessage! };
         try
         {
 			var options = new JsonSerializerOptions
@@ -376,7 +376,7 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
 		}
         catch (Exception e)
         {
-            return new() { message = e.Message + "|" + response.Data };
+            return new() { Message = e.Message + "|" + response.Data };
         }
     }
 
@@ -385,7 +385,7 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
         if (Session == null)
             return (ACCEPT_STATUS.BadSession, "Нет сессии");
         string tag = "accept";
-        string url = APIEndpoints.COMMUNITY_BASE + "/mobileconf/ajaxop?op=allow&" + GenerateConfirmationQueryParams(tag) + "&cid=" + conf.id + "&ck=" + conf.nonce;
+        string url = APIEndpoints.COMMUNITY_BASE + "/mobileconf/ajaxop?op=allow&" + GenerateConfirmationQueryParams(tag) + "&cid=" + conf.Id + "&ck=" + conf.Nonce;
         string content = withCredentials ? "{\"withCredentials\":true}" : "{\"withCredentials\":false}";
         var request = new PostRequest(url, content, Downloader.AppJson, Proxy!, Session)
         {
@@ -410,7 +410,7 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
         if (Session == null)
 			return (ACCEPT_STATUS.BadSession, "Нет сессии");
 		string tag = "reject";
-		string url = APIEndpoints.COMMUNITY_BASE + "/mobileconf/ajaxop?op=allow&" + GenerateConfirmationQueryParams(tag) + "&cid=" + conf.id + "&ck=" + conf.nonce;
+		string url = APIEndpoints.COMMUNITY_BASE + "/mobileconf/ajaxop?op=allow&" + GenerateConfirmationQueryParams(tag) + "&cid=" + conf.Id + "&ck=" + conf.Nonce;
 		string content = withCredentials ? "{\"withCredentials\":true}" : "{\"withCredentials\":false}";
         var request = new PostRequest(url, content, Downloader.AppJson, Proxy!, Session)
         {
@@ -439,14 +439,14 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
         int length = confs.Length;
 		string tag = "accept";
         string url = APIEndpoints.COMMUNITY_BASE + "/mobileconf/multiajaxop?op=allow&" + GenerateConfirmationQueryParams(tag);
-        var sb = new StringBuilder(length * 4 + 2).Append("cid[]=").Append(confs[0].id).Append("&ck[]=").Append(confs[0].nonce);
+        var sb = new StringBuilder(length * 4 + 2).Append("cid[]=").Append(confs[0].Id).Append("&ck[]=").Append(confs[0].Nonce);
         for (int i = 1; i < length; i++)
         {
             var conf = confs[i];
             sb.Append("&cid[]=");
-            sb.Append(conf.id);
+            sb.Append(conf.Id);
             sb.Append("&ck[]=");
-            sb.Append(conf.nonce);
+            sb.Append(conf.Nonce);
         }
         var request = new PostRequest(url, sb.ToString(), Downloader.AppFormUrlEncoded, Proxy!, Session)
         {
@@ -473,14 +473,14 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
 		int length = confs.Length;
 		string tag = "reject";
 		string url = APIEndpoints.COMMUNITY_BASE + "/mobileconf/multiajaxop?op=allow&" + GenerateConfirmationQueryParams(tag);
-		var sb = new StringBuilder().Append("cid[]=").Append(confs[0].id).Append("&ck[]=").Append(confs[0].nonce);
+		var sb = new StringBuilder().Append("cid[]=").Append(confs[0].Id).Append("&ck[]=").Append(confs[0].Nonce);
         for (int i = 1; i < length; i++)
         {
             var conf = confs[i];
             sb.Append("&cid[]=");
-            sb.Append(conf.id);
+            sb.Append(conf.Id);
             sb.Append("&ck[]=");
-            sb.Append(conf.nonce);
+            sb.Append(conf.Nonce);
         }
         var request = new PostRequest(url, sb.ToString(), Downloader.AppFormUrlEncoded, Proxy!, Session)
         {
@@ -505,7 +505,7 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
         if (Session == null)
 			return (ACCEPT_STATUS.BadSession, "Нет сессии");
 		string tag = "accept";
-        string url = $"{APIEndpoints.COMMUNITY_BASE}/mobileconf/ajaxop?op=allow&{GenerateConfirmationQueryParams(tag)}&cid={conf.id}&ck={conf.nonce}";
+        string url = $"{APIEndpoints.COMMUNITY_BASE}/mobileconf/ajaxop?op=allow&{GenerateConfirmationQueryParams(tag)}&cid={conf.Id}&ck={conf.Nonce}";
         string content = withCredentials ? "{\"withCredentials\":true}" : "{\"withCredentials\":false}";
         var request = new PostRequest(url, content, Downloader.AppJson, Proxy, Session)
         {
@@ -529,7 +529,7 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
         if (Session == null)
 		    return (ACCEPT_STATUS.BadSession, "Нет сессии");
 		string tag = "reject";
-        string url = $"{APIEndpoints.COMMUNITY_BASE}/mobileconf/ajaxop?op=allow&{GenerateConfirmationQueryParams(tag)}&cid={conf.id}&ck={conf.nonce}";
+        string url = $"{APIEndpoints.COMMUNITY_BASE}/mobileconf/ajaxop?op=allow&{GenerateConfirmationQueryParams(tag)}&cid={conf.Id}&ck={conf.Nonce}";
         string content = withCredentials ? "{\"withCredentials\":true}" : "{\"withCredentials\":false}";
         var request = new PostRequest(url, content, Downloader.AppJson, Proxy, Session)
         {
@@ -556,14 +556,14 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
             return true;
         string tag = "accept";
         string url = $"{APIEndpoints.COMMUNITY_BASE}/mobileconf/multiajaxop?op=allow&{GenerateConfirmationQueryParams(tag)}";
-        var sb = new StringBuilder().Append("cid[]=").Append(confs[0].id).Append("&ck[]=").Append(confs[0].nonce);
+        var sb = new StringBuilder().Append("cid[]=").Append(confs[0].Id).Append("&ck[]=").Append(confs[0].Nonce);
         for (int i = 1; i < confs.Length; i++)
         {
             var conf = confs[i];
             sb.Append("&cid[]=");
-            sb.Append(conf.id);
+            sb.Append(conf.Id);
             sb.Append("&ck[]=");
-            sb.Append(conf.nonce);
+            sb.Append(conf.Nonce);
         }
         var request = new PostRequest(url, sb.ToString(), Downloader.AppFormUrlEncoded, Proxy, Session)
         {
@@ -588,14 +588,14 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
             return true;
         string tag = "reject";
         string url = $"{APIEndpoints.COMMUNITY_BASE}/mobileconf/multiajaxop?op=allow&{GenerateConfirmationQueryParams(tag)}";
-        var sb = new StringBuilder().Append("cid[]=").Append(confs[0].id).Append("&ck[]=").Append(confs[0].nonce);
+        var sb = new StringBuilder().Append("cid[]=").Append(confs[0].Id).Append("&ck[]=").Append(confs[0].Nonce);
         for (int i = 1; i < confs.Length; i++)
         {
             var conf = confs[i];
             sb.Append("&cid[]=");
-            sb.Append(conf.id);
+            sb.Append(conf.Id);
             sb.Append("&ck[]=");
-            sb.Append(conf.nonce);
+            sb.Append(conf.Nonce);
         }
         var request = new PostRequest(url, sb.ToString(), Downloader.AppFormUrlEncoded, Proxy, Session)
         {
