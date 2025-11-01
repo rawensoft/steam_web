@@ -15,6 +15,6 @@ public class WalletInfo
     [JsonPropertyName("wallet_delayed_balance")] public uint WalletDelayedBalance { get; init; }
     [JsonPropertyName("wallet_max_balance")] public uint WalletMaxBalance { get; init; }
     [JsonPropertyName("wallet_trade_max_balance")] public uint WalletTradeMaxBalance { get; init; }
-    [JsonPropertyName("success")] public byte Success { get; init; }
+    [JsonPropertyName("success")] public EResult Success { get; init; }
     [JsonPropertyName("rwgrsn")] public sbyte Rwgrsn { get; init; }
 }

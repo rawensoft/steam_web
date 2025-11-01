@@ -1,12 +1,24 @@
-﻿using System.Text.Json.Serialization;
-using SteamWeb.Extensions;
+﻿using SteamWeb.Extensions;
+using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 
 namespace SteamWeb.Script.Models;
 
-public record NextRedirect
+public class NextRedirect
 {
-    public string hash { get; init; }
-    public string errorMsg { get; init; }
-    [JsonIgnore] public bool success => !hash.IsEmpty();
-    [JsonIgnore] public bool is_error => errorMsg.IsEmpty();
+    [JsonPropertyName("hash")]
+    public string? Hash { get; init; }
+
+    [JsonPropertyName("errorMsg")]
+    public string? ErrorMsg { get; init; }
+
+    [JsonIgnore]
+    [MemberNotNullWhen(true, [nameof(Hash)])]
+    [MemberNotNullWhen(false, [nameof(ErrorMsg)])]
+    public bool IsHash => !Hash.IsEmpty();
+
+    [JsonIgnore]
+    [MemberNotNullWhen(false, [nameof(Hash)])]
+    [MemberNotNullWhen(true, [nameof(ErrorMsg)])]
+    public bool IsError => ErrorMsg.IsEmpty();
 }

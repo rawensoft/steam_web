@@ -565,7 +565,7 @@ public static class Ajax
         }
     }
 
-	public static DataOrder market_createbuyorder(DefaultRequest defaultRequest, byte currency, uint appid, string market_hash_name, int price_total, ushort quantity, int tradefee_tax)
+	public static DataOrder market_createbuyorder(DefaultRequest defaultRequest, byte currency, uint appid, string market_hash_name, uint price_total, ushort quantity, uint tradefee_tax)
 	{
 		var request = new PostRequest(SteamCommunityUrls.Market_CreateBuyOrder, Downloader.AppFormUrlEncoded)
         {
@@ -1304,10 +1304,7 @@ public static class Ajax
     /// <summary>
     /// Оставить комментарий в профиле
     /// </summary>
-    /// <param name="comment"></param>
-    /// <param name="steamid"></param>
     /// <param name="count">Количество комментариев на странице</param>
-    /// <param name="feature2"></param>
     /// <returns></returns>
     public static async Task<CommentResponse> profiles_post_comment_async(DefaultRequest defaultRequest, string comment, ulong steamid, int count = 6, int feature2 = -1)
     {

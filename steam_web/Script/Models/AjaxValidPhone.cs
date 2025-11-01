@@ -1,9 +1,20 @@
-﻿namespace SteamWeb.Script.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace SteamWeb.Script.Models;
 public class AjaxValidPhone
 {
-    public bool success { get; set; } = false;
-    public string? number { get; set; } = null;
-    public bool is_valid { get; set; } = false;
-    public bool is_voip { get; set; } = false;
-    public bool is_fixed { get; set; } = false;
+    [JsonPropertyName("success")]
+    public bool Success { get; set; } = false;
+
+    [JsonPropertyName("number")]
+    public string? Number { get; set; } = null;
+
+    [JsonPropertyName("is_valid")]
+    public bool IsValid { get; set; } = false;
+
+    [JsonPropertyName("is_voip")]
+    public bool IsVoIp { get; set; } = false;
+
+    [JsonPropertyName("is_fixed")]
+    public bool IsFixed { get; set; } = false;
 }

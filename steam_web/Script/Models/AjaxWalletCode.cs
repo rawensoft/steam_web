@@ -2,5 +2,6 @@
 namespace SteamWeb.Script.Models;
 public class AjaxWalletCode
 {
-	[JsonPropertyName("success")] public EResult Success { get; init; } = EResult.Invalid;
+	[JsonPropertyName("success")]
+    public EResult Success { get; init; } = EResult.Invalid;
 }

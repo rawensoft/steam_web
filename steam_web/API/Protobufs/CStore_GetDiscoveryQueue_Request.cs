@@ -7,7 +7,7 @@ namespace SteamWeb.API.Protobufs;
 [ProtoContract]
 public class CStore_GetDiscoveryQueue_Request
 {
-    [ProtoMember(1, IsRequired = false)]
+    [ProtoMember(1, IsRequired = true)]
     [JsonPropertyName("queue_type")]
     public EStoreDiscoveryQueueType QueueType { get; init; } = EStoreDiscoveryQueueType.k_EStoreDiscoveryQueueTypeNew;
 

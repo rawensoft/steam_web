@@ -5,7 +5,7 @@ using SteamWeb.Models;
 using SteamWeb.Script.Enums;
 using SteamWeb.Script.Models;
 using SteamWeb.Web;
-using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -43,6 +43,7 @@ public static class ExtensionMethods
         Array.Copy(data, index, result, 0, length);
         return result;
 	}
+
 	public static byte ParseByte(this string? value)
 	{
 		if (byte.TryParse(value, out byte result))
@@ -113,7 +114,10 @@ public static class ExtensionMethods
         return 0f;
     }
     public static string? GetClearWebString(this string? strSource) => strSource?.Replace("\n", "").Replace("\t", "").Replace("\r", "");
-    public static bool IsEmpty(this string? str) => string.IsNullOrEmpty(str);
+
+    [return: NotNullIfNotNull(nameof(str))]
+    public static bool IsEmpty([NotNullWhen(false)] this  string? str) => string.IsNullOrEmpty(str);
+
     public static bool ContainsOnlyDigit(this string strSource)
     {
         var length = strSource.Length;

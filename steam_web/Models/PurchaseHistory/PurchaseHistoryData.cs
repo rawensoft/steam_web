@@ -9,12 +9,17 @@ using AngleSharp.Text;
 using SteamWeb.Script.DTO;
 using SteamWeb.Script;
 using SteamWeb.Enums;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SteamWeb.Models.PurchaseHistory;
 public class PurchaseHistoryData
 {
+    [MemberNotNullWhen(false, [nameof(Error)])]
     public bool Success { get; init; } = false;
+
     public string? Error { get; init; }
+
+    [MemberNotNullWhen(true, [nameof(Error)])]
     public bool IsError => Error != null;
     public required ImmutableList<PurchaseHistoryModel> History { get; init; }
     public PurchaseHistoryCursorModel? Cursor { get; init; }

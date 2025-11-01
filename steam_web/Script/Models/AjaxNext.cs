@@ -1,4 +1,5 @@
 ﻿using SteamWeb.Extensions;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
 namespace SteamWeb.Script.Models;
@@ -19,11 +20,17 @@ public class AjaxNext
     [JsonPropertyName("html")]
     public string? Html { get; init; } = null;
 
-    [JsonIgnore] public bool IsHash => !Hash.IsEmpty();
+    [JsonIgnore]
+    [MemberNotNullWhen(true, [nameof(Hash)])]
+    public bool IsHash => !Hash.IsEmpty();
+
     /// <summary>
     /// Показывает является ли этот ответ ошибкой или нет
     /// <br/>
     /// Ошибка может быть в <see cref="ErrorMsg"/> или в <see cref="Title"/>,  <see cref="Html"/> и <see cref="SteamId"/>
     /// </summary>
-    [JsonIgnore] public bool IsError => !ErrorMsg.IsEmpty() || !Html.IsEmpty();
+    [JsonIgnore]
+    [MemberNotNullWhen(true, [nameof(ErrorMsg), nameof(Html), nameof(Title)])]
+    [MemberNotNullWhen(false, [nameof(Hash)])]
+    public bool IsError => !ErrorMsg.IsEmpty() || !Html.IsEmpty();
 }

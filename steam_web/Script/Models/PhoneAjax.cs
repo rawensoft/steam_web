@@ -1,5 +1,8 @@
-﻿namespace SteamWeb.Script.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace SteamWeb.Script.Models;
 public class PhoneAjax
 {
-    public bool? has_phone { get; init; } = null;
+    [JsonPropertyName("has_phone")]
+    public bool? HasPhone { get; init; } = null;
 }

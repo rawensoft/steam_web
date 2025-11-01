@@ -1,10 +1,7 @@
-﻿using System;
-
-namespace SteamWeb.Script.DTO;
-
-public readonly struct ItemPriceHistory
+﻿namespace SteamWeb.Script.DTO;
+public class ItemPriceHistory
 {
     public DateTime Time { get; init; }
-    public int Count { get; init; }
-    public float Price { get; init; }
+    public uint Count { get; init; }
+    public decimal Price { get; init; }
 }

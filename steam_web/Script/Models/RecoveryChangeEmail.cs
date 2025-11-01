@@ -1,16 +1,29 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 using SteamWeb.Extensions;
 
 namespace SteamWeb.Script.Models;
-public record RecoveryChangeEmail
+public class RecoveryChangeEmail
 {
-    public string hash { get; init; }
-    public string errorMsg { get; init; }
+    [JsonPropertyName("hash")]
+    public string? Hash { get; init; }
+
+    [JsonPropertyName("errorMsg")]
+    public string? ErrorMsg { get; init; }
+
     /// <summary>
     /// true если нужно подтвердить код с почты
     /// </summary>
-    public bool show_confirmation { get; init; } = false;
+    [JsonPropertyName("show_confirmation")]
+    public bool ShowConfirmation { get; init; } = false;
 
-    [JsonIgnore] public bool is_hash => !hash.IsEmpty();
-    [JsonIgnore] public bool is_error => errorMsg.IsEmpty();
+    [JsonIgnore]
+    [MemberNotNullWhen(true, [nameof(Hash)])]
+    [MemberNotNullWhen(false, [nameof(ErrorMsg)])]
+    public bool IsHash => !Hash.IsEmpty();
+
+    [JsonIgnore]
+    [MemberNotNullWhen(false, [nameof(Hash)])]
+    [MemberNotNullWhen(true, [nameof(ErrorMsg)])]
+    public bool IsError => ErrorMsg.IsEmpty();
 }

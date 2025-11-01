@@ -29,19 +29,19 @@ public class PriceHistory
     }
     internal static ItemPriceHistory[] SortPriceHistory(JsonElement[][] prices)
     {
+        const string format = "MMM d yyyy HH: z";
         var list = new List<ItemPriceHistory>(prices.Length);
         DateTime time;
-        float price;
-        int count;
+        decimal price;
+        uint count;
         string raw;
         var cultureCode = CultureInfo.GetCultureInfo("en-US");
-        string format = "MMM d yyyy HH: z";
         foreach (var item0 in prices)
         {
             raw = item0[0].GetRawText().Replace("\"", string.Empty);
             time = DateTime.ParseExact(raw, format, cultureCode);
-            price = (float)item0[1].GetDouble();
-            count = item0[2].GetString().ParseInt32();
+            price = item0[1].GetDecimal();
+            count = item0[2].GetString().ParseUInt32();
             list.Add(new()
             {
                 Count = count,

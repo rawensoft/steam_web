@@ -1,4 +1,6 @@
-﻿namespace SteamWeb.Script.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace SteamWeb.Script.Models;
 public class AjaxLicense
 {
     /// <summary>
@@ -6,8 +8,15 @@ public class AjaxLicense
     /// 2 - уже был активирован
     /// 16 - возможно активировался
     /// </summary>
-    public int success { get; init; } = 0;
-    public int rwgrsn { get; init; } = 0;
-    public int purchase_result_details { get; init; } = 0;
-    public AjaxLicenseInfo purchase_receipt_info { get; init; } = new();
+    [JsonPropertyName("success")]
+    public EResult Success { get; init; } = EResult.Invalid;
+
+    [JsonPropertyName("rwgrsn")]
+    public EResult Rwgrsn { get; init; } = 0;
+
+    [JsonPropertyName("purchase_result_details")]
+    public int PurchaseResultDetails { get; init; } = 0;
+
+    [JsonPropertyName("purchase_receipt_info")]
+    public AjaxLicenseInfo PurchaseReceiptInfo { get; init; } = new();
 }

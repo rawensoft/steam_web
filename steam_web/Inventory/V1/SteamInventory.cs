@@ -15,11 +15,12 @@ public class SteamInventory
     public int? success { get; set; }
     public uint? total_inventory_count { get; set; }
 
-    public async static Task<SteamInventory> LoadAsync(ISessionProvider session, System.Net.IWebProxy proxy, ulong steamid64, uint appid, ushort count, string contextid)
+    public async static Task<SteamInventory> LoadAsync(ISessionProvider? session, System.Net.IWebProxy? proxy, ulong steamid64, uint appid, ushort count, string contextid)
     {
+        string url = $"http://steamcommunity.com/inventory/{steamid64}/{appid}/{contextid}?l=english&count={count}";
         try
         {
-            var getRequest = new GetRequest($"http://steamcommunity.com/inventory/{steamid64}/{appid}/{contextid}?l=english&count={count}", proxy, session) { IsAjax = true };
+            var getRequest = new GetRequest(url, proxy, session) { IsAjax = true };
             var response = await Downloader.GetAsync(getRequest);
             if (!response.Success)
                 return new SteamInventory() { success = 0 };

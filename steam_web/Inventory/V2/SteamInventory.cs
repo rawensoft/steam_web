@@ -202,7 +202,7 @@ public class SteamInventory
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="appId"></param>
     /// <param name="context">Обычный context 753=6, но также может быть и другой, например 7</param>

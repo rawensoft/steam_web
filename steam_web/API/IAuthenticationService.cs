@@ -143,7 +143,7 @@ public static class IAuthenticationService
             AccessToken = session.AccessToken,
             CancellationToken = ct
         };
-        
+
         using var response = Downloader.PostProtobuf(request);
         if (response.EResult != EResult.OK)
             return (response.EResult, default);

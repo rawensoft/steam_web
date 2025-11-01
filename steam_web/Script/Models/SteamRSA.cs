@@ -1,9 +1,11 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 
 namespace SteamWeb.Script.Models;
 public class SteamRSA
 {
     [JsonPropertyName("success")]
+    [MemberNotNullWhen(true, [nameof(PublicKeyMod), nameof(PublicKeyExp), nameof(Timestamp), nameof(TokenGid)])]
     public bool Success { get; init; } = false;
 
     [JsonPropertyName("publickey_mod")]

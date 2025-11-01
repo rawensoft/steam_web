@@ -3,6 +3,7 @@ using System.Text;
 using SteamWeb.Extensions;
 using RestSharp;
 using System.Net.Sockets;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SteamWeb.Web.DTO;
 public class Response
@@ -11,6 +12,7 @@ public class Response
     private const string HeaderNameXEResult = "X-eresult";
 
     public CookieContainer? CookieContainer { get; set; } = null;
+    [MemberNotNullWhen(false, [nameof(ErrorException), nameof(ErrorMessage)])]
     public bool Success { get; init; } = false;
     public string? Cookie { get; private set; } = null;
     public int StatusCode { get; init; } = 0;

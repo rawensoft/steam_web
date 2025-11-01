@@ -49,9 +49,9 @@ public static class Steam
     public static async Task<bool> SwitchToMailCodeAsync(DefaultRequest ajaxRequest, SteamGuardAccuntv2? SDA)
     {
         var att_phone = await Script.AjaxHelp.PhoneAjaxAsync(ajaxRequest);
-        if (att_phone.has_phone == null)
+        if (att_phone.HasPhone == null)
             return false;
-        if (att_phone.has_phone == true && SDA != null)
+        if (att_phone.HasPhone == true && SDA != null)
         {
             SDA.Proxy = ajaxRequest.Proxy;
             var result = await SDA.RemoveAuthenticatorAsync(false);
@@ -71,9 +71,9 @@ public static class Steam
     public static bool SwitchToMailCode(DefaultRequest ajaxRequest, SteamGuardAccuntv2 SDA)
     {
         var att_phone = Script.AjaxHelp.PhoneAjax(ajaxRequest);
-        if (att_phone.has_phone == null)
+        if (att_phone.HasPhone == null)
             return false;
-        if (att_phone.has_phone == true && SDA != null)
+        if (att_phone.HasPhone == true && SDA != null)
         {
             SDA.Proxy = ajaxRequest.Proxy;
             var result = SDA.RemoveAuthenticator(false);

@@ -1,8 +1,15 @@
-﻿namespace SteamWeb.Script.DTO;
+﻿using System.Text.Json.Serialization;
 
-public record ItemGroup
+namespace SteamWeb.Script.DTO;
+
+public class ItemGroup
 {
-    public string avatarHash { get; init; }
-    public string name { get; init; }
-    public string steamid { get; init; }
+    [JsonPropertyName("avatarHash")]
+    public string? AvatarHash { get; init; }
+
+    [JsonPropertyName("name")]
+    public string Name { get; init; }
+
+    [JsonPropertyName("steamid")]
+    public ulong SteamId { get; init; }
 }

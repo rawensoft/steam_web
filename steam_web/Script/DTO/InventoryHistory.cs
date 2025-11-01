@@ -1,27 +1,40 @@
-﻿using System.Collections.Generic;
+﻿using System.Text.Json.Serialization;
 
 namespace SteamWeb.Script.DTO;
 
 public class InventoryHistory
 {
-    public bool success { get; internal set; } = false;
-    public InventoryHistoryCursor cursor { get; init; } = new();
+    [JsonPropertyName("success")]
+    public bool Success { get; internal set; } = false;
+
+    [JsonPropertyName("cursor")]
+    public InventoryHistoryCursor Cursor { get; init; } = new();
+
     /// <summary>
     /// Key1 - AppID, Key2 - classid_instanceid
     /// </summary>
-    public Dictionary<string, Dictionary<string, InventoryHistoryItem>> descriptions { get; init; } = new(0);
-    public InventoryHistoryApp[] apps { get; init; } = new InventoryHistoryApp[0];
-    public int num { get; init; }
-    public string html { get; init; }
+#if NET8_0_OR_GREATER
+    [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
+#endif
+    [JsonPropertyName("descriptions")]
+    public Dictionary<string, Dictionary<string, InventoryHistoryItem>> Descriptions { get; init; } = new(20);
 
-    public InventoryHistoryItem[] GetDescriptionsArray()
+    [JsonPropertyName("apps")]
+    public InventoryHistoryApp[] Apps { get; init; } = Array.Empty<InventoryHistoryApp>();
+
+    [JsonPropertyName("num")]
+    public int Num { get; init; }
+
+    [JsonPropertyName("html")]
+    public string? Html { get; init; }
+
+    public List<InventoryHistoryItem> GetDescriptionsArray()
     {
-        var list = new List<InventoryHistoryItem>(num);
-        foreach (var app in descriptions)
-        {
-            foreach (var item in app.Value) list.Add(item.Value);
-        }
+        var list = new List<InventoryHistoryItem>(Num + 1);
+        foreach (var app in Descriptions)
+            foreach (var item in app.Value)
+                list.Add(item.Value);
         list.Sort();
-        return list.ToArray();
+        return list;
     }
 }

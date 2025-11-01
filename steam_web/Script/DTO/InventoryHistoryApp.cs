@@ -1,9 +1,18 @@
-﻿namespace SteamWeb.Script.DTO;
+﻿using System.Text.Json.Serialization;
+
+namespace SteamWeb.Script.DTO;
 
 public class InventoryHistoryApp
 {
-    public int appid { get; init; }
-    public string icon { get; init; }
-    public string link { get; init; }
-    public string name { get; init; }
+    [JsonPropertyName("appid")]
+    public uint AppId { get; init; }
+
+    [JsonPropertyName("icon")]
+    public string Icon { get; init; } = string.Empty;
+
+    [JsonPropertyName("link")]
+    public string Link { get; init; } = string.Empty;
+
+    [JsonPropertyName("name")]
+    public string Name { get; init; } = string.Empty;
 }

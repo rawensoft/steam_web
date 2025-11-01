@@ -328,7 +328,7 @@ public static class IEconService
     /// <param name="get_descriptions">If set, the item display data for the items included in the returned trades will also be returned</param>
     /// <param name="language">The language to use when loading item display data</param>
     /// <returns></returns>
-    public static async Task<ResponseData<TradeStatus>> GetTradeStatusAsync(ApiRequest apiRequest, ulong tradeid, bool get_descriptions = false, string language = null)
+    public static async Task<ResponseData<TradeStatus>> GetTradeStatusAsync(ApiRequest apiRequest, ulong tradeid, bool get_descriptions = false, string? language = null)
     {
         var request = new GetRequest(SteamApiUrls.IEconService_GetTradeStatus_v1)
         {
