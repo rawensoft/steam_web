@@ -1,4 +1,4 @@
-﻿enum EAuthTokenState
+﻿public enum EAuthTokenState
 {
     Invalid = 0,
     New = 1,

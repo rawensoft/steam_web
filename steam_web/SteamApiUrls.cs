@@ -82,4 +82,5 @@ internal static class SteamApiUrls
     public const string IAuthenticationService_GetAuthSessionsForAccount_v1 = "https://api.steampowered.com/IAuthenticationService/GetAuthSessionsForAccount/v1";
     public const string IAuthenticationService_GenerateAccessTokenForApp_v1 = "https://api.steampowered.com/IAuthenticationService/GenerateAccessTokenForApp/v1";
     public const string IAuthenticationService_UpdateAuthSessionWithMobileConfirmation_v1 = "https://api.steampowered.com/IAuthenticationService/UpdateAuthSessionWithMobileConfirmation/v1";
+    public const string IAuthenticationService_EnumerateTokens_v1 = "https://api.steampowered.com/IAuthenticationService/EnumerateTokens/v1";
 }

@@ -30,8 +30,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="CMsgIPAddress.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="CMsgIPAddress.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AngleSharp" Version="1.0.7" />
     <PackageReference Include="protobuf-net" Version="3.2.30" />
+    <PackageReference Include="protobuf-net.BuildTools" Version="3.2.52">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="RestSharp" Version="110.2.0" />
   </ItemGroup>
 

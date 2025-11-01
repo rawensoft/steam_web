@@ -1,9 +1,12 @@
-﻿using System.Text.Json;
-using ProtoBuf;
+﻿using ProtoBuf;
 using SteamWeb.API.Models;
+using SteamWeb.API.Protobufs;
 using SteamWeb.Auth.v2.DTO;
 using SteamWeb.Auth.v2.Models;
+using SteamWeb.Models;
 using SteamWeb.Web;
+using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 using SessionData = SteamWeb.Auth.v2.Models.SessionData;
 
 namespace SteamWeb.API;
@@ -155,5 +158,42 @@ public static class IAuthenticationService
         response.Stream?.Close();
         response.Stream?.Dispose();
         return (response.EResult, token);
+    }
+
+    public static (EResult, CAuthentication_RefreshToken_Enumerate_Response?) EnumerateTokens(DefaultRequest request, CAuthentication_RefreshToken_Enumerate_Request proto)
+    {
+        using var memStream1 = new MemoryStream();
+        Serializer.Serialize(memStream1, proto);
+        var protoRequest = new ProtobufRequest(SteamApiUrls.IAuthenticationService_EnumerateTokens_v1, Convert.ToBase64String(memStream1.ToArray()))
+        {
+            Proxy = request.Proxy,
+            CancellationToken = request.CancellationToken,
+            AccessToken = request.Session?.AccessToken,
+        };
+
+        using var protoResponse = Downloader.PostProtobuf(protoRequest);
+        if (protoResponse.EResult != EResult.OK)
+            return (protoResponse.EResult, default);
+
+        var token = Serializer.Deserialize<CAuthentication_RefreshToken_Enumerate_Response>(protoResponse.Stream);
+        return (protoResponse.EResult, token);
+    }
+    public static async Task<(EResult, CAuthentication_RefreshToken_Enumerate_Response?)> EnumerateTokensAsync(DefaultRequest request, CAuthentication_RefreshToken_Enumerate_Request proto)
+    {
+        using var memStream1 = new MemoryStream();
+        Serializer.Serialize(memStream1, proto);
+        var protoRequest = new ProtobufRequest(SteamApiUrls.IAuthenticationService_EnumerateTokens_v1, Convert.ToBase64String(memStream1.ToArray()))
+        {
+            Proxy = request.Proxy,
+            CancellationToken = request.CancellationToken,
+            AccessToken = request.Session?.AccessToken,
+        };
+
+        using var protoResponse = await Downloader.PostProtobufAsync(protoRequest);
+        if (protoResponse.EResult != EResult.OK)
+            return (protoResponse.EResult, default);
+
+        var token = Serializer.Deserialize<CAuthentication_RefreshToken_Enumerate_Response>(protoResponse.Stream);
+        return (protoResponse.EResult, token);
     }
 }
