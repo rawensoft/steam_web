@@ -829,7 +829,7 @@ public static class Ajax
 
 	/// <exception cref="JsonException"/>
 	/// <exception cref="NotSupportedException"/>
-	public static WalletInfo market_buylisting(DefaultRequest defaultRequest, ItemRenderListing renderRequest, ushort quantity = 1, string? billing_state = null, bool save_my_address = false)
+	public static BuyListing market_buylisting(DefaultRequest defaultRequest, ItemRenderListing renderRequest, ushort quantity = 1, string? billing_state = null, bool save_my_address = false, ulong confirmation = 0)
 	{
 		var request = new PostRequest(SteamCommunityUrls.Market_BuyListing + renderRequest.ListingId, Downloader.AppFormUrlEncoded)
 		{
@@ -846,18 +846,19 @@ public static class Ajax
             .AddPostData("total", renderRequest.TotalPrice)
 			.AddPostData("quantity", quantity)
             .AddPostData("save_my_address", save_my_address ? 1 : 0)
-            .AddPostData("billing_state", !billing_state.IsEmpty() ? Uri.EscapeDataString(billing_state!) : string.Empty, false);
+            .AddPostData("billing_state", !billing_state.IsEmpty() ? Uri.EscapeDataString(billing_state!) : string.Empty, false)
+            .AddPostData("confirmation", confirmation);
 
         var response = Downloader.Post(request);
-		if (!response.Success)
-			return new();
+        if (response.StatusCode == 429)
+            return new() { Success = EResult.RateLimitExceeded };
 
-		var obj = JsonSerializer.Deserialize<WalletInfo>(response.Data!, Steam.JsonOptions)!;
+		var obj = JsonSerializer.Deserialize<BuyListing>(response.Data!, Steam.JsonOptions)!;
 		return obj;
 	}
 	/// <exception cref="JsonException"/>
 	/// <exception cref="NotSupportedException"/>
-	public static async Task<WalletInfo> market_buylisting_async(DefaultRequest defaultRequest, ItemRenderListing renderRequest, ushort quantity = 1, string? billing_state = null, bool save_my_address = false)
+	public static async Task<BuyListing> market_buylisting_async(DefaultRequest defaultRequest, ItemRenderListing renderRequest, ushort quantity = 1, string? billing_state = null, bool save_my_address = false, ulong confirmation = 0)
 	{
 		var request = new PostRequest(SteamCommunityUrls.Market_BuyListing + renderRequest.ListingId, Downloader.AppFormUrlEncoded)
 		{
@@ -874,13 +875,14 @@ public static class Ajax
             .AddPostData("total", renderRequest.TotalPrice)
             .AddPostData("quantity", quantity)
             .AddPostData("save_my_address", save_my_address ? 1 : 0)
-            .AddPostData("billing_state", !billing_state.IsEmpty() ? Uri.EscapeDataString(billing_state!) : string.Empty, false);
+            .AddPostData("billing_state", !billing_state.IsEmpty() ? Uri.EscapeDataString(billing_state!) : string.Empty, false)
+            .AddPostData("confirmation", confirmation);
 
         var response = await Downloader.PostAsync(request);
-		if (!response.Success)
-			return new();
+        if (response.StatusCode == 429)
+            return new() { Success = EResult.RateLimitExceeded };
 
-		var obj = JsonSerializer.Deserialize<WalletInfo>(response.Data!, Steam.JsonOptions)!;
+        var obj = JsonSerializer.Deserialize<BuyListing>(response.Data!, Steam.JsonOptions)!;
 		return obj;
 	}
 
@@ -1270,7 +1272,7 @@ public static class Ajax
 		var response = await Downloader.GetAsync(request);
         if (!response.Success)
             return Array.Empty<ItemGroup>();
-        var obj = JsonSerializer.Deserialize<ItemGroup[]>(response.Data!)!;
+        var obj = JsonSerializer.Deserialize<ItemGroup[]>(response.Data!, Steam.JsonOptions)!;
         return obj;
     }
     public static ItemGroup[] profiles_ajaxgroupinvite(DefaultRequest defaultRequest)
@@ -1288,7 +1290,7 @@ public static class Ajax
         var response = Downloader.Get(request);
         if (!response.Success)
             return Array.Empty<ItemGroup>();
-        var obj = JsonSerializer.Deserialize<ItemGroup[]>(response.Data!)!;
+        var obj = JsonSerializer.Deserialize<ItemGroup[]>(response.Data!, Steam.JsonOptions)!;
         return obj;
     }
 
@@ -1891,8 +1893,8 @@ public static class Ajax
         InventoryHistory obj;
         try
         {
-            obj = JsonSerializer.Deserialize<InventoryHistory>(response.Data)!;
-            obj.success = true;
+            obj = JsonSerializer.Deserialize<InventoryHistory>(response.Data, Steam.JsonOptions)!;
+            obj.Success = true;
             return obj;
         }
         catch (Exception)
