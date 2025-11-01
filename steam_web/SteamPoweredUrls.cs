@@ -14,8 +14,9 @@ internal static class SteamPoweredUrls
 	public const string Account_RedeemWalletCode = "https://store.steampowered.com/account/redeemwalletcode";
 	public const string Account_AjaxRegisterKey = "https://store.steampowered.com/account/ajaxregisterkey/";
 	public const string Account_AjaxRedeemWalletCode = "https://store.steampowered.com/account/ajaxredeemwalletcode/";
+    public const string Account_SteamRefundsMethods = "https://store.steampowered.com/steam_refunds_methods";
 
-	public const string Explore = "https://store.steampowered.com/explore";
+    public const string Explore = "https://store.steampowered.com/explore";
     public const string Explore_Next = "https://store.steampowered.com/explore/next/";
     public const string Explore_Next_Zero = "https://store.steampowered.com/explore/next/0/";
     public const string Explore_GenerateNewDiscoveryQueue = "https://store.steampowered.com/explore/generatenewdiscoveryqueue";

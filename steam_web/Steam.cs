@@ -1,23 +1,22 @@
-﻿using System.Text.Json;
-using SteamWeb.Web;
-using SteamWeb.Models;
+﻿using AngleSharp.Html.Parser;
+using SteamWeb.API.Models.IEconService;
+using SteamWeb.Auth.v2.Enums;
 using SteamWeb.Extensions;
-using AngleSharp.Html.Parser;
-using System.Globalization;
+using SteamWeb.Models;
+using SteamWeb.Models.PurchaseHistory;
 using SteamWeb.Models.Trade;
+using SteamWeb.Web;
+using System.Collections.Immutable;
+using System.Globalization;
+using System.Net;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Web;
-using SteamWeb.Auth.v2.Enums;
-using SteamWeb.API.Models.IEconService;
-using System.Net;
-using System.Text.Json.Serialization;
-using System.Collections.Immutable;
-using SteamWeb.Models.PurchaseHistory;
-
 using LoginResultv2 = SteamWeb.Auth.v2.Enums.LoginResult;
 using SessionDatav2 = SteamWeb.Auth.v2.Models.SessionData;
-using UserLoginv2 = SteamWeb.Auth.v2.UserLogin;
 using SteamGuardAccuntv2 = SteamWeb.Auth.v2.SteamGuardAccount;
+using UserLoginv2 = SteamWeb.Auth.v2.UserLogin;
 
 namespace SteamWeb;
 
@@ -1993,7 +1992,64 @@ public static class Steam
         return PurchaseHistoryData.Deserialize(response.Data!);
     }
 
-	public static ulong Steam32ToSteam64(uint input) => SteamIDConverter + input;
+    public static SteamRefundMethods GetSteamRefundMethods(DefaultRequest ajaxRequest)
+    {
+        var request = new GetRequest(SteamPoweredUrls.Account_SteamRefundsMethods, ajaxRequest.Proxy, ajaxRequest.Session)
+        {
+            CancellationToken = ajaxRequest.CancellationToken,
+        };
+        request.AddQuery("l", "english");
+        var response = Downloader.Get(request);
+        if (!response.Success)
+            return new();
+        else if (response.Data == "<!DOCTYPE html>")
+            return new();
+        return SteamRefundMethods.Deserialize(response.Data!);
+    }
+    public static async Task<SteamRefundMethods> GetSteamRefundMethodsAsync(DefaultRequest ajaxRequest)
+    {
+        var request = new GetRequest(SteamPoweredUrls.Account_SteamRefundsMethods, ajaxRequest.Proxy, ajaxRequest.Session)
+        {
+            CancellationToken = ajaxRequest.CancellationToken,
+        };
+        request.AddQuery("l", "english");
+        var response = await Downloader.GetAsync(request);
+        if (!response.Success)
+            return new();
+        else if (response.Data == "<!DOCTYPE html>")
+            return new();
+        return SteamRefundMethods.Deserialize(response.Data!);
+    }
+
+    public static (bool success, ImmutableList<uint> appids) GetSteamMarketApps(DefaultRequest ajaxRequest)
+    {
+        var request = new GetRequest(SteamCommunityUrls.Market, ajaxRequest.Proxy, ajaxRequest.Session)
+        {
+            CancellationToken = ajaxRequest.CancellationToken,
+        };
+        var response = Downloader.Get(request);
+        if (!response.Success)
+            return (false, ImmutableList<uint>.Empty);
+        else if (response.Data == "<!DOCTYPE html>")
+            return (false, ImmutableList<uint>.Empty);
+
+        var html = new HtmlParser();
+        var doc = html.ParseDocument(response.Data!);
+        var game_buttons = doc.GetElementsByClassName("game_button");
+        var appids = new List<uint>(game_buttons.Length + 1);
+        foreach (var game_button in game_buttons)
+        {
+            var url = game_button.GetAttribute("href")!;
+            var uri = new Uri(url);
+            var query = HttpUtility.ParseQueryString(uri.Query);
+            var appid = query.Get("appid");
+            if (appid != null)
+                appids.Add(appid.ParseUInt32());
+        }
+        return (true, appids.ToImmutableList());
+    }
+
+    public static ulong Steam32ToSteam64(uint input) => SteamIDConverter + input;
     public static uint Steam64ToSteam32(ulong input) => (uint)(input - SteamIDConverter);
     /// <summary>
     /// </summary>
