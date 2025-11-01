@@ -12,7 +12,7 @@ public class TradeAssets
 	/// <summary>
 	/// either assetid or currencyid will be set
 	/// </summary>
-	[JsonPropertyName("currencyid")] public byte CurrencyId { get; init; }
+	[JsonPropertyName("currencyid")] public byte? CurrencyId { get; init; }
 	/// <summary>
 	/// together with instanceid, uniquely identifies the display of the item
 	/// </summary>

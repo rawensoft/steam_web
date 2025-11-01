@@ -15,7 +15,7 @@ public class Trade
 	/// <summary>
 	/// a message included by the creator of the trade offer
 	/// </summary>
-	[JsonPropertyName("message")] public string? Message { get; init; }
+	[JsonPropertyName("message")] public string? Message { get; init; } = string.Empty;
 	/// <summary>
 	/// unix time when the offer will expire (or expired, if it is in the past)
 	/// </summary>
@@ -56,6 +56,10 @@ public class Trade
     ///  Используется для обозначения trade protected предметов\трейда
     /// </summary>
     [JsonPropertyName("delay_settlement")] public bool DelaySettlement { get; init; } = false;
+    /// <summary>
+    /// Время, когда заканчивается Trade Protection
+    /// </summary>
+    [JsonPropertyName("settlement_date")] public int SettlementDate { get; init; }
 
     /// <summary>
     /// Трейд содержит предметы только для отправки

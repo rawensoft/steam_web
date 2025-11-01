@@ -14,10 +14,11 @@ public class TradeHistory
 	/// unix timestamp of the time the trade started to commit
 	/// </summary>
 	[JsonPropertyName("time_init")] public int TimeInit { get; init; }
-	/// <summary>
-	/// unix timestamp of the time the trade will leave escrow
-	/// </summary>
-	[JsonPropertyName("time_escrow_end")] public int TimeEscrowEnd { get; init; }
+    [JsonPropertyName("time_mod")] public int TimeMod { get; init; }
+    /// <summary>
+    /// unix timestamp of the time the trade will leave escrow
+    /// </summary>
+    [JsonPropertyName("time_escrow_end")] public int? TimeEscrowEnd { get; init; }
 	[JsonPropertyName("status")] public Enums.ETradeStatus Status { get; init; } = Enums.ETradeStatus.k_ETradeStatus_Failed;
 	[JsonPropertyName("assets_given")] public List<TradeHistoryAssets> AssetsGiven { get; init; } = new(3);
 	[JsonPropertyName("assets_received")] public List<TradeHistoryAssets> AssetsReceived { get; init; } = new(3);
