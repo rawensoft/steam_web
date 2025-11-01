@@ -471,11 +471,11 @@ public static class ExtensionMethods
 			return false;
 
 		var new_token_response = API.IAuthenticationService.GenerateAccessTokenForApp(session, proxy, cancellationToken);
-        if (new_token_response.Item1 != EResult.OK || new_token_response.Item2?.access_token?.IsEmpty() != false)
+        if (new_token_response.Item1 != EResult.OK || new_token_response.Item2?.AccessToken?.IsEmpty() != false)
             return false;
 		else
 		{
-			session.AccessToken = new_token_response.Item2!.access_token;
+			session.AccessToken = new_token_response.Item2!.AccessToken;
             return true;
 		}
 	}
@@ -509,11 +509,11 @@ public static class ExtensionMethods
 			return false;
 
 		var new_token_response = await API.IAuthenticationService.GenerateAccessTokenForAppAsync(session, proxy, cancellationToken);
-		if (new_token_response.Item1 != EResult.OK || new_token_response.Item2?.access_token?.IsEmpty() != false)
+		if (new_token_response.Item1 != EResult.OK || new_token_response.Item2?.AccessToken?.IsEmpty() != false)
 			return false;
 		else
 		{
-			session.AccessToken = new_token_response.Item2.access_token;
+			session.AccessToken = new_token_response.Item2.AccessToken;
 			return true;
 		}
 	}

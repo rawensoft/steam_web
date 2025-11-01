@@ -106,7 +106,7 @@ public static class IAuthenticationService
             return (response.EResult, default);
 
         var token = Serializer.Deserialize<UpdateTokenResponse>(response.Stream);
-        if (token.access_token == null)
+        if (token.AccessToken == null)
             return (response.EResult, token);
 
         response.Stream?.Close();

@@ -174,9 +174,9 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
         if (!response.Success || response.EResult != EResult.OK)
             return false;
         var obj = Serializer.Deserialize<UpdateTokenResponse>(response.Stream);
-        if (obj.access_token == null)
+        if (obj.AccessToken == null)
             return false;
-        Session.AccessToken = obj.access_token;
+        Session.AccessToken = obj.AccessToken;
         return true;
     }
     /// <summary>
@@ -210,9 +210,9 @@ public sealed class SteamGuardAccount : IEquatable<SteamGuardAccount>
         if (!response.Success || response.EResult != EResult.OK)
             return false;
         var obj = Serializer.Deserialize<UpdateTokenResponse>(response.Stream);
-        if (obj.access_token == null)
+        if (obj.AccessToken == null)
             return false;
-        Session.AccessToken = obj.access_token;
+        Session.AccessToken = obj.AccessToken;
         return true;
     }
     public bool CheckSession(CancellationToken? token = null)
