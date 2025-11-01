@@ -11,4 +11,9 @@
     <ProjectReference Include="..\steam_web\SteamWeb.csproj" />
   </ItemGroup>
 
+	<ItemGroup>
+		<Reference Include="RestClientFactory" Condition="$(DefineConstants.Contains('FACTORY'))">
+			<HintPath>..\..\restclient_factory\RestClientFactory\bin\Publish\RestClientFactory.dll</HintPath>
+		</Reference>
+	</ItemGroup>
 </Project>
