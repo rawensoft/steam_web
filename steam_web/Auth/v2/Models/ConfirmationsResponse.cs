@@ -16,7 +16,7 @@ public class ConfirmationsResponse
     [JsonPropertyName("detail")]
     public string? Detail { get; init; }
 
-    [JsonPropertyName("creation_time")]
+    [JsonPropertyName("conf")]
     public Confirmation[] Conf { get; init; } = Array.Empty<Confirmation>();
 
     /// <summary>
