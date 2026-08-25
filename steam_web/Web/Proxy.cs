@@ -168,7 +168,7 @@ public sealed class Proxy : IWebProxy, INotifyPropertyChanged, IEquatable<Proxy>
         return new(sb.ToString());
 
 	}
-    public bool IsBypassed(Uri host) => !UseProxy || string.IsNullOrEmpty(IP) || Port == 0;
+    public bool IsBypassed(Uri host) => !UseProxy || string.IsNullOrEmpty(IP) || Port == 0 || Port > 65535;
     private void Property(string name) => PropertyChanged?.Invoke(this, new(name));
 
     public static bool IsLocalIPv4(string ip) => new Regex(@"(^127\.\d{0,255})|(^10\.\d{0,255})|(^172\.16)|(^192\.168)|(^169\.254)\.\d{0,255}\.\d{0,255}$", RegexOptions.Compiled, TimeSpan.FromSeconds(1)).IsMatch(ip);
