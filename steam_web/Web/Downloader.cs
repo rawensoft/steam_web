@@ -73,7 +73,7 @@ public static class Downloader
 		{
 			if (!request.IsMobile)
 			{
-				req.AddHeader(KnownHeaders.AcceptLanguage, "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7");
+				req.AddHeader(KnownHeaders.AcceptLanguage, "q=0.9,en-US;q=0.8,en;q=0.7");
 				req.AddHeader(KnownHeaders.Dnt, "1");
 				req.AddHeader(KnownHeaders.CacheControl, "no-cache");
 				req.AddHeader(KnownHeaders.UpgradeInsecureRequests, "1");
