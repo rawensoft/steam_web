@@ -3,7 +3,7 @@
 namespace SteamWeb.Models;
 public class WebTradeEligibilityReason
 {
-    public EligibilityStates State { get; }
+    public EMarketNotAllowedReason State { get; }
     /// <summary>
     /// You must have a valid Steam purchase that is between 7 days and a year old with no recent chargebacks or payment disputes
     /// </summary>
@@ -79,24 +79,24 @@ public class WebTradeEligibilityReason
 
     public WebTradeEligibilityReason(WebTradeEligibility web)
     {
-        State = (EligibilityStates)web.Reason;
-        TemporaryFailure = State.HasFlag(EligibilityStates.TemporaryFailure);
-        AccountDisabled = State.HasFlag(EligibilityStates.AccountDisabled);
-        IsLocked = State.HasFlag(EligibilityStates.AccountLockedDown);
-        IsLimited = State.HasFlag(EligibilityStates.AccountLimited);
-        TradeBanned = State.HasFlag(EligibilityStates.TradeBanned);
-        NotTrusted = State.HasFlag(EligibilityStates.AccountNotTrusted);
-        SteamGuardEnabled = State.HasFlag(EligibilityStates.SteamGuardNotEnabled);
-        SteamGuardRecentEnabled = State.HasFlag(EligibilityStates.SteamGuardOnlyRecentlyEnabled);
-        PasswordReset = State.HasFlag(EligibilityStates.RecentPasswordReset);
-        CoockieProblem = State.HasFlag(EligibilityStates.InvalidCookie);
-        SteamGuard7Days = State.HasFlag(EligibilityStates.UsingNewDevice);
-        RecentSelfRefund = State.HasFlag(EligibilityStates.RecentSelfRefund);
-        NewPaymentMethodCannotBeVerified = State.HasFlag(EligibilityStates.NewPaymentMethodCannotBeVerified);
-        SteamPurchase = State.HasFlag(EligibilityStates.NoRecentPurchases);
-        AcceptedWalletGift = State.HasFlag(EligibilityStates.AcceptedWalletGift);
+        State = (EMarketNotAllowedReason)web.Reason;
+        TemporaryFailure = State.HasFlag(EMarketNotAllowedReason.TemporaryFailure);
+        AccountDisabled = State.HasFlag(EMarketNotAllowedReason.AccountDisabled);
+        IsLocked = State.HasFlag(EMarketNotAllowedReason.AccountLockedDown);
+        IsLimited = State.HasFlag(EMarketNotAllowedReason.AccountLimited);
+        TradeBanned = State.HasFlag(EMarketNotAllowedReason.TradeBanned);
+        NotTrusted = State.HasFlag(EMarketNotAllowedReason.AccountNotTrusted);
+        SteamGuardEnabled = State.HasFlag(EMarketNotAllowedReason.SteamGuardNotEnabled);
+        SteamGuardRecentEnabled = State.HasFlag(EMarketNotAllowedReason.SteamGuardOnlyRecentlyEnabled);
+        PasswordReset = State.HasFlag(EMarketNotAllowedReason.RecentPasswordReset);
+        CoockieProblem = State.HasFlag(EMarketNotAllowedReason.InvalidCookie);
+        SteamGuard7Days = State.HasFlag(EMarketNotAllowedReason.UsingNewDevice);
+        RecentSelfRefund = State.HasFlag(EMarketNotAllowedReason.RecentSelfRefund);
+        NewPaymentMethodCannotBeVerified = State.HasFlag(EMarketNotAllowedReason.NewPaymentMethodCannotBeVerified);
+        SteamPurchase = State.HasFlag(EMarketNotAllowedReason.NoRecentPurchases);
+        AcceptedWalletGift = State.HasFlag(EMarketNotAllowedReason.AcceptedWalletGift);
 
-        CanMarket = web.Reason == 0 || web.Reason == (uint)EligibilityStates.TradeBanned;
+        CanMarket = web.Reason == 0 || web.Reason == (uint)EMarketNotAllowedReason.TradeBanned;
         CanTrade = !(AccountDisabled || IsLocked || IsLimited || TradeBanned || NotTrusted || SteamGuardEnabled || SteamGuardRecentEnabled || PasswordReset || CoockieProblem || SteamGuard7Days || SteamPurchase);
     }
 }

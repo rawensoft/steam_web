@@ -47,25 +47,94 @@ public enum PURCHASE_TYPE : byte
 /// Информация взята из <see href="https://pub.dev/documentation/steamworks/latest/steamworks/EMarketNotAllowedReasonFlags.html"/>
 /// </summary>
 [Flags]
-public enum EligibilityStates
+public enum EMarketNotAllowedReason
 {
     None,
+
+    /// <summary>
+    /// A back-end call failed or something that might work again on retry.
+    /// </summary>
     TemporaryFailure = 1,
+
+    /// <summary>
+    /// Disabled account.
+    /// </summary>
     AccountDisabled = 2,
+
+    /// <summary>
+    /// Locked account.
+    /// </summary>
     AccountLockedDown = 4,
+
+    /// <summary>
+    /// Limited account; no purchases.
+    /// </summary>
     AccountLimited = 8,
+
+    /// <summary>
+    /// The account is banned from trading items.
+    /// </summary>
     TradeBanned = 16,
+
+    /// <summary>
+    /// Wallet funds aren't tradable because the user has had no purchase activity in the last year or has had no purchases prior to last month.
+    /// </summary>
     AccountNotTrusted = 32,
+
+    /// <summary>
+    /// The user doesn't have Steam Guard enabled.
+    /// </summary>
     SteamGuardNotEnabled = 64,
+
+    /// <summary>
+    /// The user has Steam Guard but it hasn't been enabled for the required number of days.
+    /// </summary>
     SteamGuardOnlyRecentlyEnabled = 128,
+
+    /// <summary>
+    /// The user has recently forgotten their password and reset it.
+    /// </summary>
     RecentPasswordReset = 256,
+
+    /// <summary>
+    /// The user has recently funded his or her wallet with a new payment method.
+    /// </summary>
     NewPaymentMethod = 512,
+
+    /// <summary>
+    /// An invalid cookie was sent by the user.
+    /// </summary>
     InvalidCookie = 1024,
+
+    /// <summary>
+    /// The user has Steam Guard but is using a new computer or web browser.
+    /// </summary>
     UsingNewDevice = 2048,
+
+    /// <summary>
+    /// The user has Steam Guard, but is using a new computer or web browser.
+    /// </summary>
     RecentSelfRefund = 4096,
+
+    /// <summary>
+    /// The user has recently funded his or her wallet with a new payment method that cannot be verified.
+    /// </summary>
     NewPaymentMethodCannotBeVerified = 8192,
+
+    /// <summary>
+    /// Not only is the account not trusted but they have no recent purchases at all.
+    /// </summary>
     NoRecentPurchases = 16384,
+
+    /// <summary>
+    /// User accepted a wallet gift that was recently purchased.
+    /// </summary>
     AcceptedWalletGift = 32768,
+
+    /// <summary>
+    /// User did something that triggered a trade cooldown (like reversing trades).
+    /// </summary>
+    TradeCooldown = 65536,
 }
 public enum ETradeOfferState : byte
 {
