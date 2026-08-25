@@ -1,7 +1,8 @@
 ﻿namespace SteamWeb.Web.Enums;
 public enum ProxyType : byte
 {
-	HTTP,
-	Socks4,
-	Socks5
+	HTTP = 0,
+	Socks4 = 1,
+	Socks5 = 2,
+    HTTPS = 3,
 };

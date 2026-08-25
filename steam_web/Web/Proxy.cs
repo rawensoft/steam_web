@@ -1,18 +1,17 @@
-﻿using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
+﻿using SteamWeb.Extensions;
+using SteamWeb.Web.Enums;
+using System.ComponentModel;
 using System.Net;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
-using SteamWeb.Extensions;
-using SteamWeb.Web.Enums;
 
 namespace SteamWeb.Web;
 public sealed class Proxy : IWebProxy, INotifyPropertyChanged, IEquatable<Proxy>
 {
     public event PropertyChangedEventHandler? PropertyChanged;
     private bool _useProxy = true;
-    private string? _ip;
+    private string _ip = string.Empty;
     private int _port;
     private string? _username;
     private string? _password;
@@ -30,13 +29,13 @@ public sealed class Proxy : IWebProxy, INotifyPropertyChanged, IEquatable<Proxy>
         }
         set { _useProxy = value; Property("UseProxy"); }
     }
-    public string? IP
+    public string IP
     {
         get => _ip;
         set
         {
-            _ip = !string.IsNullOrEmpty(value) && IsValidIPv4(value) ? value : null;
-            Property("IP");
+            _ip = value;
+            Property(nameof(IP));
         }
     }
     public int Port
@@ -49,7 +48,7 @@ public sealed class Proxy : IWebProxy, INotifyPropertyChanged, IEquatable<Proxy>
             else if (0 > value)
                 _port = 0;
             else _port = value;
-            Property("Port");
+            Property(nameof(Port));
         }
     }
     public string? Username
@@ -58,10 +57,10 @@ public sealed class Proxy : IWebProxy, INotifyPropertyChanged, IEquatable<Proxy>
         set
         {
             _username = value;
-            Property("Username");
-            Property("IsBadCredentials");
-            Property("IsCredentials");
-            Property("Credentials");
+            Property(nameof(Username));
+            Property(nameof(IsBadCredentials));
+            Property(nameof(IsCredentials));
+            Property(nameof(Credentials));
         }
     }
     public string? Password
@@ -70,10 +69,10 @@ public sealed class Proxy : IWebProxy, INotifyPropertyChanged, IEquatable<Proxy>
         set
         {
             _password = value;
-            Property("Password");
-            Property("IsBadCredentials");
-            Property("IsCredentials");
-            Property("Credentials");
+            Property(nameof(Password));
+            Property(nameof(IsBadCredentials));
+            Property(nameof(IsCredentials));
+            Property(nameof(Credentials));
         }
     }
     [JsonIgnore]
@@ -103,7 +102,7 @@ public sealed class Proxy : IWebProxy, INotifyPropertyChanged, IEquatable<Proxy>
             }
         }
     }
-    public ProxyType Type { get; } = ProxyType.HTTP;
+    public ProxyType Type { get; set; } = ProxyType.HTTP;
 
 	public Proxy() { }
     public Proxy(string ip, int port)
@@ -158,7 +157,11 @@ public sealed class Proxy : IWebProxy, INotifyPropertyChanged, IEquatable<Proxy>
 				sb.Append("socks4://");
 				break;
 
-			default:
+            case ProxyType.HTTPS:
+                sb.Append("https://");
+                break;
+
+            default:
 				sb.Append("http://");
 				break;
 		}
