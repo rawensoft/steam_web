@@ -56,6 +56,7 @@ public static class Downloader
         {
             CookieContainer = cookies
 		};
+        req.AddHeader("Accept-Encoding", "gzip, deflate, br, zstd");
 		req.AddHeader(RestSharp.KnownHeaders.Accept, request.GetAccept());
 		req.AddHeader(RestSharp.KnownHeaders.UserAgent, request.GetUserAgent());
 		request.AddHeaders(req);
@@ -142,7 +143,8 @@ public static class Downloader
 		{
 			CookieContainer = new()
 		};
-		req.AddHeader(RestSharp.KnownHeaders.Accept, "application/octet-stream, application/json, text/plain, */*");
+        req.AddHeader("Accept-Encoding", "gzip, deflate, br, zstd");
+        req.AddHeader(RestSharp.KnownHeaders.Accept, "application/octet-stream, application/json, text/plain, */*");
 		if (!request.Cookie.IsEmpty())
 			req.AddHeader(RestSharp.KnownHeaders.Cookie, request.Cookie!);
 		if (!request.AccessToken.IsEmpty())
